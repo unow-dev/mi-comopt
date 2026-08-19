@@ -1,0 +1,2956 @@
+[
+  {
+    "keyword": "今日はこれでいいや",
+    "variants": [
+      "今日はこれでいいや",
+      "今日はこれで良いや"
+    ],
+    "category": "コピペ・長文スパム",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 14,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0269,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "アンチ",
+    "variants": [
+      "アンチ"
+    ],
+    "category": "反応系",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 10,
+    "reactive_hits": 649,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0192,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "ちょっと待ってほしい",
+    "variants": [
+      "ちょっと待ってほしい"
+    ],
+    "category": "コピペ・長文スパム",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 10,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.9091,
+    "direct_nuisance_coverage": 0.0192,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "唐揚げだけは",
+    "variants": [
+      "唐揚げだけは",
+      "今日の弁当には唐揚げ"
+    ],
+    "category": "コピペ・長文スパム",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 10,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.9091,
+    "direct_nuisance_coverage": 0.0192,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "エロ",
+    "variants": [
+      "エロ",
+      "えろ"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 10,
+    "reactive_hits": 4,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.9091,
+    "direct_nuisance_coverage": 0.0192,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "おえ",
+    "variants": [
+      "おえ",
+      "オエ"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 9,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0173,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "ここまで読んでくれた人",
+    "variants": [
+      "ここまで読んでくれた人"
+    ],
+    "category": "コピペ・長文スパム",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 9,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.9,
+    "direct_nuisance_coverage": 0.0173,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "冷蔵庫には意思がある",
+    "variants": [
+      "冷蔵庫には意思がある"
+    ],
+    "category": "コピペ・長文スパム",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 9,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.9,
+    "direct_nuisance_coverage": 0.0173,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "共感性羞恥",
+    "variants": [
+      "共感性羞恥",
+      "共感羞恥"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 9,
+    "reactive_hits": 2,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.9,
+    "direct_nuisance_coverage": 0.0173,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "DM",
+    "variants": [
+      "DM",
+      "dm"
+    ],
+    "category": "スパム・勧誘",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 8,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0154,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "十七歳の春",
+    "variants": [
+      "十七歳の春"
+    ],
+    "category": "コピペ・長文スパム",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 6,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0115,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "フォローしろ",
+    "variants": [
+      "フォローしろ"
+    ],
+    "category": "スパム・勧誘",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 5,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0096,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "ほんまにきつい",
+    "variants": [
+      "ほんまにきつい",
+      "ほんまにキツい"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 5,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0096,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "vt.tiktok.com",
+    "variants": [
+      "vt.tiktok.com"
+    ],
+    "category": "リンクスパム",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 4,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0077,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "承認欲求",
+    "variants": [
+      "承認欲求"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 4,
+    "reactive_hits": 3,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0077,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "だいぶきつい",
+    "variants": [
+      "だいぶきつい",
+      "だいぶキツい",
+      "だいぶキツイ"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 3,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0058,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "わざとらしい",
+    "variants": [
+      "わざとらしい",
+      "わざとらし"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 3,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0058,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "いつまでやる",
+    "variants": [
+      "いつまでやる",
+      "いつまでこんな",
+      "いつまで続け"
+    ],
+    "category": "年齢いじり",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 3,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0058,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "息子",
+    "variants": [
+      "息子"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 3,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0058,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "一人でやってる",
+    "variants": [
+      "一人でやってる",
+      "ひとりでやってる",
+      "一人でこれやって",
+      "ひとりでこれやって"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 3,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0058,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "一人で何して",
+    "variants": [
+      "一人で何して",
+      "ひとりで何して",
+      "一人でなにして",
+      "ひとりでなにして"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 3,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0058,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "炎上商法",
+    "variants": [
+      "炎上商法"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "高推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 3,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0058,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "きついって",
+    "variants": [
+      "きついって",
+      "キツいって",
+      "キツイって"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 12,
+    "reactive_hits": 9,
+    "normal_hits": 6,
+    "precision_excluding_reactive": 0.6667,
+    "direct_nuisance_coverage": 0.023,
+    "normal_hit_rate": 0.000302
+  },
+  {
+    "keyword": "胸",
+    "variants": [
+      "胸"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 8,
+    "reactive_hits": 1,
+    "normal_hits": 2,
+    "precision_excluding_reactive": 0.8,
+    "direct_nuisance_coverage": 0.0154,
+    "normal_hit_rate": 0.000101
+  },
+  {
+    "keyword": "脇",
+    "variants": [
+      "脇",
+      "わき"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 8,
+    "reactive_hits": 0,
+    "normal_hits": 2,
+    "precision_excluding_reactive": 0.8,
+    "direct_nuisance_coverage": 0.0154,
+    "normal_hit_rate": 0.000101
+  },
+  {
+    "keyword": "きつすぎ",
+    "variants": [
+      "きつすぎ",
+      "キツすぎ",
+      "キツすぎる",
+      "きつすぎる"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 8,
+    "reactive_hits": 1,
+    "normal_hits": 3,
+    "precision_excluding_reactive": 0.7273,
+    "direct_nuisance_coverage": 0.0154,
+    "normal_hit_rate": 0.000151
+  },
+  {
+    "keyword": "これは痛い",
+    "variants": [
+      "これは痛い",
+      "これはいたい"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 7,
+    "reactive_hits": 1,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.875,
+    "direct_nuisance_coverage": 0.0134,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "流石にきつい",
+    "variants": [
+      "流石にきつい",
+      "流石にキツい",
+      "流石にキツイ",
+      "さすがにきつい",
+      "さすがにキツい"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 6,
+    "reactive_hits": 2,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.8571,
+    "direct_nuisance_coverage": 0.0115,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "何歳まで",
+    "variants": [
+      "何歳まで",
+      "なんさいまで"
+    ],
+    "category": "年齢いじり",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 5,
+    "reactive_hits": 0,
+    "normal_hits": 2,
+    "precision_excluding_reactive": 0.7143,
+    "direct_nuisance_coverage": 0.0096,
+    "normal_hit_rate": 0.000101
+  },
+  {
+    "keyword": "がちできつい",
+    "variants": [
+      "がちできつい",
+      "ガチできつい",
+      "がちでキツい",
+      "ガチでキツい",
+      "ガチでキツイ"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 4,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.8,
+    "direct_nuisance_coverage": 0.0077,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "ヤレる",
+    "variants": [
+      "ヤレる",
+      "やれる"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 3,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.75,
+    "direct_nuisance_coverage": 0.0058,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "フォロー返し",
+    "variants": [
+      "フォロー返し",
+      "フォロー返して",
+      "フォロー返しして"
+    ],
+    "category": "スパム・勧誘",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "叩かれ",
+    "variants": [
+      "叩かれ",
+      "叩かれて",
+      "叩かれまく"
+    ],
+    "category": "反応系",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 78,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "かわきつ",
+    "variants": [
+      "かわきつ"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "きちぃ",
+    "variants": [
+      "きちぃ",
+      "きちい"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "これはきつい",
+    "variants": [
+      "これはきつい",
+      "これはキツい",
+      "これはキツイ"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "これは無理",
+    "variants": [
+      "これは無理",
+      "これはむり"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "ちょっと痛い",
+    "variants": [
+      "ちょっと痛い",
+      "ちょっといたい"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "まじ無理",
+    "variants": [
+      "まじ無理",
+      "マジ無理",
+      "まじむり"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "恥ずかしくない",
+    "variants": [
+      "恥ずかしくない",
+      "恥ずかしくないん",
+      "恥ずかしくならん"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "普通にきつい",
+    "variants": [
+      "普通にきつい",
+      "普通にキツい",
+      "普通にキツイ"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "黒歴史",
+    "variants": [
+      "黒歴史"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "25歳が何してる",
+    "variants": [
+      "25歳が何してる",
+      "25歳何してん"
+    ],
+    "category": "年齢いじり",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "アラサーでこれは",
+    "variants": [
+      "アラサーでこれは",
+      "アラサーがこれは"
+    ],
+    "category": "年齢いじり",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "おかず",
+    "variants": [
+      "おかず"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "エッチ",
+    "variants": [
+      "エッチ",
+      "えっち"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "汗を飲",
+    "variants": [
+      "汗だけで摂取",
+      "汗集めて飲",
+      "汗を飲"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "股間",
+    "variants": [
+      "股間"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "舐めてくれそう",
+    "variants": [
+      "舐めてくれそう",
+      "なめてくれそう"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "何を見せられて",
+    "variants": [
+      "何を見せられて",
+      "なにを見せられて"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "炎上目的",
+    "variants": [
+      "炎上目的"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "流石に無理",
+    "variants": [
+      "流石に無理",
+      "さすがに無理"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.6667,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "おばさん",
+    "variants": [
+      "おばさん",
+      "オバサン"
+    ],
+    "category": "年齢いじり",
+    "recommendation": "中推奨",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 2,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.6667,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "きつ",
+    "variants": [
+      "きつ",
+      "キツ"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 112,
+    "reactive_hits": 55,
+    "normal_hits": 70,
+    "precision_excluding_reactive": 0.6154,
+    "direct_nuisance_coverage": 0.215,
+    "normal_hit_rate": 0.003525
+  },
+  {
+    "keyword": "痛い",
+    "variants": [
+      "痛い",
+      "いたい",
+      "イタイ"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 47,
+    "reactive_hits": 64,
+    "normal_hits": 99,
+    "precision_excluding_reactive": 0.3219,
+    "direct_nuisance_coverage": 0.0902,
+    "normal_hit_rate": 0.004985
+  },
+  {
+    "keyword": "無理",
+    "variants": [
+      "無理",
+      "むり",
+      "ムリ"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 25,
+    "reactive_hits": 21,
+    "normal_hits": 71,
+    "precision_excluding_reactive": 0.2604,
+    "direct_nuisance_coverage": 0.048,
+    "normal_hit_rate": 0.003575
+  },
+  {
+    "keyword": "フォローして",
+    "variants": [
+      "フォローして",
+      "フォローお願いします",
+      "フォローお願い"
+    ],
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 14,
+    "reactive_hits": 1,
+    "normal_hits": 11,
+    "precision_excluding_reactive": 0.56,
+    "direct_nuisance_coverage": 0.0269,
+    "normal_hit_rate": 0.000554
+  },
+  {
+    "keyword": "恥ずかしい",
+    "variants": [
+      "恥ずかしい",
+      "恥ずかしく",
+      "恥ずかし"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 9,
+    "reactive_hits": 1,
+    "normal_hits": 8,
+    "precision_excluding_reactive": 0.5294,
+    "direct_nuisance_coverage": 0.0173,
+    "normal_hit_rate": 0.000403
+  },
+  {
+    "keyword": "あざとい",
+    "variants": [
+      "あざとい"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 9,
+    "reactive_hits": 2,
+    "normal_hits": 9,
+    "precision_excluding_reactive": 0.5,
+    "direct_nuisance_coverage": 0.0173,
+    "normal_hit_rate": 0.000453
+  },
+  {
+    "keyword": "何してるの",
+    "variants": [
+      "何してるの",
+      "何してんの",
+      "なにしてんの",
+      "何してるん",
+      "なにしてるん"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 8,
+    "reactive_hits": 0,
+    "normal_hits": 7,
+    "precision_excluding_reactive": 0.5333,
+    "direct_nuisance_coverage": 0.0154,
+    "normal_hit_rate": 0.000353
+  },
+  {
+    "keyword": "きついな",
+    "variants": [
+      "きついな",
+      "キツいな",
+      "キツイな"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 7,
+    "reactive_hits": 2,
+    "normal_hits": 4,
+    "precision_excluding_reactive": 0.6364,
+    "direct_nuisance_coverage": 0.0134,
+    "normal_hit_rate": 0.000201
+  },
+  {
+    "keyword": "ブス",
+    "variants": [
+      "ブス",
+      "ぶす"
+    ],
+    "category": "容姿攻撃",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 7,
+    "reactive_hits": 6,
+    "normal_hits": 6,
+    "precision_excluding_reactive": 0.5385,
+    "direct_nuisance_coverage": 0.0134,
+    "normal_hit_rate": 0.000302
+  },
+  {
+    "keyword": "舐め",
+    "variants": [
+      "舐め",
+      "なめ"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 7,
+    "reactive_hits": 1,
+    "normal_hits": 9,
+    "precision_excluding_reactive": 0.4375,
+    "direct_nuisance_coverage": 0.0134,
+    "normal_hit_rate": 0.000453
+  },
+  {
+    "keyword": "AV",
+    "variants": [
+      "AV",
+      "av"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 7,
+    "reactive_hits": 0,
+    "normal_hits": 26,
+    "precision_excluding_reactive": 0.2121,
+    "direct_nuisance_coverage": 0.0134,
+    "normal_hit_rate": 0.001309
+  },
+  {
+    "keyword": "ぶりっ子",
+    "variants": [
+      "ぶりっ子",
+      "ぶりっこ"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 6,
+    "reactive_hits": 7,
+    "normal_hits": 8,
+    "precision_excluding_reactive": 0.4286,
+    "direct_nuisance_coverage": 0.0115,
+    "normal_hit_rate": 0.000403
+  },
+  {
+    "keyword": "25歳",
+    "variants": [
+      "25歳",
+      "25才"
+    ],
+    "category": "年齢いじり",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 6,
+    "reactive_hits": 7,
+    "normal_hits": 24,
+    "precision_excluding_reactive": 0.2,
+    "direct_nuisance_coverage": 0.0115,
+    "normal_hit_rate": 0.001209
+  },
+  {
+    "keyword": "食べたい",
+    "variants": [
+      "食べたい"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 6,
+    "reactive_hits": 1,
+    "normal_hits": 49,
+    "precision_excluding_reactive": 0.1091,
+    "direct_nuisance_coverage": 0.0115,
+    "normal_hit_rate": 0.002468
+  },
+  {
+    "keyword": "キモい",
+    "variants": [
+      "キモい",
+      "きもい",
+      "キモイ",
+      "きも"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 5,
+    "reactive_hits": 6,
+    "normal_hits": 12,
+    "precision_excluding_reactive": 0.2941,
+    "direct_nuisance_coverage": 0.0096,
+    "normal_hit_rate": 0.000604
+  },
+  {
+    "keyword": "嫉妬",
+    "variants": [
+      "嫉妬"
+    ],
+    "category": "反応系",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 5,
+    "reactive_hits": 131,
+    "normal_hits": 30,
+    "precision_excluding_reactive": 0.1429,
+    "direct_nuisance_coverage": 0.0096,
+    "normal_hit_rate": 0.001511
+  },
+  {
+    "keyword": "ピュ",
+    "variants": [
+      "ピュ",
+      "ぴゅ"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 4,
+    "reactive_hits": 1,
+    "normal_hits": 3,
+    "precision_excluding_reactive": 0.5714,
+    "direct_nuisance_coverage": 0.0077,
+    "normal_hit_rate": 0.000151
+  },
+  {
+    "keyword": "やりたい",
+    "variants": [
+      "やりたい",
+      "ヤりたい"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 4,
+    "reactive_hits": 3,
+    "normal_hits": 4,
+    "precision_excluding_reactive": 0.5,
+    "direct_nuisance_coverage": 0.0077,
+    "normal_hit_rate": 0.000201
+  },
+  {
+    "keyword": "いいねして",
+    "variants": [
+      "いいねして"
+    ],
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 4,
+    "reactive_hits": 2,
+    "normal_hits": 5,
+    "precision_excluding_reactive": 0.4444,
+    "direct_nuisance_coverage": 0.0077,
+    "normal_hit_rate": 0.000252
+  },
+  {
+    "keyword": "アラサー",
+    "variants": [
+      "アラサー"
+    ],
+    "category": "年齢いじり",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 4,
+    "reactive_hits": 2,
+    "normal_hits": 6,
+    "precision_excluding_reactive": 0.4,
+    "direct_nuisance_coverage": 0.0077,
+    "normal_hit_rate": 0.000302
+  },
+  {
+    "keyword": "可愛くない",
+    "variants": [
+      "可愛くない",
+      "かわいくない"
+    ],
+    "category": "容姿攻撃",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 4,
+    "reactive_hits": 7,
+    "normal_hits": 27,
+    "precision_excluding_reactive": 0.129,
+    "direct_nuisance_coverage": 0.0077,
+    "normal_hit_rate": 0.00136
+  },
+  {
+    "keyword": "制服",
+    "variants": [
+      "制服"
+    ],
+    "category": "年齢いじり",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 4,
+    "reactive_hits": 4,
+    "normal_hits": 56,
+    "precision_excluding_reactive": 0.0667,
+    "direct_nuisance_coverage": 0.0077,
+    "normal_hit_rate": 0.00282
+  },
+  {
+    "keyword": "誰か言ってやれ",
+    "variants": [
+      "誰か言ってやれ",
+      "誰か言ってやって",
+      "誰か教えたれ"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 3,
+    "reactive_hits": 0,
+    "normal_hits": 2,
+    "precision_excluding_reactive": 0.6,
+    "direct_nuisance_coverage": 0.0058,
+    "normal_hit_rate": 0.000101
+  },
+  {
+    "keyword": "何がしたい",
+    "variants": [
+      "何がしたい",
+      "なにがしたい"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 3,
+    "reactive_hits": 5,
+    "normal_hits": 4,
+    "precision_excluding_reactive": 0.4286,
+    "direct_nuisance_coverage": 0.0058,
+    "normal_hit_rate": 0.000201
+  },
+  {
+    "keyword": "イテテ",
+    "variants": [
+      "イテテ",
+      "いてて",
+      "いたた",
+      "あいたた"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 3,
+    "reactive_hits": 4,
+    "normal_hits": 8,
+    "precision_excluding_reactive": 0.2727,
+    "direct_nuisance_coverage": 0.0058,
+    "normal_hit_rate": 0.000403
+  },
+  {
+    "keyword": "唇",
+    "variants": [
+      "唇"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 3,
+    "reactive_hits": 0,
+    "normal_hits": 9,
+    "precision_excluding_reactive": 0.25,
+    "direct_nuisance_coverage": 0.0058,
+    "normal_hit_rate": 0.000453
+  },
+  {
+    "keyword": "いたいわ",
+    "variants": [
+      "いたいわ",
+      "痛いわ"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 2,
+    "precision_excluding_reactive": 0.5,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.000101
+  },
+  {
+    "keyword": "鳥肌",
+    "variants": [
+      "鳥肌"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 4,
+    "precision_excluding_reactive": 0.3333,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.000201
+  },
+  {
+    "keyword": "えち",
+    "variants": [
+      "えち",
+      "エチ"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 2,
+    "normal_hits": 4,
+    "precision_excluding_reactive": 0.3333,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.000201
+  },
+  {
+    "keyword": "インキャ",
+    "variants": [
+      "インキャ",
+      "陰キャ"
+    ],
+    "category": "属性攻撃",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 1,
+    "normal_hits": 5,
+    "precision_excluding_reactive": 0.2857,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.000252
+  },
+  {
+    "keyword": "可愛いでしょ感",
+    "variants": [
+      "可愛いでしょ",
+      "かわいいでしょ"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 5,
+    "precision_excluding_reactive": 0.2857,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.000252
+  },
+  {
+    "keyword": "引く",
+    "variants": [
+      "引く",
+      "引いた",
+      "引くわ"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 1,
+    "normal_hits": 9,
+    "precision_excluding_reactive": 0.1818,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.000453
+  },
+  {
+    "keyword": "返信して",
+    "variants": [
+      "返信して",
+      "返信きたら"
+    ],
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 11,
+    "precision_excluding_reactive": 0.1538,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.000554
+  },
+  {
+    "keyword": "違和感",
+    "variants": [
+      "違和感"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 1,
+    "normal_hits": 13,
+    "precision_excluding_reactive": 0.1333,
+    "direct_nuisance_coverage": 0.0038,
+    "normal_hit_rate": 0.000655
+  },
+  {
+    "keyword": "俺の時計、時間を食べてる説",
+    "variants": [
+      "俺の時計",
+      "時間を食べてる説"
+    ],
+    "category": "コピペ・長文スパム",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "明日はこれでいいや",
+    "variants": [
+      "明日はこれでいいや"
+    ],
+    "category": "コピペ・長文スパム",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "貴方の時間を5分だけ",
+    "variants": [
+      "貴方の時間を5分だけ",
+      "あなたの時間を5分だけ"
+    ],
+    "category": "コピペ・長文スパム",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "DMおいで",
+    "variants": [
+      "DMおいで",
+      "dmおいで"
+    ],
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "DMきて",
+    "variants": [
+      "DMきて",
+      "dmきて"
+    ],
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "DMください",
+    "variants": [
+      "DMください",
+      "dmください"
+    ],
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "DM欲しい",
+    "variants": [
+      "DM欲しい",
+      "dm欲しい"
+    ],
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "いいねしてください",
+    "variants": [
+      "いいねしてください"
+    ],
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "いいね稼ぎ",
+    "variants": [
+      "いいね稼ぎ"
+    ],
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "ガチ恋の人いいね",
+    "variants": [
+      "ガチ恋の人いいね"
+    ],
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "フォロバ",
+    "variants": [
+      "フォロバ"
+    ],
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "フォロー返ししてください",
+    "variants": [
+      "フォロー返ししてください",
+      "フォロー返しして"
+    ],
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "フォロー返します",
+    "variants": [
+      "フォロー返します"
+    ],
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "ライン交換",
+    "variants": [
+      "ライン交換",
+      "LINE交換",
+      "line交換"
+    ],
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "自分のことフォロー",
+    "variants": [
+      "自分のことフォロー"
+    ],
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "話したい人",
+    "variants": [
+      "話したい人"
+    ],
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "誰でもフォロー",
+    "variants": [
+      "誰でもフォロー"
+    ],
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "ごめん無理",
+    "variants": [
+      "ごめん無理",
+      "ごめんむり"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "ぶりぶり",
+    "variants": [
+      "ぶりぶり"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "まじできつい",
+    "variants": [
+      "まじできつい",
+      "マジできつい",
+      "まじでキツい",
+      "マジでキツい"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "わざとらしすぎて無理",
+    "variants": [
+      "わざとらしすぎて無理"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "媚び",
+    "variants": [
+      "媚び",
+      "媚びて"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "救いようがない",
+    "variants": [
+      "救いようがない"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "気づけ笑",
+    "variants": [
+      "気づけ笑",
+      "気付け笑"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "無理です",
+    "variants": [
+      "無理です",
+      "むりです"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "笑顔の押し売り",
+    "variants": [
+      "笑顔の押し売り"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "見てらんない",
+    "variants": [
+      "見てらんない",
+      "見てられない"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "需要ない",
+    "variants": [
+      "需要ない",
+      "需要ないです"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 1,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "黒歴史製造機",
+    "variants": [
+      "黒歴史製造機"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "あるもんがなさすぎる",
+    "variants": [
+      "あるもんがなさすぎる"
+    ],
+    "category": "容姿攻撃",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "ぺったんこ",
+    "variants": [
+      "ぺったんこ"
+    ],
+    "category": "容姿攻撃",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "オタクには刺さりそう",
+    "variants": [
+      "オタクには刺さりそう",
+      "オタクに刺さりそう"
+    ],
+    "category": "属性攻撃",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "弱者男性",
+    "variants": [
+      "弱者男性"
+    ],
+    "category": "属性攻撃",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "52歳",
+    "variants": [
+      "52歳"
+    ],
+    "category": "年齢いじり",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "おばさん気味",
+    "variants": [
+      "おばさん気味"
+    ],
+    "category": "年齢いじり",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "老後まで",
+    "variants": [
+      "老後まで"
+    ],
+    "category": "年齢いじり",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "どぴゅ",
+    "variants": [
+      "どぴゅ",
+      "ドピュ"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "はあはぁ",
+    "variants": [
+      "はあはぁ",
+      "はぁはぁ",
+      "ハアハア"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "ガチエロ",
+    "variants": [
+      "ガチエロ",
+      "がちえろ"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "バニーガール",
+    "variants": [
+      "バニーガール"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "ペロペロ",
+    "variants": [
+      "ペロペロ",
+      "ぺろぺろ"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "ムスコ",
+    "variants": [
+      "ムスコ",
+      "むすこ"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "体臭",
+    "variants": [
+      "体臭"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "咥える",
+    "variants": [
+      "咥える",
+      "くわえる"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "性欲",
+    "variants": [
+      "性欲"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "性欲強そう",
+    "variants": [
+      "性欲強そう"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "抜いた",
+    "variants": [
+      "抜いた",
+      "抜い"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "抜ける",
+    "variants": [
+      "抜ける"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "生足",
+    "variants": [
+      "生足"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "脇きれい",
+    "variants": [
+      "脇きれい",
+      "脇綺麗"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "脇に住みたい",
+    "variants": [
+      "脇に住みたい"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "裸足助かる",
+    "variants": [
+      "裸足助かる"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "足の裏",
+    "variants": [
+      "足の裏",
+      "足裏"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "足指",
+    "variants": [
+      "足指"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "足酸っぱそう",
+    "variants": [
+      "足酸っぱそう"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "顔がえろ",
+    "variants": [
+      "顔がえろ",
+      "顔がエロ"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "食べてやりたい",
+    "variants": [
+      "食べてやりたい"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "髪の毛にかけ",
+    "variants": [
+      "髪の毛にかけ"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "髪の毛にかけたい",
+    "variants": [
+      "髪の毛にかけたい"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "髪の毛食べ",
+    "variants": [
+      "髪の毛食べ"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "アイコンの方がかわいい",
+    "variants": [
+      "アイコンの方が",
+      "アイコンのほうが"
+    ],
+    "category": "比較・貶し",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "可愛いよりキツい",
+    "variants": [
+      "可愛いよりキツ",
+      "かわいいよりきつ",
+      "可愛いよりきつ"
+    ],
+    "category": "比較・貶し",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "可愛いより痛い",
+    "variants": [
+      "可愛いより痛い",
+      "かわいいより痛い"
+    ],
+    "category": "比較・貶し",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "彼女の方が可愛い",
+    "variants": [
+      "彼女の方が",
+      "彼女のほうが"
+    ],
+    "category": "比較・貶し",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "ドジっ子演じ",
+    "variants": [
+      "ドジっ子演じ",
+      "ドジっ子"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "ファン全員金",
+    "variants": [
+      "ファン全員金"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "一人で撮ってる",
+    "variants": [
+      "一人で撮ってる",
+      "ひとりで撮ってる"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "何を求めてる",
+    "variants": [
+      "何を求めてる",
+      "何を求めている"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "冷笑",
+    "variants": [
+      "冷笑"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 30,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "可愛い私見て感",
+    "variants": [
+      "可愛い私見て感",
+      "かわいい私見て感"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "洗脳",
+    "variants": [
+      "洗脳"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "私可愛い",
+    "variants": [
+      "私可愛い",
+      "私かわいい"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "見てるこっち恥ずかしく",
+    "variants": [
+      "見てるこっち恥ずかしく"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "計算を感じ",
+    "variants": [
+      "計算を感じ"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "誰層",
+    "variants": [
+      "誰層"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "都合の悪いコメント",
+    "variants": [
+      "都合の悪いコメント"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.0
+  },
+  {
+    "keyword": "5点",
+    "variants": [
+      "5点"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.5,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "うざい",
+    "variants": [
+      "うざい",
+      "ウザい",
+      "うざ"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.5,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "こっちみんな",
+    "variants": [
+      "こっちみんな"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.5,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "ガチ痛い",
+    "variants": [
+      "ガチ痛い",
+      "がち痛い"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.5,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "普通に無理",
+    "variants": [
+      "普通に無理",
+      "普通にむり"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.5,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "終わってる",
+    "variants": [
+      "終わってる"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 4,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.5,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "鼻で笑",
+    "variants": [
+      "鼻で笑"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.5,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "手帳もち",
+    "variants": [
+      "手帳もち",
+      "手帳持ち"
+    ],
+    "category": "属性攻撃",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.5,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "25歳が制服",
+    "variants": [
+      "25歳が制服"
+    ],
+    "category": "年齢いじり",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.5,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "いい年して",
+    "variants": [
+      "いい年して"
+    ],
+    "category": "年齢いじり",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.5,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "やらせて",
+    "variants": [
+      "やらせて"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 2,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.5,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "タイツ",
+    "variants": [
+      "タイツ"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.5,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "興奮",
+    "variants": [
+      "興奮"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.5,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "裸足",
+    "variants": [
+      "裸足"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.5,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "何を伝えたい",
+    "variants": [
+      "何を伝えたい",
+      "なにを伝えたい"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.5,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "意味わからん",
+    "variants": [
+      "意味わからん",
+      "意味分からん"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 3,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.5,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 5e-05
+  },
+  {
+    "keyword": "微妙",
+    "variants": [
+      "微妙"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 2,
+    "precision_excluding_reactive": 0.3333,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.000101
+  },
+  {
+    "keyword": "匂い嗅",
+    "variants": [
+      "匂い嗅",
+      "におい嗅"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 2,
+    "precision_excluding_reactive": 0.3333,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.000101
+  },
+  {
+    "keyword": "イラッ",
+    "variants": [
+      "イラッ",
+      "いらっ"
+    ],
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 3,
+    "precision_excluding_reactive": 0.25,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.000151
+  },
+  {
+    "keyword": "ぐろ",
+    "variants": [
+      "ぐろ",
+      "グロ"
+    ],
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 4,
+    "precision_excluding_reactive": 0.2,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.000201
+  },
+  {
+    "keyword": "汗だく",
+    "variants": [
+      "汗だく"
+    ],
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 5,
+    "precision_excluding_reactive": 0.1667,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.000252
+  },
+  {
+    "keyword": "25で",
+    "variants": [
+      "25で"
+    ],
+    "category": "年齢いじり",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 3,
+    "normal_hits": 6,
+    "precision_excluding_reactive": 0.1429,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.000302
+  },
+  {
+    "keyword": "何歳すか",
+    "variants": [
+      "何歳すか",
+      "何歳ですか"
+    ],
+    "category": "年齢いじり",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 6,
+    "precision_excluding_reactive": 0.1429,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.000302
+  },
+  {
+    "keyword": "いいねまで",
+    "variants": [
+      "いいねまで"
+    ],
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "部分一致",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 9,
+    "precision_excluding_reactive": 0.1,
+    "direct_nuisance_coverage": 0.0019,
+    "normal_hit_rate": 0.000453
+  }
+]

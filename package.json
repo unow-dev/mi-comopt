@@ -1,0 +1,17 @@
+{
+  "name": "workspace",
+  "private": true,
+  "workspaces": ["package"],
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "build": "npm --workspace package run build",
+    "test": "npm --workspace package run test",
+    "clean": "npm --workspace package run clean"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^24.0.0"
+  }
+}
