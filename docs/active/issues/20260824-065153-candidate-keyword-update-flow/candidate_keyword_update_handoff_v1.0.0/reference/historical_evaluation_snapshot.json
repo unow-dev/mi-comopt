@@ -1,0 +1,114 @@
+{
+  "snapshot_type": "historical_evaluation_example",
+  "dataset": {
+    "total_rows": 21433,
+    "label_counts": {
+      "direct_nuisance": 521,
+      "reactive": 1054,
+      "normal": 19858
+    }
+  },
+  "evaluation_policy": {
+    "direct_nuisance": "positive",
+    "reactive": "reference_only_neutral",
+    "normal": "negative_false_positive",
+    "precision_excluding_reactive": "direct_nuisance_hits / (direct_nuisance_hits + normal_hits)",
+    "utility_score": "direct_nuisance_hits - normal_hits"
+  },
+  "candidate_output": {
+    "total_candidates": 187,
+    "recommendation_counts": {
+      "高推奨": 22,
+      "中推奨": 31,
+      "任意": 134
+    }
+  },
+  "verified_candidate_examples": [
+    {
+      "keyword": "これでいいや",
+      "direct_nuisance_hits": 14,
+      "reactive_hits": 0,
+      "normal_hits": 0,
+      "precision_excluding_reactive": 1.0,
+      "tier_by_numeric_threshold": "高推奨",
+      "comment": "長文コピペ・定型スパムの代表例"
+    },
+    {
+      "keyword": "アンチ",
+      "direct_nuisance_hits": 10,
+      "reactive_hits": 649,
+      "normal_hits": 0,
+      "precision_excluding_reactive": 1.0,
+      "tier_by_numeric_threshold": "高推奨",
+      "comment": "reactive_hitsが非常に多くても今回の方針では減点しないことを示す例"
+    },
+    {
+      "keyword": "おえ",
+      "direct_nuisance_hits": 9,
+      "reactive_hits": 0,
+      "normal_hits": 0,
+      "precision_excluding_reactive": 1.0,
+      "tier_by_numeric_threshold": "高推奨",
+      "comment": "短い嫌悪表現の高精度例"
+    },
+    {
+      "keyword": "共感性羞恥",
+      "direct_nuisance_hits": 8,
+      "reactive_hits": 2,
+      "normal_hits": 0,
+      "precision_excluding_reactive": 1.0,
+      "tier_by_numeric_threshold": "高推奨",
+      "comment": "reactiveへのヒットをニュートラル扱いする例"
+    },
+    {
+      "keyword": "dm",
+      "direct_nuisance_hits": 8,
+      "reactive_hits": 0,
+      "normal_hits": 0,
+      "precision_excluding_reactive": 1.0,
+      "tier_by_numeric_threshold": "高推奨",
+      "comment": "勧誘系候補の例。実運用ではより長い定型句を優先する"
+    },
+    {
+      "keyword": "ちょっと待ってほしい",
+      "direct_nuisance_hits": 10,
+      "reactive_hits": 0,
+      "normal_hits": 1,
+      "precision_excluding_reactive": 0.909091,
+      "tier_by_numeric_threshold": "中推奨",
+      "comment": "長文コピペ由来だがnormalにも1件ある例"
+    },
+    {
+      "keyword": "にきつい",
+      "direct_nuisance_hits": 16,
+      "reactive_hits": 2,
+      "normal_hits": 2,
+      "precision_excluding_reactive": 0.888889,
+      "tier_by_numeric_threshold": "中推奨",
+      "comment": "部分文字列候補。意味単位としては手動整理対象"
+    },
+    {
+      "keyword": "そこには",
+      "direct_nuisance_hits": 17,
+      "reactive_hits": 0,
+      "normal_hits": 1,
+      "precision_excluding_reactive": 0.944444,
+      "tier_by_numeric_threshold": "中推奨",
+      "comment": "数値だけでは良く見えるが一般語なので除外・抑制すべきノイズ例"
+    },
+    {
+      "keyword": "弁当",
+      "direct_nuisance_hits": 11,
+      "reactive_hits": 0,
+      "normal_hits": 1,
+      "precision_excluding_reactive": 0.916667,
+      "tier_by_numeric_threshold": "中推奨",
+      "comment": "長文コピペ由来の一般語。単独フィルターには不適切なノイズ例"
+    }
+  ],
+  "interpretation": [
+    "推奨度の数値判定ではreactive_hitsを使用しない。",
+    "自動抽出n-gramは高い数値でも一般語・断片語になり得るため、最終候補では意味的なノイズ除去が必要。",
+    "このsnapshotは次回更新時の比較基準として使う。"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "candidates": {
+    "kw_123e4567-e89b-42d3-a456-426614174000": {
+      "status": "active",
+      "keyword": "これでいいや",
+      "variants": [
+        "これでいいや"
+      ],
+      "category_id": "copypasta_spam",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_known",
+      "introduced_at": "2026-08-24T15:54:00Z"
+    }
+  }
+}

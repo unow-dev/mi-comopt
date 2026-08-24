@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.invalid/candidate-keywords/bootstrap-candidate-id-map.schema.json",
+  "title": "Bootstrap candidate ID map",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "legacy_source_artifact_sha256",
+    "entries"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "legacy_source_artifact_sha256": {
+      "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/sha256"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "legacy_index",
+          "legacy_candidate_semantic_sha256",
+          "candidate_id"
+        ],
+        "properties": {
+          "legacy_index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "legacy_candidate_semantic_sha256": {
+            "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/sha256"
+          },
+          "candidate_id": {
+            "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/candidate_id"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

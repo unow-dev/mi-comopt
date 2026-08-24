@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.invalid/candidate-keywords/candidate-registry.schema.json",
+  "title": "Candidate registry",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "candidates"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "candidates": {
+      "type": "object",
+      "patternProperties": {
+        "^kw_": {
+          "type": "object",
+          "required": [
+            "status",
+            "keyword",
+            "variants",
+            "category_id",
+            "created_at",
+            "last_changed_at",
+            "first_publication_state",
+            "introduced_at"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "active",
+                "retired"
+              ]
+            },
+            "keyword": {
+              "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/nonempty_string"
+            },
+            "variants": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/nonempty_string"
+              }
+            },
+            "category_id": {
+              "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/category_id"
+            },
+            "created_at": {
+              "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/timestamp"
+            },
+            "last_changed_at": {
+              "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/timestamp"
+            },
+            "first_publication_state": {
+              "enum": [
+                "never_published",
+                "published_at_known",
+                "published_at_unknown"
+              ]
+            },
+            "introduced_at": {
+              "oneOf": [
+                {
+                  "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/timestamp"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "first_publication_state": {
+                    "const": "published_at_known"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "introduced_at": {
+                    "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/timestamp"
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "first_publication_state": {
+                    "enum": [
+                      "never_published",
+                      "published_at_unknown"
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "introduced_at": {
+                    "type": "null"
+                  }
+                }
+              }
+            }
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,278 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.invalid/candidate-keywords/run-manifest.schema.json",
+  "title": "Candidate publication run manifest",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "run_id",
+    "run_type",
+    "base_run_id",
+    "parent_manifest_content_sha256",
+    "started_at",
+    "completed_at",
+    "published_at",
+    "outcome",
+    "source_dataset",
+    "evaluation_policy",
+    "taxonomy",
+    "registry_before_content_sha256",
+    "registry_after_content_sha256",
+    "artifacts",
+    "evaluator",
+    "published_candidates_content_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "run_id": {
+      "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/run_id"
+    },
+    "run_type": {
+      "enum": [
+        "bootstrap_migration",
+        "full_update",
+        "local_rebuild"
+      ]
+    },
+    "base_run_id": {
+      "oneOf": [
+        {
+          "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/run_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "parent_manifest_content_sha256": {
+      "oneOf": [
+        {
+          "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/sha256"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "started_at": {
+      "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/timestamp"
+    },
+    "completed_at": {
+      "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/timestamp"
+    },
+    "published_at": {
+      "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/timestamp"
+    },
+    "outcome": {
+      "const": "published"
+    },
+    "source_dataset": {
+      "type": "object",
+      "required": [
+        "artifact_ref",
+        "artifact_sha256"
+      ],
+      "properties": {
+        "artifact_ref": {
+          "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/artifact_ref"
+        },
+        "artifact_sha256": {
+          "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/sha256"
+        }
+      },
+      "additionalProperties": false
+    },
+    "evaluation_policy": {
+      "type": "object",
+      "required": [
+        "version",
+        "content_sha256"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_sha256": {
+          "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/sha256"
+        }
+      },
+      "additionalProperties": false
+    },
+    "taxonomy": {
+      "type": "object",
+      "required": [
+        "version",
+        "content_sha256"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_sha256": {
+          "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/sha256"
+        }
+      },
+      "additionalProperties": false
+    },
+    "registry_before_content_sha256": {
+      "oneOf": [
+        {
+          "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/sha256"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "registry_after_content_sha256": {
+      "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/sha256"
+    },
+    "artifacts": {
+      "type": "object",
+      "properties": {
+        "bootstrap_candidate_id_map": {
+          "type": "object",
+          "required": [
+            "artifact_ref",
+            "content_sha256"
+          ],
+          "properties": {
+            "artifact_ref": {
+              "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/artifact_ref"
+            },
+            "content_sha256": {
+              "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/sha256"
+            }
+          },
+          "additionalProperties": false
+        },
+        "candidate_view": {
+          "type": "object",
+          "required": [
+            "artifact_ref",
+            "content_sha256"
+          ],
+          "properties": {
+            "artifact_ref": {
+              "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/artifact_ref"
+            },
+            "content_sha256": {
+              "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/sha256"
+            }
+          },
+          "additionalProperties": false
+        },
+        "pre_evaluation": {
+          "type": "object",
+          "required": [
+            "artifact_ref",
+            "content_sha256"
+          ],
+          "properties": {
+            "artifact_ref": {
+              "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/artifact_ref"
+            },
+            "content_sha256": {
+              "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/sha256"
+            }
+          },
+          "additionalProperties": false
+        },
+        "candidate_generation_request": {
+          "type": "object",
+          "required": [
+            "artifact_ref",
+            "content_sha256"
+          ],
+          "properties": {
+            "artifact_ref": {
+              "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/artifact_ref"
+            },
+            "content_sha256": {
+              "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/sha256"
+            }
+          },
+          "additionalProperties": false
+        },
+        "candidate_proposal": {
+          "type": "object",
+          "required": [
+            "artifact_ref",
+            "content_sha256"
+          ],
+          "properties": {
+            "artifact_ref": {
+              "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/artifact_ref"
+            },
+            "content_sha256": {
+              "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/sha256"
+            }
+          },
+          "additionalProperties": false
+        },
+        "candidate_change_set": {
+          "type": "object",
+          "required": [
+            "artifact_ref",
+            "content_sha256"
+          ],
+          "properties": {
+            "artifact_ref": {
+              "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/artifact_ref"
+            },
+            "content_sha256": {
+              "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/sha256"
+            }
+          },
+          "additionalProperties": false
+        },
+        "candidate_evaluation": {
+          "type": "object",
+          "required": [
+            "artifact_ref",
+            "content_sha256"
+          ],
+          "properties": {
+            "artifact_ref": {
+              "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/artifact_ref"
+            },
+            "content_sha256": {
+              "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/sha256"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "candidate_evaluation"
+      ],
+      "additionalProperties": false
+    },
+    "evaluator": {
+      "type": "object",
+      "required": [
+        "version",
+        "source_revision"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_revision": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "published_candidates_content_sha256": {
+      "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/sha256"
+    }
+  },
+  "additionalProperties": false
+}

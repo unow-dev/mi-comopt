@@ -1,0 +1,16 @@
+{
+  "pipeline_version": "1.4.0",
+  "source_stage13_sha256": "a46c140b1e979c7c2a5037c8fc4eb0797207bd2a6323ced51bfb7cf74e09ee17",
+  "unresolved_p2_count": 1,
+  "note": "Intentionally unresolved after boundary review. The text alone cannot distinguish physical pain from 「痛い」 as a cringe judgment with sufficient confidence; do not infer a label to eliminate the backlog.",
+  "items": [
+    {
+      "source_index_1_based": 3920,
+      "record_key": "f1fb38be87e3dc7a27a598ae",
+      "matched_direct_cues": [
+        "痛い"
+      ],
+      "comment": "痛いよ！痛い痛い"
+    }
+  ]
+}

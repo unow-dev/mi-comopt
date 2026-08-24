@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.invalid/candidate-keywords/taxonomy.schema.json",
+  "title": "Candidate category taxonomy",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "taxonomy_version",
+    "categories"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "taxonomy_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "categories": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "category_id",
+          "label",
+          "description"
+        ],
+        "properties": {
+          "category_id": {
+            "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/category_id"
+          },
+          "label": {
+            "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/nonempty_string"
+          },
+          "description": {
+            "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/nonempty_string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

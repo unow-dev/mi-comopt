@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "vectors": [
+    {
+      "input": "ＡＢＣ　ＤＥＦ",
+      "expected": "abc def"
+    },
+    {
+      "input": "A\tB\r\nC",
+      "expected": "a b c"
+    },
+    {
+      "input": "​DM⁠きて﻿",
+      "expected": "dmきて"
+    },
+    {
+      "input": "  キツい   って  ",
+      "expected": "キツい って"
+    },
+    {
+      "input": "１２３",
+      "expected": "123"
+    }
+  ]
+}

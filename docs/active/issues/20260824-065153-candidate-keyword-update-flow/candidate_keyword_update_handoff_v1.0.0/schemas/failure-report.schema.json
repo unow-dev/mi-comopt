@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.invalid/candidate-keywords/failure-report.schema.json",
+  "title": "Validation failure report",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "errors"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "errors": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "stage",
+          "code",
+          "path",
+          "message"
+        ],
+        "properties": {
+          "stage": {
+            "enum": [
+              "input",
+              "request",
+              "proposal",
+              "candidate",
+              "evaluation",
+              "publication",
+              "bootstrap"
+            ]
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]+$"
+          },
+          "path": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

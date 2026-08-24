@@ -1,0 +1,427 @@
+{
+  "schema_version": 1,
+  "changes": [
+    {
+      "legacy_index": 9,
+      "candidate_id": "kw_1502debd-122e-4854-a362-76c85f943d0c",
+      "keyword": "DM",
+      "before": [
+        "DM",
+        "dm"
+      ],
+      "after": [
+        "DM"
+      ]
+    },
+    {
+      "legacy_index": 19,
+      "candidate_id": "kw_0c4e2e09-d2e0-43c3-ae49-c39e5bdcc30f",
+      "keyword": "一人でやってる",
+      "before": [
+        "一人でやってる",
+        "ひとりでやってる",
+        "一人でこれやって",
+        "ひとりでこれやって"
+      ],
+      "after": [
+        "一人でやってる",
+        "ひとりでこれやって",
+        "ひとりでやってる",
+        "一人でこれやって"
+      ]
+    },
+    {
+      "legacy_index": 20,
+      "candidate_id": "kw_a2ae03c0-11bc-497b-926a-db94bab00657",
+      "keyword": "一人で何して",
+      "before": [
+        "一人で何して",
+        "ひとりで何して",
+        "一人でなにして",
+        "ひとりでなにして"
+      ],
+      "after": [
+        "一人で何して",
+        "ひとりでなにして",
+        "ひとりで何して",
+        "一人でなにして"
+      ]
+    },
+    {
+      "legacy_index": 25,
+      "candidate_id": "kw_e9223abc-a983-4f04-94cb-a9f86e272189",
+      "keyword": "きつすぎ",
+      "before": [
+        "きつすぎ",
+        "キツすぎ",
+        "キツすぎる",
+        "きつすぎる"
+      ],
+      "after": [
+        "きつすぎ",
+        "きつすぎる",
+        "キツすぎ",
+        "キツすぎる"
+      ]
+    },
+    {
+      "legacy_index": 27,
+      "candidate_id": "kw_1212d25e-e284-455e-be3a-fb898f7e337f",
+      "keyword": "流石にきつい",
+      "before": [
+        "流石にきつい",
+        "流石にキツい",
+        "流石にキツイ",
+        "さすがにきつい",
+        "さすがにキツい"
+      ],
+      "after": [
+        "流石にきつい",
+        "さすがにきつい",
+        "さすがにキツい",
+        "流石にキツい",
+        "流石にキツイ"
+      ]
+    },
+    {
+      "legacy_index": 29,
+      "candidate_id": "kw_e9376531-fc58-427d-b404-4dd9e9649663",
+      "keyword": "がちできつい",
+      "before": [
+        "がちできつい",
+        "ガチできつい",
+        "がちでキツい",
+        "ガチでキツい",
+        "ガチでキツイ"
+      ],
+      "after": [
+        "がちできつい",
+        "がちでキツい",
+        "ガチできつい",
+        "ガチでキツい",
+        "ガチでキツイ"
+      ]
+    },
+    {
+      "legacy_index": 31,
+      "candidate_id": "kw_6efc0626-23c4-49ca-89bf-5f3578d7b904",
+      "keyword": "フォロー返し",
+      "before": [
+        "フォロー返し",
+        "フォロー返して",
+        "フォロー返しして"
+      ],
+      "after": [
+        "フォロー返し",
+        "フォロー返しして",
+        "フォロー返して"
+      ]
+    },
+    {
+      "legacy_index": 38,
+      "candidate_id": "kw_7235d3a6-c81a-4340-a01c-3ae00a8e12f1",
+      "keyword": "まじ無理",
+      "before": [
+        "まじ無理",
+        "マジ無理",
+        "まじむり"
+      ],
+      "after": [
+        "まじ無理",
+        "まじむり",
+        "マジ無理"
+      ]
+    },
+    {
+      "legacy_index": 46,
+      "candidate_id": "kw_8aacb39b-7839-499d-83d5-08e1601f59f5",
+      "keyword": "汗を飲",
+      "before": [
+        "汗だけで摂取",
+        "汗集めて飲",
+        "汗を飲"
+      ],
+      "after": [
+        "汗を飲",
+        "汗だけで摂取",
+        "汗集めて飲"
+      ]
+    },
+    {
+      "legacy_index": 56,
+      "candidate_id": "kw_b8d5df8a-4d81-4e45-9c0e-8b08b28d86ed",
+      "keyword": "フォローして",
+      "before": [
+        "フォローして",
+        "フォローお願いします",
+        "フォローお願い"
+      ],
+      "after": [
+        "フォローして",
+        "フォローお願い",
+        "フォローお願いします"
+      ]
+    },
+    {
+      "legacy_index": 57,
+      "candidate_id": "kw_77366eca-4946-47cc-84bc-81cfc7eccb07",
+      "keyword": "恥ずかしい",
+      "before": [
+        "恥ずかしい",
+        "恥ずかしく",
+        "恥ずかし"
+      ],
+      "after": [
+        "恥ずかしい",
+        "恥ずかし",
+        "恥ずかしく"
+      ]
+    },
+    {
+      "legacy_index": 59,
+      "candidate_id": "kw_0c7bc66e-35ea-4b73-8939-5f99d5af3264",
+      "keyword": "何してるの",
+      "before": [
+        "何してるの",
+        "何してんの",
+        "なにしてんの",
+        "何してるん",
+        "なにしてるん"
+      ],
+      "after": [
+        "何してるの",
+        "なにしてるん",
+        "なにしてんの",
+        "何してるん",
+        "何してんの"
+      ]
+    },
+    {
+      "legacy_index": 63,
+      "candidate_id": "kw_59973320-2baa-4717-a4c6-c5080f3f1762",
+      "keyword": "AV",
+      "before": [
+        "AV",
+        "av"
+      ],
+      "after": [
+        "AV"
+      ]
+    },
+    {
+      "legacy_index": 67,
+      "candidate_id": "kw_2dbf5e40-fcb8-4131-b43a-7475139cd195",
+      "keyword": "キモい",
+      "before": [
+        "キモい",
+        "きもい",
+        "キモイ",
+        "きも"
+      ],
+      "after": [
+        "キモい",
+        "きも",
+        "きもい",
+        "キモイ"
+      ]
+    },
+    {
+      "legacy_index": 75,
+      "candidate_id": "kw_1471ae8b-ea6c-419f-b8f7-1fc43a827191",
+      "keyword": "誰か言ってやれ",
+      "before": [
+        "誰か言ってやれ",
+        "誰か言ってやって",
+        "誰か教えたれ"
+      ],
+      "after": [
+        "誰か言ってやれ",
+        "誰か教えたれ",
+        "誰か言ってやって"
+      ]
+    },
+    {
+      "legacy_index": 77,
+      "candidate_id": "kw_5ed03903-5614-47bb-b6d4-35d9ea388183",
+      "keyword": "イテテ",
+      "before": [
+        "イテテ",
+        "いてて",
+        "いたた",
+        "あいたた"
+      ],
+      "after": [
+        "イテテ",
+        "あいたた",
+        "いたた",
+        "いてて"
+      ]
+    },
+    {
+      "legacy_index": 83,
+      "candidate_id": "kw_0d377405-9ac3-413f-ab1b-e3c12f130c13",
+      "keyword": "可愛いでしょ感",
+      "before": [
+        "可愛いでしょ",
+        "かわいいでしょ"
+      ],
+      "after": [
+        "可愛いでしょ感",
+        "かわいいでしょ",
+        "可愛いでしょ"
+      ]
+    },
+    {
+      "legacy_index": 87,
+      "candidate_id": "kw_8cd519c1-a422-4d19-bc4e-61d7bfa11e19",
+      "keyword": "俺の時計、時間を食べてる説",
+      "before": [
+        "俺の時計",
+        "時間を食べてる説"
+      ],
+      "after": [
+        "俺の時計、時間を食べてる説",
+        "俺の時計",
+        "時間を食べてる説"
+      ]
+    },
+    {
+      "legacy_index": 90,
+      "candidate_id": "kw_ffa5ede5-0d1e-447f-b84c-2dc7177b51e2",
+      "keyword": "DMおいで",
+      "before": [
+        "DMおいで",
+        "dmおいで"
+      ],
+      "after": [
+        "DMおいで"
+      ]
+    },
+    {
+      "legacy_index": 91,
+      "candidate_id": "kw_0ac46ede-8e34-437b-b062-026c014ac997",
+      "keyword": "DMきて",
+      "before": [
+        "DMきて",
+        "dmきて"
+      ],
+      "after": [
+        "DMきて"
+      ]
+    },
+    {
+      "legacy_index": 92,
+      "candidate_id": "kw_90bba903-6a2e-4f70-85b4-9f22689ef2f8",
+      "keyword": "DMください",
+      "before": [
+        "DMください",
+        "dmください"
+      ],
+      "after": [
+        "DMください"
+      ]
+    },
+    {
+      "legacy_index": 93,
+      "candidate_id": "kw_859c8361-cbd8-4325-8caa-3141e4d0f2f3",
+      "keyword": "DM欲しい",
+      "before": [
+        "DM欲しい",
+        "dm欲しい"
+      ],
+      "after": [
+        "DM欲しい"
+      ]
+    },
+    {
+      "legacy_index": 100,
+      "candidate_id": "kw_a0bbaa1e-a0aa-4dc2-ade1-a10c0d129e78",
+      "keyword": "ライン交換",
+      "before": [
+        "ライン交換",
+        "LINE交換",
+        "line交換"
+      ],
+      "after": [
+        "ライン交換",
+        "LINE交換"
+      ]
+    },
+    {
+      "legacy_index": 106,
+      "candidate_id": "kw_23a77db8-dcbb-4f30-857e-99c7131ddd86",
+      "keyword": "まじできつい",
+      "before": [
+        "まじできつい",
+        "マジできつい",
+        "まじでキツい",
+        "マジでキツい"
+      ],
+      "after": [
+        "まじできつい",
+        "まじでキツい",
+        "マジできつい",
+        "マジでキツい"
+      ]
+    },
+    {
+      "legacy_index": 147,
+      "candidate_id": "kw_e93b6cba-e5d3-428b-9108-c8afc408793e",
+      "keyword": "アイコンの方がかわいい",
+      "before": [
+        "アイコンの方が",
+        "アイコンのほうが"
+      ],
+      "after": [
+        "アイコンの方がかわいい",
+        "アイコンのほうが",
+        "アイコンの方が"
+      ]
+    },
+    {
+      "legacy_index": 148,
+      "candidate_id": "kw_89e80071-4cac-47b7-95ac-cf9213f1942c",
+      "keyword": "可愛いよりキツい",
+      "before": [
+        "可愛いよりキツ",
+        "かわいいよりきつ",
+        "可愛いよりきつ"
+      ],
+      "after": [
+        "可愛いよりキツい",
+        "かわいいよりきつ",
+        "可愛いよりきつ",
+        "可愛いよりキツ"
+      ]
+    },
+    {
+      "legacy_index": 150,
+      "candidate_id": "kw_e189a165-a096-468f-816f-08b2716a060a",
+      "keyword": "彼女の方が可愛い",
+      "before": [
+        "彼女の方が",
+        "彼女のほうが"
+      ],
+      "after": [
+        "彼女の方が可愛い",
+        "彼女のほうが",
+        "彼女の方が"
+      ]
+    },
+    {
+      "legacy_index": 164,
+      "candidate_id": "kw_3f18f1c1-6a02-49b9-988e-9c715aa4eee4",
+      "keyword": "うざい",
+      "before": [
+        "うざい",
+        "ウザい",
+        "うざ"
+      ],
+      "after": [
+        "うざい",
+        "うざ",
+        "ウザい"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.invalid/candidate-keywords/candidate-evaluation.schema.json",
+  "title": "Candidate evaluation result",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "dataset",
+    "evaluation_policy",
+    "candidates"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "dataset": {
+      "type": "object",
+      "required": [
+        "artifact_sha256",
+        "direct_nuisance_total",
+        "reactive_total",
+        "normal_total"
+      ],
+      "properties": {
+        "artifact_sha256": {
+          "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/sha256"
+        },
+        "direct_nuisance_total": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "reactive_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "normal_total": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "evaluation_policy": {
+      "type": "object",
+      "required": [
+        "version",
+        "content_sha256"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_sha256": {
+          "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/sha256"
+        }
+      },
+      "additionalProperties": false
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "candidate_id",
+          "direct_nuisance_hits",
+          "reactive_hits",
+          "normal_hits",
+          "precision_excluding_reactive",
+          "direct_recall_contribution",
+          "normal_hit_rate",
+          "utility_score",
+          "recommendation",
+          "publication_status"
+        ],
+        "properties": {
+          "candidate_id": {
+            "$ref": "https://contracts.invalid/candidate-keywords/common.schema.json#/$defs/candidate_id"
+          },
+          "direct_nuisance_hits": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "reactive_hits": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "normal_hits": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "precision_excluding_reactive": {
+            "oneOf": [
+              {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "direct_recall_contribution": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "normal_hit_rate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "utility_score": {
+            "type": "integer"
+          },
+          "recommendation": {
+            "oneOf": [
+              {
+                "enum": [
+                  "高推奨",
+                  "中推奨",
+                  "任意"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "publication_status": {
+            "enum": [
+              "published",
+              "suppressed_no_direct_hits"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

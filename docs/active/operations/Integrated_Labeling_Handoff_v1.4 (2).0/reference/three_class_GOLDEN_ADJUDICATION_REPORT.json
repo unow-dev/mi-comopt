@@ -1,0 +1,39 @@
+{
+  "pipeline_version": "1.2.0",
+  "registry_version": "1.0.0",
+  "adjudication_date": "2026-08-24",
+  "source_stage13_sha256": "a46c140b1e979c7c2a5037c8fc4eb0797207bd2a6323ced51bfb7cf74e09ee17",
+  "mandatory_review_rows_covered": 124,
+  "unique_record_keys": 123,
+  "duplicate_baseline_rows_sharing_key": 1,
+  "golden_label_counts_unique_keys": {
+    "reactive": 90,
+    "normal": 20,
+    "direct_nuisance": 13
+  },
+  "golden_rows_applied": 124,
+  "golden_rows_changing_provisional": 68,
+  "golden_rows_retaining_provisional": 56,
+  "changed_transition_counts": {
+    "direct_nuisance->reactive": 2,
+    "normal->reactive": 55,
+    "reactive->direct_nuisance": 11
+  },
+  "term_only_candidate_counts": {
+    "reactive": 1096,
+    "normal": 19817,
+    "direct_nuisance": 520
+  },
+  "term_only_candidate_sha256": "dc3620f6049766de3a8a485596cdfbbe2a29288a8295db79693ebdcc930096d7",
+  "term_only_unresolved_mandatory": 124,
+  "golden_final_counts": {
+    "reactive": 1142,
+    "normal": 19762,
+    "direct_nuisance": 529
+  },
+  "golden_final_sha256": "5c4f27ad0558b1914ca18e43727b704891d6abc5c5b0e75e23ae95e4cf3be33b",
+  "golden_unresolved_mandatory": 0,
+  "optional_p2_unresolved": 346,
+  "historical_exception_recovery_claimed": false,
+  "scope": "Exact record_key only; no generalization to unseen records."
+}

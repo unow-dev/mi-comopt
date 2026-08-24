@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "legacy_candidate_count": 187,
+  "bootstrap_candidate_count": 187,
+  "bootstrap_active_count": 187,
+  "bootstrap_published_count": 187,
+  "bootstrap_suppressed_count": 0,
+  "v1_4_label_counts": {
+    "direct_nuisance": 549,
+    "reactive": 1225,
+    "normal": 19659
+  },
+  "bootstrap_recommendation_counts": {
+    "高推奨": 42,
+    "中推奨": 11,
+    "任意": 134
+  },
+  "legacy_recommendation_counts": {
+    "高推奨": 22,
+    "中推奨": 31,
+    "任意": 134
+  },
+  "legacy_keyword_missing_from_variants": 5,
+  "candidates_with_structural_variant_canonicalization": 28,
+  "expected_new_badges_after_bootstrap": 0
+}

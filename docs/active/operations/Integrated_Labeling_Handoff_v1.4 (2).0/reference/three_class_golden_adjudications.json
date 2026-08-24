@@ -1,0 +1,1367 @@
+{
+  "schema_version": 1,
+  "registry_version": "1.0.0",
+  "policy_profile": "stage13_compatible_three_class",
+  "adjudication_date": "2026-08-24",
+  "adjudication_method": "spec_guided_semantic_review",
+  "source_stage13_sha256": "a46c140b1e979c7c2a5037c8fc4eb0797207bd2a6323ced51bfb7cf74e09ee17",
+  "scope": "Exact record_key decisions only; no lexical or semantic generalization to unseen records.",
+  "decision_count": 123,
+  "covered_baseline_mandatory_rows": 124,
+  "decisions": [
+    {
+      "record_key": "b1844fd066192263fa8128b2",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        11
+      ],
+      "comment_sha256": "eedfb8f8ba635eeb15af6396c0e6c66d30bb401118131f5bdaadab599f9ec4b4"
+    },
+    {
+      "record_key": "56ed520ab076d1452373e799",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        18
+      ],
+      "comment_sha256": "379ca3079a8a5d71dc4c2f6f904c88a7c950c2b418416f16f6dabcf62ca72df0"
+    },
+    {
+      "record_key": "c1122b7e524984f46390aefa",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "否定表現の主対象は既存の批判者・アンチで、投稿者本人への独立した迷惑主張ではない。",
+      "baseline_source_indices_1_based": [
+        73
+      ],
+      "comment_sha256": "ea28668d2db17d64cbc639b6309cb69899eb30cd765159c90ec70b9f4aee90e7"
+    },
+    {
+      "record_key": "147cb6ea15e2b520f9b3d5e1",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "本文だけでは既存アンチ・批判への反応が確定せず、上流normalを維持する。",
+      "baseline_source_indices_1_based": [
+        89
+      ],
+      "comment_sha256": "dfb2a6ebef62d72515186c59de0ead2d70995c3f4e1fee0260f27b3ef4de264f"
+    },
+    {
+      "record_key": "fd7e0f1a42bb51d79f49ddb8",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "本文だけでは既存アンチ・批判への反応が確定せず、上流normalを維持する。",
+      "baseline_source_indices_1_based": [
+        149
+      ],
+      "comment_sha256": "3e07f04a0138af9e389214e7eff8f57eacaa13d69071a3da5f399c771785501e"
+    },
+    {
+      "record_key": "bb4fa30338d98f7380bb4792",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        192
+      ],
+      "comment_sha256": "2802b1f3c4113f2a6f429d598c73103746110db6eb04bc6097f1952d03bfc42c"
+    },
+    {
+      "record_key": "befd05fd4fe3b4cf07dfcc13",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        447
+      ],
+      "comment_sha256": "3dd5902e0bfe513e6fa7503f57933b6523864a6bd4573727a586841174b401bc"
+    },
+    {
+      "record_key": "2ac7c191696358154bb62c7d",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        898
+      ],
+      "comment_sha256": "b773a405acb05e6f3759d4f245e59b41a49d090ab27bc2109b5777bb057a04e9"
+    },
+    {
+      "record_key": "aa83996d96e9201ec142e122",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        2120
+      ],
+      "comment_sha256": "426f82eda67f0faa3ffbb8eaf3a1efa0b6833b18ca5721afdba8ba3ccff83f8f"
+    },
+    {
+      "record_key": "97563469410d39bbcab6255b",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        2230
+      ],
+      "comment_sha256": "ce8ad4b7f523b66afbb179e2c4ade09c404a51c6b3c90aa7fcc116608d088202"
+    },
+    {
+      "record_key": "7dae26d2645c4eae0a1206ff",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "meta_reaction",
+      "rationale": "主内容は既存の批判状況・他コメントへの二次的な反応である。",
+      "baseline_source_indices_1_based": [
+        3453
+      ],
+      "comment_sha256": "7d1fae98f0d7d29893596ae0601e975afcb8e57790c7b5e180ae23d7fc958dd8"
+    },
+    {
+      "record_key": "bc55bc1997b37720ef2d7580",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "meta_reaction",
+      "rationale": "主内容は既存の批判状況・他コメントへの二次的な反応である。",
+      "baseline_source_indices_1_based": [
+        3489
+      ],
+      "comment_sha256": "f50f06cbb55fbe431eb4fc1807baf6485b863182a7ef44de4e43066ca5f57e9c"
+    },
+    {
+      "record_key": "750369ae981de36b1bca9573",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "本文だけでは既存アンチ・批判への反応が確定せず、上流normalを維持する。",
+      "baseline_source_indices_1_based": [
+        3845
+      ],
+      "comment_sha256": "35767ac15cf1b38ed0cf21b86bf58cfc165e1b6a1c051386f0fd09a1e13957fe"
+    },
+    {
+      "record_key": "522c00bd98a3ca620216efed",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "投稿者・投稿への直接的な否定または要求が主内容で、反応文脈が主ではない。",
+      "baseline_source_indices_1_based": [
+        3873
+      ],
+      "comment_sha256": "1d15047093e6b7ddca927275828ee86859df6b7ba1b8433b79f2d29dbeaa67c9"
+    },
+    {
+      "record_key": "30928bd028c414c3da6740a7",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        4474
+      ],
+      "comment_sha256": "3608631215f056b85483ce8d45aaaeb5cb72898c4af9d43bd0fd1303b4a92a58"
+    },
+    {
+      "record_key": "8aeaf172898889b7b53a2272",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "反応文脈に触れつつ、投稿者本人への否定評価を自身の主張として述べている。",
+      "baseline_source_indices_1_based": [
+        4793
+      ],
+      "comment_sha256": "446644eaf5dd9d00616b1209a79ced443fc6ce55c89cfd578eaca063d0e65ad1"
+    },
+    {
+      "record_key": "0fe09f3fddae108d5250868e",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "否定表現の主対象は既存の批判者・アンチで、投稿者本人への独立した迷惑主張ではない。",
+      "baseline_source_indices_1_based": [
+        4795
+      ],
+      "comment_sha256": "1bd0ea23059956fbdf75a6cf3791bf44c5d18f88f9b7bae3e9aa5df7dad2b95a"
+    },
+    {
+      "record_key": "10d57f52b5597de746116f11",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        4799
+      ],
+      "comment_sha256": "d4bdf5c169f7885e04db042571f65cbca7af9d0b36461d062f3eb77395c3712f"
+    },
+    {
+      "record_key": "ee8e0f35ef274412757493d0",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        4801
+      ],
+      "comment_sha256": "000bde43c18a74ff7ba71a8748d2759d722e6934d2a31d5d00ce2113f9c47dee"
+    },
+    {
+      "record_key": "aa9b2bfb0e66f429a3e34bc8",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "meta_reaction",
+      "rationale": "主内容は既存の批判状況・他コメントへの二次的な反応である。",
+      "baseline_source_indices_1_based": [
+        4803
+      ],
+      "comment_sha256": "ad02d54e5c5e2b9f1dea6e234122a186fd1581b3d1c25f43be519747e59d4b64"
+    },
+    {
+      "record_key": "8a4927f24d23cc24af04583a",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "本文だけでは既存アンチ・批判への反応が確定せず、上流normalを維持する。",
+      "baseline_source_indices_1_based": [
+        4816
+      ],
+      "comment_sha256": "72749f3c7d9830e2eaa5fbe9a9df908bc3e6663fc13f7b138b19884b53895a01"
+    },
+    {
+      "record_key": "bf852b6f05977e05bc30d4b2",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "反応文脈に触れつつ、投稿者本人への否定評価を自身の主張として述べている。",
+      "baseline_source_indices_1_based": [
+        4839
+      ],
+      "comment_sha256": "2ad1304d85367078265a1d677dcda5480673faf145d32e42cde0d0c0cf339fa3"
+    },
+    {
+      "record_key": "bfc90942944ca6b9d0943197",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "否定表現の主対象は既存の批判者・アンチで、投稿者本人への独立した迷惑主張ではない。",
+      "baseline_source_indices_1_based": [
+        4840
+      ],
+      "comment_sha256": "e7225153c9b28fd4ca2214a93c66ab84e814c38569edc46024c9ed3436db75ef"
+    },
+    {
+      "record_key": "017fda9bf15dc4eb5c8ff361",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "否定表現の主対象は既存の批判者・アンチで、投稿者本人への独立した迷惑主張ではない。",
+      "baseline_source_indices_1_based": [
+        4859
+      ],
+      "comment_sha256": "622f8c67e7376a0119ebdb5e512750f6d88e443b286ce88eee94413faf3f0986"
+    },
+    {
+      "record_key": "31b0358c00012bf279f728b8",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "meta_reaction",
+      "rationale": "主内容は既存の批判状況・他コメントへの二次的な反応である。",
+      "baseline_source_indices_1_based": [
+        4873
+      ],
+      "comment_sha256": "13bdee7f4405802c42a0a032511128f5567cf78df81ba3e87a91c0b9aa8f4d2a"
+    },
+    {
+      "record_key": "bca396639acc1941f38348b3",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        5027
+      ],
+      "comment_sha256": "e7a4d93b04696647a2c4f7e24a433f311f0c33f4c831fcea8cce8e560b8d3f08"
+    },
+    {
+      "record_key": "d74152494f5c20ab769b2ca1",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        5275
+      ],
+      "comment_sha256": "3ad737ffef74e72cbead8861be034aab36f1ef50206dcfbcd38be1d178d74660"
+    },
+    {
+      "record_key": "b85f66d61acfa8a256e02f66",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "反応文脈に触れつつ、投稿者本人への否定評価を自身の主張として述べている。",
+      "baseline_source_indices_1_based": [
+        6127
+      ],
+      "comment_sha256": "d809838e565bb3f52b7c5517288b9d43bc6a8a26e538f3502a0dfe89f02c754d"
+    },
+    {
+      "record_key": "1ff67234bc24ca8510653fb6",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        6442
+      ],
+      "comment_sha256": "102eaeffa71b10c30791e4bc93f0c4ce99e222f79797a7a24fc1d5d60bc76c0b"
+    },
+    {
+      "record_key": "0cd8bb90d98b0fe603ae94a5",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        6554
+      ],
+      "comment_sha256": "8a2f905868c472ce4a6151532d49f9c5ec92b06cc7a68bcac357f0049ccb01bb"
+    },
+    {
+      "record_key": "33c1e03ebba0b61891684b4f",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "否定表現の主対象は既存の批判者・アンチで、投稿者本人への独立した迷惑主張ではない。",
+      "baseline_source_indices_1_based": [
+        6574
+      ],
+      "comment_sha256": "e488d57b929816a5890ed12a3b09d287b7bd8cfa772c551bc1dbcab78bbc47b2"
+    },
+    {
+      "record_key": "0ccf9b77bd9563a44a4b9cfa",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "否定表現の主対象は既存の批判者・アンチで、投稿者本人への独立した迷惑主張ではない。",
+      "baseline_source_indices_1_based": [
+        6605
+      ],
+      "comment_sha256": "5b350d21559ebbe6c654d372e49e9e3ebb884d194c96d4d56c69e559e6963d15"
+    },
+    {
+      "record_key": "51501edcde8f0e013233322b",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        6650
+      ],
+      "comment_sha256": "c4ba0d7a0a7402c5d82ed2b31b1aca4fd95ce77df7678159d1c742f553e0a943"
+    },
+    {
+      "record_key": "4bf95093bac7c085bd2ce8fd",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        6864
+      ],
+      "comment_sha256": "ef99737f6358587c88cd88ea511852778773a4ef70bc92e4090d1efb8d1e8d45"
+    },
+    {
+      "record_key": "2f852b179a8227c2ad975ddd",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        6925
+      ],
+      "comment_sha256": "8a14ef096517efce39b56dc94b39848265d9a62fbab668f1e4527779081f851a"
+    },
+    {
+      "record_key": "9d38725e3dac97f45cb059d5",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "否定表現の主対象は既存の批判者・アンチで、投稿者本人への独立した迷惑主張ではない。",
+      "baseline_source_indices_1_based": [
+        6999
+      ],
+      "comment_sha256": "f3cd241a185f8ff3e9107d8aac3892bbb20cfead3603f4ad4173e6b4816635ae"
+    },
+    {
+      "record_key": "af37ed1391196ca64ac85180",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        7012
+      ],
+      "comment_sha256": "01ff2d864ad93897fbc39bcdcb18d05893a223b97f4b039c4cb36e783efc2489"
+    },
+    {
+      "record_key": "cfb5af7df6d2b0e476476bf0",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        7057
+      ],
+      "comment_sha256": "f7c6134406223ea3970784b1c8462cd60d84e4acb91a5368d7a3a2efb5b1bc5e"
+    },
+    {
+      "record_key": "ac32c04a6ece9fb8c2e05ac3",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        7195
+      ],
+      "comment_sha256": "d1d82793f7532ed0de3512620638ffccea7e44ac772ece85f131a4eea37c8c4c"
+    },
+    {
+      "record_key": "58b1e951f5996bccd8f1d44f",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        7236
+      ],
+      "comment_sha256": "286f31c775d3cecdc530a8ab318acfe01cdf70e53927061ac1bed60f2ca09bc9"
+    },
+    {
+      "record_key": "a6cedb25067548f23b1ab845",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        7384
+      ],
+      "comment_sha256": "fda9c37ed2c699dc814706ddd2745d67aefc7efc761ce4874105964821da5b54"
+    },
+    {
+      "record_key": "b76b81e6588bced09b3d20c9",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "本文だけでは既存アンチ・批判への反応が確定せず、上流normalを維持する。",
+      "baseline_source_indices_1_based": [
+        7576
+      ],
+      "comment_sha256": "99154ef9ce38b5767acf191beeba22ff00e9770a00e597090bcc913b1a543a3f"
+    },
+    {
+      "record_key": "a0f61c904166e0fca2ef3ac3",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "否定表現の主対象は既存の批判者・アンチで、投稿者本人への独立した迷惑主張ではない。",
+      "baseline_source_indices_1_based": [
+        7767
+      ],
+      "comment_sha256": "f3bc6c5772a894d4cc6886d7586b4d35bf6d606759214d28a82b01dc6e578064"
+    },
+    {
+      "record_key": "3ba83cb1fd04c3b199d0cb46",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "本文だけでは既存アンチ・批判への反応が確定せず、上流normalを維持する。",
+      "baseline_source_indices_1_based": [
+        7791
+      ],
+      "comment_sha256": "a76b2aa47915a90d1abe911442c4933714a6ae2f55100f56e3a843f316082f68"
+    },
+    {
+      "record_key": "e6e8106a85f4c89c1b4607fd",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        8109
+      ],
+      "comment_sha256": "8c51ca0ee26afde07229160431e778753f26d9126be3a0d6543a7e7961d5b492"
+    },
+    {
+      "record_key": "f9a3a1b2651ecc5231a79a5f",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "否定表現の主対象は既存の批判者・アンチで、投稿者本人への独立した迷惑主張ではない。",
+      "baseline_source_indices_1_based": [
+        8412,
+        12963
+      ],
+      "comment_sha256": "12343932c51dbf33efff68c829b247d5d034e88c07231110b45c85eff870a5b3"
+    },
+    {
+      "record_key": "f22beaf380f7ab58f7f9a8ee",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "否定表現の主対象は既存の批判者・アンチで、投稿者本人への独立した迷惑主張ではない。",
+      "baseline_source_indices_1_based": [
+        8821
+      ],
+      "comment_sha256": "aace8c11abd5962f44c155e408df4bdf57dea202c79b6986f9c693a389d890bd"
+    },
+    {
+      "record_key": "6f35eb727b01cdbdca1191d4",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "否定表現の主対象は既存の批判者・アンチで、投稿者本人への独立した迷惑主張ではない。",
+      "baseline_source_indices_1_based": [
+        8858
+      ],
+      "comment_sha256": "b29effd82413fcecfd012edc519b1a364a45c6f759d687a01035cd4be6acb9fd"
+    },
+    {
+      "record_key": "d928bf2289c7432917c53ee4",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        8867
+      ],
+      "comment_sha256": "b7957ac1c4c03eba5de67792d7cc1196d4cb89596284e02cdd79e61d9725ff0d"
+    },
+    {
+      "record_key": "d75cd82379e2788031fd26df",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "否定表現の主対象は既存の批判者・アンチで、投稿者本人への独立した迷惑主張ではない。",
+      "baseline_source_indices_1_based": [
+        8878
+      ],
+      "comment_sha256": "8867e75b060015ba7a9a57bb8f99d6775bf38e7f26ad680240f558941784f712"
+    },
+    {
+      "record_key": "616018b4060b0f7101744663",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "反応文脈に触れつつ、投稿者本人への否定評価を自身の主張として述べている。",
+      "baseline_source_indices_1_based": [
+        8938
+      ],
+      "comment_sha256": "ba210ae28f8cd104126f9d7c6ebea823b3e6f74846f132d6145cea348f1f30be"
+    },
+    {
+      "record_key": "ce20a40d4756054402710632",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "否定表現の主対象は既存の批判者・アンチで、投稿者本人への独立した迷惑主張ではない。",
+      "baseline_source_indices_1_based": [
+        9000
+      ],
+      "comment_sha256": "94090862bfbef7c3ffc7f87d6ce07c771211307116a9af5644d556c563f274c2"
+    },
+    {
+      "record_key": "5b7c63ce2fb3bb994e8d92e7",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        9008
+      ],
+      "comment_sha256": "a15604433ba3781eaedc5925c5e63e59e17a27322bc48b79a5f0d49d4b2ef126"
+    },
+    {
+      "record_key": "f91e4ae07200a458a04b7932",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "本文だけでは既存アンチ・批判への反応が確定せず、上流normalを維持する。",
+      "baseline_source_indices_1_based": [
+        9075
+      ],
+      "comment_sha256": "e07d663f015d90401bbd8dec2a56b9a1e3b3cff037ccce69c7d40f94c716ddc6"
+    },
+    {
+      "record_key": "8a97867112503f148eb84b7f",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        9153
+      ],
+      "comment_sha256": "468822fea99004b72a7fac8a7bc419aeb293d6cd13dafd3c199d2391af2659a1"
+    },
+    {
+      "record_key": "48fe4d42d5f48730580f3c46",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        9189
+      ],
+      "comment_sha256": "6cf2016ede13f87e0fe250ed35212cbecf9dfc46ca37674cefbdfca724fa09c6"
+    },
+    {
+      "record_key": "f1e8b89ffd8547bd41397ac4",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        9273
+      ],
+      "comment_sha256": "cc1cf1beb879bba9dac250e0c58efe9661d86df985e5b5482f68eb8c3dd71589"
+    },
+    {
+      "record_key": "6e05ada2bc63be88e086cb4e",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "反応文脈に触れつつ、投稿者本人への否定評価を自身の主張として述べている。",
+      "baseline_source_indices_1_based": [
+        9339
+      ],
+      "comment_sha256": "2ce600ec09307fd31230e842e9dd7503b56770fc43780eed1b4418f18822d73a"
+    },
+    {
+      "record_key": "116ebeccaccff37857db8b58",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        9541
+      ],
+      "comment_sha256": "b5b53a969b4302be14ff347fb423227284a853736181e1bc93d8f99465aa39c0"
+    },
+    {
+      "record_key": "133bfddfe81b03c954688b3a",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "否定表現の主対象は既存の批判者・アンチで、投稿者本人への独立した迷惑主張ではない。",
+      "baseline_source_indices_1_based": [
+        9543
+      ],
+      "comment_sha256": "89c70f1cefd369dd653eabd558b5aed8cc785203bfb5d251ba7c48719766c808"
+    },
+    {
+      "record_key": "ae4602990e4349395fb01a30",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "反応文脈に触れつつ、投稿者本人への否定評価を自身の主張として述べている。",
+      "baseline_source_indices_1_based": [
+        9568
+      ],
+      "comment_sha256": "ad84275ca58ca0ee15e91229713f9ea9bda1ab453ada0d8d303c264f5d5bce8d"
+    },
+    {
+      "record_key": "4fe35c3f4795d8a7d3c4ea79",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "本文だけでは既存アンチ・批判への反応が確定せず、上流normalを維持する。",
+      "baseline_source_indices_1_based": [
+        9729
+      ],
+      "comment_sha256": "418631e7867af613e3da0d0369b67e23d1f29c1fec9ee2203921ac4180794525"
+    },
+    {
+      "record_key": "54f300e84094725392241ab7",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        9888
+      ],
+      "comment_sha256": "51b258350d067a360e0c20d4cdf09e96890c06bb1eaf069fb57da4937711600a"
+    },
+    {
+      "record_key": "23e6db1fe16b69b9bb76bfe4",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        10070
+      ],
+      "comment_sha256": "d965101255e77cd1118408fb154d410675e9df35271551573138bb4e9149f789"
+    },
+    {
+      "record_key": "08474ad8de7a2d6bf8920297",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        10073
+      ],
+      "comment_sha256": "053692885618ae78007dd094e235154cea0eb1665fe37e4c45ce97b46a1fa73e"
+    },
+    {
+      "record_key": "b5a76c00037f822319c126b4",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "否定表現の主対象は既存の批判者・アンチで、投稿者本人への独立した迷惑主張ではない。",
+      "baseline_source_indices_1_based": [
+        10111
+      ],
+      "comment_sha256": "ca2730cc7f2f9d25893854db300b1bc6537579371fa4559c48d6d0ccb7a531bd"
+    },
+    {
+      "record_key": "32aef7ea859e9e9b1c1227af",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        10163
+      ],
+      "comment_sha256": "ff2fa69072fa4075a00b16a117bf5b900f0513810795d354ac88bd35d27637df"
+    },
+    {
+      "record_key": "3b6a13b85bb1fd06b74b01b3",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "本文だけでは既存アンチ・批判への反応が確定せず、上流normalを維持する。",
+      "baseline_source_indices_1_based": [
+        10693
+      ],
+      "comment_sha256": "db58c3a658465ef928f492c88c9f5f4679ba4f7ef61be4b512b7136f76c5ab02"
+    },
+    {
+      "record_key": "2237fdf57171cba9e4fd7dce",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "反応文脈に触れつつ、投稿者本人への否定評価を自身の主張として述べている。",
+      "baseline_source_indices_1_based": [
+        10986
+      ],
+      "comment_sha256": "c6d2e7824d106e95852f6eeb3b3ad6bdfa611ac0921587eb28361444c8d4f01f"
+    },
+    {
+      "record_key": "b5b3cf9929a6ba730cc92273",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        11307
+      ],
+      "comment_sha256": "6e2e730ddc0ee8bdb7b409e6958382817eda7d905a9f7a2410b1c8a07a82f7f5"
+    },
+    {
+      "record_key": "e2d3a4873be61e0a17ac7d92",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        11428
+      ],
+      "comment_sha256": "3c5230c28fe0907fdcde863f696c8ce311d3ddc048aef072f15b0fe1eedcd40e"
+    },
+    {
+      "record_key": "15d291976cca8651f41b9aa4",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "否定表現の主対象は既存の批判者・アンチで、投稿者本人への独立した迷惑主張ではない。",
+      "baseline_source_indices_1_based": [
+        11740
+      ],
+      "comment_sha256": "65fea8c3e7779e9e864bf81085d0918259ae245aa9003126e697142964f14e05"
+    },
+    {
+      "record_key": "53916b9d92e5f03cfe43bd15",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        11810
+      ],
+      "comment_sha256": "baff628da6cbbfb4f96f7d3654f8be7659fae72ccd95ef781e2004d59f2f56df"
+    },
+    {
+      "record_key": "ae23d67c26951c79acb65dcb",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "本文だけでは既存アンチ・批判への反応が確定せず、上流normalを維持する。",
+      "baseline_source_indices_1_based": [
+        11888
+      ],
+      "comment_sha256": "373c68c977d556c2f0f20c1e09fedd211da387e3cecff69531cdcdd3ed0a95fd"
+    },
+    {
+      "record_key": "401729330a2354c72b2f514b",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        12489
+      ],
+      "comment_sha256": "2033e7d025e11309cd63d35a8723f3c51c5b57aaf3bffe8684d7824c406260c2"
+    },
+    {
+      "record_key": "be8a6963b76a09af6bae01c4",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "否定表現の主対象は既存の批判者・アンチで、投稿者本人への独立した迷惑主張ではない。",
+      "baseline_source_indices_1_based": [
+        12764
+      ],
+      "comment_sha256": "eec044fcc043b69f1d897c498ebc41f1337bc28d95a6d04a4cd8e3cbc3f56f99"
+    },
+    {
+      "record_key": "ae593f37c0ee379946440566",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        12853
+      ],
+      "comment_sha256": "5542f0987600f869adbe6374396a65b36674c052e132a4112da74ebbb906a2f8"
+    },
+    {
+      "record_key": "5d0ba819d87c97fa1f865a43",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "本文だけでは既存アンチ・批判への反応が確定せず、上流normalを維持する。",
+      "baseline_source_indices_1_based": [
+        13122
+      ],
+      "comment_sha256": "73b7c5b20c897579e69b4e7dc0363842974060a64a3b86e2cb82a4c118c1f88e"
+    },
+    {
+      "record_key": "e7048b7cadabe037aa8629bf",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        13205
+      ],
+      "comment_sha256": "155e8621924479b57c01e7e6cc63ee6828c2e452ad8d08984d2f4d616ad48f0c"
+    },
+    {
+      "record_key": "1c3e9b683a4e3f3b03347a75",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        13285
+      ],
+      "comment_sha256": "2d43304fd8e2dd2ca861f47de2d8dbf826998b256feca6f934339d7c9da8bca5"
+    },
+    {
+      "record_key": "c7be038fdd257328bfadbb1e",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "本文だけでは既存アンチ・批判への反応が確定せず、上流normalを維持する。",
+      "baseline_source_indices_1_based": [
+        13474
+      ],
+      "comment_sha256": "81fa6c4307415e971b5060cf0ffb94a65448a5be3ae4b619ca1659da2b681680"
+    },
+    {
+      "record_key": "4c6db0b19941efb376400469",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        13517
+      ],
+      "comment_sha256": "aebbd01e783ed45daba22e46f94c39ccc234482b746a6acdcbe74632f102598d"
+    },
+    {
+      "record_key": "e29b18fc830509b4380b9609",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        13624
+      ],
+      "comment_sha256": "c009285729cfb50d58dde6414804ee8c933ce6a6a74bbccdc915c5f3a29a54a3"
+    },
+    {
+      "record_key": "18818fc95944647341d29bba",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "meta_reaction",
+      "rationale": "主内容は既存の批判状況・他コメントへの二次的な反応である。",
+      "baseline_source_indices_1_based": [
+        13731
+      ],
+      "comment_sha256": "2231bce883a2f4adfcf6076fa2a72c7e1bbee6d420ab2fa1b35fb9b8946243be"
+    },
+    {
+      "record_key": "0ee2a412b695813ee686ebd7",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        13859
+      ],
+      "comment_sha256": "e927df3b0adf7e0594e7a2391150fbe5e3f453129f33b54e6095896b025319be"
+    },
+    {
+      "record_key": "4c740299183d9a4bb7733666",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        13917
+      ],
+      "comment_sha256": "03cfb428bd1d970459f84ce70f17fadfaad81712c07f32f36145a40a1c6ddd44"
+    },
+    {
+      "record_key": "eb3e4a677781d7abb0068746",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "反応文脈に触れつつ、投稿者本人への否定評価を自身の主張として述べている。",
+      "baseline_source_indices_1_based": [
+        13929
+      ],
+      "comment_sha256": "971a5e8089ce77f9ba8d3c230188b361688975a228f3d93d18c51e67feafd96f"
+    },
+    {
+      "record_key": "e3c3f7f6e89de6574ca2d284",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "本文だけでは既存アンチ・批判への反応が確定せず、上流normalを維持する。",
+      "baseline_source_indices_1_based": [
+        14070
+      ],
+      "comment_sha256": "bd8326df88bcfa818b74733bfbd71debde773074978c8b84431d32e666e7a4fb"
+    },
+    {
+      "record_key": "0fbc5ba2a972d0eac344bbec",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "反応文脈に触れつつ、投稿者本人への否定評価を自身の主張として述べている。",
+      "baseline_source_indices_1_based": [
+        14088
+      ],
+      "comment_sha256": "e5487410a45a427c71ffa48f5430682a32d4fcc4e1f7f7780ebfcbace80bfbed"
+    },
+    {
+      "record_key": "23c9d668dd173939df72d71d",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "反応文脈に触れつつ、投稿者本人への否定評価を自身の主張として述べている。",
+      "baseline_source_indices_1_based": [
+        14113
+      ],
+      "comment_sha256": "e278cd4cfdd83eb1ff3ed9536f82965499119c05ff3f1f0c3c00814d8f062eb6"
+    },
+    {
+      "record_key": "957e514b13bccc2a249a51ec",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "本文だけでは既存アンチ・批判への反応が確定せず、上流normalを維持する。",
+      "baseline_source_indices_1_based": [
+        14291
+      ],
+      "comment_sha256": "b6cb1c16f9d8a70ba606d9316594d2af20ba43c0f0d21390065f211225188241"
+    },
+    {
+      "record_key": "77aa1dd31868c63e4b414852",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        15166
+      ],
+      "comment_sha256": "9402b3e799a7b6723bc67220ad44d8257578370719f3fae5f761cbf0f2f987b1"
+    },
+    {
+      "record_key": "0ef281f793ede6be05c10f8b",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "meta_reaction",
+      "rationale": "主内容は既存の批判状況・他コメントへの二次的な反応である。",
+      "baseline_source_indices_1_based": [
+        15303
+      ],
+      "comment_sha256": "09a7807a0cb127678c59f3de71cefd3c24acbc5e30ce6bfbd6cda3846cce0f9f"
+    },
+    {
+      "record_key": "10721d379463e412e948b2f3",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        15316
+      ],
+      "comment_sha256": "c49a6cbe6d3b35bfa9d9827d65f5d5e8490476cd7d952864a13d4fc6f9bf885a"
+    },
+    {
+      "record_key": "92fdc975a525b4f8fe038995",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        15372
+      ],
+      "comment_sha256": "f851b58c49b19286dcffb27f2e8f1014da237d7018d60af53120ee2f08f3dbba"
+    },
+    {
+      "record_key": "9d0943f26bd3528ad42d945c",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "meta_reaction",
+      "rationale": "主内容は既存の批判状況・他コメントへの二次的な反応である。",
+      "baseline_source_indices_1_based": [
+        15393
+      ],
+      "comment_sha256": "670718eddedccb16383a028e5f44fe050b507dd5f29f4f4bb7e02b743f13ba6e"
+    },
+    {
+      "record_key": "6a07db84fcf3ce8d0c74c230",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "投稿者・投稿への直接的な否定または要求が主内容で、反応文脈が主ではない。",
+      "baseline_source_indices_1_based": [
+        15406
+      ],
+      "comment_sha256": "7978c5fdfa6778e6a8bc820dfd8c11b4e6f69f0625c930f73295fdbed3dd1503"
+    },
+    {
+      "record_key": "d789892dfa06d83245614f80",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        15458
+      ],
+      "comment_sha256": "56de74f1545b643947ee5ccd8900baff0ea9b8c49bee9be899a9ca3c9ed4d5fb"
+    },
+    {
+      "record_key": "e6d2731d42fe7aeef859452b",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        15745
+      ],
+      "comment_sha256": "1c5d318e41cb67eb2e4f3a4e84103931e271e0df209b71a69c67b9e500186761"
+    },
+    {
+      "record_key": "096f7313c014777dd5cd8459",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "反応文脈に触れつつ、投稿者本人への否定評価を自身の主張として述べている。",
+      "baseline_source_indices_1_based": [
+        15786
+      ],
+      "comment_sha256": "deca821bb2fc5d879e927b03c4d18c4201c11d834ad7628912894acdaa56efa1"
+    },
+    {
+      "record_key": "9270495f2cba33ea8bc5dabc",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        16019
+      ],
+      "comment_sha256": "13661e870f0b62dfc7f4a144dc7a38bdd96a800e9cfeb986fec568f0f85d1b34"
+    },
+    {
+      "record_key": "65c12a7d9291fcafc05168de",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "本文だけでは既存アンチ・批判への反応が確定せず、上流normalを維持する。",
+      "baseline_source_indices_1_based": [
+        16027
+      ],
+      "comment_sha256": "9645fa528edff35c5eecf4c479123d4e4a741d098843cf913980d84bcbf54e62"
+    },
+    {
+      "record_key": "d11cca9399eb7108036867a5",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        16637
+      ],
+      "comment_sha256": "9657ca9326746aec495823a0cac00186813b375fcdecfaa9fdc40924d7f6e85c"
+    },
+    {
+      "record_key": "e16fc6b1fe8bd77f95ba520f",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        16770
+      ],
+      "comment_sha256": "e180694db4b051efca9e0821da93f21be1a0d75ec7e1b6030949fbf2f65cdb02"
+    },
+    {
+      "record_key": "5e13752b86981aa63eda5c52",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        16790
+      ],
+      "comment_sha256": "98d88efe9c1fd9bcc8ccb96e5d82fd061ec4665336c5622aa29c72a39191183a"
+    },
+    {
+      "record_key": "09694c9e0f47c1bf0e2c85ae",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "meta_reaction",
+      "rationale": "主内容は既存の批判状況・他コメントへの二次的な反応である。",
+      "baseline_source_indices_1_based": [
+        17114
+      ],
+      "comment_sha256": "80b84b9388652e8ee405eaf26add161aa3826bbd66adadfaf696840219114cce"
+    },
+    {
+      "record_key": "0637aa0a323d73139d993f81",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        17184
+      ],
+      "comment_sha256": "82b609649e2700f15a46b2c37dd96e060e51f932a2e9ece2570643a4e3d3b1af"
+    },
+    {
+      "record_key": "3c4f1af148fd1e752ec78b69",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "否定表現の主対象は既存の批判者・アンチで、投稿者本人への独立した迷惑主張ではない。",
+      "baseline_source_indices_1_based": [
+        17672
+      ],
+      "comment_sha256": "486bf168bba69081e7bbd4dc6e1081806e90b23dd78416c3ef2c2a7af7c31a7a"
+    },
+    {
+      "record_key": "ba74c539243d347117acd22c",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "本文だけでは既存アンチ・批判への反応が確定せず、上流normalを維持する。",
+      "baseline_source_indices_1_based": [
+        17717
+      ],
+      "comment_sha256": "911494a34f3247a27622dbbd26e7fe091d02f8ec88197511f32565aa5f6ef409"
+    },
+    {
+      "record_key": "5af96acf9da31b878af18059",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "本文だけでは既存アンチ・批判への反応が確定せず、上流normalを維持する。",
+      "baseline_source_indices_1_based": [
+        17852
+      ],
+      "comment_sha256": "272b4ba605a4d7dcd69bfb49ed8b6fa4ed9d5a56b94e180eaa4651f63abb529e"
+    },
+    {
+      "record_key": "be328ad6b7c0f5f7007f62a8",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        17943
+      ],
+      "comment_sha256": "b85b467517b7f7d05d379055f0e2e64d1703d14c7b277737cdbfe9855113aa5e"
+    },
+    {
+      "record_key": "fb6f989340624b9ba010ba5a",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "meta_reaction",
+      "rationale": "主内容は既存の批判状況・他コメントへの二次的な反応である。",
+      "baseline_source_indices_1_based": [
+        17985
+      ],
+      "comment_sha256": "160b76f6c4749ce99ce6178e6f99b419278569925fa0f722a90325017316668a"
+    },
+    {
+      "record_key": "356a67fd121d4f4a8f3da730",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        18032
+      ],
+      "comment_sha256": "87e5225c38039f16124d4f1b40def0bd9b55078c800c70eab36604627bffe3aa"
+    },
+    {
+      "record_key": "77fd06790135fbeb14126c25",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        18325
+      ],
+      "comment_sha256": "0bdebe63408f08a07c9e14eb7bc3b0efa3d5ca9115845387ca7fb2a443513aee"
+    },
+    {
+      "record_key": "c3fe887a652812ed70f91f38",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "本文だけでは既存アンチ・批判への反応が確定せず、上流normalを維持する。",
+      "baseline_source_indices_1_based": [
+        19149
+      ],
+      "comment_sha256": "a017f4ab4c071c009ab19b8fd0e47853dcd82ca5c32fb0d1d39026bc6f9cb947"
+    },
+    {
+      "record_key": "f76530f1a89e33fed81fee55",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        19346
+      ],
+      "comment_sha256": "753ed696af8d4d56ece3bd2fe0acf909667d7089bfac6fa41d540eeaa681e5c9"
+    },
+    {
+      "record_key": "ddd33c30c4c22da7a7f2e38c",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        19403
+      ],
+      "comment_sha256": "f78acb730367e8762b39aac630427713b5b1a4cdc3de0683cd7a64465cef5a41"
+    },
+    {
+      "record_key": "f98b95df8ac192ebf56d2cdf",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        19412
+      ],
+      "comment_sha256": "6f22f2d4b17b7d6b475a22cb99e9184889281a7ea6ff53b4de74c67fbf8ed1c2"
+    },
+    {
+      "record_key": "5b9e1dc9a3b787c3d71b31eb",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "既存の否定・批判を前提にした擁護または励ましが主内容である。",
+      "baseline_source_indices_1_based": [
+        19596
+      ],
+      "comment_sha256": "f3cc0ea533a12dea3e5e1acdc4fd889e9d8f02d8377e6bce5c9d7319e55c08cd"
+    },
+    {
+      "record_key": "0f3d9253f3711c238f597fd1",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "既存の否定表現やコメントを引用・参照して応答しており、二次反応として扱う。",
+      "baseline_source_indices_1_based": [
+        19723
+      ],
+      "comment_sha256": "681ec254451b3fa80f6bda45d73bb50c5339e48ed84e910e712d2f7069428486"
+    },
+    {
+      "record_key": "1406c4fda41ce276b4d4fa8e",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "否定表現の主対象は既存の批判者・アンチで、投稿者本人への独立した迷惑主張ではない。",
+      "baseline_source_indices_1_based": [
+        20464
+      ],
+      "comment_sha256": "389e2b1fbaafb22218e047ba39538847aa085e7c1bd13e0a20d703e471fdfd6f"
+    },
+    {
+      "record_key": "767b14a9b9fd3ab13d80a770",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "本文だけでは既存アンチ・批判への反応が確定せず、上流normalを維持する。",
+      "baseline_source_indices_1_based": [
+        20567
+      ],
+      "comment_sha256": "7f563bab1f736479fb08a45a31223b049c726053b0ac4b5861cc503fad2fe8fe"
+    },
+    {
+      "record_key": "b604a5a84d9119d192434d9d",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "本文だけでは既存アンチ・批判への反応が確定せず、上流normalを維持する。",
+      "baseline_source_indices_1_based": [
+        20622
+      ],
+      "comment_sha256": "33514d52b119e50ac13e793ae4a5dd1e602cfb8fd2cecf6a03e585b513c59e3c"
+    }
+  ]
+}

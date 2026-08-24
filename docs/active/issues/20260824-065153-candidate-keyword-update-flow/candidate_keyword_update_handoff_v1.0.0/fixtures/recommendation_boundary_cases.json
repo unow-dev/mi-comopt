@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "name": "high_exact_095",
+      "D": 19,
+      "R": 999,
+      "N": 1,
+      "expected_precision": 0.95,
+      "expected_recommendation": "高推奨",
+      "note": "reactive count must not affect tier"
+    },
+    {
+      "name": "mid_exact_080",
+      "D": 4,
+      "R": 0,
+      "N": 1,
+      "expected_precision": 0.8,
+      "expected_recommendation": "中推奨"
+    },
+    {
+      "name": "optional_single_direct",
+      "D": 1,
+      "R": 100,
+      "N": 0,
+      "expected_precision": 1.0,
+      "expected_recommendation": "任意"
+    },
+    {
+      "name": "suppressed_reactive_only",
+      "D": 0,
+      "R": 12,
+      "N": 0,
+      "expected_precision": null,
+      "expected_recommendation": null,
+      "expected_publication_status": "suppressed_no_direct_hits"
+    },
+    {
+      "name": "optional_below_mid_precision",
+      "D": 3,
+      "R": 0,
+      "N": 1,
+      "expected_precision": 0.75,
+      "expected_recommendation": "任意"
+    },
+    {
+      "name": "normal_hit_blocks_high",
+      "D": 100,
+      "R": 0,
+      "N": 2,
+      "expected_recommendation": "中推奨"
+    }
+  ]
+}

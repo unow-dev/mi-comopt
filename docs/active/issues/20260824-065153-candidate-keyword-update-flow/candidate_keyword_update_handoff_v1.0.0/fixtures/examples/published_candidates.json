@@ -1,0 +1,21 @@
+[
+  {
+    "candidate_id": "kw_123e4567-e89b-42d3-a456-426614174000",
+    "keyword": "これでいいや",
+    "variants": [
+      "これでいいや"
+    ],
+    "category_id": "copypasta_spam",
+    "category": "コピペ・長文スパム",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 14,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1.0,
+    "direct_recall_contribution": 0.025501,
+    "normal_hit_rate": 0.0,
+    "utility_score": 14,
+    "introduced_at": "2026-08-24T15:54:00Z"
+  }
+]

@@ -1,0 +1,109 @@
+[
+  {
+    "name": "direct_simple",
+    "record": {
+      "username": "x",
+      "handle": "x",
+      "comment": "もうキツイって😅",
+      "postedAt": "",
+      "postedDate": "",
+      "label": "nuisance"
+    },
+    "expected_provisional": "direct_nuisance",
+    "expected_review_required": false
+  },
+  {
+    "name": "direct_rejection",
+    "record": {
+      "username": "x",
+      "handle": "x",
+      "comment": "こっちみんな",
+      "postedAt": "",
+      "postedDate": "",
+      "label": "nuisance"
+    },
+    "expected_provisional": "direct_nuisance",
+    "expected_review_required": false
+  },
+  {
+    "name": "reactive_counterattack",
+    "record": {
+      "username": "x",
+      "handle": "x",
+      "comment": "アンチ潰したい",
+      "postedAt": "",
+      "postedDate": "",
+      "label": "nuisance"
+    },
+    "expected_provisional": "reactive",
+    "expected_review_required": false
+  },
+  {
+    "name": "reactive_support",
+    "record": {
+      "username": "x",
+      "handle": "x",
+      "comment": "アンチなんて気にせずに頑張ってください",
+      "postedAt": "",
+      "postedDate": "",
+      "label": "normal"
+    },
+    "expected_provisional": "reactive",
+    "expected_review_required": false
+  },
+  {
+    "name": "normal_support",
+    "record": {
+      "username": "x",
+      "handle": "x",
+      "comment": "今日も可愛い。応援しています",
+      "postedAt": "",
+      "postedDate": "",
+      "label": "normal"
+    },
+    "expected_provisional": "normal",
+    "expected_review_required": false
+  },
+  {
+    "name": "mixed_requires_review",
+    "record": {
+      "username": "x",
+      "handle": "x",
+      "comment": "アンチ＝嫉妬は無理ある。ぶりっ子は痛いって話",
+      "postedAt": "",
+      "postedDate": "",
+      "label": "nuisance"
+    },
+    "expected_provisional": "reactive",
+    "expected_review_required": true,
+    "expected_priority": 0
+  },
+  {
+    "name": "negated_attack_stays_normal_compat",
+    "record": {
+      "username": "x",
+      "handle": "x",
+      "comment": "可愛いですし、痛くもないしきつくもないので頑張ってください",
+      "postedAt": "",
+      "postedDate": "",
+      "label": "normal"
+    },
+    "expected_provisional": "normal",
+    "expected_review_required": true,
+    "expected_priority": 2
+  },
+  {
+    "name": "latent_reactive_review",
+    "record": {
+      "username": "x",
+      "handle": "x",
+      "comment": "そんなこと言う人の気持ちが分からない。頑張って",
+      "postedAt": "",
+      "postedDate": "",
+      "label": "normal"
+    },
+    "expected_provisional": "normal",
+    "expected_review_required": true,
+    "expected_priority": 1
+  }
+]

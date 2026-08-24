@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "status": "pass",
+  "json_schema_draft": "2020-12",
+  "schema_files_checked": 14,
+  "schema_examples_validated": 14,
+  "bootstrap_semantic_validation": {
+    "status": "pass",
+    "legacy_candidates": 187,
+    "active_candidates": 187,
+    "published_candidates": 187,
+    "suppressed_candidates": 0,
+    "recommendation_counts": {
+      "高推奨": 42,
+      "中推奨": 11,
+      "任意": 134
+    },
+    "label_counts": {
+      "direct_nuisance": 549,
+      "reactive": 1225,
+      "normal": 19659
+    },
+    "expected_new_badges": 0,
+    "grandfathered_cross_candidate_normalized_conflicts": 1
+  },
+  "notes": [
+    "The single grandfathered conflict is normalized variant フォロー返しして.",
+    "No large labeled comment artifact is copied into this handoff."
+  ]
+}

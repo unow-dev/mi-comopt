@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "run_id": "run_123e4567-e89b-42d3-a456-426614174000",
+  "run_type": "full_update",
+  "base_run_id": "run_223e4567-e89b-42d3-a456-426614174000",
+  "parent_manifest_content_sha256": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "started_at": "2026-08-24T15:50:00Z",
+  "completed_at": "2026-08-24T15:54:00Z",
+  "published_at": "2026-08-24T15:54:00Z",
+  "outcome": "published",
+  "source_dataset": {
+    "artifact_ref": "upstream://three-class/example",
+    "artifact_sha256": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "evaluation_policy": {
+    "version": "1.0.0",
+    "content_sha256": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "taxonomy": {
+    "version": "1.0.0",
+    "content_sha256": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "registry_before_content_sha256": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "registry_after_content_sha256": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "published_candidates_content_sha256": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "artifacts": {
+    "candidate_view": {
+      "artifact_ref": "runs/x/candidate_view.json",
+      "content_sha256": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    "pre_evaluation": {
+      "artifact_ref": "runs/x/pre_evaluation.json",
+      "content_sha256": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    "candidate_generation_request": {
+      "artifact_ref": "runs/x/candidate_generation_request.json",
+      "content_sha256": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    "candidate_proposal": {
+      "artifact_ref": "runs/x/candidate_proposal.json",
+      "content_sha256": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    "candidate_change_set": {
+      "artifact_ref": "runs/x/candidate_change_set.json",
+      "content_sha256": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    "candidate_evaluation": {
+      "artifact_ref": "runs/x/candidate_evaluation.json",
+      "content_sha256": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    }
+  },
+  "evaluator": {
+    "version": "1.0.0",
+    "source_revision": "git:0123456789abcdef"
+  }
+}

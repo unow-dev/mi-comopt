@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "request_id": "cgr_123e4567-e89b-42d3-a456-426614174000",
+  "prompt_contract_version": 1,
+  "base_publication": {
+    "run_id": "run_123e4567-e89b-42d3-a456-426614174000",
+    "registry_content_sha256": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "source_dataset": {
+    "artifact_ref": "upstream://three-class/example",
+    "artifact_sha256": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "candidate_view": {
+    "artifact_ref": "runs/example/candidate_view.json",
+    "content_sha256": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "pre_evaluation": {
+    "artifact_ref": "runs/example/pre_evaluation.json",
+    "content_sha256": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "evaluation_policy": {
+    "version": "1.0.0",
+    "content_sha256": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "taxonomy": {
+    "version": "1.0.0",
+    "content_sha256": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "output_schema_version": 1,
+  "input_fingerprint": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+}

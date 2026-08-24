@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "request_id": "cgr_123e4567-e89b-42d3-a456-426614174000",
+  "input_fingerprint": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "actions": [
+    {
+      "action": "add",
+      "keyword": "これでいいや",
+      "variants": [
+        "これでいいや"
+      ],
+      "category_id": "copypasta_spam"
+    },
+    {
+      "action": "update",
+      "candidate_id": "kw_123e4567-e89b-42d3-a456-426614174000",
+      "keyword": "これでいいや",
+      "variants": [
+        "これでいいや",
+        "今日はこれでいいや"
+      ],
+      "category_id": "copypasta_spam"
+    }
+  ]
+}

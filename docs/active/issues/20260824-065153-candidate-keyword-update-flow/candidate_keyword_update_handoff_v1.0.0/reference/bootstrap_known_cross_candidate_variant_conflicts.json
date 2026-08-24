@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "conflicts": [
+    {
+      "normalized_variant": "フォロー返しして",
+      "owners": [
+        {
+          "candidate_id": "kw_6efc0626-23c4-49ca-89bf-5f3578d7b904",
+          "keyword": "フォロー返し",
+          "variant": "フォロー返しして"
+        },
+        {
+          "candidate_id": "kw_8e9936ff-4d0a-4240-a9f7-e6672f1228de",
+          "keyword": "フォロー返ししてください",
+          "variant": "フォロー返しして"
+        }
+      ]
+    }
+  ]
+}
