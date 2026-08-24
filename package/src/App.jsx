@@ -1,19 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import candidates from "./data/filterKeywordCandidates.json";
-
-const RECOMMENDATION_ORDER = {
-  "高推奨": 0,
-  "中推奨": 1,
-  "任意": 2,
-};
-
-const SORT_OPTIONS = [
-  { value: "recommendation", label: "推奨度順" },
-  { value: "direct_desc", label: "direct 命中数が多い順" },
-  { value: "normal_asc", label: "normal 誤爆が少ない順" },
-  { value: "precision_desc", label: "精度が高い順" },
-  { value: "keyword", label: "キーワード順" },
-];
+import workflowConfig from "./data/candidateWorkflowConfig.json";
+import { isNewCandidate } from "./lib/new-badge.js";
 
 function formatPercent(value) {
   if (typeof value !== "number") return "—";
@@ -56,10 +44,15 @@ function SummaryCard({ label, value }) {
   );
 }
 
-function KeywordCard({ item, onCopy }) {
+function KeywordCard({ item, onCopy, now }) {
   const [open, setOpen] = useState(false);
   const variants = (item.variants ?? []).filter(
     (variant) => variant !== item.keyword
+  );
+  const isNew = isNewCandidate(
+    item.introduced_at,
+    now,
+    workflowConfig.new_keyword_display_days,
   );
 
   return (
@@ -72,6 +65,7 @@ function KeywordCard({ item, onCopy }) {
             <div className="keyword-card__badges">
               <RecommendationBadge value={item.recommendation} />
               <span className="category-badge">{item.category}</span>
+              {isNew && <span className="new-badge">NEW</span>}
             </div>
           </div>
         </div>
@@ -153,8 +147,7 @@ export default function App() {
   const [recommendation, setRecommendation] = useState("");
   const [toast, setToast] = useState("");
   const toastTimerRef = useRef(null);
-
-
+  const [now] = useState(() => new Date());
 
   const filteredCandidates = useMemo(
     () =>
@@ -221,9 +214,10 @@ export default function App() {
             <div className="keyword-list">
               {filteredCandidates.map((item) => (
                 <KeywordCard
-                  key={`${item.keyword}-${item.category}`}
+                  key={item.candidate_id}
                   item={item}
                   onCopy={handleCopy}
+                  now={now}
                 />
               ))}
             </div>
@@ -239,7 +233,7 @@ export default function App() {
       <footer>
         <p>
           JSONデータは <code>src/data/filterKeywordCandidates.json</code>{" "}
-          に分離されています。
+          に分離されています。候補の識別には永続的な <code>candidate_id</code> を使用します。
         </p>
       </footer>
 

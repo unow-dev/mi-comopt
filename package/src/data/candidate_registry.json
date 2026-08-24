@@ -1,0 +1,2396 @@
+{
+  "schema_version": 1,
+  "candidates": {
+    "kw_38621257-82a3-4d75-b8b2-aa235fea38ad": {
+      "status": "active",
+      "keyword": "今日はこれでいいや",
+      "variants": [
+        "今日はこれでいいや",
+        "今日はこれで良いや"
+      ],
+      "category_id": "copypasta_spam",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_b3572bd7-9620-4918-8d1b-7953d4e80f52": {
+      "status": "active",
+      "keyword": "アンチ",
+      "variants": [
+        "アンチ"
+      ],
+      "category_id": "reaction",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_08edcfcb-6baa-4cf6-b747-fd6bc104361c": {
+      "status": "active",
+      "keyword": "ちょっと待ってほしい",
+      "variants": [
+        "ちょっと待ってほしい"
+      ],
+      "category_id": "copypasta_spam",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_d33bcb15-f655-40e8-9f37-13fb148447e2": {
+      "status": "active",
+      "keyword": "唐揚げだけは",
+      "variants": [
+        "唐揚げだけは",
+        "今日の弁当には唐揚げ"
+      ],
+      "category_id": "copypasta_spam",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_83f671de-627a-4da2-9477-a3b288531892": {
+      "status": "active",
+      "keyword": "エロ",
+      "variants": [
+        "エロ",
+        "えろ"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_8c44e5f5-3cdd-4989-af5d-4b36511fa93e": {
+      "status": "active",
+      "keyword": "おえ",
+      "variants": [
+        "おえ",
+        "オエ"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_1a40efb1-c337-4593-92f4-5f3f25979271": {
+      "status": "active",
+      "keyword": "ここまで読んでくれた人",
+      "variants": [
+        "ここまで読んでくれた人"
+      ],
+      "category_id": "copypasta_spam",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_4f83beb4-060a-48ff-8ce4-79cc66f10484": {
+      "status": "active",
+      "keyword": "冷蔵庫には意思がある",
+      "variants": [
+        "冷蔵庫には意思がある"
+      ],
+      "category_id": "copypasta_spam",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_03f7817d-7192-4b38-95c4-87b30a527850": {
+      "status": "active",
+      "keyword": "共感性羞恥",
+      "variants": [
+        "共感性羞恥",
+        "共感羞恥"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_1502debd-122e-4854-a362-76c85f943d0c": {
+      "status": "active",
+      "keyword": "DM",
+      "variants": [
+        "DM"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_e6bbc4ba-fe41-4a6b-ab4d-11135e6d8950": {
+      "status": "active",
+      "keyword": "十七歳の春",
+      "variants": [
+        "十七歳の春"
+      ],
+      "category_id": "copypasta_spam",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_be621ad0-f658-4684-b2fb-0cc720db7c86": {
+      "status": "active",
+      "keyword": "フォローしろ",
+      "variants": [
+        "フォローしろ"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_0645b4df-be5f-44fa-8dd7-5068e5b5b2f0": {
+      "status": "active",
+      "keyword": "ほんまにきつい",
+      "variants": [
+        "ほんまにきつい",
+        "ほんまにキツい"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_a4249f82-6937-4616-b196-07e24ad1087c": {
+      "status": "active",
+      "keyword": "vt.tiktok.com",
+      "variants": [
+        "vt.tiktok.com"
+      ],
+      "category_id": "link_spam",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_68c133b9-a772-4568-aa4b-1baa7778df46": {
+      "status": "active",
+      "keyword": "承認欲求",
+      "variants": [
+        "承認欲求"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_9cb98e32-2701-4039-8c71-040cbdab95bd": {
+      "status": "active",
+      "keyword": "だいぶきつい",
+      "variants": [
+        "だいぶきつい",
+        "だいぶキツい",
+        "だいぶキツイ"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_dc225929-0a36-45b6-9cae-1a2e3eeb3615": {
+      "status": "active",
+      "keyword": "わざとらしい",
+      "variants": [
+        "わざとらしい",
+        "わざとらし"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_f1ca18a3-d247-4f44-a64d-8ebe723395b9": {
+      "status": "active",
+      "keyword": "いつまでやる",
+      "variants": [
+        "いつまでやる",
+        "いつまでこんな",
+        "いつまで続け"
+      ],
+      "category_id": "age_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_93cb81f5-bdb6-4a8c-a855-f1432de5e835": {
+      "status": "active",
+      "keyword": "息子",
+      "variants": [
+        "息子"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_0c4e2e09-d2e0-43c3-ae49-c39e5bdcc30f": {
+      "status": "active",
+      "keyword": "一人でやってる",
+      "variants": [
+        "一人でやってる",
+        "ひとりでこれやって",
+        "ひとりでやってる",
+        "一人でこれやって"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_a2ae03c0-11bc-497b-926a-db94bab00657": {
+      "status": "active",
+      "keyword": "一人で何して",
+      "variants": [
+        "一人で何して",
+        "ひとりでなにして",
+        "ひとりで何して",
+        "一人でなにして"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_da7dbc9e-026d-4387-92e6-82dd0f997b03": {
+      "status": "active",
+      "keyword": "炎上商法",
+      "variants": [
+        "炎上商法"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_1ffd6c41-5ae9-484b-9137-b499b9b435ec": {
+      "status": "active",
+      "keyword": "きついって",
+      "variants": [
+        "きついって",
+        "キツいって",
+        "キツイって"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_2a070db4-dea9-4d3f-995d-64dbf382f188": {
+      "status": "active",
+      "keyword": "胸",
+      "variants": [
+        "胸"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_73eb99f7-1a23-4aed-b8b5-2340ee7254eb": {
+      "status": "active",
+      "keyword": "脇",
+      "variants": [
+        "脇",
+        "わき"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_e9223abc-a983-4f04-94cb-a9f86e272189": {
+      "status": "active",
+      "keyword": "きつすぎ",
+      "variants": [
+        "きつすぎ",
+        "きつすぎる",
+        "キツすぎ",
+        "キツすぎる"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_61dcb846-45da-4b3b-ba9f-80a1f32a9f7e": {
+      "status": "active",
+      "keyword": "これは痛い",
+      "variants": [
+        "これは痛い",
+        "これはいたい"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_1212d25e-e284-455e-be3a-fb898f7e337f": {
+      "status": "active",
+      "keyword": "流石にきつい",
+      "variants": [
+        "流石にきつい",
+        "さすがにきつい",
+        "さすがにキツい",
+        "流石にキツい",
+        "流石にキツイ"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_4e23b14d-272b-41c2-88f3-72d82546a544": {
+      "status": "active",
+      "keyword": "何歳まで",
+      "variants": [
+        "何歳まで",
+        "なんさいまで"
+      ],
+      "category_id": "age_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_e9376531-fc58-427d-b404-4dd9e9649663": {
+      "status": "active",
+      "keyword": "がちできつい",
+      "variants": [
+        "がちできつい",
+        "がちでキツい",
+        "ガチできつい",
+        "ガチでキツい",
+        "ガチでキツイ"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_2cf45b1e-eb63-4398-b1ed-fdfe262a684a": {
+      "status": "active",
+      "keyword": "ヤレる",
+      "variants": [
+        "ヤレる",
+        "やれる"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_6efc0626-23c4-49ca-89bf-5f3578d7b904": {
+      "status": "active",
+      "keyword": "フォロー返し",
+      "variants": [
+        "フォロー返し",
+        "フォロー返しして",
+        "フォロー返して"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_4acb0965-7f5a-4871-9455-e90152f264c8": {
+      "status": "active",
+      "keyword": "叩かれ",
+      "variants": [
+        "叩かれ",
+        "叩かれて",
+        "叩かれまく"
+      ],
+      "category_id": "reaction",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_4a453f0e-5ea2-4b6f-9be1-c534aea52fad": {
+      "status": "active",
+      "keyword": "かわきつ",
+      "variants": [
+        "かわきつ"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_8d22b6f5-c180-4e06-91f5-2a85680ebe6b": {
+      "status": "active",
+      "keyword": "きちぃ",
+      "variants": [
+        "きちぃ",
+        "きちい"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_5b9a7f43-a8a9-4ffa-9046-345266f5e422": {
+      "status": "active",
+      "keyword": "これはきつい",
+      "variants": [
+        "これはきつい",
+        "これはキツい",
+        "これはキツイ"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_6eb9653e-45cb-4190-a9f6-5b756f7e3c03": {
+      "status": "active",
+      "keyword": "これは無理",
+      "variants": [
+        "これは無理",
+        "これはむり"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_0c86ccfb-4da4-404e-be47-d31b478ca37b": {
+      "status": "active",
+      "keyword": "ちょっと痛い",
+      "variants": [
+        "ちょっと痛い",
+        "ちょっといたい"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_7235d3a6-c81a-4340-a01c-3ae00a8e12f1": {
+      "status": "active",
+      "keyword": "まじ無理",
+      "variants": [
+        "まじ無理",
+        "まじむり",
+        "マジ無理"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_adc11c05-845f-4501-a347-8f0a0e622ee8": {
+      "status": "active",
+      "keyword": "恥ずかしくない",
+      "variants": [
+        "恥ずかしくない",
+        "恥ずかしくないん",
+        "恥ずかしくならん"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_fa2d5240-d758-4b0f-a42d-be35c5b113d2": {
+      "status": "active",
+      "keyword": "普通にきつい",
+      "variants": [
+        "普通にきつい",
+        "普通にキツい",
+        "普通にキツイ"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_e6ee964c-2487-4e16-9e8d-cb82436c5107": {
+      "status": "active",
+      "keyword": "黒歴史",
+      "variants": [
+        "黒歴史"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_8ecfb342-eb86-4bad-9778-f95a8c869411": {
+      "status": "active",
+      "keyword": "25歳が何してる",
+      "variants": [
+        "25歳が何してる",
+        "25歳何してん"
+      ],
+      "category_id": "age_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_7fd7396d-5b73-432e-8cfc-ef8027e7b64f": {
+      "status": "active",
+      "keyword": "アラサーでこれは",
+      "variants": [
+        "アラサーでこれは",
+        "アラサーがこれは"
+      ],
+      "category_id": "age_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_66c93586-a9a0-4fd8-a641-78f465f30cfa": {
+      "status": "active",
+      "keyword": "おかず",
+      "variants": [
+        "おかず"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_5edd8c75-c131-4800-865c-ec91eb454536": {
+      "status": "active",
+      "keyword": "エッチ",
+      "variants": [
+        "エッチ",
+        "えっち"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_8aacb39b-7839-499d-83d5-08e1601f59f5": {
+      "status": "active",
+      "keyword": "汗を飲",
+      "variants": [
+        "汗を飲",
+        "汗だけで摂取",
+        "汗集めて飲"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_375590bb-69ab-494d-8576-178c9a0af0d0": {
+      "status": "active",
+      "keyword": "股間",
+      "variants": [
+        "股間"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_0d12c2f7-e3a3-4591-afb4-a3ab2bb58ed3": {
+      "status": "active",
+      "keyword": "舐めてくれそう",
+      "variants": [
+        "舐めてくれそう",
+        "なめてくれそう"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_b39e0eb8-c959-49dd-b272-2cfb2b36dce1": {
+      "status": "active",
+      "keyword": "何を見せられて",
+      "variants": [
+        "何を見せられて",
+        "なにを見せられて"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_8caced30-851c-42d0-904d-3d99b2bab5dc": {
+      "status": "active",
+      "keyword": "炎上目的",
+      "variants": [
+        "炎上目的"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_bd66cc8f-9d62-4c14-a430-03398ea8f996": {
+      "status": "active",
+      "keyword": "流石に無理",
+      "variants": [
+        "流石に無理",
+        "さすがに無理"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_0d3b0e78-edf7-4145-b215-852004533d67": {
+      "status": "active",
+      "keyword": "おばさん",
+      "variants": [
+        "おばさん",
+        "オバサン"
+      ],
+      "category_id": "age_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_4c91246c-8a83-449c-ae23-9b5a33549baa": {
+      "status": "active",
+      "keyword": "きつ",
+      "variants": [
+        "きつ",
+        "キツ"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_c3251f6b-8f3c-4fb9-aec1-6de246dedd44": {
+      "status": "active",
+      "keyword": "痛い",
+      "variants": [
+        "痛い",
+        "いたい",
+        "イタイ"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_16e35bca-01af-4993-8d2d-3b43c35eb1f6": {
+      "status": "active",
+      "keyword": "無理",
+      "variants": [
+        "無理",
+        "むり",
+        "ムリ"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_b8d5df8a-4d81-4e45-9c0e-8b08b28d86ed": {
+      "status": "active",
+      "keyword": "フォローして",
+      "variants": [
+        "フォローして",
+        "フォローお願い",
+        "フォローお願いします"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_77366eca-4946-47cc-84bc-81cfc7eccb07": {
+      "status": "active",
+      "keyword": "恥ずかしい",
+      "variants": [
+        "恥ずかしい",
+        "恥ずかし",
+        "恥ずかしく"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_e951dce4-1b34-4742-b889-711683903b04": {
+      "status": "active",
+      "keyword": "あざとい",
+      "variants": [
+        "あざとい"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_0c7bc66e-35ea-4b73-8939-5f99d5af3264": {
+      "status": "active",
+      "keyword": "何してるの",
+      "variants": [
+        "何してるの",
+        "なにしてるん",
+        "なにしてんの",
+        "何してるん",
+        "何してんの"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_398aff3e-1dc4-4f01-abb6-e0aa10ca8366": {
+      "status": "active",
+      "keyword": "きついな",
+      "variants": [
+        "きついな",
+        "キツいな",
+        "キツイな"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_50b67f67-b37c-4aa8-ba8d-23487966a9ef": {
+      "status": "active",
+      "keyword": "ブス",
+      "variants": [
+        "ブス",
+        "ぶす"
+      ],
+      "category_id": "appearance_attack",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_543a2785-c9bf-4a25-b07d-0a53df5bdfd9": {
+      "status": "active",
+      "keyword": "舐め",
+      "variants": [
+        "舐め",
+        "なめ"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_59973320-2baa-4717-a4c6-c5080f3f1762": {
+      "status": "active",
+      "keyword": "AV",
+      "variants": [
+        "AV"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_1c166a4e-6452-43e8-a8fb-cc78e2069acc": {
+      "status": "active",
+      "keyword": "ぶりっ子",
+      "variants": [
+        "ぶりっ子",
+        "ぶりっこ"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_76bd7568-806f-41d8-93d2-99994b3f4616": {
+      "status": "active",
+      "keyword": "25歳",
+      "variants": [
+        "25歳",
+        "25才"
+      ],
+      "category_id": "age_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_208eafe3-9719-444b-b40d-6dcf6977c697": {
+      "status": "active",
+      "keyword": "食べたい",
+      "variants": [
+        "食べたい"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_2dbf5e40-fcb8-4131-b43a-7475139cd195": {
+      "status": "active",
+      "keyword": "キモい",
+      "variants": [
+        "キモい",
+        "きも",
+        "きもい",
+        "キモイ"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_86f39138-3462-4afb-a4b7-e8cfd006768e": {
+      "status": "active",
+      "keyword": "嫉妬",
+      "variants": [
+        "嫉妬"
+      ],
+      "category_id": "reaction",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_55f01760-f86d-48da-819f-cf24f6516b27": {
+      "status": "active",
+      "keyword": "ピュ",
+      "variants": [
+        "ピュ",
+        "ぴゅ"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_ef174fa2-5ea6-460e-832f-21feeb53d29c": {
+      "status": "active",
+      "keyword": "やりたい",
+      "variants": [
+        "やりたい",
+        "ヤりたい"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_9d286c28-c615-4757-818c-d26b01cb3c4e": {
+      "status": "active",
+      "keyword": "いいねして",
+      "variants": [
+        "いいねして"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_3ac59061-0370-41ca-b3c4-dbf2c987f4a1": {
+      "status": "active",
+      "keyword": "アラサー",
+      "variants": [
+        "アラサー"
+      ],
+      "category_id": "age_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_6432be41-bc90-47af-9ac1-36973f24b86a": {
+      "status": "active",
+      "keyword": "可愛くない",
+      "variants": [
+        "可愛くない",
+        "かわいくない"
+      ],
+      "category_id": "appearance_attack",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_896d94fe-17e2-42c3-ac9e-8fe7760d796f": {
+      "status": "active",
+      "keyword": "制服",
+      "variants": [
+        "制服"
+      ],
+      "category_id": "age_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_1471ae8b-ea6c-419f-b8f7-1fc43a827191": {
+      "status": "active",
+      "keyword": "誰か言ってやれ",
+      "variants": [
+        "誰か言ってやれ",
+        "誰か教えたれ",
+        "誰か言ってやって"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_3644a834-b92f-4719-9643-2d3ba6795885": {
+      "status": "active",
+      "keyword": "何がしたい",
+      "variants": [
+        "何がしたい",
+        "なにがしたい"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_5ed03903-5614-47bb-b6d4-35d9ea388183": {
+      "status": "active",
+      "keyword": "イテテ",
+      "variants": [
+        "イテテ",
+        "あいたた",
+        "いたた",
+        "いてて"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_95090cbc-1005-42d3-a7dd-bc0478166827": {
+      "status": "active",
+      "keyword": "唇",
+      "variants": [
+        "唇"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_d30fa2ec-1ae7-4538-8c54-24f195b8363e": {
+      "status": "active",
+      "keyword": "いたいわ",
+      "variants": [
+        "いたいわ",
+        "痛いわ"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_68a76fd2-d69f-4771-b0af-10dc516d6dea": {
+      "status": "active",
+      "keyword": "鳥肌",
+      "variants": [
+        "鳥肌"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_38e33746-d91d-46e0-9e95-40f204c1e908": {
+      "status": "active",
+      "keyword": "えち",
+      "variants": [
+        "えち",
+        "エチ"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_b6fb5b18-6ebb-405b-996d-5190e10919a6": {
+      "status": "active",
+      "keyword": "インキャ",
+      "variants": [
+        "インキャ",
+        "陰キャ"
+      ],
+      "category_id": "attribute_attack",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_0d377405-9ac3-413f-ab1b-e3c12f130c13": {
+      "status": "active",
+      "keyword": "可愛いでしょ感",
+      "variants": [
+        "可愛いでしょ感",
+        "かわいいでしょ",
+        "可愛いでしょ"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_e7c8e712-308e-41b3-8a84-ba090b929214": {
+      "status": "active",
+      "keyword": "引く",
+      "variants": [
+        "引く",
+        "引いた",
+        "引くわ"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_3d88b56b-5623-4dbf-bf7b-b3e6cbdc4d1e": {
+      "status": "active",
+      "keyword": "返信して",
+      "variants": [
+        "返信して",
+        "返信きたら"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_9220b946-8434-408b-892a-01671d0d4c7c": {
+      "status": "active",
+      "keyword": "違和感",
+      "variants": [
+        "違和感"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_8cd519c1-a422-4d19-bc4e-61d7bfa11e19": {
+      "status": "active",
+      "keyword": "俺の時計、時間を食べてる説",
+      "variants": [
+        "俺の時計、時間を食べてる説",
+        "俺の時計",
+        "時間を食べてる説"
+      ],
+      "category_id": "copypasta_spam",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_609bc29b-1504-41bd-bfaa-36d6e82fa03f": {
+      "status": "active",
+      "keyword": "明日はこれでいいや",
+      "variants": [
+        "明日はこれでいいや"
+      ],
+      "category_id": "copypasta_spam",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_21430fac-550e-4f42-b0c7-8dcceda42466": {
+      "status": "active",
+      "keyword": "貴方の時間を5分だけ",
+      "variants": [
+        "貴方の時間を5分だけ",
+        "あなたの時間を5分だけ"
+      ],
+      "category_id": "copypasta_spam",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_ffa5ede5-0d1e-447f-b84c-2dc7177b51e2": {
+      "status": "active",
+      "keyword": "DMおいで",
+      "variants": [
+        "DMおいで"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_0ac46ede-8e34-437b-b062-026c014ac997": {
+      "status": "active",
+      "keyword": "DMきて",
+      "variants": [
+        "DMきて"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_90bba903-6a2e-4f70-85b4-9f22689ef2f8": {
+      "status": "active",
+      "keyword": "DMください",
+      "variants": [
+        "DMください"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_859c8361-cbd8-4325-8caa-3141e4d0f2f3": {
+      "status": "active",
+      "keyword": "DM欲しい",
+      "variants": [
+        "DM欲しい"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_3364af54-d528-4c45-a138-0e2932dbddaf": {
+      "status": "active",
+      "keyword": "いいねしてください",
+      "variants": [
+        "いいねしてください"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_7057cdba-94b9-4be8-bb7f-1f4e3428fdc1": {
+      "status": "active",
+      "keyword": "いいね稼ぎ",
+      "variants": [
+        "いいね稼ぎ"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_43f5b84b-7634-4de4-9064-bc422a73bb49": {
+      "status": "active",
+      "keyword": "ガチ恋の人いいね",
+      "variants": [
+        "ガチ恋の人いいね"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_685cdd63-6702-404d-8c5d-9231a92baf14": {
+      "status": "active",
+      "keyword": "フォロバ",
+      "variants": [
+        "フォロバ"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_8e9936ff-4d0a-4240-a9f7-e6672f1228de": {
+      "status": "active",
+      "keyword": "フォロー返ししてください",
+      "variants": [
+        "フォロー返ししてください",
+        "フォロー返しして"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_381dfda6-292e-46df-b575-3fb90d5c0715": {
+      "status": "active",
+      "keyword": "フォロー返します",
+      "variants": [
+        "フォロー返します"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_a0bbaa1e-a0aa-4dc2-ade1-a10c0d129e78": {
+      "status": "active",
+      "keyword": "ライン交換",
+      "variants": [
+        "ライン交換",
+        "LINE交換"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_4903a0cd-11b6-4597-8004-797b3488064e": {
+      "status": "active",
+      "keyword": "自分のことフォロー",
+      "variants": [
+        "自分のことフォロー"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_5cc93423-1fee-4c25-8f79-77c05ebe0f3e": {
+      "status": "active",
+      "keyword": "話したい人",
+      "variants": [
+        "話したい人"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_739d4bba-d77a-48bb-9493-c65c277142ac": {
+      "status": "active",
+      "keyword": "誰でもフォロー",
+      "variants": [
+        "誰でもフォロー"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_9ec764da-81e2-49cd-a1d5-22f5fe3271e2": {
+      "status": "active",
+      "keyword": "ごめん無理",
+      "variants": [
+        "ごめん無理",
+        "ごめんむり"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_cb6d40db-916e-4edd-b984-c34e1d12172c": {
+      "status": "active",
+      "keyword": "ぶりぶり",
+      "variants": [
+        "ぶりぶり"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_23a77db8-dcbb-4f30-857e-99c7131ddd86": {
+      "status": "active",
+      "keyword": "まじできつい",
+      "variants": [
+        "まじできつい",
+        "まじでキツい",
+        "マジできつい",
+        "マジでキツい"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_87e446db-12bf-4b77-84b0-f7ae9082323f": {
+      "status": "active",
+      "keyword": "わざとらしすぎて無理",
+      "variants": [
+        "わざとらしすぎて無理"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_be2d211b-4aec-46d2-8265-c808b78da173": {
+      "status": "active",
+      "keyword": "媚び",
+      "variants": [
+        "媚び",
+        "媚びて"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_aec9a8ac-7f01-4cdd-b4ce-19a987085106": {
+      "status": "active",
+      "keyword": "救いようがない",
+      "variants": [
+        "救いようがない"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_ab2d3c22-66ac-4002-baa7-cc2d37af1745": {
+      "status": "active",
+      "keyword": "気づけ笑",
+      "variants": [
+        "気づけ笑",
+        "気付け笑"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_b7df1106-f777-431d-9f53-22f0994816bd": {
+      "status": "active",
+      "keyword": "無理です",
+      "variants": [
+        "無理です",
+        "むりです"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_97f78769-e476-42b6-9067-6d9992b8d025": {
+      "status": "active",
+      "keyword": "笑顔の押し売り",
+      "variants": [
+        "笑顔の押し売り"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_c765b225-53f3-4796-a46d-b7b9a93af7db": {
+      "status": "active",
+      "keyword": "見てらんない",
+      "variants": [
+        "見てらんない",
+        "見てられない"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_fb00c3eb-62bd-455c-8a59-91382d9cee2e": {
+      "status": "active",
+      "keyword": "需要ない",
+      "variants": [
+        "需要ない",
+        "需要ないです"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_7cbb4b10-991c-4b0e-bd5a-b15cccfecd8c": {
+      "status": "active",
+      "keyword": "黒歴史製造機",
+      "variants": [
+        "黒歴史製造機"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_07ad6066-18ee-4205-afa9-90704e13dbc4": {
+      "status": "active",
+      "keyword": "あるもんがなさすぎる",
+      "variants": [
+        "あるもんがなさすぎる"
+      ],
+      "category_id": "appearance_attack",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_c3b502b6-526d-42ac-9df7-bbb0b2f64071": {
+      "status": "active",
+      "keyword": "ぺったんこ",
+      "variants": [
+        "ぺったんこ"
+      ],
+      "category_id": "appearance_attack",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_30c4702e-5b3c-4e3a-93c5-88ba9f5da30c": {
+      "status": "active",
+      "keyword": "オタクには刺さりそう",
+      "variants": [
+        "オタクには刺さりそう",
+        "オタクに刺さりそう"
+      ],
+      "category_id": "attribute_attack",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_37542744-cab6-4cf7-b639-0a0e869fa192": {
+      "status": "active",
+      "keyword": "弱者男性",
+      "variants": [
+        "弱者男性"
+      ],
+      "category_id": "attribute_attack",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_2cf69f0b-fad5-4262-b76d-391c011062e4": {
+      "status": "active",
+      "keyword": "52歳",
+      "variants": [
+        "52歳"
+      ],
+      "category_id": "age_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_61688f69-b2a4-4d7e-a368-97241a3a84c0": {
+      "status": "active",
+      "keyword": "おばさん気味",
+      "variants": [
+        "おばさん気味"
+      ],
+      "category_id": "age_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_ce9a1125-6b2a-430b-8f41-cbeb4c99157d": {
+      "status": "active",
+      "keyword": "老後まで",
+      "variants": [
+        "老後まで"
+      ],
+      "category_id": "age_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_9a1ed307-a09d-46bc-abb9-f4ae114cf2bc": {
+      "status": "active",
+      "keyword": "どぴゅ",
+      "variants": [
+        "どぴゅ",
+        "ドピュ"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_ceef1a71-7025-439b-b8a1-18fb134fdd54": {
+      "status": "active",
+      "keyword": "はあはぁ",
+      "variants": [
+        "はあはぁ",
+        "はぁはぁ",
+        "ハアハア"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_3ee2a87d-ba2f-492c-9569-e119b51540c4": {
+      "status": "active",
+      "keyword": "ガチエロ",
+      "variants": [
+        "ガチエロ",
+        "がちえろ"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_ed458a1c-4c7c-432e-b822-1d2ef1e121c6": {
+      "status": "active",
+      "keyword": "バニーガール",
+      "variants": [
+        "バニーガール"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_9e5a563b-8d74-43fb-adac-8dffc3a76f2f": {
+      "status": "active",
+      "keyword": "ペロペロ",
+      "variants": [
+        "ペロペロ",
+        "ぺろぺろ"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_5dbfda87-ab7c-4222-a0e2-2b0c16db59d4": {
+      "status": "active",
+      "keyword": "ムスコ",
+      "variants": [
+        "ムスコ",
+        "むすこ"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_6383deb4-c66a-45e2-96fb-fbec4da79f6f": {
+      "status": "active",
+      "keyword": "体臭",
+      "variants": [
+        "体臭"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_25cef504-c046-462a-acd8-3ee5a2ffc0c3": {
+      "status": "active",
+      "keyword": "咥える",
+      "variants": [
+        "咥える",
+        "くわえる"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_4d60b319-164b-4640-95c3-ecb3be760947": {
+      "status": "active",
+      "keyword": "性欲",
+      "variants": [
+        "性欲"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_49e6011e-8d1f-4fb5-8d0c-728c005398a8": {
+      "status": "active",
+      "keyword": "性欲強そう",
+      "variants": [
+        "性欲強そう"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_97b16293-04f7-4762-8fcb-09356d2de65c": {
+      "status": "active",
+      "keyword": "抜いた",
+      "variants": [
+        "抜いた",
+        "抜い"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_f27c4788-c54d-43d4-a608-df53146b39c8": {
+      "status": "active",
+      "keyword": "抜ける",
+      "variants": [
+        "抜ける"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_34087fc3-3c50-44d2-ad0d-c1a1f52328d5": {
+      "status": "active",
+      "keyword": "生足",
+      "variants": [
+        "生足"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_c9876294-c630-43c6-becb-1b8fcc65febd": {
+      "status": "active",
+      "keyword": "脇きれい",
+      "variants": [
+        "脇きれい",
+        "脇綺麗"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_21bbbef8-5610-4ec3-acc7-7e4d8c9c19c5": {
+      "status": "active",
+      "keyword": "脇に住みたい",
+      "variants": [
+        "脇に住みたい"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_ab03d280-0cec-4325-bf1d-6d8f572524d5": {
+      "status": "active",
+      "keyword": "裸足助かる",
+      "variants": [
+        "裸足助かる"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_f0957509-7115-4904-aad5-3c1c96f7c2d3": {
+      "status": "active",
+      "keyword": "足の裏",
+      "variants": [
+        "足の裏",
+        "足裏"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_ff182f40-7f5c-4e54-abe0-3fef41aa2926": {
+      "status": "active",
+      "keyword": "足指",
+      "variants": [
+        "足指"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_baf226dd-49a1-47bf-8ddc-ed31fd792bbf": {
+      "status": "active",
+      "keyword": "足酸っぱそう",
+      "variants": [
+        "足酸っぱそう"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_38452182-7bab-4228-b4c9-cf5b71eab983": {
+      "status": "active",
+      "keyword": "顔がえろ",
+      "variants": [
+        "顔がえろ",
+        "顔がエロ"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_c8a3d2c6-da12-4c80-a34e-f87d2a077fe9": {
+      "status": "active",
+      "keyword": "食べてやりたい",
+      "variants": [
+        "食べてやりたい"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_b04b3727-9919-419b-8c48-a2bca58549bb": {
+      "status": "active",
+      "keyword": "髪の毛にかけ",
+      "variants": [
+        "髪の毛にかけ"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_4464b8ff-37de-4054-a1a3-796ab59dde4c": {
+      "status": "active",
+      "keyword": "髪の毛にかけたい",
+      "variants": [
+        "髪の毛にかけたい"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_2986c1f4-60ea-4d63-b5a9-0cdb03472929": {
+      "status": "active",
+      "keyword": "髪の毛食べ",
+      "variants": [
+        "髪の毛食べ"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_e93b6cba-e5d3-428b-9108-c8afc408793e": {
+      "status": "active",
+      "keyword": "アイコンの方がかわいい",
+      "variants": [
+        "アイコンの方がかわいい",
+        "アイコンのほうが",
+        "アイコンの方が"
+      ],
+      "category_id": "comparison_belittling",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_89e80071-4cac-47b7-95ac-cf9213f1942c": {
+      "status": "active",
+      "keyword": "可愛いよりキツい",
+      "variants": [
+        "可愛いよりキツい",
+        "かわいいよりきつ",
+        "可愛いよりきつ",
+        "可愛いよりキツ"
+      ],
+      "category_id": "comparison_belittling",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_c360d876-d0c1-42a3-9df4-351ef991a031": {
+      "status": "active",
+      "keyword": "可愛いより痛い",
+      "variants": [
+        "可愛いより痛い",
+        "かわいいより痛い"
+      ],
+      "category_id": "comparison_belittling",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_e189a165-a096-468f-816f-08b2716a060a": {
+      "status": "active",
+      "keyword": "彼女の方が可愛い",
+      "variants": [
+        "彼女の方が可愛い",
+        "彼女のほうが",
+        "彼女の方が"
+      ],
+      "category_id": "comparison_belittling",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_52395d57-4733-4433-99b2-a36901502a24": {
+      "status": "active",
+      "keyword": "ドジっ子演じ",
+      "variants": [
+        "ドジっ子演じ",
+        "ドジっ子"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_2ad557c1-1331-4447-8ef9-6d9e4b1aa80d": {
+      "status": "active",
+      "keyword": "ファン全員金",
+      "variants": [
+        "ファン全員金"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_f151e37d-e7ee-437a-b995-f2aad2550449": {
+      "status": "active",
+      "keyword": "一人で撮ってる",
+      "variants": [
+        "一人で撮ってる",
+        "ひとりで撮ってる"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_942b4914-014a-4754-922f-dc6f874d2de4": {
+      "status": "active",
+      "keyword": "何を求めてる",
+      "variants": [
+        "何を求めてる",
+        "何を求めている"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_251fedc5-3966-40c3-bd0c-dc1af4469c7d": {
+      "status": "active",
+      "keyword": "冷笑",
+      "variants": [
+        "冷笑"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_0171fe3e-ae2c-4c21-aba9-2b45eeb85534": {
+      "status": "active",
+      "keyword": "可愛い私見て感",
+      "variants": [
+        "可愛い私見て感",
+        "かわいい私見て感"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_3d57a836-3ad9-45d8-963d-d298f9f8c0eb": {
+      "status": "active",
+      "keyword": "洗脳",
+      "variants": [
+        "洗脳"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_4261a893-760c-417e-8a8a-b0c892cfd943": {
+      "status": "active",
+      "keyword": "私可愛い",
+      "variants": [
+        "私可愛い",
+        "私かわいい"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_58cfaf66-468d-4099-bab2-1576cce50088": {
+      "status": "active",
+      "keyword": "見てるこっち恥ずかしく",
+      "variants": [
+        "見てるこっち恥ずかしく"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_e7ac3c7d-530e-460a-85fe-a6350eb85d2a": {
+      "status": "active",
+      "keyword": "計算を感じ",
+      "variants": [
+        "計算を感じ"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_7a5f5ff0-19b4-4d26-a32f-3dd2e571eda9": {
+      "status": "active",
+      "keyword": "誰層",
+      "variants": [
+        "誰層"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_c14dc3e7-4a00-4114-b822-53353235c8b4": {
+      "status": "active",
+      "keyword": "都合の悪いコメント",
+      "variants": [
+        "都合の悪いコメント"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_7911d4ad-63c3-4373-9214-9f07902ffc5f": {
+      "status": "active",
+      "keyword": "5点",
+      "variants": [
+        "5点"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_3f18f1c1-6a02-49b9-988e-9c715aa4eee4": {
+      "status": "active",
+      "keyword": "うざい",
+      "variants": [
+        "うざい",
+        "うざ",
+        "ウザい"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_4c87ad3a-835b-4c4f-8987-474a8315c600": {
+      "status": "active",
+      "keyword": "こっちみんな",
+      "variants": [
+        "こっちみんな"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_0c30067c-9268-4892-983e-a6d54ad6bdea": {
+      "status": "active",
+      "keyword": "ガチ痛い",
+      "variants": [
+        "ガチ痛い",
+        "がち痛い"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_7e311f8b-8bce-4206-bdfc-87c5ea48f220": {
+      "status": "active",
+      "keyword": "普通に無理",
+      "variants": [
+        "普通に無理",
+        "普通にむり"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_f535fcd3-2b8b-4a56-9253-3ad5b3d47239": {
+      "status": "active",
+      "keyword": "終わってる",
+      "variants": [
+        "終わってる"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_789a408d-3769-4fe8-a66f-1170b6823de7": {
+      "status": "active",
+      "keyword": "鼻で笑",
+      "variants": [
+        "鼻で笑"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_45658a0f-d307-4106-be92-8ae9ca3f1ac3": {
+      "status": "active",
+      "keyword": "手帳もち",
+      "variants": [
+        "手帳もち",
+        "手帳持ち"
+      ],
+      "category_id": "attribute_attack",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_a89a5f74-2299-4591-adf0-0baa7c0f0795": {
+      "status": "active",
+      "keyword": "25歳が制服",
+      "variants": [
+        "25歳が制服"
+      ],
+      "category_id": "age_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_7360e530-3710-4cc2-b431-a4c1d6d53958": {
+      "status": "active",
+      "keyword": "いい年して",
+      "variants": [
+        "いい年して"
+      ],
+      "category_id": "age_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_f43c67ff-12a9-4303-872a-75125f20d2ec": {
+      "status": "active",
+      "keyword": "やらせて",
+      "variants": [
+        "やらせて"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_5343cb0b-c6e8-47b4-a6ee-690a0e815f73": {
+      "status": "active",
+      "keyword": "タイツ",
+      "variants": [
+        "タイツ"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_8202d903-457e-4a44-9814-dbe58b509d19": {
+      "status": "active",
+      "keyword": "興奮",
+      "variants": [
+        "興奮"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_0a1b4c91-8757-4083-b7c6-fefa093e8889": {
+      "status": "active",
+      "keyword": "裸足",
+      "variants": [
+        "裸足"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_9807d1aa-b5bb-47da-ab21-a57c122adc9a": {
+      "status": "active",
+      "keyword": "何を伝えたい",
+      "variants": [
+        "何を伝えたい",
+        "なにを伝えたい"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_0df89953-2ecc-4efc-b209-e80dfbab32e3": {
+      "status": "active",
+      "keyword": "意味わからん",
+      "variants": [
+        "意味わからん",
+        "意味分からん"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_4253f3c0-07fc-4681-b9ab-44e12b9e4542": {
+      "status": "active",
+      "keyword": "微妙",
+      "variants": [
+        "微妙"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_abd386ce-652d-4065-9d0f-05ad2a4361c3": {
+      "status": "active",
+      "keyword": "匂い嗅",
+      "variants": [
+        "匂い嗅",
+        "におい嗅"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_fe709547-ccd6-4c69-a646-e36fb61206a7": {
+      "status": "active",
+      "keyword": "イラッ",
+      "variants": [
+        "イラッ",
+        "いらっ"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_400fe7aa-f579-404a-8249-2037e7429ac5": {
+      "status": "active",
+      "keyword": "ぐろ",
+      "variants": [
+        "ぐろ",
+        "グロ"
+      ],
+      "category_id": "hate_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_e9e595ec-17e4-4eac-8e13-649c17604dae": {
+      "status": "active",
+      "keyword": "汗だく",
+      "variants": [
+        "汗だく"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_f098098d-4c54-40d3-940d-85c1c532df5b": {
+      "status": "active",
+      "keyword": "25で",
+      "variants": [
+        "25で"
+      ],
+      "category_id": "age_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_4eb60f66-3eb2-47dd-bf5c-2f1e49905b90": {
+      "status": "active",
+      "keyword": "何歳すか",
+      "variants": [
+        "何歳すか",
+        "何歳ですか"
+      ],
+      "category_id": "age_mockery",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    },
+    "kw_be21326d-d5e8-4160-ad86-7d27b5c2abc3": {
+      "status": "active",
+      "keyword": "いいねまで",
+      "variants": [
+        "いいねまで"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-24T15:54:00Z",
+      "first_publication_state": "published_at_unknown",
+      "introduced_at": null
+    }
+  }
+}

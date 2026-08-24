@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { hello } from "../dist/index.js";
+import fs from "node:fs";
 
-test("hello", () => {
-  assert.equal(hello("world"), "hello, world");
+test("package contains the browser entrypoint", () => {
+  assert.equal(fs.existsSync(new URL("../src/main.jsx", import.meta.url)), true);
 });

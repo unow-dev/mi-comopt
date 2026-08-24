@@ -1,0 +1,16 @@
+{
+  "labeling_status": "published",
+  "artifact_sha256": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+  "records": [
+    {
+      "record_id": "fixture-001",
+      "comment": "新しい候補",
+      "label": "direct_nuisance"
+    },
+    {
+      "record_id": "fixture-002",
+      "comment": "通常のコメント",
+      "label": "normal"
+    }
+  ]
+}

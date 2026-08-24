@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "run_id": "run_00000000-0000-4000-8000-000000000001",
+  "run_type": "bootstrap_migration",
+  "base_run_id": null,
+  "parent_manifest_content_sha256": null,
+  "started_at": "2026-08-24T15:54:00Z",
+  "completed_at": "2026-08-24T15:54:00Z",
+  "published_at": "2026-08-24T15:54:00Z",
+  "outcome": "published",
+  "source_dataset": {
+    "artifact_ref": "upstream://integrated-labeling/three-class",
+    "artifact_sha256": "sha256:8c95a01ead137927c8a7d9b23c81deee41bcd8e7647e58fe072bdfffcabb5ff6"
+  },
+  "evaluation_policy": {
+    "version": "1.0.0",
+    "content_sha256": "sha256:edfd0c0ea09f60ea505999bd3985fc6e1a44a1f706486cf7c2a52a941d049dba"
+  },
+  "taxonomy": {
+    "version": "1.0.0",
+    "content_sha256": "sha256:d79db026b946888661925307cf597c47b45ba7fcf86969cdcb2ce590fb5c1302"
+  },
+  "registry_before_content_sha256": null,
+  "registry_after_content_sha256": "sha256:3d34c39853368ed0435e407c705245e5091862b1f55b140e144f6943508c1372",
+  "artifacts": {
+    "bootstrap_candidate_id_map": {
+      "artifact_ref": "bootstrap_candidate_id_map.json",
+      "content_sha256": "sha256:7eddefbfdf7b8561684055f894e0985fe66cd439473f6b7b69ab91bf267c3f5f"
+    },
+    "candidate_evaluation": {
+      "artifact_ref": "candidate_evaluation.json",
+      "content_sha256": "sha256:b7570b744e3644e9c8bf0f5b87cb1fa67a7e1e3008eea266128886c23221af18"
+    }
+  },
+  "evaluator": {
+    "version": "1.0.0",
+    "source_revision": "local"
+  },
+  "published_candidates_content_sha256": "sha256:74256d8bb5e5e766294bbba9ad5fa283138f2f7870fc66fd15b76cef394664b3"
+}
