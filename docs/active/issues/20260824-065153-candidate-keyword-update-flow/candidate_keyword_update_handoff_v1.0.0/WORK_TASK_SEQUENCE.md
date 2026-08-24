@@ -14,7 +14,7 @@ Integrated Labeling の publication 済み 3-class artifact を起点に、候�
 - [x] 6. 公開と画面表示の検証範囲で、AIエージェントまたはCIが、bootstrap 結果、公開系成果物の再構成、競合時の保護および `NEW` 判定を確認する。
 - [x] 7. 外部候補提案境界の範囲で、AIエージェントが、外部LLMとの入出力契約、提案の検証および変更セットの確定処理を整備する。
 - [x] 8. 候補更新フローの統合検証範囲で、AIエージェントまたはCIが、fixture を用いた更新から公開までの一連の処理と、既存ローカル生成経路の廃止を確認する。
-- [ ] 9. リリース判断の範囲で、人間が、受入条件、移行結果および公開影響を確認してcutoverを承認する。
+- [x] 9. リリース判断の範囲で、人間が、受入条件、移行結果および公開影響を確認してcutoverを承認する。
 - [x] 10. 作業結果の範囲で、AIエージェントが、実施内容、検証結果および残存する運用上の注意点を記録する。
 
 ## Work Notes
@@ -28,4 +28,5 @@ Integrated Labeling の publication 済み 3-class artifact を起点に、候�
 - 決定的処理は `package/src/lib/candidate-workflow.js`、更新統合は `package/src/lib/update-flow.js`、atomic promotion は `package/src/lib/publication.js` に実装した。
 - `package/src/data/` のbootstrap成果物は187件、推奨度は高42・中11・任意134、初回 `NEW` は0件。`candidate-workflow validate-current` で再構成検証済み。
 - fixture proposalによる `full_update` E2Eで、外部LLM呼び出しなしのadd→評価→公開→`introduced_at`確定を検証済み。
-- 残存する判断は人間による受入確認とcutover承認。外部LLM provider/model/API実装は対象外のため実装していない。
+- 外部LLM provider/model/API実装は対象外のため実装していない。受入確認とcutover承認は完了した。
+- cutover承認済み。承認者: ユーザー、承認日: 2026-08-25、対象コミット: `c0ce13a`。
