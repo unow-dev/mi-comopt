@@ -1,0 +1,387 @@
+{
+  "spec_stage": 13,
+  "input_file": "merged_array(1).json",
+  "output_file": "merged_array_stage13_labeled.json",
+  "batch_size": 500,
+  "batch_count": 43,
+  "input_records": 21433,
+  "output_records": 21433,
+  "label_counts": {
+    "normal": 20810,
+    "nuisance": 623
+  },
+  "unique_handles": 11606,
+  "global_handle_history_indexed": true,
+  "handles_with_2plus_nuisance_records": 45,
+  "classification_passes": [
+    "明白なnuisance",
+    "嘲笑・羞恥",
+    "有害な決めつけ",
+    "性的対象化再監査",
+    "同一handle反復監査",
+    "コメント欄内対人攻撃",
+    "normal残存監査",
+    "表記揺れ・類似表現一貫性監査"
+  ],
+  "identical_comment_texts_with_mixed_labels": 1,
+  "checks": {
+    "input_count_equals_output_count": true,
+    "all_records_have_label": true,
+    "label_enum_valid": true,
+    "existing_5_fields_exact_match": true,
+    "input_order_preserved": true,
+    "only_expected_fields": true,
+    "batch_count_43": true,
+    "batch_sizes_valid": true,
+    "batches_reassemble_exactly": true
+  },
+  "all_checks_passed": true,
+  "input_sha256": "2adf2501890d48f3416c167b46877ec36e6b46cf6b179ec0e5edd84ca8bfa95f",
+  "output_sha256": "a46c140b1e979c7c2a5037c8fc4eb0797207bd2a6323ced51bfb7cf74e09ee17",
+  "batches": [
+    {
+      "file": "batch_001_00001-00500.json",
+      "records": 500,
+      "record_range_1_based": [
+        1,
+        500
+      ]
+    },
+    {
+      "file": "batch_002_00501-01000.json",
+      "records": 500,
+      "record_range_1_based": [
+        501,
+        1000
+      ]
+    },
+    {
+      "file": "batch_003_01001-01500.json",
+      "records": 500,
+      "record_range_1_based": [
+        1001,
+        1500
+      ]
+    },
+    {
+      "file": "batch_004_01501-02000.json",
+      "records": 500,
+      "record_range_1_based": [
+        1501,
+        2000
+      ]
+    },
+    {
+      "file": "batch_005_02001-02500.json",
+      "records": 500,
+      "record_range_1_based": [
+        2001,
+        2500
+      ]
+    },
+    {
+      "file": "batch_006_02501-03000.json",
+      "records": 500,
+      "record_range_1_based": [
+        2501,
+        3000
+      ]
+    },
+    {
+      "file": "batch_007_03001-03500.json",
+      "records": 500,
+      "record_range_1_based": [
+        3001,
+        3500
+      ]
+    },
+    {
+      "file": "batch_008_03501-04000.json",
+      "records": 500,
+      "record_range_1_based": [
+        3501,
+        4000
+      ]
+    },
+    {
+      "file": "batch_009_04001-04500.json",
+      "records": 500,
+      "record_range_1_based": [
+        4001,
+        4500
+      ]
+    },
+    {
+      "file": "batch_010_04501-05000.json",
+      "records": 500,
+      "record_range_1_based": [
+        4501,
+        5000
+      ]
+    },
+    {
+      "file": "batch_011_05001-05500.json",
+      "records": 500,
+      "record_range_1_based": [
+        5001,
+        5500
+      ]
+    },
+    {
+      "file": "batch_012_05501-06000.json",
+      "records": 500,
+      "record_range_1_based": [
+        5501,
+        6000
+      ]
+    },
+    {
+      "file": "batch_013_06001-06500.json",
+      "records": 500,
+      "record_range_1_based": [
+        6001,
+        6500
+      ]
+    },
+    {
+      "file": "batch_014_06501-07000.json",
+      "records": 500,
+      "record_range_1_based": [
+        6501,
+        7000
+      ]
+    },
+    {
+      "file": "batch_015_07001-07500.json",
+      "records": 500,
+      "record_range_1_based": [
+        7001,
+        7500
+      ]
+    },
+    {
+      "file": "batch_016_07501-08000.json",
+      "records": 500,
+      "record_range_1_based": [
+        7501,
+        8000
+      ]
+    },
+    {
+      "file": "batch_017_08001-08500.json",
+      "records": 500,
+      "record_range_1_based": [
+        8001,
+        8500
+      ]
+    },
+    {
+      "file": "batch_018_08501-09000.json",
+      "records": 500,
+      "record_range_1_based": [
+        8501,
+        9000
+      ]
+    },
+    {
+      "file": "batch_019_09001-09500.json",
+      "records": 500,
+      "record_range_1_based": [
+        9001,
+        9500
+      ]
+    },
+    {
+      "file": "batch_020_09501-10000.json",
+      "records": 500,
+      "record_range_1_based": [
+        9501,
+        10000
+      ]
+    },
+    {
+      "file": "batch_021_10001-10500.json",
+      "records": 500,
+      "record_range_1_based": [
+        10001,
+        10500
+      ]
+    },
+    {
+      "file": "batch_022_10501-11000.json",
+      "records": 500,
+      "record_range_1_based": [
+        10501,
+        11000
+      ]
+    },
+    {
+      "file": "batch_023_11001-11500.json",
+      "records": 500,
+      "record_range_1_based": [
+        11001,
+        11500
+      ]
+    },
+    {
+      "file": "batch_024_11501-12000.json",
+      "records": 500,
+      "record_range_1_based": [
+        11501,
+        12000
+      ]
+    },
+    {
+      "file": "batch_025_12001-12500.json",
+      "records": 500,
+      "record_range_1_based": [
+        12001,
+        12500
+      ]
+    },
+    {
+      "file": "batch_026_12501-13000.json",
+      "records": 500,
+      "record_range_1_based": [
+        12501,
+        13000
+      ]
+    },
+    {
+      "file": "batch_027_13001-13500.json",
+      "records": 500,
+      "record_range_1_based": [
+        13001,
+        13500
+      ]
+    },
+    {
+      "file": "batch_028_13501-14000.json",
+      "records": 500,
+      "record_range_1_based": [
+        13501,
+        14000
+      ]
+    },
+    {
+      "file": "batch_029_14001-14500.json",
+      "records": 500,
+      "record_range_1_based": [
+        14001,
+        14500
+      ]
+    },
+    {
+      "file": "batch_030_14501-15000.json",
+      "records": 500,
+      "record_range_1_based": [
+        14501,
+        15000
+      ]
+    },
+    {
+      "file": "batch_031_15001-15500.json",
+      "records": 500,
+      "record_range_1_based": [
+        15001,
+        15500
+      ]
+    },
+    {
+      "file": "batch_032_15501-16000.json",
+      "records": 500,
+      "record_range_1_based": [
+        15501,
+        16000
+      ]
+    },
+    {
+      "file": "batch_033_16001-16500.json",
+      "records": 500,
+      "record_range_1_based": [
+        16001,
+        16500
+      ]
+    },
+    {
+      "file": "batch_034_16501-17000.json",
+      "records": 500,
+      "record_range_1_based": [
+        16501,
+        17000
+      ]
+    },
+    {
+      "file": "batch_035_17001-17500.json",
+      "records": 500,
+      "record_range_1_based": [
+        17001,
+        17500
+      ]
+    },
+    {
+      "file": "batch_036_17501-18000.json",
+      "records": 500,
+      "record_range_1_based": [
+        17501,
+        18000
+      ]
+    },
+    {
+      "file": "batch_037_18001-18500.json",
+      "records": 500,
+      "record_range_1_based": [
+        18001,
+        18500
+      ]
+    },
+    {
+      "file": "batch_038_18501-19000.json",
+      "records": 500,
+      "record_range_1_based": [
+        18501,
+        19000
+      ]
+    },
+    {
+      "file": "batch_039_19001-19500.json",
+      "records": 500,
+      "record_range_1_based": [
+        19001,
+        19500
+      ]
+    },
+    {
+      "file": "batch_040_19501-20000.json",
+      "records": 500,
+      "record_range_1_based": [
+        19501,
+        20000
+      ]
+    },
+    {
+      "file": "batch_041_20001-20500.json",
+      "records": 500,
+      "record_range_1_based": [
+        20001,
+        20500
+      ]
+    },
+    {
+      "file": "batch_042_20501-21000.json",
+      "records": 500,
+      "record_range_1_based": [
+        20501,
+        21000
+      ]
+    },
+    {
+      "file": "batch_043_21001-21433.json",
+      "records": 433,
+      "record_range_1_based": [
+        21001,
+        21433
+      ]
+    }
+  ]
+}

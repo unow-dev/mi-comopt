@@ -1,0 +1,15 @@
+# ChatGPT手動投入による候補キーワード提案生成
+
+## 目的
+
+既存の決定的な候補更新フローに、ChatGPTへ候補キーワードの意味的な更新提案を手動で依頼する運用を接続し、ローカルで生成したhandoff bundleから検証済みの `candidate_proposal.json` を受け取れる状態にする。
+
+handoff bundleとChatGPTの返却結果は、既存候補のidentity、候補のライフサイクルおよび更新履歴を壊さず、ローカルのschema検証・lifecycle検証・canonical change set・deterministic evaluation・publicationへ追跡可能に引き渡せることを目的とする。ChatGPTの出力を直接公開せず、候補提案者とローカル更新処理の責務を分離する。
+
+## 背景
+
+候補キーワード更新フローでは、現在すでにcandidate registry、bootstrap、決定的評価、publication、`NEW` 表示および `full_update` のローカル処理が実装されている。一方、候補の意味的な発見・追加・更新を担う外部LLMとの実接続は、provider、model、API呼び出しおよび実際のprompt本文を対象外としていた。そこで初期運用ではAPI連携を前提にせず、担当者がChatGPTへ必要資料と固定promptを手動投入し、返却された `candidate_proposal.json` をローカル処理へ戻す方式を採用する。
+
+handoff内の `contracts/PROMPT_CONTRACT_v1.md` は、LLMが満たすべき意味上の指示と入出力境界を定義しているが、実際にChatGPTへ送る自然言語prompt本文ではない。実装済みの `generate-request` も、現在のpublication、candidate view、pre-evaluation、policyおよびtaxonomyをbindingする機械可読requestを生成するだけであり、ChatGPTへ手動で渡すためには、requestに加えてcandidate view、pre-evaluation、taxonomy、evaluation policyおよび候補発見に必要なdatasetまたは匿名化済み入力を一つのhandoff bundleとして準備する必要がある。
+
+そのため、現状は決定的なローカル更新経路とChatGPT手動提案生成の間に実運用上の境界が残っている。手動投入では、requestに記録されたsource dataset hashと実際にChatGPTへ渡すファイルの一致、匿名化によるhash変更、promptとmodel設定の記録、コピー・編集によるproposal改変、個人情報およびChatGPT上のファイル保持を管理する必要がある。ChatGPTの返却結果を直接publicationせず、request fingerprint、厳密なproposal schema、候補ライフサイクルおよび監査可能な実行履歴に結び付けてからローカル更新へ進めることが、このIssueで扱う背景となる。
