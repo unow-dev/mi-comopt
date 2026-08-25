@@ -38,6 +38,17 @@ export function prepareFullUpdate({
     throw staleError;
   }
 
+  if (
+    policy.policy_version !== request.evaluation_policy.version ||
+    contentSha256(policy) !== request.evaluation_policy.content_sha256 ||
+    taxonomy.taxonomy_version !== request.taxonomy.version ||
+    contentSha256(taxonomy) !== request.taxonomy.content_sha256
+  ) {
+    const bindingError = new Error("policy or taxonomy does not match request");
+    bindingError.code = "REQUEST_ARTIFACT_MISMATCH";
+    throw bindingError;
+  }
+
   const canonicalChangeSet = canonicalizeProposal(
     proposal,
     { request, registry, taxonomy },

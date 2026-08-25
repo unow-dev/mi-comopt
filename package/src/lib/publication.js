@@ -6,6 +6,11 @@ import { prettyJson } from "./candidate-workflow.js";
 function currentPath(rootDir) {
   return path.join(rootDir, "current");
 }
+
+export function resolveCurrentPublicationDir(rootDir) {
+  return fs.realpathSync(currentPath(path.resolve(rootDir)));
+}
+
 function readCurrentMeta(rootDir) {
   const file = path.join(currentPath(rootDir), "filterKeywordCandidates.meta.json");
   if (!fs.existsSync(file)) return null;

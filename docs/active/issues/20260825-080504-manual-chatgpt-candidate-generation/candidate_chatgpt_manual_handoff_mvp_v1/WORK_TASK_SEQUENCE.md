@@ -6,15 +6,15 @@
 
 ## Task Sequence
 
-- [ ] 1. 要求整理の範囲で、AIエージェントが、実装仕様、受入条件、決定済み事項および対象外事項を確認する。
-- [ ] 2. 実装前提の確認の範囲で、AIエージェントが、権威あるrepositoryにおける基準fixtureの所在と既存テストの実行可能性を確認する。
-- [ ] 3. runtime契約とpublication読取基盤の範囲で、AIエージェントが、handoff用の固定契約資源と単一のimmutable publicationを読むための基盤を整備する。
-- [ ] 4. handoff生成の範囲で、AIエージェントが、入力整合性、再評価、source identity、排他的出力およびbyte integrityを満たす手動handoff bundleの生成を整備する。
-- [ ] 5. 手動提案の受入と更新保護の範囲で、AIエージェントが、request artifact bindingとhandoff manifest検証を既存のfull-update処理へ整備する。
-- [ ] 6. 手動運用手順の範囲で、AIエージェントが、handoff生成、ChatGPTへの投入、JSON-only提案の保存およびfull-update実行の手順を記録する。
-- [ ] 7. 検証範囲で、AIエージェントまたはCIが、handoff生成、改変検知、更新処理、既存回帰および手動フローの受入条件を確認する。
+- [x] 1. 要求整理の範囲で、AIエージェントが、実装仕様、受入条件、決定済み事項および対象外事項を確認する。
+- [x] 2. 実装前提の確認の範囲で、AIエージェントが、権威あるrepositoryにおける基準fixtureの所在と既存テストの実行可能性を確認する。
+- [x] 3. runtime契約とpublication読取基盤の範囲で、AIエージェントが、handoff用の固定契約資源と単一のimmutable publicationを読むための基盤を整備する。
+- [x] 4. handoff生成の範囲で、AIエージェントが、入力整合性、再評価、source identity、排他的出力およびbyte integrityを満たす手動handoff bundleの生成を整備する。
+- [x] 5. 手動提案の受入と更新保護の範囲で、AIエージェントが、request artifact bindingとhandoff manifest検証を既存のfull-update処理へ整備する。
+- [x] 6. 手動運用手順の範囲で、AIエージェントが、handoff生成、ChatGPTへの投入、JSON-only提案の保存およびfull-update実行の手順を記録する。
+- [x] 7. 検証範囲で、AIエージェントまたはCIが、handoff生成、改変検知、更新処理、既存回帰および手動フローの受入条件を確認する。
 - [ ] 8. リリース判断の範囲で、人間が、受入条件、既知の基準fixture問題の扱いおよび運用開始の可否を判断する。
-- [ ] 9. 作業結果の範囲で、AIエージェントが、実施内容、検証結果および残存する運用上の注意点を記録する。
+- [x] 9. 作業結果の範囲で、AIエージェントが、実施内容、検証結果および残存する運用上の注意点を記録する。
 
 ## Work Notes
 
@@ -28,3 +28,9 @@
 - `--handoff-manifest`は既存`full-update`との後方互換のためoptionalとするが、手動handoff運用では必須とする。manifest検証時は候補proposal以外のhandoffファイルとCLI入力のraw bytesをfail-closedで照合する。
 - supplied snapshotでは既存bootstrap testに必要な権威fixtureが欠け、`npm test`は9件成功・1件失敗となる。権威あるrepositoryにも存在しない場合は、本Issueの回帰判断前に別の準備作業として復元方針を扱う。
 - MVPの対象外は、ChatGPT/OpenAI API連携、provider/model設定の記録、匿名化、raw response・実行履歴・retry、ZIP生成、出力修復、自動rebase、policy/taxonomy移行、JSON Schema engine導入およびcandidate IDの決定的生成とする。
+- ベースラインコミットは `0b85e50`（`chore: establish implementation baseline`）。
+- この作業ツリーでは基準fixtureが存在し、ベースラインおよび変更後の `npm test` は14件成功・0件失敗となった。
+- `package/contracts/candidate-handoff/v1/` に固定契約資源を配置し、`prepare-handoff`、排他的outdir、raw byte manifest、source identity解決、単一current snapshotを実装した。
+- `prepareFullUpdate()` のpolicy/taxonomy bindingと `full-update --handoff-manifest` の10ファイルおよびCLI入力のbyte照合を実装した。
+- `package/tests/handoff.test.js` でresolver固定、決定性、raw copy、既存outdir保護、manifest改変検知を確認した。`npm run build` も成功した。
+- リリース可否と、基準fixture問題を正式にどう扱うかは人間の判断待ちである。
