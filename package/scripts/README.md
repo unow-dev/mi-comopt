@@ -22,11 +22,15 @@ LLM provider/APIは呼び出しません。`candidate-proposal.json` は外部�
 npm run candidate-workflow -- prepare-handoff \
   --publication-root ./candidate-publication \
   --dataset ./three-class.json \
+  --labeling-summary ./three_class_final/summary.json \
+  --labeling-validation ./validation_report.json \
   --policy ./candidateEvaluationPolicy.json \
   --taxonomy ./candidateTaxonomy.json \
   --source-ref upstream://integrated-labeling/three-class \
   --outdir ./handoff
 ```
+
+`--labeling-summary` と `--labeling-validation` を両方指定すると、pipeline version、mandatory review完了、Stage13 SHA、最終three-class datasetのSHAをローカルで照合します。照合済みの最終dataset SHAがcandidate requestのsource identityになります。片方だけの指定や不一致は失敗します。両方を省略すれば、従来のsource artifact SHAを使うhandoff経路です。
 
 `--outdir` は既存directoryを指定できません。生成物は11ファイルで、`handoff_manifest.json` はローカル検証用なのでChatGPTへ渡しません。
 

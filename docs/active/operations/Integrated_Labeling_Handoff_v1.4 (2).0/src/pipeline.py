@@ -5,6 +5,7 @@ import argparse
 import csv
 import hashlib
 import json
+import re
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -119,8 +120,9 @@ def cmd_prepare_stage13(args: argparse.Namespace) -> int:
     outdir.mkdir(parents=True, exist_ok=True)
     batches_dir = outdir / "pending_batches"
     batches_dir.mkdir(exist_ok=True)
-    for stale in batches_dir.glob("batch_*.json"):
-        stale.unlink()
+    for stale in batches_dir.iterdir():
+        if stale.is_file() and re.fullmatch(r"batch_\d{3}(?:_context|_adjudications)?\.(?:json|csv)", stale.name):
+            stale.unlink()
 
     current = validate_raw_records(load_json(input_path), exact_fields=True)
     reference = validate_stage13_records(load_json(ref_path))
@@ -187,9 +189,6 @@ def cmd_prepare_stage13(args: argparse.Namespace) -> int:
             similar.append(item)
         pending.append(item)
 
-    for b, start in enumerate(range(0, len(pending), args.batch_size), 1):
-        dump_json(batches_dir / f"batch_{b:03d}.json", pending[start:start + args.batch_size])
-
     pending_handles = sorted({p["record"].get("handle") for p in pending}, key=lambda x: str(x))
     handle_context = {}
     for h in pending_handles:
@@ -198,6 +197,19 @@ def cmd_prepare_stage13(args: argparse.Namespace) -> int:
             "current_input": current_by_handle.get(h, []),
             "prior_reference": ref_by_handle.get(h, []),
         }
+
+    for b, start in enumerate(range(0, len(pending), args.batch_size), 1):
+        batch_name = f"batch_{b:03d}"
+        batch_items = pending[start:start + args.batch_size]
+        dump_json(batches_dir / f"{batch_name}.json", batch_items)
+        batch_handles = sorted({item["record"].get("handle") for item in batch_items}, key=lambda x: str(x))
+        batch_context = {str(handle): handle_context[str(handle)] for handle in batch_handles}
+        dump_json(batches_dir / f"{batch_name}_context.json", batch_context)
+        with (batches_dir / f"{batch_name}_adjudications.csv").open("w", encoding="utf-8-sig", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(["source_index_1_based", "source_record_sha256", "label", "note"])
+            for item in batch_items:
+                w.writerow([item["source_index_1_based"], item["source_record_sha256"], "", ""])
 
     dump_json(outdir / "stage13_exact_reuse.json", reused)
     dump_json(outdir / "stage13_review_queue.json", pending)
@@ -272,6 +284,64 @@ def load_stage13_adjudications(path: Path) -> dict[int, dict]:
     return out
 
 
+def load_stage13_adjudications_dir(directory: Path, workspace: Path, pending: list[dict]) -> dict[int, dict]:
+    if not directory.is_dir():
+        raise FileNotFoundError(f"Stage 13 adjudications directory is unavailable: {directory}")
+
+    expected_by_name: dict[str, set[int]] = {}
+    batches_dir = workspace / "pending_batches"
+    if batches_dir.is_dir():
+        for batch_path in sorted(batches_dir.iterdir()):
+            match = re.fullmatch(r"(batch_\d{3})\.json", batch_path.name)
+            if not match:
+                continue
+            batch = load_json(batch_path)
+            if not isinstance(batch, list):
+                raise ValueError(f"Stage 13 batch must be an array: {batch_path.name}")
+            expected_by_name[f"{match.group(1)}_adjudications.csv"] = {
+                int(item["source_index_1_based"]) for item in batch
+            }
+
+    actual_names = {
+        item.name for item in directory.iterdir()
+        if item.is_file() and re.fullmatch(r"batch_.*_adjudications\.csv", item.name)
+    }
+    expected_names = set(expected_by_name)
+    unknown = sorted(actual_names - expected_names)
+    missing = sorted(expected_names - actual_names)
+    if unknown:
+        raise ValueError(f"unknown Stage 13 batch adjudication files: {unknown}")
+    if missing:
+        raise ValueError(f"missing Stage 13 batch adjudication files: {missing}")
+
+    merged: dict[int, dict] = {}
+    for name in sorted(expected_by_name):
+        decisions = load_stage13_adjudications(directory / name)
+        expected_indices = expected_by_name[name]
+        actual_indices = set(decisions)
+        if actual_indices != expected_indices:
+            missing_indices = sorted(expected_indices - actual_indices)
+            extra_indices = sorted(actual_indices - expected_indices)
+            raise ValueError(
+                f"Stage 13 batch adjudication coverage mismatch for {name}; "
+                f"missing={missing_indices[:20]}, extra={extra_indices[:20]}"
+            )
+        for idx, decision in decisions.items():
+            if not decision["note"].strip():
+                raise ValueError(f"Stage 13 directory adjudication requires a non-empty note at source index {idx}")
+            if idx in merged:
+                raise ValueError(f"duplicate adjudication for source index {idx} across batch files")
+            merged[idx] = decision
+
+    pending_indices = {int(item["source_index_1_based"]) for item in pending}
+    if set(merged) != pending_indices:
+        raise ValueError(
+            "Stage 13 directory adjudications do not cover the prepared pending records; "
+            f"missing={sorted(pending_indices - set(merged))[:20]}, extra={sorted(set(merged) - pending_indices)[:20]}"
+        )
+    return merged
+
+
 def _load_bound_reference(args: argparse.Namespace, state: dict) -> tuple[Path, list[dict]]:
     ref_path = args.reference
     if ref_path is None:
@@ -317,7 +387,16 @@ def cmd_finalize_stage13(args: argparse.Namespace) -> int:
 
     reused = load_json(workspace / "stage13_exact_reuse.json")
     pending = load_json(workspace / "stage13_review_queue.json")
-    adjudications = load_stage13_adjudications(args.adjudications)
+    adjudications_file = getattr(args, "adjudications", None)
+    adjudications_dir = getattr(args, "adjudications_dir", None)
+    if adjudications_file and adjudications_dir:
+        raise ValueError("--adjudications and --adjudications-dir are mutually exclusive")
+    if adjudications_dir:
+        adjudications = load_stage13_adjudications_dir(adjudications_dir, workspace, pending)
+    elif adjudications_file:
+        adjudications = load_stage13_adjudications(adjudications_file)
+    else:
+        raise ValueError("one of --adjudications or --adjudications-dir is required")
 
     reused_map: dict[int, str] = {}
     for item in reused:
@@ -991,7 +1070,9 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("finalize-stage13", help="Assemble clean Stage 13 output from bound workspace + adjudications")
     p.add_argument("input_json", type=Path)
     p.add_argument("--workspace", type=Path, required=True)
-    p.add_argument("--adjudications", type=Path, required=True)
+    g = p.add_mutually_exclusive_group(required=True)
+    g.add_argument("--adjudications", type=Path)
+    g.add_argument("--adjudications-dir", type=Path)
     p.add_argument("--reference", type=Path, help="Reference snapshot used during prepare; SHA-256 must match workspace")
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--audit", type=Path)

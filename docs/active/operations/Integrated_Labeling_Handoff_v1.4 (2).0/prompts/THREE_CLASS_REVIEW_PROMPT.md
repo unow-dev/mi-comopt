@@ -1,6 +1,6 @@
 # REVIEW_PROMPT
 
-以下のテンプレートを、人手レビュー補助またはLLMレビューに使用する。
+以下のテンプレートを、人手レビュー補助またはLLMレビューに使用する。入力の `manual_overrides.csv` を完成させ、既存のCSV契約で返却する。
 
 ---
 
@@ -36,29 +36,18 @@
 
 ## 入力
 
-```json
-{
-  "record_key": "...",
-  "label_original": "normal|nuisance",
-  "label_provisional": "...",
-  "matched_reactive_terms": [],
-  "review_reasons": [],
-  "comment": "..."
-}
-```
+`review_queue.csv` と `manual_overrides.csv` を読み込む。`manual_overrides.csv` の既存行について、`record_key` は変更せず、`label` と `note` だけを完成させる。
 
 ## 出力
 
-説明文を追加せず次のJSONだけを返す。
+`manual_overrides.csv` と同じ行集合を、次のCSVだけで返す。説明文、Markdown code fence、JSONは追加しない。
 
-```json
-{
-  "record_key": "...",
-  "label": "direct_nuisance|reactive|normal",
-  "reason_code": "direct_target|anti_target|support_reaction|meta_reaction|quoted_attack|mixed_target|spam|normal_context",
-  "rationale": "80文字以内の短い根拠"
-}
+```csv
+record_key,label,note
+...
 ```
+
+`record_key` は入力テンプレートの値をそのまま維持する。`label` は `direct_nuisance`、`reactive`、`normal` のいずれか、`note` は判断根拠を記入する。P0/P1行のnoteは空欄にしない。
 
 ## 混在時
 

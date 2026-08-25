@@ -156,6 +156,130 @@ def test_stage13_pending_and_context():
     return 1
 
 
+def _multi_batch_stage13_fixture(td: Path):
+    ref = [
+        {"username":"u","handle":"h1","comment":"known","postedAt":"1-1","postedDate":"2026-01-01","label":"normal"},
+    ]
+    raw = [
+        {"username":"u","handle":"h1","comment":"known","postedAt":"1-1","postedDate":"2026-01-01"},
+        {"username":"v","handle":"h2","comment":"pending two","postedAt":"1-2","postedDate":"2026-01-02"},
+        {"username":"w","handle":"h3","comment":"pending three","postedAt":"1-3","postedDate":"2026-01-03"},
+    ]
+    rp, ip = td / "ref.json", td / "input.json"
+    mod.dump_json(rp, ref)
+    mod.dump_json(ip, raw)
+    return rp, ip, raw
+
+
+def _write_batch_response(directory: Path, name: str, batch: list[dict], *, label="normal", note="reviewed"):
+    directory.mkdir(parents=True, exist_ok=True)
+    with (directory / f"{name}_adjudications.csv").open("w", encoding="utf-8-sig", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["source_index_1_based", "source_record_sha256", "label", "note"])
+        for item in batch:
+            w.writerow([item["source_index_1_based"], item["source_record_sha256"], label, note])
+
+
+def test_stage13_batch_handoff_and_directory_finalize():
+    with tempfile.TemporaryDirectory() as td_raw:
+        td = Path(td_raw)
+        rp, ip, raw = _multi_batch_stage13_fixture(td)
+        work = td / "work"
+        mod.cmd_prepare_stage13(Namespace(input_json=ip, reference=rp, outdir=work, batch_size=1))
+        batches_dir = work / "pending_batches"
+        assert_eq(
+            sorted(p.name for p in batches_dir.iterdir()),
+            [
+                "batch_001.json", "batch_001_adjudications.csv", "batch_001_context.json",
+                "batch_002.json", "batch_002_adjudications.csv", "batch_002_context.json",
+            ],
+            "per-batch artifact set",
+        )
+        for number, handle in [("001", "h2"), ("002", "h3")]:
+            batch = load(batches_dir / f"batch_{number}.json")
+            context = load(batches_dir / f"batch_{number}_context.json")
+            assert_eq(set(context), {handle}, f"batch {number} context handles")
+            assert_eq(context, {handle: load(work / "stage13_handle_context.json")[handle]}, f"batch {number} context subset")
+            with (batches_dir / f"batch_{number}_adjudications.csv").open("r", encoding="utf-8-sig", newline="") as f:
+                rows = list(csv.DictReader(f))
+            assert_eq(rows[0]["source_index_1_based"], str(batch[0]["source_index_1_based"]), f"batch {number} source index")
+            assert_eq(rows[0]["source_record_sha256"], batch[0]["source_record_sha256"], f"batch {number} source sha")
+            assert_eq(rows[0]["label"], "", f"batch {number} label template")
+            assert_eq(rows[0]["note"], "", f"batch {number} note template")
+
+        for name in ["batch_999.json", "batch_999_context.json", "batch_999_adjudications.csv"]:
+            (batches_dir / name).write_text("stale", encoding="utf-8")
+        mod.cmd_prepare_stage13(Namespace(input_json=ip, reference=rp, outdir=work, batch_size=1))
+        for name in ["batch_999.json", "batch_999_context.json", "batch_999_adjudications.csv"]:
+            assert_eq((batches_dir / name).exists(), False, f"stale artifact removed: {name}")
+
+        responses = td / "chatgpt-stage13"
+        _write_batch_response(responses, "batch_001", load(batches_dir / "batch_001.json"), label="normal", note="reviewed two")
+        _write_batch_response(responses, "batch_002", load(batches_dir / "batch_002.json"), label="nuisance", note="reviewed three")
+        output = td / "stage13.json"
+        rc = mod.cmd_finalize_stage13(Namespace(
+            input_json=ip, workspace=work, adjudications=None, adjudications_dir=responses,
+            reference=rp, output=output, audit=None,
+        ))
+        assert_eq(rc, 0, "directory finalize rc")
+        assert_eq([item["label"] for item in load(output)], ["normal", "normal", "nuisance"], "directory final labels")
+    return 2
+
+
+def test_stage13_directory_rejects_invalid_response_sets():
+    cases = ["missing", "unknown", "duplicate", "non_pending", "invalid_label", "sha_mismatch", "coverage", "blank_note"]
+    for case in cases:
+        with tempfile.TemporaryDirectory() as td_raw:
+            td = Path(td_raw)
+            rp, ip, _ = _multi_batch_stage13_fixture(td)
+            work = td / "work"
+            mod.cmd_prepare_stage13(Namespace(input_json=ip, reference=rp, outdir=work, batch_size=1))
+            batches_dir = work / "pending_batches"
+            responses = td / "responses"
+            responses.mkdir()
+            batch_one = load(batches_dir / "batch_001.json")
+            batch_two = load(batches_dir / "batch_002.json")
+            if case != "missing":
+                _write_batch_response(responses, "batch_001", batch_one)
+            if case != "missing":
+                _write_batch_response(responses, "batch_002", batch_two)
+
+            if case == "unknown":
+                (responses / "batch_999_adjudications.csv").write_text("source_index_1_based,source_record_sha256,label,note\n", encoding="utf-8")
+            elif case == "duplicate":
+                with (responses / "batch_001_adjudications.csv").open("a", encoding="utf-8", newline="") as f:
+                    f.write(f"{batch_one[0]['source_index_1_based']},{batch_one[0]['source_record_sha256']},normal,duplicate\n")
+            elif case == "non_pending":
+                with (responses / "batch_001_adjudications.csv").open("w", encoding="utf-8-sig", newline="") as f:
+                    w = csv.writer(f)
+                    w.writerow(["source_index_1_based", "source_record_sha256", "label", "note"])
+                    w.writerow([999, "0" * 64, "normal", "extra"])
+            elif case == "invalid_label":
+                with (responses / "batch_001_adjudications.csv").open("w", encoding="utf-8-sig", newline="") as f:
+                    w = csv.writer(f)
+                    w.writerow(["source_index_1_based", "source_record_sha256", "label", "note"])
+                    w.writerow([batch_one[0]["source_index_1_based"], batch_one[0]["source_record_sha256"], "unknown", "invalid"])
+            elif case == "sha_mismatch":
+                with (responses / "batch_001_adjudications.csv").open("w", encoding="utf-8-sig", newline="") as f:
+                    w = csv.writer(f)
+                    w.writerow(["source_index_1_based", "source_record_sha256", "label", "note"])
+                    w.writerow([batch_one[0]["source_index_1_based"], "0" * 64, "normal", "stale"])
+            elif case == "coverage":
+                with (responses / "batch_001_adjudications.csv").open("w", encoding="utf-8-sig", newline="") as f:
+                    csv.writer(f).writerow(["source_index_1_based", "source_record_sha256", "label", "note"])
+            elif case == "blank_note":
+                with (responses / "batch_001_adjudications.csv").open("w", encoding="utf-8-sig", newline="") as f:
+                    w = csv.writer(f)
+                    w.writerow(["source_index_1_based", "source_record_sha256", "label", "note"])
+                    w.writerow([batch_one[0]["source_index_1_based"], batch_one[0]["source_record_sha256"], "normal", "  "])
+
+            assert_raises(ValueError, lambda: mod.cmd_finalize_stage13(Namespace(
+                input_json=ip, workspace=work, adjudications=None, adjudications_dir=responses,
+                reference=rp, output=td / "out.json", audit=None,
+            )), f"directory rejection: {case}")
+    return len(cases)
+
+
 def test_stage13_rejects_stale_input():
     with tempfile.TemporaryDirectory() as td_raw:
         td = Path(td_raw)
@@ -542,6 +666,8 @@ def main():
         ("baseline_three_class", test_baseline_three_class),
         ("stage13_exact_reuse_roundtrip", test_stage13_exact_reuse_roundtrip),
         ("stage13_pending_and_context", test_stage13_pending_and_context),
+        ("stage13_batch_handoff_and_directory_finalize", test_stage13_batch_handoff_and_directory_finalize),
+        ("stage13_directory_rejects_invalid_response_sets", test_stage13_directory_rejects_invalid_response_sets),
         ("stage13_rejects_stale_input", test_stage13_rejects_stale_input),
         ("stage13_rejects_stale_adjudication_fingerprint", test_stage13_rejects_stale_adjudication_fingerprint),
         ("three_class_fail_closed_publication", test_three_class_fail_closed_publication),

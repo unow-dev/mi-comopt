@@ -28,6 +28,8 @@ import { validateGeneratedArtifacts } from "../src/lib/artifact-validation.js";
 
 const LEGACY_BOOTSTRAP_SOURCE_SHA256 = "sha256:ce1baa51f927782496f617907880dd0c1442ddf5a2b8700746baa9b0f3879095";
 const SHA256_PATTERN = /^sha256:[0-9a-f]{64}$/;
+const PLAIN_SHA256_PATTERN = /^[0-9a-f]{64}$/;
+const LABELING_PIPELINE_VERSION = "1.4.0";
 const HANDOFF_FILES = [
   "prompt.txt",
   "PROMPT_CONTRACT_v1.md",
@@ -55,7 +57,7 @@ function usage() {
   candidate-workflow generate-request --registry FILE --evaluation FILE --policy FILE --taxonomy FILE --base-run-id ID --base-registry-sha SHA --source-sha SHA --out FILE [--source-ref REF]
   candidate-workflow canonicalize-proposal --request FILE --proposal FILE --registry FILE --taxonomy FILE --out FILE
   candidate-workflow validate-current --dir DIR --taxonomy FILE
-  candidate-workflow prepare-handoff --publication-root DIR --dataset FILE --policy FILE --taxonomy FILE --outdir DIR [--request-id ID] [--source-ref REF] [--source-sha SHA]
+  candidate-workflow prepare-handoff --publication-root DIR --dataset FILE --policy FILE --taxonomy FILE --outdir DIR [--labeling-summary FILE --labeling-validation FILE] [--request-id ID] [--source-ref REF] [--source-sha SHA]
   candidate-workflow full-update --registry FILE --request FILE --proposal FILE --dataset FILE --policy FILE --taxonomy FILE --outdir DIR [--candidate-view FILE] [--pre-evaluation FILE] [--handoff-manifest FILE] [--run-id ID] [--published-at TIMESTAMP] [--export-dir DIR]
 `);
 }
@@ -145,6 +147,77 @@ function resolveDatasetSourceRef({ explicitRef, resolvedSha, baseManifest }) {
   if (explicitRef !== undefined) return explicitRef;
   if (resolvedSha === baseManifest.source_dataset.artifact_sha256) return baseManifest.source_dataset.artifact_ref;
   throw codedError("SOURCE_REF_REQUIRED", "--source-ref is required for a new source dataset artifact SHA");
+}
+
+function readLabelingEvidence(file, name) {
+  try {
+    return readJson(file);
+  } catch (caught) {
+    throw codedError("LABELING_EVIDENCE_INVALID", `${name} cannot be read: ${caught.message}`);
+  }
+}
+
+function assertPlainSha(value, description) {
+  if (typeof value !== "string" || !PLAIN_SHA256_PATTERN.test(value)) {
+    throw codedError("LABELING_EVIDENCE_INVALID", `${description} must be 64 lowercase hexadecimal characters`);
+  }
+}
+
+function verifyLabelingEvidence({ summaryFile, validationFile, datasetInput, explicitSourceSha }) {
+  const summary = readLabelingEvidence(summaryFile, "labeling summary");
+  const validation = readLabelingEvidence(validationFile, "labeling validation");
+  if (!summary || typeof summary !== "object" || Array.isArray(summary)) {
+    throw codedError("LABELING_EVIDENCE_INVALID", "labeling summary must be a JSON object");
+  }
+  if (!validation || typeof validation !== "object" || Array.isArray(validation)) {
+    throw codedError("LABELING_EVIDENCE_INVALID", "labeling validation must be a JSON object");
+  }
+  if (summary.pipeline_version !== LABELING_PIPELINE_VERSION || validation.pipeline_version !== LABELING_PIPELINE_VERSION) {
+    throw codedError("LABELING_EVIDENCE_INVALID", `pipeline_version must be ${LABELING_PIPELINE_VERSION}`);
+  }
+  if (summary.final_published !== true) {
+    throw codedError("LABELING_EVIDENCE_INVALID", "labeling summary is not final_published");
+  }
+  if (summary.unresolved_mandatory_reviews !== 0) {
+    throw codedError("LABELING_EVIDENCE_INVALID", "mandatory labeling reviews remain unresolved");
+  }
+  if (validation.all_checks_passed !== true) {
+    throw codedError("LABELING_EVIDENCE_INVALID", "labeling validation checks did not pass");
+  }
+  if (validation.checks?.three_class_mandatory_reviews_resolved !== true) {
+    throw codedError("LABELING_EVIDENCE_INVALID", "mandatory three-class reviews are not marked resolved");
+  }
+  if (validation.three_class_audit?.unresolved_mandatory !== 0) {
+    throw codedError("LABELING_EVIDENCE_INVALID", "validation reports unresolved mandatory three-class reviews");
+  }
+
+  assertPlainSha(summary.input_sha256, "summary.input_sha256");
+  assertPlainSha(validation.sha256?.stage13, "validation.sha256.stage13");
+  if (summary.input_sha256 !== validation.sha256.stage13) {
+    throw codedError("LABELING_EVIDENCE_INVALID", "summary.input_sha256 does not match validation.sha256.stage13");
+  }
+  assertPlainSha(summary.final_output_sha256, "summary.final_output_sha256");
+  assertPlainSha(validation.sha256?.three_class, "validation.sha256.three_class");
+  if (summary.final_output_sha256 !== validation.sha256.three_class) {
+    throw codedError("LABELING_EVIDENCE_INVALID", "summary.final_output_sha256 does not match validation.sha256.three_class");
+  }
+
+  const evidenceSha = `sha256:${summary.final_output_sha256}`;
+  if (byteSha256(datasetInput.bytes) !== evidenceSha) {
+    throw codedError("LABELING_EVIDENCE_INVALID", "final dataset bytes do not match the labeling evidence SHA");
+  }
+  if (explicitSourceSha !== undefined) {
+    if (!SHA256_PATTERN.test(explicitSourceSha) || explicitSourceSha !== evidenceSha) {
+      throw codedError("LABELING_EVIDENCE_INVALID", "--source-sha does not match the verified labeling SHA");
+    }
+  }
+  if (datasetInput.value && !Array.isArray(datasetInput.value)) {
+    const embedded = [datasetInput.value.artifact_sha256, datasetInput.value.manifest?.artifact_sha256].filter((value) => value !== undefined);
+    if (embedded.some((value) => value !== evidenceSha)) {
+      throw codedError("LABELING_EVIDENCE_INVALID", "dataset embedded artifact SHA does not match the verified labeling SHA");
+    }
+  }
+  return { sourceSha: evidenceSha };
 }
 
 function readPublicationJson(publicationDir, name) {
@@ -358,6 +431,11 @@ function prepareHandoff(args) {
   const datasetInput = readJsonWithBytes(args.dataset);
   const policyInput = readJsonWithBytes(args.policy);
   const taxonomyInput = readJsonWithBytes(args.taxonomy);
+  const labelingSummaryFile = args["labeling-summary"];
+  const labelingValidationFile = args["labeling-validation"];
+  if ((labelingSummaryFile === undefined) !== (labelingValidationFile === undefined)) {
+    throw codedError("LABELING_EVIDENCE_INVALID", "--labeling-summary and --labeling-validation must be provided together");
+  }
 
   validateGeneratedArtifacts({ registry, evaluation, publishedCandidates, currentMeta, manifest, taxonomy: taxonomyInput.value });
   assertHandoffBaseBindings({
@@ -368,7 +446,14 @@ function prepareHandoff(args) {
     taxonomy: taxonomyInput.value,
   });
 
-  const sourceSha = resolveDatasetSourceSha(datasetInput.value, args["source-sha"]);
+  const sourceSha = labelingSummaryFile
+    ? verifyLabelingEvidence({
+        summaryFile: labelingSummaryFile,
+        validationFile: labelingValidationFile,
+        datasetInput,
+        explicitSourceSha: args["source-sha"],
+      }).sourceSha
+    : resolveDatasetSourceSha(datasetInput.value, args["source-sha"]);
   const sourceRef = resolveDatasetSourceRef({
     explicitRef: args["source-ref"],
     resolvedSha: sourceSha,

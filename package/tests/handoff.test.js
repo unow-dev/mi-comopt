@@ -66,6 +66,62 @@ function hash(bytes) {
   return `sha256:${crypto.createHash("sha256").update(bytes).digest("hex")}`;
 }
 
+function writeJsonFile(file, value) {
+  fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`);
+}
+
+function makeLabelingEvidence(root, overrides = {}) {
+  const dataset = {
+    labeling_status: "published",
+    records: [
+      { record_id: "evidence-001", comment: "候補", label: "direct_nuisance" },
+      { record_id: "evidence-002", comment: "通常", label: "normal" },
+    ],
+  };
+  const datasetPath = path.join(root, "three_class_labeled.json");
+  writeJsonFile(datasetPath, dataset);
+  const finalSha = hash(fs.readFileSync(datasetPath)).slice("sha256:".length);
+  const stage13Sha = "a".repeat(64);
+  const summary = {
+    pipeline_version: "1.4.0",
+    final_published: true,
+    unresolved_mandatory_reviews: 0,
+    input_sha256: stage13Sha,
+    final_output_sha256: finalSha,
+  };
+  const validation = {
+    pipeline_version: "1.4.0",
+    all_checks_passed: true,
+    checks: { three_class_mandatory_reviews_resolved: true },
+    three_class_audit: { unresolved_mandatory: 0 },
+    sha256: { stage13: stage13Sha, three_class: finalSha },
+  };
+  if (overrides.summary) Object.assign(summary, overrides.summary);
+  if (overrides.validation) Object.assign(validation, overrides.validation);
+  const summaryPath = path.join(root, "summary.json");
+  const validationPath = path.join(root, "validation_report.json");
+  writeJsonFile(summaryPath, summary);
+  writeJsonFile(validationPath, validation);
+  return { datasetPath, summaryPath, validationPath, finalSha };
+}
+
+function prepareWithOptions(root, outdir, options = {}) {
+  const result = runWorkflow([
+    "prepare-handoff",
+    "--publication-root", root,
+    "--dataset", options.dataset ?? datasetFile,
+    "--policy", policyFile,
+    "--taxonomy", taxonomyFile,
+    "--source-ref", options.sourceRef ?? "fixture://e2e-dataset",
+    "--request-id", options.requestId ?? "cgr_123e4567-e89b-42d3-a456-426614174000",
+    ...(options.labelingSummary ? ["--labeling-summary", options.labelingSummary] : []),
+    ...(options.labelingValidation ? ["--labeling-validation", options.labelingValidation] : []),
+    ...(options.sourceSha ? ["--source-sha", options.sourceSha] : []),
+    "--outdir", outdir,
+  ]);
+  return result;
+}
+
 test("resolveCurrentPublicationDir fixes the immutable target", () => {
   const root = makePublicationRoot();
   const resolved = resolveCurrentPublicationDir(root);
@@ -117,6 +173,177 @@ test("prepare-handoff rejects existing outdir without touching it", () => {
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /HANDOFF_OUTPUT_EXISTS/);
   assert.equal(fs.readFileSync(sentinel, "utf8"), "keep me");
+});
+
+test("prepare-handoff accepts verified labeling evidence and binds the final dataset bytes", () => {
+  const root = makePublicationRoot();
+  const evidence = makeLabelingEvidence(root);
+  const outdir = path.join(root, "evidence-handoff");
+  const result = prepareWithOptions(root, outdir, {
+    dataset: evidence.datasetPath,
+    labelingSummary: evidence.summaryPath,
+    labelingValidation: evidence.validationPath,
+    sourceRef: "upstream://integrated-labeling/three-class/final",
+  });
+  assert.equal(result.status, 0, result.stderr);
+  const request = JSON.parse(fs.readFileSync(path.join(outdir, "candidate_generation_request.json"), "utf8"));
+  assert.equal(request.source_dataset.artifact_sha256, `sha256:${evidence.finalSha}`);
+});
+
+test("prepare-handoff rejects a partial labeling evidence pair", () => {
+  const root = makePublicationRoot();
+  const evidence = makeLabelingEvidence(root);
+  const result = prepareWithOptions(root, path.join(root, "handoff"), {
+    dataset: evidence.datasetPath,
+    labelingSummary: evidence.summaryPath,
+  });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /LABELING_EVIDENCE_INVALID/);
+});
+
+test("prepare-handoff rejects unsupported labeling pipeline versions", () => {
+  const root = makePublicationRoot();
+  const evidence = makeLabelingEvidence(root, { summary: { pipeline_version: "1.3.0" } });
+  const result = prepareWithOptions(root, path.join(root, "handoff"), {
+    dataset: evidence.datasetPath,
+    labelingSummary: evidence.summaryPath,
+    labelingValidation: evidence.validationPath,
+  });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /LABELING_EVIDENCE_INVALID/);
+});
+
+test("prepare-handoff rejects unpublished or unresolved labeling output", () => {
+  for (const summary of [
+    { final_published: false },
+    { unresolved_mandatory_reviews: 1 },
+  ]) {
+    const root = makePublicationRoot();
+    const evidence = makeLabelingEvidence(root, { summary });
+    const result = prepareWithOptions(root, path.join(root, "handoff"), {
+      dataset: evidence.datasetPath,
+      labelingSummary: evidence.summaryPath,
+      labelingValidation: evidence.validationPath,
+    });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /LABELING_EVIDENCE_INVALID/);
+  }
+});
+
+test("prepare-handoff rejects failed validation evidence", () => {
+  const root = makePublicationRoot();
+  const evidence = makeLabelingEvidence(root, { validation: { all_checks_passed: false } });
+  const result = prepareWithOptions(root, path.join(root, "handoff"), {
+    dataset: evidence.datasetPath,
+    labelingSummary: evidence.summaryPath,
+    labelingValidation: evidence.validationPath,
+  });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /LABELING_EVIDENCE_INVALID/);
+});
+
+test("prepare-handoff rejects unresolved mandatory validation evidence", () => {
+  for (const validation of [
+    { checks: { three_class_mandatory_reviews_resolved: false } },
+    { three_class_audit: { unresolved_mandatory: 1 } },
+  ]) {
+    const root = makePublicationRoot();
+    const evidence = makeLabelingEvidence(root, { validation });
+    const result = prepareWithOptions(root, path.join(root, "handoff"), {
+      dataset: evidence.datasetPath,
+      labelingSummary: evidence.summaryPath,
+      labelingValidation: evidence.validationPath,
+    });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /LABELING_EVIDENCE_INVALID/);
+  }
+});
+
+test("prepare-handoff rejects labeling Stage 13 lineage mismatch", () => {
+  const root = makePublicationRoot();
+  const evidence = makeLabelingEvidence(root, { validation: { sha256: { stage13: "b".repeat(64) } } });
+  const result = prepareWithOptions(root, path.join(root, "handoff"), {
+    dataset: evidence.datasetPath,
+    labelingSummary: evidence.summaryPath,
+    labelingValidation: evidence.validationPath,
+  });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /LABELING_EVIDENCE_INVALID/);
+});
+
+test("prepare-handoff rejects final dataset SHA mismatch", () => {
+  const root = makePublicationRoot();
+  const evidence = makeLabelingEvidence(root, { summary: { final_output_sha256: "c".repeat(64) } });
+  const result = prepareWithOptions(root, path.join(root, "handoff"), {
+    dataset: evidence.datasetPath,
+    labelingSummary: evidence.summaryPath,
+    labelingValidation: evidence.validationPath,
+  });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /LABELING_EVIDENCE_INVALID/);
+});
+
+test("prepare-handoff rejects final dataset bytes changed after validation", () => {
+  const root = makePublicationRoot();
+  const evidence = makeLabelingEvidence(root);
+  fs.appendFileSync(evidence.datasetPath, "\n");
+  const result = prepareWithOptions(root, path.join(root, "handoff"), {
+    dataset: evidence.datasetPath,
+    labelingSummary: evidence.summaryPath,
+    labelingValidation: evidence.validationPath,
+  });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /LABELING_EVIDENCE_INVALID/);
+});
+
+test("prepare-handoff rejects an explicit source SHA that differs from evidence", () => {
+  const root = makePublicationRoot();
+  const evidence = makeLabelingEvidence(root);
+  const result = prepareWithOptions(root, path.join(root, "handoff"), {
+    dataset: evidence.datasetPath,
+    labelingSummary: evidence.summaryPath,
+    labelingValidation: evidence.validationPath,
+    sourceSha: `sha256:${"d".repeat(64)}`,
+  });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /LABELING_EVIDENCE_INVALID/);
+});
+
+test("verified labeling handoff can proceed through full-update publication", () => {
+  const root = makePublicationRoot();
+  const evidence = makeLabelingEvidence(root);
+  const handoffDir = path.join(root, "evidence-handoff");
+  const prepared = prepareWithOptions(root, handoffDir, {
+    dataset: evidence.datasetPath,
+    labelingSummary: evidence.summaryPath,
+    labelingValidation: evidence.validationPath,
+    sourceRef: "upstream://integrated-labeling/three-class/final",
+  });
+  assert.equal(prepared.status, 0, prepared.stderr);
+  const requestPath = path.join(handoffDir, "candidate_generation_request.json");
+  const request = JSON.parse(fs.readFileSync(requestPath, "utf8"));
+  const proposalFile = path.join(root, "candidate_proposal.json");
+  writeJsonFile(proposalFile, {
+    schema_version: 1,
+    request_id: request.request_id,
+    input_fingerprint: request.input_fingerprint,
+    actions: [],
+  });
+  const result = runWorkflow([
+    "full-update",
+    "--registry", path.join(root, "current/candidate_registry.json"),
+    "--request", requestPath,
+    "--proposal", proposalFile,
+    "--dataset", path.join(handoffDir, "source_dataset.json"),
+    "--policy", path.join(handoffDir, "evaluation_policy.json"),
+    "--taxonomy", path.join(handoffDir, "taxonomy.json"),
+    "--candidate-view", path.join(handoffDir, "candidate_view.json"),
+    "--pre-evaluation", path.join(handoffDir, "pre_evaluation.json"),
+    "--handoff-manifest", path.join(handoffDir, "handoff_manifest.json"),
+    "--outdir", root,
+  ]);
+  assert.equal(result.status, 0, result.stderr);
+  assert.notEqual(fs.readlinkSync(path.join(root, "current")), "publications/base");
 });
 
 test("full-update verifies handoff bytes before publication", () => {
