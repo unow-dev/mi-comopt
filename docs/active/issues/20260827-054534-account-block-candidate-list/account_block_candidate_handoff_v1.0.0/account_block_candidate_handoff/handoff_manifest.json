@@ -1,0 +1,24 @@
+{
+  "handoff_version": "1.0.0",
+  "topic": "account-block-candidate-list",
+  "spec_status": "implementation-ready",
+  "spec_completion_percent": 100,
+  "generated_date": "2026-08-27",
+  "authoritative_files": [
+    "UPDATED_ISSUE_BODY.md",
+    "docs/ACCOUNT_BLOCK_CANDIDATE_CONTRACT.md",
+    "config/accountBlockCandidatePolicy.json"
+  ],
+  "supporting_files": [
+    "README_FIRST.md",
+    "docs/IMPLEMENTATION_PLAN.md",
+    "docs/TEST_MATRIX.md",
+    "docs/PR_REVIEW_CHECKLIST.md",
+    "docs/DECISION_LOG.md",
+    "docs/BASELINE_NOTES.md",
+    "schemas/accountBlockCandidates.example.json",
+    "schemas/accountBlockCandidates.meta.example.json",
+    "schemas/accountBlockCandidateRunManifest.example.json"
+  ],
+  "note": "This handoff supersedes intermediate proposals from the discussion. The supplied discussion set does not contain the actual published three_class_labeled.json required for production artifact generation."
+}

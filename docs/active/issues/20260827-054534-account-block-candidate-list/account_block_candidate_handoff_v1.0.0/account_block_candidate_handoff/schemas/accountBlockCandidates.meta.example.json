@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "run_id": "run_00000000-0000-4000-8000-000000000000",
+  "run_manifest_content_sha256": "sha256:<64hex>",
+  "published_at": "2026-08-27T00:00:00Z",
+  "candidates_content_sha256": "sha256:<64hex>",
+  "dataset_artifact_sha256": "sha256:<64hex>",
+  "three_class_policy_version": "<version>",
+  "unresolved_optional_p2_reviews": 0,
+  "candidate_policy_version": "1.0.0",
+  "candidate_policy_content_sha256": "sha256:<64hex>"
+}

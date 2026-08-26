@@ -1,0 +1,18 @@
+[
+  {
+    "handle": "example_handle",
+    "direct_nuisance_count": 4,
+    "evidence_sample": [
+      {
+        "comment": "example comment A",
+        "postedAt": "8-20",
+        "postedDate": "2026-08-20"
+      },
+      {
+        "comment": "example comment B",
+        "postedAt": "8-24",
+        "postedDate": "2026-08-24"
+      }
+    ]
+  }
+]

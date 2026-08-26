@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "run_id": "run_00000000-0000-4000-8000-000000000000",
+  "run_type": "full_snapshot",
+  "started_at": "2026-08-27T00:00:00Z",
+  "completed_at": "2026-08-27T00:00:01Z",
+  "published_at": "2026-08-27T00:00:01Z",
+  "outcome": "published",
+  "source_dataset": {
+    "artifact_ref": "upstream://integrated-labeling/three-class",
+    "artifact_sha256": "sha256:<64hex>"
+  },
+  "source_summary": {
+    "artifact_ref": "upstream://integrated-labeling/three-class/summary",
+    "content_sha256": "sha256:<64hex>",
+    "final_published": true,
+    "three_class_policy_version": "<version>",
+    "unresolved_optional_p2_reviews": 0
+  },
+  "candidate_policy": {
+    "version": "1.0.0",
+    "content_sha256": "sha256:<64hex>"
+  },
+  "generator": {
+    "version": "1.0.0",
+    "content_sha256": "sha256:<64hex>"
+  },
+  "statistics": {
+    "source_record_count": 0,
+    "distinct_behavior_event_count": 0,
+    "collapsed_source_rows": 0,
+    "direct_nuisance_event_count": 0,
+    "candidate_count": 0
+  },
+  "artifacts": {
+    "candidate_view": {
+      "artifact_ref": "accountBlockCandidates.json",
+      "content_sha256": "sha256:<64hex>"
+    }
+  }
+}
