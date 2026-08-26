@@ -14,7 +14,7 @@
 - [x] 6. 候補生成へのevidence接続の範囲で、AIエージェントが、ラベリング完了証跡と最終datasetの系譜をfail-closedで検証してhandoffを生成できる状態へ変更する。
 - [x] 7. 運用手順の範囲で、AIエージェントが、rawデータ準備からChatGPTレビュー、候補提案およびlocal publicationまでの再現可能な手順を記録する。
 - [x] 8. 検証範囲で、AIエージェントまたはCIが、正常系、semantic review不要時、回答・証跡の改変検知、既存互換性および公開までの一連の受入条件を確認する。
-- [ ] 9. リリース判断の範囲で、人間が、受入条件、既知の基準fixture問題および運用開始の可否を判断する。
+- [x] 9. リリース判断の範囲で、人間が、受入条件、既知の基準fixture問題および運用開始の可否を判断する。
 - [x] 10. 作業結果の範囲で、AIエージェントが、実施内容、検証結果、残存する注意点および承認結果を記録する。
 
 ## Work Notes
@@ -30,4 +30,5 @@
 - Stage13はbatchごとのJSON/context/CSV template、stale artifact cleanup、`--adjudications-dir` のexpected set・coverage・SHA・note検証を追加し、single-file経路を維持した。
 - 3-ClassのChatGPT返却契約を `record_key,label,note` CSVへ変更し、candidate `prepare-handoff` にsummary/validation/final dataset SHAのevidence modeを追加した。handoffは11ファイルのまま。
 - 検証結果: Integrated Labeling 22 test groups、candidate package 25 tests、`npm run build`、manifest file hash checkが成功した。
-- Task 9のリリース可否判断と承認は人間の残作業。
+- リリース判断: 人間による運用開始承認済み。`validate-current` は `valid=true`、run IDは `run_bf8163da-cc49-4549-a42a-f02636d4b97c`、公開candidateは194件。
+- リリース対象: `work/20260826/candidate-publication-final/current/` のatomic publication。

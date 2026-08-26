@@ -167,11 +167,13 @@
       "status": "active",
       "keyword": "vt.tiktok.com",
       "variants": [
-        "vt.tiktok.com"
+        "vt.tiktok.com",
+        "lin.ee/",
+        "lite.tiktok.com"
       ],
       "category_id": "link_spam",
       "created_at": "2026-08-24T15:54:00Z",
-      "last_changed_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-26T14:51:16Z",
       "first_publication_state": "published_at_unknown",
       "introduced_at": null
     },
@@ -260,13 +262,19 @@
       "keyword": "一人で何して",
       "variants": [
         "一人で何して",
+        "1人でなんして",
+        "1人で何やって",
         "ひとりでなにして",
+        "ひとりでなんして",
         "ひとりで何して",
-        "一人でなにして"
+        "ひとりで何やって",
+        "一人でなにして",
+        "一人でなんして",
+        "一人で何やって"
       ],
       "category_id": "behavior_mockery",
       "created_at": "2026-08-24T15:54:00Z",
-      "last_changed_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-26T14:51:16Z",
       "first_publication_state": "published_at_unknown",
       "introduced_at": null
     },
@@ -354,14 +362,16 @@
       "keyword": "流石にきつい",
       "variants": [
         "流石にきつい",
+        "さすがにきっつい",
         "さすがにきつい",
         "さすがにキツい",
+        "流石にきっつい",
         "流石にキツい",
         "流石にキツイ"
       ],
       "category_id": "hate_mockery",
       "created_at": "2026-08-24T15:54:00Z",
-      "last_changed_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-26T14:51:16Z",
       "first_publication_state": "published_at_unknown",
       "introduced_at": null
     },
@@ -452,11 +462,12 @@
       "keyword": "きちぃ",
       "variants": [
         "きちぃ",
-        "きちい"
+        "きちい",
+        "きちー"
       ],
       "category_id": "hate_mockery",
       "created_at": "2026-08-24T15:54:00Z",
-      "last_changed_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-26T14:51:16Z",
       "first_publication_state": "published_at_unknown",
       "introduced_at": null
     },
@@ -611,11 +622,12 @@
       "variants": [
         "汗を飲",
         "汗だけで摂取",
+        "汗貰って",
         "汗集めて飲"
       ],
       "category_id": "sexual_objectification",
       "created_at": "2026-08-24T15:54:00Z",
-      "last_changed_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-26T14:51:16Z",
       "first_publication_state": "published_at_unknown",
       "introduced_at": null
     },
@@ -661,11 +673,12 @@
       "status": "active",
       "keyword": "炎上目的",
       "variants": [
-        "炎上目的"
+        "炎上目的",
+        "炎上わざと"
       ],
       "category_id": "behavior_mockery",
       "created_at": "2026-08-24T15:54:00Z",
-      "last_changed_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-26T14:51:16Z",
       "first_publication_state": "published_at_unknown",
       "introduced_at": null
     },
@@ -862,11 +875,12 @@
       "keyword": "25歳",
       "variants": [
         "25歳",
+        "25ってマジか",
         "25才"
       ],
       "category_id": "age_mockery",
       "created_at": "2026-08-24T15:54:00Z",
-      "last_changed_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-26T14:51:16Z",
       "first_publication_state": "published_at_unknown",
       "introduced_at": null
     },
@@ -927,11 +941,13 @@
       "keyword": "やりたい",
       "variants": [
         "やりたい",
+        "めちゃくちゃにしたい",
+        "メチャクチャにはしたい",
         "ヤりたい"
       ],
       "category_id": "sexual_objectification",
       "created_at": "2026-08-24T15:54:00Z",
-      "last_changed_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-26T14:51:16Z",
       "first_publication_state": "published_at_unknown",
       "introduced_at": null
     },
@@ -1233,11 +1249,15 @@
       "status": "active",
       "keyword": "いいねしてください",
       "variants": [
-        "いいねしてください"
+        "いいねしてください",
+        "いいねたくさんほしい",
+        "いいねほしい",
+        "いいねや再投稿お願いします",
+        "いいね頼んだ"
       ],
       "category_id": "spam_solicitation",
       "created_at": "2026-08-24T15:54:00Z",
-      "last_changed_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-26T14:51:16Z",
       "first_publication_state": "published_at_unknown",
       "introduced_at": null
     },
@@ -1471,11 +1491,12 @@
       "keyword": "見てらんない",
       "variants": [
         "見てらんない",
-        "見てられない"
+        "見てられない",
+        "見てられん"
       ],
       "category_id": "hate_mockery",
       "created_at": "2026-08-24T15:54:00Z",
-      "last_changed_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-26T14:51:16Z",
       "first_publication_state": "published_at_unknown",
       "introduced_at": null
     },
@@ -2372,11 +2393,12 @@
       "keyword": "何歳すか",
       "variants": [
         "何歳すか",
-        "何歳ですか"
+        "何歳ですか",
+        "何歳でちゅか"
       ],
       "category_id": "age_mockery",
       "created_at": "2026-08-24T15:54:00Z",
-      "last_changed_at": "2026-08-24T15:54:00Z",
+      "last_changed_at": "2026-08-26T14:51:16Z",
       "first_publication_state": "published_at_unknown",
       "introduced_at": null
     },
@@ -2391,6 +2413,93 @@
       "last_changed_at": "2026-08-24T15:54:00Z",
       "first_publication_state": "published_at_unknown",
       "introduced_at": null
+    },
+    "kw_6f3ef838-32e8-4153-9ac8-7a8765f3ac1a": {
+      "status": "active",
+      "keyword": "自分のこと好き",
+      "variants": [
+        "自分のこと好き",
+        "自分好きすぎ"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-08-26T14:51:16Z",
+      "last_changed_at": "2026-08-26T14:51:16Z",
+      "first_publication_state": "published_at_known",
+      "introduced_at": "2026-08-26T14:51:16Z"
+    },
+    "kw_45e36356-5e08-4d82-ab64-32bcc10c1fa4": {
+      "status": "active",
+      "keyword": "私の買って欲しい",
+      "variants": [
+        "私の買って欲しい"
+      ],
+      "category_id": "spam_solicitation",
+      "created_at": "2026-08-26T14:51:16Z",
+      "last_changed_at": "2026-08-26T14:51:16Z",
+      "first_publication_state": "published_at_known",
+      "introduced_at": "2026-08-26T14:51:16Z"
+    },
+    "kw_8ca7bbd6-cc5b-4288-8e12-a91c404ab0a8": {
+      "status": "active",
+      "keyword": "いつもよりはマシ",
+      "variants": [
+        "いつもよりはマシ",
+        "まだマシ"
+      ],
+      "category_id": "comparison_belittling",
+      "created_at": "2026-08-26T14:51:16Z",
+      "last_changed_at": "2026-08-26T14:51:16Z",
+      "first_publication_state": "published_at_known",
+      "introduced_at": "2026-08-26T14:51:16Z"
+    },
+    "kw_ef6486ec-de78-4e3c-ae6d-70768a3f61d9": {
+      "status": "active",
+      "keyword": "成長した体見せて",
+      "variants": [
+        "成長した体見せて",
+        "成長して欲しい"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-08-26T14:51:16Z",
+      "last_changed_at": "2026-08-26T14:51:16Z",
+      "first_publication_state": "published_at_known",
+      "introduced_at": "2026-08-26T14:51:16Z"
+    },
+    "kw_ba7f870e-f9e8-42ff-b2b0-31431b6bf730": {
+      "status": "active",
+      "keyword": "かわいいなー俺もこういう子と付き合いたかったな",
+      "variants": [
+        "かわいいなー俺もこういう子と付き合いたかったな"
+      ],
+      "category_id": "copypasta_spam",
+      "created_at": "2026-08-26T14:51:16Z",
+      "last_changed_at": "2026-08-26T14:51:16Z",
+      "first_publication_state": "published_at_known",
+      "introduced_at": "2026-08-26T14:51:16Z"
+    },
+    "kw_fadfb2ea-9808-4534-8b29-4d94a323fa7d": {
+      "status": "active",
+      "keyword": "@eeumn: @ラッキー: 他のコメントどこいった",
+      "variants": [
+        "@eeumn: @ラッキー: 他のコメントどこいった"
+      ],
+      "category_id": "copypasta_spam",
+      "created_at": "2026-08-26T14:51:16Z",
+      "last_changed_at": "2026-08-26T14:51:16Z",
+      "first_publication_state": "published_at_known",
+      "introduced_at": "2026-08-26T14:51:16Z"
+    },
+    "kw_74fb2256-4253-45b8-a62e-36d397290563": {
+      "status": "active",
+      "keyword": "ブロスタとは",
+      "variants": [
+        "ブロスタとは"
+      ],
+      "category_id": "copypasta_spam",
+      "created_at": "2026-08-26T14:51:16Z",
+      "last_changed_at": "2026-08-26T14:51:16Z",
+      "first_publication_state": "published_at_known",
+      "introduced_at": "2026-08-26T14:51:16Z"
     }
   }
 }
