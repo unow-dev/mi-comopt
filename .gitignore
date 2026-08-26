@@ -5,6 +5,9 @@ node_modules/
 dist/
 *.tsbuildinfo
 
+# Local labeling, handoff, and publication workspaces
+/work/
+
 # Test output
 coverage/
 
