@@ -259,7 +259,7 @@ export default function App() {
           {view === "keywords" ? (
             <>
               <p className="eyebrow">FILTER KEYWORD CANDIDATES</p>
-              <h1>フィルターキーワード候補リスト</h1>
+              <h1>フィルターキーワード候補</h1>
               <p className="description">
                 フィルターに追加するキーワード候補です。
                 <br />
@@ -271,7 +271,7 @@ export default function App() {
           ) : (
             <>
               <p className="eyebrow">ACCOUNT BLOCK CANDIDATES</p>
-              <h1>アカウントブロック候補リスト</h1>
+              <h1>アカウントブロック候補</h1>
               <p className="description">
                 ブロック候補のアカウントです。
                 <br />
