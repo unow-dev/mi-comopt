@@ -263,6 +263,8 @@ export default function App() {
               <p className="description">
                 フィルターに追加するキーワード候補です。
                 <br />
+                迷惑コメントへの該当数と誤判定の少なさで評価しています。
+                <br />
                 詳細から判定結果を確認できます。
               </p>
             </>
@@ -272,6 +274,8 @@ export default function App() {
               <h1>アカウントブロック候補リスト</h1>
               <p className="description">
                 ブロック候補のアカウントです。
+                <br />
+                同じアカウントから迷惑コメントが2件以上ある場合に候補としています。
                 <br />
                 詳細から根拠を確認できます。
               </p>
