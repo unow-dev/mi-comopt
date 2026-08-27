@@ -11,8 +11,12 @@ function formatPercent(value) {
 
 async function copyToClipboard(text) {
   if (navigator.clipboard?.writeText) {
-    await navigator.clipboard.writeText(text);
-    return;
+    try {
+      await navigator.clipboard.writeText(text);
+      return;
+    } catch {
+      // Clipboard APIが使えない環境では、従来のdocument fallbackを使う。
+    }
   }
 
   const textarea = document.createElement("textarea");

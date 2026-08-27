@@ -31,5 +31,6 @@
 - `npm test`（36件成功）、`npm run verify:data`、`npm run build` はすべて成功した。
 - タスク7でAccount view（候補一覧、根拠開閉、raw handleコピー、候補0件表示）を追加し、keyword viewを初期表示として維持した。
 - 残件8: UIの初期表示、view切替、根拠表示、コピー、候補0件表示および対象外情報について、手動受入確認が必要。自動build・artifact検証は完了している。
+- Chrome headlessで初期キーワードview、account切替、候補54カード、keywordタブ非表示、根拠開閉および対象外情報なしを確認した。clipboardはheadlessのfocus/permission制限で実値確認できていない。
 - 残件9: 公開入力の正当性、privacy懸念、受入条件およびリリース可否について人間の判断が必要。
 - タスク10として、実施内容、検証結果、公開dataset snapshotおよび残存注意点を本Work Notesへ記録した。
