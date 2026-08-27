@@ -261,8 +261,8 @@ export default function App() {
               <p className="eyebrow">FILTER KEYWORD CANDIDATES</p>
               <h1>フィルターキーワード候補リスト</h1>
               <p className="description">
-                direct_nuisance の命中を重視し、normal のヒットだけを誤爆として評価。
-                reactive は推奨度の減点に使わず、参考値として表示しています。
+                コメントの内容をもとに、フィルターへ追加する候補のキーワードを整理しています。
+                詳細から判定の内訳や表記ゆれを確認できます。
               </p>
             </>
           ) : (
@@ -270,7 +270,8 @@ export default function App() {
               <p className="eyebrow">ACCOUNT BLOCK CANDIDATES</p>
               <h1>アカウントブロック候補リスト</h1>
               <p className="description">
-                反復する direct_nuisance 行為を確認し、手動でブロックを判断するための候補です。
+                同じアカウントによる迷惑なコメントの繰り返しを確認し、
+                ブロックするかどうかを手動で判断するための候補です。
               </p>
             </>
           )}
