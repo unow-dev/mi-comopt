@@ -262,6 +262,7 @@ export default function App() {
               <h1>フィルターキーワード候補リスト</h1>
               <p className="description">
                 コメントの内容をもとに、フィルターへ追加する候補のキーワードを整理しています。
+                <br />
                 詳細から判定の内訳や表記ゆれを確認できます。
               </p>
             </>
@@ -271,6 +272,7 @@ export default function App() {
               <h1>アカウントブロック候補リスト</h1>
               <p className="description">
                 同じアカウントによる迷惑なコメントの繰り返しを確認し、
+                <br />
                 ブロックするかどうかを手動で判断するための候補です。
               </p>
             </>
