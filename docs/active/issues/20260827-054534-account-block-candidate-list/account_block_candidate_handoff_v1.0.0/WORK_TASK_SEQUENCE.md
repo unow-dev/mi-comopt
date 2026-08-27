@@ -11,11 +11,11 @@
 - [x] 3. 候補生成契約の実装範囲で、AIエージェントが、exact `handle` とdistinct behavior eventに基づく候補判定、決定的な根拠抽出および入力不整合のfail-closed処理を実現する。
 - [x] 4. 公開と系譜検証の実装範囲で、AIエージェントが、候補・meta・run manifestの整合性、キーワード候補とのdataset snapshot一致および検証完了後の安全な公開を実現する。
 - [x] 5. 候補生成と公開の検証範囲で、AIエージェントまたはCIが、候補境界、重複・競合、決定性、改変検知、snapshot不一致および公開失敗時の保護を確認する。
-- [ ] 6. 公開済み入力を用いる成果物生成の範囲で、AIエージェントが、検証済みの `three_class_labeled.json` と対応する `summary.json` から、リリース対象の候補成果物を生成する。
-- [ ] 7. アカウント候補表示の実装範囲で、AIエージェントが、既存のフィルターキーワード表示を維持したまま、候補一覧、根拠の開閉およびraw handleのコピーを確認できる状態へ変更する。
+- [x] 6. 公開済み入力を用いる成果物生成の範囲で、AIエージェントが、検証済みの `three_class_labeled.json` と対応する `summary.json` から、リリース対象の候補成果物を生成する。
+- [x] 7. アカウント候補表示の実装範囲で、AIエージェントが、既存のフィルターキーワード表示を維持したまま、候補一覧、根拠の開閉およびraw handleのコピーを確認できる状態へ変更する。
 - [ ] 8. 利用者向け表示の検証範囲で、AIエージェントまたはCIが、初期表示、view切替、根拠表示、コピー、候補0件時の表示および対象外情報が表示されないことを確認する。
 - [ ] 9. リリース判断の範囲で、人間が、公開入力の正当性、privacy上の懸念、受入条件およびリリース可否を判断する。
-- [ ] 10. 作業結果の範囲で、AIエージェントが、実施内容、検証結果、公開したdataset snapshotおよび残存する注意点を記録する。
+- [x] 10. 作業結果の範囲で、AIエージェントが、実施内容、検証結果、公開したdataset snapshotおよび残存する注意点を記録する。
 
 ## Work Notes
 
@@ -24,10 +24,12 @@
 - account候補の初回リリースには、対応する公開済み3-Classデータとsummaryが必要である。handoffには当該実データ本体が含まれないため、候補生成実装とfixture検証は先行できる一方、実成果物生成・E2E publication確認・リリース判断はこの入力が利用可能になってから行う。
 - MVPはmanual review専用であり、自動ブロック、永続状態管理、score・推奨度、期間window、subtype推定、handle変更をまたぐ同一性推定、検索および複雑なfilterは対象外とする。
 - Close gateは `npm test`、`npm run verify:data`、`npm run build` の成功、およびUI手動確認とする。
-- ベースラインコミットは `931b38b`、候補生成workflow実装コミットは `96610b4`。
+- ベースラインコミットは `931b38b`、候補生成workflow実装コミットは `96610b4`。artifact/UI統合は本更新で実施する。
 - タスク1〜5は、正本確認、現状確認、候補生成・公開検証実装および36件のfixtureテスト成功まで完了した。
-- `npm test`（36件成功）と `npm run build` は成功した。`npm run verify:data` は、正式なaccount artifact未生成のためfail-closedで失敗する。
-- 残件6: handoffに正式な `three_class_labeled.json` と対応 `summary.json` が含まれておらず、リリース対象artifactを生成できない。
-- 残件7〜8: account artifactがないため、account viewの統合と利用者向けUI手動確認を未実施。
+- `work/20260826/three_class_final` を入力に採用し、`final_published=true`、mandatory review 0件、dataset SHA `sha256:b15bf5a4f431e56fb1d5b9e1490b94fbca3950ad596f4db142877c45bb0d95b3`、unresolved optional P2 46件を確認した。未公開の `work/20260826/three_class` は使用していない。
+- タスク6で候補54件、source record 24,622件、distinct behavior event 24,285件、collapsed source rows 337件のaccount artifactを生成し、`src/data` へ公開した。
+- `npm test`（36件成功）、`npm run verify:data`、`npm run build` はすべて成功した。
+- タスク7でAccount view（候補一覧、根拠開閉、raw handleコピー、候補0件表示）を追加し、keyword viewを初期表示として維持した。
+- 残件8: UIの初期表示、view切替、根拠表示、コピー、候補0件表示および対象外情報について、手動受入確認が必要。自動build・artifact検証は完了している。
 - 残件9: 公開入力の正当性、privacy懸念、受入条件およびリリース可否について人間の判断が必要。
-- 残件10: 公開したdataset snapshotが未確定のため、リリース結果の記録は未完了。
+- タスク10として、実施内容、検証結果、公開dataset snapshotおよび残存注意点を本Work Notesへ記録した。

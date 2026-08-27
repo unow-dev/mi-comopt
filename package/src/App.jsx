@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import candidates from "./data/filterKeywordCandidates.json";
+import accountCandidates from "./data/accountBlockCandidates.json";
 import workflowConfig from "./data/candidateWorkflowConfig.json";
 import { isNewCandidate } from "./lib/new-badge.js";
 
@@ -143,7 +144,67 @@ function KeywordCard({ item, onCopy, now }) {
   );
 }
 
+function AccountCard({ item, onCopy }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <article className="account-card">
+      <div className="account-card__main">
+        <div className="account-card__content">
+          <strong className="account-handle">{item.handle}</strong>
+          <span className="account-count">
+            direct_nuisance {item.direct_nuisance_count}件
+          </span>
+        </div>
+
+        <div className="account-card__actions">
+          <button
+            className="copy-button"
+            type="button"
+            onClick={() => onCopy(item.handle)}
+            aria-label={`${item.handle} をコピー`}
+          >
+            コピー
+          </button>
+
+          <button
+            className={open ? "detail-toggle detail-toggle--open" : "detail-toggle"}
+            type="button"
+            onClick={() => setOpen((current) => !current)}
+            aria-expanded={open}
+          >
+            根拠を確認
+            <span className="detail-toggle__icon" aria-hidden="true">⌄</span>
+          </button>
+        </div>
+      </div>
+
+      {open && (
+        <div className="account-card__details">
+          <div className="account-evidence-heading">
+            <strong>根拠例 {item.evidence_sample.length}件</strong>
+            <span>計{item.direct_nuisance_count}件</span>
+          </div>
+
+          <ol className="account-evidence-list">
+            {item.evidence_sample.map((evidence, index) => (
+              <li key={`${evidence.postedDate}-${evidence.postedAt}-${index}`}>
+                <div className="account-evidence-date">
+                  <time dateTime={evidence.postedDate}>{evidence.postedDate}</time>
+                  <span>{evidence.postedAt}</span>
+                </div>
+                <p>{evidence.comment}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+    </article>
+  );
+}
+
 export default function App() {
+  const [view, setView] = useState("keywords");
   const [recommendation, setRecommendation] = useState("");
   const [toast, setToast] = useState("");
   const toastTimerRef = useRef(null);
@@ -163,54 +224,97 @@ export default function App() {
     toastTimerRef.current = window.setTimeout(() => setToast(""), 1400);
   }
 
-  async function handleCopy(keyword) {
-    await copyToClipboard(keyword);
-    showToast(`「${keyword}」をコピーしました`);
+  async function handleCopy(value) {
+    await copyToClipboard(value);
+    showToast(`「${value}」をコピーしました`);
   }
-
-
 
   return (
     <main className="page-shell">
       <section className="hero">
         <div>
-          <p className="eyebrow">FILTER KEYWORD CANDIDATES</p>
-          <h1>フィルターキーワード候補リスト</h1>
-          <p className="description">
-            direct_nuisance の命中を重視し、normal のヒットだけを誤爆として評価。
-            reactive は推奨度の減点に使わず、参考値として表示しています。
-          </p>
+          {view === "keywords" ? (
+            <>
+              <p className="eyebrow">FILTER KEYWORD CANDIDATES</p>
+              <h1>フィルターキーワード候補リスト</h1>
+              <p className="description">
+                direct_nuisance の命中を重視し、normal のヒットだけを誤爆として評価。
+                reactive は推奨度の減点に使わず、参考値として表示しています。
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="eyebrow">ACCOUNT BLOCK CANDIDATES</p>
+              <h1>アカウントブロック候補リスト</h1>
+              <p className="description">
+                反復する direct_nuisance 行為を確認し、手動でブロックを判断するための候補です。
+              </p>
+            </>
+          )}
         </div>
       </section>
 
-      <section className="controls controls--simple">
-        <div className="recommendation-tabs" role="group" aria-label="推奨度">
-          {[
-            ["", "すべて"],
-            ["高推奨", "高推奨"],
-            ["中推奨", "中推奨"],
-            ["任意", "任意"],
-          ].map(([value, label]) => (
-            <button
-              key={label}
-              type="button"
-              className={
-                recommendation === value
-                  ? "recommendation-tab recommendation-tab--active"
-                  : "recommendation-tab"
-              }
-              onClick={() => setRecommendation(value)}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+      <section className="view-switcher" aria-label="表示切替">
+        <button
+          className={view === "keywords" ? "view-switcher__button view-switcher__button--active" : "view-switcher__button"}
+          type="button"
+          aria-pressed={view === "keywords"}
+          onClick={() => setView("keywords")}
+        >
+          フィルターキーワード
+        </button>
+        <button
+          className={view === "accounts" ? "view-switcher__button view-switcher__button--active" : "view-switcher__button"}
+          type="button"
+          aria-pressed={view === "accounts"}
+          onClick={() => setView("accounts")}
+        >
+          アカウント
+        </button>
       </section>
+
+      {view === "keywords" && (
+        <section className="controls controls--simple">
+          <div className="recommendation-tabs" role="group" aria-label="推奨度">
+            {[
+              ["", "すべて"],
+              ["高推奨", "高推奨"],
+              ["中推奨", "中推奨"],
+              ["任意", "任意"],
+            ].map(([value, label]) => (
+              <button
+                key={label}
+                type="button"
+                className={
+                  recommendation === value
+                    ? "recommendation-tab recommendation-tab--active"
+                    : "recommendation-tab"
+                }
+                onClick={() => setRecommendation(value)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="results">
-
         <div className="card-frame">
-          {filteredCandidates.length > 0 ? (
+          {view === "accounts" ? (
+            accountCandidates.length > 0 ? (
+              <div className="account-list">
+                {accountCandidates.map((item) => (
+                  <AccountCard key={item.handle} item={item} onCopy={handleCopy} />
+                ))}
+              </div>
+            ) : (
+              <div className="empty-state account-empty-state">
+                <strong>該当するアカウント候補はありません</strong>
+                <p>現在のデータでは、候補条件を満たすアカウントはありません。</p>
+              </div>
+            )
+          ) : filteredCandidates.length > 0 ? (
             <div className="keyword-list">
               {filteredCandidates.map((item) => (
                 <KeywordCard
@@ -230,12 +334,20 @@ export default function App() {
         </div>
       </section>
 
-      <footer>
-        <p>
-          JSONデータは <code>src/data/filterKeywordCandidates.json</code>{" "}
-          に分離されています。候補の識別には永続的な <code>candidate_id</code> を使用します。
-        </p>
-      </footer>
+      {view === "keywords" ? (
+        <footer>
+          <p>
+            JSONデータは <code>src/data/filterKeywordCandidates.json</code>{" "}
+            に分離されています。候補の識別には永続的な <code>candidate_id</code> を使用します。
+          </p>
+        </footer>
+      ) : (
+        <footer>
+          <p>
+            アカウント候補は根拠を確認したうえで、利用者が手動で判断してください。
+          </p>
+        </footer>
+      )}
 
       <div
         className={toast ? "toast toast--visible" : "toast"}
