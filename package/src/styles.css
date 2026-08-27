@@ -639,4 +639,9 @@ footer code {
   }
 }
 
-.controls--simple { display:flex; justify-content:center; }
+.controls--simple {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}

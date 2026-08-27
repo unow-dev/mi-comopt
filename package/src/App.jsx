@@ -210,16 +210,24 @@ function AccountCard({ item, onCopy }) {
 export default function App() {
   const [view, setView] = useState("keywords");
   const [recommendation, setRecommendation] = useState("");
+  const [newOnly, setNewOnly] = useState(false);
   const [toast, setToast] = useState("");
   const toastTimerRef = useRef(null);
   const [now] = useState(() => new Date());
 
   const filteredCandidates = useMemo(
     () =>
-      recommendation
-        ? candidates.filter((item) => item.recommendation === recommendation)
-        : candidates,
-    [recommendation]
+      candidates.filter(
+        (item) =>
+          (!recommendation || item.recommendation === recommendation) &&
+          (!newOnly ||
+            isNewCandidate(
+              item.introduced_at,
+              now,
+              workflowConfig.new_keyword_display_days,
+            )),
+      ),
+    [newOnly, now, recommendation],
   );
 
   function showToast(message) {
@@ -295,6 +303,18 @@ export default function App() {
               </button>
             ))}
           </div>
+          <button
+            type="button"
+            className={
+              newOnly
+                ? "recommendation-tab recommendation-tab--active"
+                : "recommendation-tab"
+            }
+            aria-pressed={newOnly}
+            onClick={() => setNewOnly((current) => !current)}
+          >
+            NEWのみ
+          </button>
         </section>
       )}
 
