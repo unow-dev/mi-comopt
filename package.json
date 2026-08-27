@@ -8,6 +8,8 @@
   "scripts": {
     "build": "npm --workspace package run build",
     "test": "npm --workspace package run test",
+    "verify:data": "npm --workspace package run verify:data",
+    "account-candidate-workflow": "npm --workspace package run account-candidate-workflow --",
     "clean": "npm --workspace package run clean"
   },
   "devDependencies": {

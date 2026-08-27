@@ -12,6 +12,25 @@ npm run candidate-workflow -- full-update ...
 npm run candidate-workflow -- validate-current ...
 ```
 
+## Account block candidate workflow
+
+公開済み3-Class final、対応するsummary、account policy、現在のkeyword metaを明示入力として、候補artifactを検証してから3ファイル単位で公開します。入力不整合時は既存のaccount artifactを変更しません。
+
+```bash
+npm run account-candidate-workflow -- \
+  --dataset /path/to/three_class_labeled.json \
+  --summary /path/to/summary.json \
+  --policy docs/active/issues/20260827-054534-account-block-candidate-list/account_block_candidate_handoff_v1.0.0/account_block_candidate_handoff/config/accountBlockCandidatePolicy.json \
+  --keyword-meta src/data/filterKeywordCandidates.meta.json \
+  --publish-dir src/data
+```
+
+公開済みaccount artifactの検証は次で行います。artifactが未生成の場合も、未生成を空配列として扱わず失敗します。
+
+```bash
+npm run verify:data
+```
+
 LLM provider/APIは呼び出しません。`candidate-proposal.json` は外部境界から受け取り、以降をローカルで検証・canonicalize・評価・publicationします。
 
 ## Manual ChatGPT handoff

@@ -1,3 +1,3 @@
 # Tests
 
-`npm test` で、正規化ベクトル、整数比による推奨度判定、1コメント1hit、bootstrap 187件、variant conflict、`NEW` 境界、proposal lifecycle、full updateおよびstale parent保護を検証します。
+`npm test` で、既存のキーワード候補workflowに加えて、account候補のexact handle/event境界、重複collapse、label conflict、決定性、privacy境界、artifact hash binding、snapshot不一致および公開失敗時の保護を検証します。
