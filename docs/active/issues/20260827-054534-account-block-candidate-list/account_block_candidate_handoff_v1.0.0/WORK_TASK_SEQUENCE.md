@@ -33,3 +33,5 @@
 - タスク8の手動受入確認は問題なしとして完了した。初期キーワードview、account切替、候補表示、keywordタブ非表示、根拠開閉、raw handleコピー、候補0件表示および対象外情報なしを確認済み。
 - タスク9として、公開入力の正当性、privacy懸念、受入条件を確認し、人間による最終リリース判断を「リリース可」とした。
 - タスク10として、実施内容、検証結果、公開dataset snapshotおよび残存注意点を本Work Notesへ記録した。
+- 最終確認（2026-08-27）: `npm test` 36件成功、`npm run verify:data` 成功、`npm run build` 成功、作業ツリーcleanを確認した。
+- 最終公開runは `run_3d717ec7-9fe7-4239-9f12-a79dac3279cb`、候補54件、dataset snapshotは `sha256:b15bf5a4f431e56fb1d5b9e1490b94fbca3950ad596f4db142877c45bb0d95b3`。candidate/manifest hash bindingと `username` 非掲載を再確認した。
