@@ -235,6 +235,25 @@ export default function App() {
 
   return (
     <main className="page-shell">
+      <section className="view-switcher" aria-label="表示切替">
+        <button
+          className={view === "keywords" ? "view-switcher__button view-switcher__button--active" : "view-switcher__button"}
+          type="button"
+          aria-pressed={view === "keywords"}
+          onClick={() => setView("keywords")}
+        >
+          フィルターキーワード
+        </button>
+        <button
+          className={view === "accounts" ? "view-switcher__button view-switcher__button--active" : "view-switcher__button"}
+          type="button"
+          aria-pressed={view === "accounts"}
+          onClick={() => setView("accounts")}
+        >
+          アカウント
+        </button>
+      </section>
+
       <section className="hero">
         <div>
           {view === "keywords" ? (
@@ -256,25 +275,6 @@ export default function App() {
             </>
           )}
         </div>
-      </section>
-
-      <section className="view-switcher" aria-label="表示切替">
-        <button
-          className={view === "keywords" ? "view-switcher__button view-switcher__button--active" : "view-switcher__button"}
-          type="button"
-          aria-pressed={view === "keywords"}
-          onClick={() => setView("keywords")}
-        >
-          フィルターキーワード
-        </button>
-        <button
-          className={view === "accounts" ? "view-switcher__button view-switcher__button--active" : "view-switcher__button"}
-          type="button"
-          aria-pressed={view === "accounts"}
-          onClick={() => setView("accounts")}
-        >
-          アカウント
-        </button>
       </section>
 
       {view === "keywords" && (
