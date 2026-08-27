@@ -261,9 +261,9 @@ export default function App() {
               <p className="eyebrow">FILTER KEYWORD CANDIDATES</p>
               <h1>フィルターキーワード候補リスト</h1>
               <p className="description">
-                コメントの内容をもとに、フィルターへ追加する候補のキーワードを整理しています。
+                フィルターに追加するキーワード候補です。
                 <br />
-                詳細から判定の内訳や表記ゆれを確認できます。
+                詳細から判定結果を確認できます。
               </p>
             </>
           ) : (
@@ -271,9 +271,9 @@ export default function App() {
               <p className="eyebrow">ACCOUNT BLOCK CANDIDATES</p>
               <h1>アカウントブロック候補リスト</h1>
               <p className="description">
-                同じアカウントによる迷惑なコメントの繰り返しを確認し、
+                ブロック候補のアカウントです。
                 <br />
-                ブロックするかどうかを手動で判断するための候補です。
+                詳細から根拠を確認できます。
               </p>
             </>
           )}
