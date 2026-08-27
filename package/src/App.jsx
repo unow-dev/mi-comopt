@@ -313,7 +313,7 @@ export default function App() {
             aria-pressed={newOnly}
             onClick={() => setNewOnly((current) => !current)}
           >
-            NEWのみ
+            NEW
           </button>
         </section>
       )}
