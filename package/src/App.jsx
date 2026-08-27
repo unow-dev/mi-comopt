@@ -250,7 +250,7 @@ export default function App() {
           aria-pressed={view === "accounts"}
           onClick={() => setView("accounts")}
         >
-          アカウント
+          ブロックアカウント
         </button>
       </section>
 
