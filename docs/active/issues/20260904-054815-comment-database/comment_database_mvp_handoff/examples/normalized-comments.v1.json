@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "observations": [
+    {
+      "source": "tiktok",
+      "postRef": "post:example-001",
+      "collectedAt": "2026-09-04T09:15:00+09:00",
+      "commentText": "Example comment"
+    },
+    {
+      "source": "tiktok",
+      "postRef": "post:example-001",
+      "collectedAt": "2026-09-04T09:15:00+09:00",
+      "commentText": "Another example comment"
+    }
+  ]
+}
