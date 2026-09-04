@@ -1,0 +1,28 @@
+{
+  "handoff_version": 1,
+  "issue": "レイヤーモデルによるアーキテクチャ整理",
+  "created_at": "2026-09-04",
+  "source_archive": {
+    "name": "layered_architecture_discussion_set.zip",
+    "sha256": "08fabbcbc17d90dc134fb4af866a79b2455f71250543cc5d2b38411ae2797d63"
+  },
+  "verified_account_generator": {
+    "path": "package/scripts/account-block-candidate-workflow.mjs",
+    "sha256": "3dcf60dc1b4a6ba89a709fb02edb6d2439bacbb2c94248078bf944b2ce8fccc9",
+    "must_remain_byte_identical": true
+  },
+  "implementation_ready": true,
+  "files": [
+    "README.md",
+    "IMPLEMENTATION_HANDOFF.md",
+    "DECISIONS.md",
+    "FILE_CHANGE_MAP.md",
+    "WORK_TASK_SEQUENCE.md",
+    "ACCEPTANCE_CRITERIA.md",
+    "REVIEW_CHECKLIST.md",
+    "ACCOUNT_GENERATOR_PROVENANCE_EXCEPTION.md",
+    "BASELINE_TEST_STATUS.md",
+    "SOURCE_FACTS.md",
+    "source_context/ISSUE_BODY.md"
+  ]
+}

@@ -11,6 +11,10 @@ dist/
 # Test output
 coverage/
 
+# Local comment database and SQLite sidecars
+/var/*.sqlite3
+/var/*.sqlite3-*
+
 # Local environment files
 .env
 .env.*
