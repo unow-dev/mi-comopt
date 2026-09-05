@@ -1,0 +1,45 @@
+{
+  "handoff_version": "1.0.0",
+  "status": "implementation-ready",
+  "prepared_date": "2026-09-05",
+  "repository": "unow-dev/mi-comopt",
+  "application_schema_version_target": 2,
+  "raw_schema_version": 1,
+  "projection_version": "1.0.0",
+  "pr_plan": [
+    "PR1_WRITE_BOUNDARY",
+    "PR2_READ_BOUNDARY"
+  ],
+  "new_tables": [
+    "raw_snapshots",
+    "videos",
+    "authors",
+    "comments",
+    "snapshot_video_observations",
+    "snapshot_comment_observations"
+  ],
+  "new_commands": [
+    "import-raw-snapshot",
+    "export-analysis-input",
+    "verify-raw-store"
+  ],
+  "stage13_fields": [
+    "username",
+    "handle",
+    "comment",
+    "postedAt",
+    "postedDate"
+  ],
+  "snapshot_export_order": [
+    "payload_sha256 ASC",
+    "source_index ASC"
+  ],
+  "raw_store_relpath": "tiktok-v1/<payload_sha256>.json",
+  "non_scope": [
+    "legacy baseline import",
+    "cross-snapshot dedupe",
+    "Stage13 reference reuse",
+    "implicit latest/all selection",
+    "candidate or UI DB dependency"
+  ]
+}

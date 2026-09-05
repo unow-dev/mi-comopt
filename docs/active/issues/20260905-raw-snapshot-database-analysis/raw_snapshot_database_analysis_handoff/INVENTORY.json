@@ -1,0 +1,137 @@
+[
+  {
+    "path": "00_IMPLEMENTATION_HANDOFF.md",
+    "sha256": "7a7448b7069ed717c6b3ac3d88fc279d3497fbcff384be492c459c37cf8ea36e",
+    "bytes": 8319
+  },
+  {
+    "path": "FILE_CHANGE_PLAN.md",
+    "sha256": "b37ec537780c77230212af6fdbae5251ea5cf197da7b64642d8ec7606fe49a0b",
+    "bytes": 2295
+  },
+  {
+    "path": "ISSUE_BODY_IMPLEMENTATION_READY.md",
+    "sha256": "2547c3910af05a891ae1fd45dabd8e437f52069b92e14a684503ccd9c9cc9204",
+    "bytes": 6033
+  },
+  {
+    "path": "README.md",
+    "sha256": "593717206f65912d308c1aeb75514dded7a8a4ed3d8c442f4bc702965b888d04",
+    "bytes": 1724
+  },
+  {
+    "path": "REJECTED_DECISIONS.md",
+    "sha256": "3e509d9676717b4828f4119d17b6b913eb11cf3a55a28530869f35891fe7fe18",
+    "bytes": 2160
+  },
+  {
+    "path": "SOURCE_BASELINE.md",
+    "sha256": "c1c108add364a2689f17dd035c5873b8dd78811285cca02765445eb64a35d63e",
+    "bytes": 1491
+  },
+  {
+    "path": "TEST_PLAN.md",
+    "sha256": "3f5db235a038ad29de8886a54f2290981022ec24d26a6f707b521254491ab0ec",
+    "bytes": 4778
+  },
+  {
+    "path": "checklists/PR1_WRITE_BOUNDARY.md",
+    "sha256": "d3013f9c7323ba26768296034517067999c76d23b93784f6a4d301981870d524",
+    "bytes": 1716
+  },
+  {
+    "path": "checklists/PR2_READ_BOUNDARY.md",
+    "sha256": "6dd1c450e1e0b18c3f5901f0769d900266c33046bfd29adb016643ad74262f10",
+    "bytes": 1555
+  },
+  {
+    "path": "contracts/ANALYSIS_EXPORT_CONTRACT.md",
+    "sha256": "388bbf308bcd95505216e96d9b71fbb9fa637616184fce900752762ac2363acb",
+    "bytes": 2781
+  },
+  {
+    "path": "contracts/CLI_CONTRACT.md",
+    "sha256": "afc1da3555388723939a515d59d3646f488e139c794a05e6c4dd7040c178fff4",
+    "bytes": 2350
+  },
+  {
+    "path": "contracts/DB_V2_CONTRACT.md",
+    "sha256": "fbac91fd87b7dfe6d32a1b2bb1cef65697e4464424ed1e4edf911aa1e7d6eaea",
+    "bytes": 5118
+  },
+  {
+    "path": "handoff.json",
+    "sha256": "7bdc368a0a03310dfd0804b621518cfa2232ec489bd223b22841948c369511d8",
+    "bytes": 1007
+  },
+  {
+    "path": "proposed/examples/new-comments.example.json",
+    "sha256": "c3ea3d5fff3f5d4f4902a8f951f767c9273f929dac881d09ea1fef76c2178fcf",
+    "bytes": 297
+  },
+  {
+    "path": "proposed/examples/new-comments.manifest.example.json",
+    "sha256": "f39da11cd7646e402117eefde11fd3223ee8e02e8ed40b0a404c7b3ecba95f24",
+    "bytes": 671
+  },
+  {
+    "path": "proposed/package/contracts/raw-snapshots/tiktokRawSnapshot-1.0.0.schema.json",
+    "sha256": "68795052faef51c52cdb23000535464584a4da6d0fbe4e2420b1c3115a4e2956",
+    "bytes": 9591
+  },
+  {
+    "path": "proposed/package/db/comment-database/002-raw-snapshots.sql",
+    "sha256": "810c69c8559a34ef5c710966d5d627a167679d4534588ade891254524d6da1ba",
+    "bytes": 3036
+  },
+  {
+    "path": "references/discussion/original-ISSUE_BODY.md",
+    "sha256": "246e34284679307a0c23287e20fa400b9e1db98c3b6e041d40b94f730675c033",
+    "bytes": 4787
+  },
+  {
+    "path": "references/discussion/raw-snapshot.schema.json",
+    "sha256": "68795052faef51c52cdb23000535464584a4da6d0fbe4e2420b1c3115a4e2956",
+    "bytes": 9591
+  },
+  {
+    "path": "references/discussion/related-comment-database-ISSUE_BODY.md",
+    "sha256": "19c90ea8e129f2954c780805b00bed06fe667a0116bb3aa537c5e0bedd663bf1",
+    "bytes": 1960
+  },
+  {
+    "path": "references/discussion/related-current-incoming-integration-ISSUE_BODY.md",
+    "sha256": "38e83a8384bf3174bb273bde7ff6b9f687f1b384b6953d0fc5e82606d1aba3b0",
+    "bytes": 1678
+  },
+  {
+    "path": "references/discussion/related-layered-architecture-ISSUE_BODY.md",
+    "sha256": "527800f51d168fd00eba04c157f7db5bb2f2f4261794f7259568a4abe7597ded",
+    "bytes": 1458
+  },
+  {
+    "path": "references/discussion/related-raw-data-update-to-deployment-ISSUE_BODY.md",
+    "sha256": "e4260209983f9172a10466e04022862867a64354c50f65f2ca99edf1313ebf16",
+    "bytes": 2166
+  },
+  {
+    "path": "references/discussion/v1-001-init.sql",
+    "sha256": "fb1b841248d43027923a478e326e4790e7c3f7a249dcd6e0403bf9788fd42b10",
+    "bytes": 992
+  },
+  {
+    "path": "references/discussion/v1-comment-database.js",
+    "sha256": "a8530b0f238bdc977fba05c5007315f39cc7def22b1ea010a6194522bf3fe8f3",
+    "bytes": 12058
+  },
+  {
+    "path": "references/discussion/v1-comment-database.mjs",
+    "sha256": "9b3583cea867b22413918c4d9cb4ebededabda919dd3fb07f3cfcb452c50c522",
+    "bytes": 2594
+  },
+  {
+    "path": "references/discussion/v1-comment-database.test.js",
+    "sha256": "bfc4c849c63811d5579b790f8d2a7cf260f928e3710cdcf01a6cede701e9ae62",
+    "bytes": 15368
+  }
+]

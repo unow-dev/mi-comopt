@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "projection_version": "1.0.0",
+  "database_schema_version": 2,
+  "output_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "output_record_count": 2,
+  "snapshots": [
+    {
+      "payload_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "platform": "tiktok",
+      "raw_schema_version": 1,
+      "extracted_at": "2026-09-05T12:00:00Z",
+      "source_canonical_url": "https://www.tiktok.com/@example/video/123",
+      "loaded_count": 2,
+      "reported_count": 10,
+      "coverage_note": "example partial snapshot",
+      "output_start_index": 0,
+      "record_count": 2
+    }
+  ]
+}
