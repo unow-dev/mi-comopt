@@ -142,6 +142,8 @@ function validateKeywordSide(files, contracts) {
   if (meta.taxonomy_content_sha256 !== prefixedSha256(contracts.taxonomy.bytes)) fail("keyword taxonomy is not bound to the canonical runtime contract");
   if (meta.run_id !== manifest.run_id) fail("keyword meta run_id does not match run manifest");
   if (meta.published_at !== manifest.published_at) fail("keyword meta published_at does not match run manifest");
+  if (meta.dataset_artifact_sha256 !== manifest.source_dataset?.artifact_sha256) fail("keyword meta dataset SHA does not match run manifest");
+  if (meta.dataset_artifact_sha256 !== files["candidate_evaluation.json"].value.dataset?.artifact_sha256) fail("keyword meta dataset SHA does not match evaluation artifact");
   if (manifest.run_type === "full_update") normalizeSha(manifest.parent_manifest_content_sha256, "keyword parent manifest SHA");
   assertRunId(meta.run_id, "keyword meta.run_id");
   assertTimestamp(meta.published_at, "keyword meta.published_at");
