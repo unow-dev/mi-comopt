@@ -11,7 +11,7 @@ import {
   serializeJson,
   validateDataset,
   validateSummary,
-} from "../src/lib/account-block-candidate-workflow.js";
+} from "../src/processing/account-block-candidates/account-block-candidate-workflow.js";
 
 const packageRoot = path.resolve(".");
 const workflowScript = path.join(packageRoot, "scripts/account-block-candidate-workflow.mjs");

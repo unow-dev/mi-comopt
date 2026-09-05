@@ -6,16 +6,16 @@
 
 ## Task Sequence
 
-- [ ] 1. 実装前確認の範囲で、AIエージェントが、実行環境、既存変更、生成物、およびaccount generator provenanceの基準を確認する。
-- [ ] 2. 共通責務の分離範囲で、AIエージェントが、加工機能間で共有する検証責務を整理する。
-- [ ] 3. レイヤー構造の分離範囲で、AIエージェントが、Processing、Database、UI、および外部境界の実装責務を変更する。
-- [ ] 4. keyword handoffの責務分離範囲で、AIエージェントが、意味処理とCLIによる入出力の境界を変更する。
-- [ ] 5. UIデータ境界の範囲で、AIエージェントが、生成artifactからUI modelへの変換責務を変更する。
-- [ ] 6. 互換性維持の範囲で、AIエージェントが、account generator provenanceおよび既存の外部契約が維持されていることを確認する。
-- [ ] 7. 依存境界の検証範囲で、AIエージェントが、レイヤー間の禁止依存とUIデータ境界を検証する。
-- [ ] 8. 非機能回帰の検証範囲で、AIエージェントが、既存テスト、データ検証、およびビルドを実行して結果を確認する。
-- [ ] 9. 文書化の範囲で、AIエージェントが、アーキテクチャの責務、依存規則、および互換性例外を記録する。
-- [ ] 10. 変更結果の確認範囲で、AIエージェントが、受入条件とレビュー観点に照らして完了可否を確認する。
+- [x] 1. 実装前確認の範囲で、AIエージェントが、実行環境、既存変更、生成物、およびaccount generator provenanceの基準を確認する。
+- [x] 2. 共通責務の分離範囲で、AIエージェントが、加工機能間で共有する検証責務を整理する。
+- [x] 3. レイヤー構造の分離範囲で、AIエージェントが、Processing、Database、UI、および外部境界の実装責務を変更する。
+- [x] 4. keyword handoffの責務分離範囲で、AIエージェントが、意味処理とCLIによる入出力の境界を変更する。
+- [x] 5. UIデータ境界の範囲で、AIエージェントが、生成artifactからUI modelへの変換責務を変更する。
+- [x] 6. 互換性維持の範囲で、AIエージェントが、account generator provenanceおよび既存の外部契約が維持されていることを確認する。
+- [x] 7. 依存境界の検証範囲で、AIエージェントが、レイヤー間の禁止依存とUIデータ境界を検証する。
+- [x] 8. 非機能回帰の検証範囲で、AIエージェントが、既存テスト、データ検証、およびビルドを実行して結果を確認する。
+- [x] 9. 文書化の範囲で、AIエージェントが、アーキテクチャの責務、依存規則、および互換性例外を記録する。
+- [x] 10. 変更結果の確認範囲で、AIエージェントが、受入条件とレビュー観点に照らして完了可否を確認する。
 
 ## Work Notes
 
@@ -28,3 +28,6 @@
 - collector実装は今回追加しない。`scripts/adapters` は第5レイヤーではなく、filesystemなどの外部境界を接続する配置とする。
 - 最終判定はNode `>=24 <25` の実リポジトリで `npm test`、`npm run verify:data`、`npm run build` をすべて成功させる。supplied discussion set上の既知のfixture・文書欠落によるbaseline失敗は、本issueの回帰として扱わない。
 - 完了確認には `ACCEPTANCE_CRITERIA.md` と `REVIEW_CHECKLIST.md` を用いる。account shimの削除条件は `ACCOUNT_GENERATOR_PROVENANCE_EXCEPTION.md` を参照する。
+- ベースラインコミットは `e9d0a58`（`chore: establish layered architecture baseline`）。
+- 実行環境は Node `v24.19.0`。`npm test` は59件全件成功、`npm run verify:data` と `npm run build` も成功した。
+- account CLI、`verify-data.mjs`、account generator manifest、およびgenerated JSONの基準SHAに差分はない。

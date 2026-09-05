@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import path from "node:path";
-import { importNormalizedPayloadFile } from "../src/lib/comment-database.js";
+import { importNormalizedPayloadFile } from "../src/database/comment-database.js";
 
 class CliArgumentError extends Error {}
 

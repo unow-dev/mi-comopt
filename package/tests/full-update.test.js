@@ -8,8 +8,8 @@ import {
   contentSha256,
   evaluateCandidates,
   makeGenerationRequest,
-} from "../src/lib/candidate-workflow.js";
-import { prepareFullUpdate } from "../src/lib/update-flow.js";
+} from "../src/processing/keyword-candidates/candidate-workflow.js";
+import { prepareFullUpdate } from "../src/processing/keyword-candidates/update-flow.js";
 
 const handoff = path.resolve("../docs/active/issues/20260824-065153-candidate-keyword-update-flow/candidate_keyword_update_handoff_v1.0.0");
 const policy = JSON.parse(fs.readFileSync(path.join(handoff, "policy/evaluation/1.0.0.json"), "utf8"));

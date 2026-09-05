@@ -3,7 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { publishBundleAtomically, readCurrentPublication } from "../src/lib/publication.js";
+import { publishBundleAtomically, readCurrentPublication } from "../scripts/adapters/keyword-publication.js";
 
 test("publication promotes a complete bundle and rejects stale parents without changing current", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "candidate-publication-test-"));

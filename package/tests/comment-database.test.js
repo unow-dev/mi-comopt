@@ -12,7 +12,7 @@ import {
   MIGRATIONS_DIR,
   openCommentDatabase,
   resolveDatabasePath,
-} from "../src/lib/comment-database.js";
+} from "../src/database/comment-database.js";
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const repositoryRoot = path.resolve(packageRoot, "..");

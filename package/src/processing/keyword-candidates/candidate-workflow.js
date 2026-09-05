@@ -1,22 +1,16 @@
 import crypto from "node:crypto";
+import { WorkflowValidationError } from "../shared/workflow-validation-error.js";
+
+export { WorkflowValidationError };
 
 export const ALLOWED_LABELS = ["direct_nuisance", "reactive", "normal"];
 export const RECOMMENDATION_ORDER = { "高推奨": 0, "中推奨": 1, 任意: 2 };
-export const DEFAULT_NEW_KEYWORD_DISPLAY_DAYS = 14;
 
 const REMOVED_CODE_POINTS = /[\u200B\u200C\u200D\u2060\uFEFF]/gu;
 const SHA256_PATTERN = /^sha256:[0-9a-f]{64}$/;
 const CANDIDATE_ID_PATTERN = /^kw_[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 const REQUEST_ID_PATTERN = /^cgr_[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 const RUN_ID_PATTERN = /^run_[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
-
-export class WorkflowValidationError extends Error {
-  constructor(errors, message = "候補キーワード契約の検証に失敗しました") {
-    super(message);
-    this.name = "WorkflowValidationError";
-    this.errors = errors;
-  }
-}
 
 function error(code, path, message, details = undefined) {
   return { code, path, message, ...(details ? { details } : {}) };
@@ -723,14 +717,6 @@ export function advanceFirstPublicationHistory(registry, evaluation, publishedAt
     }
   }
   return next;
-}
-
-export function isNewCandidate(introducedAt, now = new Date(), displayDays = DEFAULT_NEW_KEYWORD_DISPLAY_DAYS) {
-  if (introducedAt === null || introducedAt === undefined) return false;
-  const start = Date.parse(introducedAt);
-  const current = now instanceof Date ? now.getTime() : Date.parse(now);
-  if (!Number.isFinite(start) || !Number.isFinite(current) || !Number.isFinite(displayDays) || displayDays < 0) return false;
-  return current < start + displayDays * 24 * 60 * 60 * 1000;
 }
 
 export function makeArtifactRef(artifactRef, value) {

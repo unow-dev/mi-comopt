@@ -3,8 +3,8 @@ import {
   contentSha256,
   conflictSet,
   validateRegistry,
-  WorkflowValidationError,
 } from "./candidate-workflow.js";
+import { WorkflowValidationError } from "../shared/workflow-validation-error.js";
 
 function issue(code, path, message) {
   return { code, path, message };

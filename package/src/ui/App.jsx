@@ -1,8 +1,6 @@
 import { useMemo, useRef, useState } from "react";
-import candidates from "./data/filterKeywordCandidates.json";
-import accountCandidates from "./data/accountBlockCandidates.json";
-import workflowConfig from "./data/candidateWorkflowConfig.json";
-import { isNewCandidate } from "./lib/new-badge.js";
+import { accountCandidates, keywordCandidates, workflowConfig } from "./candidate-data.js";
+import { isNewCandidate } from "./new-badge.js";
 
 function formatPercent(value) {
   if (typeof value !== "number") return "—";
@@ -55,9 +53,9 @@ function KeywordCard({ item, onCopy, now }) {
     (variant) => variant !== item.keyword
   );
   const isNew = isNewCandidate(
-    item.introduced_at,
+    item.introducedAt,
     now,
-    workflowConfig.new_keyword_display_days,
+    workflowConfig.newKeywordDisplayDays,
   );
 
   return (
@@ -102,25 +100,25 @@ function KeywordCard({ item, onCopy, now }) {
           <div className="detail-metrics">
             <div className="detail-metric">
               <span>direct</span>
-              <strong>{item.direct_nuisance_hits}</strong>
+              <strong>{item.directNuisanceHits}</strong>
               <small>命中</small>
             </div>
 
             <div className="detail-metric">
               <span>reactive</span>
-              <strong>{item.reactive_hits}</strong>
+              <strong>{item.reactiveHits}</strong>
               <small>参考</small>
             </div>
 
             <div className="detail-metric">
               <span>normal</span>
-              <strong>{item.normal_hits}</strong>
+              <strong>{item.normalHits}</strong>
               <small>誤爆</small>
             </div>
 
             <div className="detail-metric">
               <span>精度</span>
-              <strong>{formatPercent(item.precision_excluding_reactive)}</strong>
+              <strong>{formatPercent(item.precisionExcludingReactive)}</strong>
               <small>reactive除外</small>
             </div>
           </div>
@@ -136,10 +134,10 @@ function KeywordCard({ item, onCopy, now }) {
             </div>
           )}
 
-          {item.match_type && (
+          {item.matchType && (
             <div className="match-type">
               <span>マッチ方式</span>
-              <strong>{item.match_type}</strong>
+              <strong>{item.matchType}</strong>
             </div>
           )}
         </div>
@@ -157,7 +155,7 @@ function AccountCard({ item, onCopy }) {
         <div className="account-card__content">
           <strong className="account-handle">{item.handle}</strong>
           <span className="account-count">
-            direct_nuisance {item.direct_nuisance_count}件
+            direct_nuisance {item.directNuisanceCount}件
           </span>
         </div>
 
@@ -186,12 +184,12 @@ function AccountCard({ item, onCopy }) {
       {open && (
         <div className="account-card__details">
           <div className="account-evidence-heading">
-            <strong>根拠例 {item.evidence_sample.length}件</strong>
-            <span>計{item.direct_nuisance_count}件</span>
+            <strong>根拠例 {item.evidence.length}件</strong>
+            <span>計{item.directNuisanceCount}件</span>
           </div>
 
           <ol className="account-evidence-list">
-            {item.evidence_sample.map((evidence, index) => (
+            {item.evidence.map((evidence, index) => (
               <li key={`${evidence.postedDate}-${evidence.postedAt}-${index}`}>
                 <div className="account-evidence-date">
                   <time dateTime={evidence.postedDate}>{evidence.postedDate}</time>
@@ -217,14 +215,14 @@ export default function App() {
 
   const filteredCandidates = useMemo(
     () =>
-      candidates.filter(
+      keywordCandidates.filter(
         (item) =>
           (!recommendation || item.recommendation === recommendation) &&
           (!newOnly ||
             isNewCandidate(
-              item.introduced_at,
+              item.introducedAt,
               now,
-              workflowConfig.new_keyword_display_days,
+              workflowConfig.newKeywordDisplayDays,
             )),
       ),
     [newOnly, now, recommendation],
@@ -337,7 +335,7 @@ export default function App() {
             <div className="keyword-list">
               {filteredCandidates.map((item) => (
                 <KeywordCard
-                  key={item.candidate_id}
+                  key={item.candidateId}
                   item={item}
                   onCopy={handleCopy}
                   now={now}

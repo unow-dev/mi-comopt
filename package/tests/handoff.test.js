@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
-import { resolveCurrentPublicationDir } from "../src/lib/publication.js";
+import { resolveCurrentPublicationDir } from "../scripts/adapters/keyword-publication.js";
 
 const packageRoot = path.resolve(".");
 const workflowScript = path.join(packageRoot, "scripts/candidate-workflow.mjs");

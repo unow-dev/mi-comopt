@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
-import { prettyJson } from "./candidate-workflow.js";
+import { prettyJson } from "../../src/processing/keyword-candidates/candidate-workflow.js";
 
 function currentPath(rootDir) {
   return path.join(rootDir, "current");
