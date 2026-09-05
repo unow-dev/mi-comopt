@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-09-05T00:00:00Z",
+  "raw": {
+    "sha256": "sha256:<64hex>",
+    "record_count": 0,
+    "scope_id": "<stable-opaque-scope-id>",
+    "source_ref": "<source-snapshot-reference>"
+  },
+  "stage13": {
+    "sha256": "sha256:<64hex>",
+    "reference_sha256": "sha256:<64hex>"
+  },
+  "three_class": {
+    "sha256": "sha256:<64hex>"
+  },
+  "keyword": {
+    "run_id": "run_<uuid>",
+    "published_at": "<RFC3339>",
+    "dataset_sha256": "sha256:<64hex>"
+  },
+  "account": {
+    "run_id": "run_<uuid>",
+    "published_at": "<RFC3339>",
+    "dataset_sha256": "sha256:<64hex>"
+  }
+}

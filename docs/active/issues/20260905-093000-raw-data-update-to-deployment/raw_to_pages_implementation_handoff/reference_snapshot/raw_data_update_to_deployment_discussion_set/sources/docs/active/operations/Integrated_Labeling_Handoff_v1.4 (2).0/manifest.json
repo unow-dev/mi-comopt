@@ -1,0 +1,187 @@
+{
+  "package_name": "Integrated_Labeling_Handoff",
+  "version": "1.4.0",
+  "created_date": "2026-08-24",
+  "architecture": "Stage13 -> Three-Class, serial with shared audit layer; fail-closed lineage/publication; exact-record P0/P1 golden + exact P2 adjudication with one intentionally unresolved ambiguity",
+  "runtime": {
+    "python": "3.9+",
+    "external_dependencies": []
+  },
+  "source_packages": {
+    "Stage13_Handoff_2026-08-24": {
+      "reference_output_sha256": "a46c140b1e979c7c2a5037c8fc4eb0797207bd2a6323ced51bfb7cf74e09ee17"
+    },
+    "three_class_labeling_handoff_v1": {
+      "version": "1.0.0",
+      "source_reference_sha256": "a46c140b1e979c7c2a5037c8fc4eb0797207bd2a6323ced51bfb7cf74e09ee17"
+    }
+  },
+  "entrypoint": "src/pipeline.py",
+  "tests": "tests/run_all_tests.py",
+  "acceptance": "reference/INTEGRATED_ACCEPTANCE_REPORT.json",
+  "golden_registry": "reference/three_class_golden_adjudications.json",
+  "p2_registry": "reference/three_class_p2_adjudications.json",
+  "remaining_p2_review": "reference/three_class_P2_REMAINING_REVIEW.json",
+  "files": {
+    "CHANGELOG.md": {
+      "sha256": "9a317ec764f8755ec9ee1605e0f7d4a72641e2d50f91edf24cd4c2ae848430f7",
+      "bytes": 3243
+    },
+    "README_FIRST.md": {
+      "sha256": "d2df48e204b9bdb19c32e39da8460c77aab7df1246faf736596dd5566aaa293e",
+      "bytes": 4826
+    },
+    "VERSION": {
+      "sha256": "78b591400c56b7b67b8cb3b2b8a8e65e9093897f02ce0878e6b5405c68620fa7",
+      "bytes": 6
+    },
+    "config/integrated_policy.json": {
+      "sha256": "4dcbfdcfcdca0f1e601dd570115faea660a112f936d4edcb5de935e6cda3f5ff",
+      "bytes": 2228
+    },
+    "config/reactive_terms.json": {
+      "sha256": "472fed633c3594d7915df03a21776bdefe0197508561df97981137e23b30135e",
+      "bytes": 786
+    },
+    "config/review_cues.json": {
+      "sha256": "5d61b00ce6749d0615b9bdd36b15cb34139eced0fd238137eae10379c94d90f3",
+      "bytes": 1364
+    },
+    "config/three_class_policy.json": {
+      "sha256": "b6b714960d35fece6072be4427b33b56cf5cf51d7f1b6ba68fabad5a42b56a7f",
+      "bytes": 4954
+    },
+    "docs/DESIGN_DECISIONS.md": {
+      "sha256": "e5e4775d9dbce5146bb7f746d2edb001e234616381d2d1c9b78cb5eaf4740ad0",
+      "bytes": 8680
+    },
+    "docs/PIPELINE_CONTRACT.md": {
+      "sha256": "16642fe4651d8d61c0793837e0ea289f5626cdf8d92c8310a1b91662bc6cda04",
+      "bytes": 3553
+    },
+    "policy/01_STAGE13_REPRODUCIBILITY.md": {
+      "sha256": "d5d73c13fc4c3643c3e496f3018f5f99e0716302d63591951ff7c8a21b9b91c4",
+      "bytes": 2712
+    },
+    "policy/02_STAGE13_DECISION_BOUNDARIES.md": {
+      "sha256": "ff349246064dbc8dee7157df7fa85f633441a255044491ee0a221a9100cd5a54",
+      "bytes": 3072
+    },
+    "policy/03_STAGE13_BATCH_QA.md": {
+      "sha256": "58ecee6a03e4f1de79e14ab083279d818acf03f6992bb381883982994bd4c1ef",
+      "bytes": 1950
+    },
+    "policy/04_THREE_CLASS_CHANGE_CONTROL.md": {
+      "sha256": "f5b0d9aba6c7c979b8348125b13589f01b05748f916fa3c9246c6e113cb4982f",
+      "bytes": 3216
+    },
+    "prompts/STAGE13_REVIEW_PROMPT.md": {
+      "sha256": "35f4e3a56fece84806cdc9b0e578dbbbba96ed6f6aec731c3539267b4380f0ec",
+      "bytes": 841
+    },
+    "prompts/THREE_CLASS_P2_REVIEW_PROMPT.md": {
+      "sha256": "fded21b4f99676407baa195c8b0c04192a581dbbcd95f4858afa2e256a6e78ce",
+      "bytes": 1243
+    },
+    "prompts/THREE_CLASS_REVIEW_PROMPT.md": {
+      "sha256": "a72d0519a14c97bb26b4a9d82d4c5eb483a6da19e7b5da480b09030f9d839ef3",
+      "bytes": 2152
+    },
+    "reference/INTEGRATED_ACCEPTANCE_REPORT.json": {
+      "sha256": "934dab6cf001f0e55257f668e095f29143b4fe45997ac2b8655b8ec581715aaf",
+      "bytes": 4171
+    },
+    "reference/source_stage13_manifest.json": {
+      "sha256": "61507a672e60fb43ba0f3d0b652ecec25c288cbc27c0dd57f0d33dbcd3eae75a",
+      "bytes": 3138
+    },
+    "reference/source_three_class_manifest.json": {
+      "sha256": "8222c981890e6dc8e954525d9f93627840e6567fa4b9aeff589571c89bcd7475",
+      "bytes": 566
+    },
+    "reference/stage13_golden_boundary_examples.json": {
+      "sha256": "daeb5c7f895fe4fce0bfc222029c5df57f674cbe75ee5952d820cc0f0114a167",
+      "bytes": 28199
+    },
+    "reference/stage13_labeled_REFERENCE.json": {
+      "sha256": "a46c140b1e979c7c2a5037c8fc4eb0797207bd2a6323ced51bfb7cf74e09ee17",
+      "bytes": 4772159
+    },
+    "reference/stage13_repeated_handle_case_studies.json": {
+      "sha256": "1eb33d4597b778a413fc153b15c37aa921e93d7926231a57a8ff8156689c390d",
+      "bytes": 19264
+    },
+    "reference/stage13_validation_report_REFERENCE.json": {
+      "sha256": "728dddfa926de20624361d5329c6bf0c3546e898041f03d3cf2ca242097c3008",
+      "bytes": 7610
+    },
+    "reference/three_class_BASELINE_AUDIT.md": {
+      "sha256": "b9b4305497704b7df286bedc248a3f3775451be4343462c3d343630a164c3583",
+      "bytes": 2417
+    },
+    "reference/three_class_GOLDEN_ADJUDICATION_REPORT.json": {
+      "sha256": "72d7032e3ba01321a4122a89fd80e8ea3c5672631f5bbe2041ac6c92086f5574",
+      "bytes": 1309
+    },
+    "reference/three_class_INTEGRATION_CHECK.json": {
+      "sha256": "a7e88a28ce4528b7dfb5e0728ca069cd706167f36b4e800d19ee5914ea26615c",
+      "bytes": 645
+    },
+    "reference/three_class_P2_ADJUDICATION_REPORT.json": {
+      "sha256": "f13f75a83f964c44f296f7e8289f3724c9d6cc11eba16049d0afd097dee5a7e9",
+      "bytes": 1417
+    },
+    "reference/three_class_P2_REMAINING_REVIEW.json": {
+      "sha256": "c5ebff5a091402aec04c7118c3fb693a97765f320fd2c977c16267b771ebc65c",
+      "bytes": 595
+    },
+    "reference/three_class_REFERENCE_EXAMPLES.md": {
+      "sha256": "bb08a171a62fefe52dfc647f2ea78bc261caaba8cabe3e99834447ec039e61ef",
+      "bytes": 1971
+    },
+    "reference/three_class_golden_adjudications.json": {
+      "sha256": "e4441bfc6d6bf11e6ab0602ffc10802dcac677352118704ee744023241ee8e7a",
+      "bytes": 55206
+    },
+    "reference/three_class_p2_adjudications.json": {
+      "sha256": "e99d7d680952ce8f7760f77e934b85af3dde7077a62f76d032a6ca0972b3f2b6",
+      "bytes": 148789
+    },
+    "specs/01_STAGE13_LABELING_SPEC.md": {
+      "sha256": "4b62e7ca28b39e0c15660cc0229e1caaa7606f02a5becb8cf81c483ffd6ee8a3",
+      "bytes": 7757
+    },
+    "specs/02_STAGE13_WORK_RULES.md": {
+      "sha256": "f19d8b5e97fafd7255ea03452ec87bf9fe85706870e463a6024d7a451110dd9f",
+      "bytes": 11034
+    },
+    "specs/03_THREE_CLASS_LABELING_SPEC.md": {
+      "sha256": "5fabc37ed5bceaf04bc04c5fd2a9cdb3186acb22282b12e70f6addd11de985a6",
+      "bytes": 10047
+    },
+    "src/pipeline.py": {
+      "sha256": "5883b3f2e3541c57f7ca466a0d342a854b1d091e2990f4ab9e1c95661989d7f1",
+      "bytes": 49717
+    },
+    "templates/stage13_adjudications.csv": {
+      "sha256": "85dfc6b0cf4a078538451527303247a8d1ab0f112ad5f9e5be76083ca477c247",
+      "bytes": 53
+    },
+    "templates/three_class_manual_overrides.csv": {
+      "sha256": "e4615f8326e0b505bf7668a45564d22e735e79c74c0df119d81c3028fcbc04fc",
+      "bytes": 25
+    },
+    "templates/three_class_optional_p2_overrides.csv": {
+      "sha256": "eaf0f73c7c32a213b91a7b4dc271f4d009f56583e53b504821c04a36f460f6e4",
+      "bytes": 22
+    },
+    "tests/run_all_tests.py": {
+      "sha256": "a39e69d565b12c8ae399708aefedd6c719541c6ebe2a9fe1e1a45731ebc98500",
+      "bytes": 36183
+    },
+    "tests/three_class_regression_cases.json": {
+      "sha256": "acf1d0cda8491d788511fc15b196bb8e8a34625f775a6d40d2df7e1d75c317f6",
+      "bytes": 2731
+    }
+  }
+}

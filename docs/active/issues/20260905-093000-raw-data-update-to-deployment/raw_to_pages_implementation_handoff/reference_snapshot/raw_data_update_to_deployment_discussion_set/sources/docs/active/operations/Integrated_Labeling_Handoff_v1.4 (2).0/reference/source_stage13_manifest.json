@@ -1,0 +1,88 @@
+{
+  "handoff_name": "Stage13_Handoff_2026-08-24",
+  "purpose": "Reproduce Stage 13 labeling criteria on future updated datasets with regression consistency.",
+  "stage": 13,
+  "created_date": "2026-08-24",
+  "reference_records": 21433,
+  "reference_label_counts": {
+    "normal": 20810,
+    "nuisance": 623
+  },
+  "golden_examples": 69,
+  "golden_label_counts": {
+    "normal": 34,
+    "nuisance": 35
+  },
+  "recommended_batch_size": 500,
+  "reference_input_sha256": "2adf2501890d48f3416c167b46877ec36e6b46cf6b179ec0e5edd84ca8bfa95f",
+  "reference_output_sha256": "a46c140b1e979c7c2a5037c8fc4eb0797207bd2a6323ced51bfb7cf74e09ee17",
+  "reference_priority": [
+    "exact_5_field_prior_label",
+    "stage13_specs",
+    "golden_boundary_examples",
+    "same_handle_history",
+    "comment_semantics"
+  ],
+  "files": {
+    "INTEGRITY.md": {
+      "sha256": "e6a26325f0c73191697f67f16dbfccf150951b55fa7d9372e2131e3b0f959170",
+      "bytes": 228
+    },
+    "README_FIRST.md": {
+      "sha256": "b46d32552d0f200d213ff026c4a8f7ed90985fb9553762075ee37a41f8acec5d",
+      "bytes": 2338
+    },
+    "policy/01_REPRODUCIBILITY_RULES.md": {
+      "sha256": "5a03b947138f9ea88ce0881c2093a13dc6dc36210fec39c066b54306d785bab6",
+      "bytes": 2128
+    },
+    "policy/02_DECISION_BOUNDARIES.md": {
+      "sha256": "ff349246064dbc8dee7157df7fa85f633441a255044491ee0a221a9100cd5a54",
+      "bytes": 3072
+    },
+    "policy/03_BATCH_AND_QA_WORKFLOW.md": {
+      "sha256": "58ecee6a03e4f1de79e14ab083279d818acf03f6992bb381883982994bd4c1ef",
+      "bytes": 1950
+    },
+    "policy/04_NEXT_RUN_PROMPT.md": {
+      "sha256": "cd2cd1660bc09c11343314c59af14894a4b52688510912c63ef66aeab3dac10b",
+      "bytes": 1710
+    },
+    "reference/golden_boundary_examples.json": {
+      "sha256": "daeb5c7f895fe4fce0bfc222029c5df57f674cbe75ee5952d820cc0f0114a167",
+      "bytes": 28199
+    },
+    "reference/merged_array_stage13_labeled_REFERENCE.json": {
+      "sha256": "a46c140b1e979c7c2a5037c8fc4eb0797207bd2a6323ced51bfb7cf74e09ee17",
+      "bytes": 4772159
+    },
+    "reference/repeated_handle_case_studies.json": {
+      "sha256": "1eb33d4597b778a413fc153b15c37aa921e93d7926231a57a8ff8156689c390d",
+      "bytes": 19264
+    },
+    "reference/stage13_validation_report_REFERENCE.json": {
+      "sha256": "728dddfa926de20624361d5329c6bf0c3546e898041f03d3cf2ca242097c3008",
+      "bytes": 7610
+    },
+    "specs/01_選別基準仕様_Stage13.md": {
+      "sha256": "4b62e7ca28b39e0c15660cc0229e1caaa7606f02a5becb8cf81c483ffd6ee8a3",
+      "bytes": 7757
+    },
+    "specs/02_ラベル付作業ルール仕様_Stage13.md": {
+      "sha256": "f19d8b5e97fafd7255ea03452ec87bf9fe85706870e463a6024d7a451110dd9f",
+      "bytes": 11034
+    },
+    "specs/README_original.md": {
+      "sha256": "7a1e06c19120e01daadf080594c40dbeeecca71903ec1c4749337a33014b7848",
+      "bytes": 668
+    },
+    "tools/prepare_update.py": {
+      "sha256": "9fd291c69b75436b5278b942757d6fb292f92af867dce03a0749f897574ca0b8",
+      "bytes": 3893
+    },
+    "tools/validate_output.py": {
+      "sha256": "f8a04afbebda31bbb44916d02211f2662cb8b6b8a37d6ca9a5036b25cdbfc764",
+      "bytes": 2833
+    }
+  }
+}

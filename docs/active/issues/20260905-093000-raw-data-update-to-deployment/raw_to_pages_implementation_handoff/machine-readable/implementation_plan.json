@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "goal": "authoritative full raw snapshot -> labeling -> keyword/account joint publication -> verified GitHub Pages",
+  "scope": {
+    "in": [
+      "stage13_previous_success_reference",
+      "three_class_operational_registry_promotion",
+      "keyword_account_shared_dataset_gate",
+      "keyword_parent_manifest_lineage",
+      "runtime_contract_relocation",
+      "data_release_json",
+      "verify_release",
+      "ci_predeploy_validation",
+      "deployed_data_release_verification"
+    ],
+    "out": [
+      "collector_implementation",
+      "private_release_archive_framework",
+      "byte_exact_full_replay",
+      "correction_release_framework",
+      "disaster_recovery_retention",
+      "deployment_manifest"
+    ]
+  },
+  "prs": [
+    {
+      "id": 1,
+      "name": "labeling-continuity",
+      "deliverables": [
+        "stage13 private previous-success reference workflow",
+        "raw five-field string validation",
+        "operational golden/p2 registries",
+        "three-class review promotion",
+        "tests"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "joint-publication",
+      "deliverables": [
+        "runtime contracts under package/contracts",
+        "keyword parent manifest binding",
+        "account generation from same three-class snapshot",
+        "public 8-artifact gate",
+        "create-data-release",
+        "verify-release",
+        "tests"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "ci-bootstrap",
+      "deliverables": [
+        "PR validation",
+        "main-only pages deployment",
+        "deployed data-release verification",
+        "production bootstrap",
+        "recurring runbook update",
+        "stage13 reference promotion"
+      ]
+    }
+  ],
+  "public_artifacts": [
+    "package/src/data/candidate_registry.json",
+    "package/src/data/candidate_evaluation.json",
+    "package/src/data/filterKeywordCandidates.json",
+    "package/src/data/filterKeywordCandidates.meta.json",
+    "package/src/data/run_manifest.json",
+    "package/src/data/accountBlockCandidates.json",
+    "package/src/data/accountBlockCandidates.meta.json",
+    "package/src/data/accountBlockCandidateRunManifest.json",
+    "package/public/data-release.json"
+  ],
+  "issue_close_requires_end_to_end_bootstrap": true
+}

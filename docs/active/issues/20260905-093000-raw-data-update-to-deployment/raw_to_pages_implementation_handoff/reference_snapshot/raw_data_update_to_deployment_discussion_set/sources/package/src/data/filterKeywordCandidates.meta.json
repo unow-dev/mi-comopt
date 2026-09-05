@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "run_id": "run_bf8163da-cc49-4549-a42a-f02636d4b97c",
+  "run_manifest_content_sha256": "sha256:4a3376229660250fe916959590579ff492bc995d9a96fb40fa768617fdf6e852",
+  "published_at": "2026-08-26T14:51:16Z",
+  "candidates_content_sha256": "sha256:01489d6939e89e66c6f0f062c4fa1d56483ac0f668efd42f188e1caf3792887c",
+  "registry_content_sha256": "sha256:f44ca0d128a1d16c9ac29711ba79af517e634d75affe02b532fb7b9071615432",
+  "dataset_artifact_sha256": "sha256:b15bf5a4f431e56fb1d5b9e1490b94fbca3950ad596f4db142877c45bb0d95b3",
+  "evaluation_policy_version": "1.0.0",
+  "evaluation_policy_content_sha256": "sha256:edfd0c0ea09f60ea505999bd3985fc6e1a44a1f706486cf7c2a52a941d049dba",
+  "taxonomy_version": "1.0.0",
+  "taxonomy_content_sha256": "sha256:d79db026b946888661925307cf597c47b45ba7fcf86969cdcb2ce590fb5c1302"
+}

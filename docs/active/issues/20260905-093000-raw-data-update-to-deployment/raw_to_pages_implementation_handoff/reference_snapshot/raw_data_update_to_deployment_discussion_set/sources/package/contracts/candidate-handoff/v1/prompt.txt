@@ -1,0 +1,8 @@
+添付されたすべてのファイルを読み、PROMPT_CONTRACT_v1.md に従って candidate proposal を生成してください。
+
+candidate_generation_request.json の request_id と input_fingerprint をそのまま使用してください。
+candidate-proposal.schema.json と common.schema.json に厳密に従ってください。
+candidate-proposal.schema.json 内の common.schema.json への参照には、添付された common.schema.json を使用してください。外部取得は不要です。
+
+最終回答には candidate_proposal の単一の JSON object だけを出力してください。
+Markdown code fence、説明、前置き、後書き、その他のテキストは出力しないでください。

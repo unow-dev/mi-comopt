@@ -1,0 +1,46 @@
+{
+  "pipeline_version": "1.4.0",
+  "registry_version": "1.1.0",
+  "adjudication_date": "2026-08-24",
+  "source_stage13_sha256": "a46c140b1e979c7c2a5037c8fc4eb0797207bd2a6323ced51bfb7cf74e09ee17",
+  "baseline_p2_rows_before": 346,
+  "high_confidence_rows_adjudicated": 345,
+  "decision_label_counts": {
+    "normal": 242,
+    "reactive": 83,
+    "direct_nuisance": 20
+  },
+  "rows_changing_from_v1_2_final": 103,
+  "changed_transition_counts": {
+    "normal->reactive": 83,
+    "normal->direct_nuisance": 20
+  },
+  "rows_retaining_normal": 242,
+  "unresolved_p2_rows": 1,
+  "unresolved_source_indices": [
+    3920
+  ],
+  "v1_3_final_counts": {
+    "reactive": 1224,
+    "normal": 19663,
+    "direct_nuisance": 546
+  },
+  "v1_3_final_sha256": "ac324e85b67bcfd2b73a934214db027076cb38e5a39002b097f64813ed1398f2",
+  "scope": "Exact P2-only record_key decisions; no generalization to unseen records.",
+  "full_346_forced_adjudication_rejected": true,
+  "v1_4_boundary_additions": {
+    "rows_reviewed": 8,
+    "rows_adjudicated": 7,
+    "normal": 3,
+    "reactive": 1,
+    "direct_nuisance": 3,
+    "left_unresolved": 1
+  },
+  "v1_4_final_counts": {
+    "reactive": 1225,
+    "normal": 19659,
+    "direct_nuisance": 549
+  },
+  "v1_4_final_sha256": "8c95a01ead137927c8a7d9b23c81deee41bcd8e7647e58fe072bdfffcabb5ff6",
+  "remaining_case_policy": "Do not force-label source index 3920 without additional admissible context."
+}
