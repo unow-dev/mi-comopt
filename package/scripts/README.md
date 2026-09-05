@@ -10,6 +10,7 @@ npm run candidate-workflow -- canonicalize-proposal ...
 npm run candidate-workflow -- prepare-handoff ...
 npm run candidate-workflow -- full-update ...
 npm run candidate-workflow -- validate-current ...
+python3 scripts/promote_stage13_reference.py ...
 ```
 
 ## Account block candidate workflow
@@ -20,7 +21,7 @@ npm run candidate-workflow -- validate-current ...
 npm run account-candidate-workflow -- \
   --dataset /path/to/three_class_labeled.json \
   --summary /path/to/summary.json \
-  --policy docs/active/issues/20260827-054534-account-block-candidate-list/account_block_candidate_handoff_v1.0.0/account_block_candidate_handoff/config/accountBlockCandidatePolicy.json \
+  --policy contracts/account-block-candidates/accountBlockCandidatePolicy-1.0.0.json \
   --keyword-meta src/data/filterKeywordCandidates.meta.json \
   --publish-dir src/data
 ```
@@ -71,6 +72,7 @@ npm run candidate-workflow -- full-update \
   --dataset ./handoff/source_dataset.json \
   --policy ./handoff/evaluation_policy.json \
   --taxonomy ./handoff/taxonomy.json \
+  --parent-manifest ./candidate-publication/current/run_manifest.json \
   --candidate-view ./handoff/candidate_view.json \
   --pre-evaluation ./handoff/pre_evaluation.json \
   --handoff-manifest ./handoff/handoff_manifest.json \
@@ -78,3 +80,23 @@ npm run candidate-workflow -- full-update \
 ```
 
 手動handoffでは `--handoff-manifest`、`--candidate-view`、`--pre-evaluation` を必須にします。`canonicalize-proposal` は診断・開発用であり、production handoffの事前手順には含めません。`add` のcandidate IDは `full-update` 内で一度だけ発行されます。
+
+## Joint publication and release identity
+
+keyword 5 artifactとaccount 3 artifactを別々のstaging directoryへ生成した後、同じthree-class finalから作られたことを確認して原子的に公開します。
+
+```bash
+npm run publish:joint-data -- \
+  --keyword-dir ./candidate-publication/current \
+  --account-dir ./account-publication \
+  --data-dir ./package/src/data \
+  --raw ./work/<run>/current_raw.json \
+  --stage13 ./work/<run>/stage13_labeled.json \
+  --stage13-reference ./var/integrated-labeling/stage13_reference.json \
+  --three-class ./work/<run>/three_class/three_class_labeled.json \
+  --scope-id <stable-scope-id> \
+  --source-ref <source-snapshot-ref> \
+  --release-out ./package/public/data-release.json
+```
+
+`create:data-release`は実raw・Stage 13・reference・three-classとstaging 8 artifactからrelease recordだけを生成し、`verify:release`はrepositoryの公開8 artifactとcanonical runtime contractをfail-closed検証します。`data-release.json`がない状態で架空の値を作らず、bootstrap入力が揃うまで公開を停止します。

@@ -11,9 +11,9 @@ import {
 } from "../src/processing/keyword-candidates/candidate-workflow.js";
 import { prepareFullUpdate } from "../src/processing/keyword-candidates/update-flow.js";
 
-const handoff = path.resolve("../docs/active/issues/20260824-065153-candidate-keyword-update-flow/candidate_keyword_update_handoff_v1.0.0");
-const policy = JSON.parse(fs.readFileSync(path.join(handoff, "policy/evaluation/1.0.0.json"), "utf8"));
-const taxonomy = JSON.parse(fs.readFileSync(path.join(handoff, "policy/taxonomy/1.0.0.json"), "utf8"));
+const contracts = path.resolve("contracts");
+const policy = JSON.parse(fs.readFileSync(path.join(contracts, "keyword-candidates/evaluation-policy-1.0.0.json"), "utf8"));
+const taxonomy = JSON.parse(fs.readFileSync(path.join(contracts, "keyword-candidates/taxonomy-1.0.0.json"), "utf8"));
 const dataset = JSON.parse(fs.readFileSync("tests/fixtures/e2e-dataset.json", "utf8"));
 const artifactSha256 = dataset.artifact_sha256;
 
@@ -37,6 +37,10 @@ test("fixture full_update issues an add ID once and records first publication", 
     input_fingerprint: request.input_fingerprint,
     actions: [{ action: "add", keyword: "新しい候補", variants: ["新しい候補"], category_id: "copypasta_spam" }],
   };
+  const parentManifest = {
+    run_id: "run_123e4567-e89b-42d3-a456-426614174000",
+    registry_after_content_sha256: contentSha256(registry),
+  };
   const prepared = prepareFullUpdate({
     request,
     proposal,
@@ -46,6 +50,7 @@ test("fixture full_update issues an add ID once and records first publication", 
     taxonomy,
     publishedAt: "2026-08-25T15:54:00Z",
     runId: "run_223e4567-e89b-42d3-a456-426614174000",
+    parentManifest,
     candidateIdFactory: () => "kw_223e4567-e89b-42d3-a456-426614174000",
   });
   const added = prepared.registryAfter.candidates["kw_223e4567-e89b-42d3-a456-426614174000"];
@@ -53,4 +58,5 @@ test("fixture full_update issues an add ID once and records first publication", 
   assert.equal(added.first_publication_state, "published_at_known");
   assert.equal(added.introduced_at, "2026-08-25T15:54:00Z");
   assert.equal(prepared.publishedCandidates[0].introduced_at, "2026-08-25T15:54:00Z");
+  assert.equal(prepared.manifest.parent_manifest_content_sha256, contentSha256(parentManifest));
 });

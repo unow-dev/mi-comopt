@@ -12,6 +12,10 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
+REPOSITORY_ROOT = next(
+    (parent for parent in Path(__file__).resolve().parents if (parent / ".git").exists()),
+    ROOT.parents[4],
+)
 FIELDS = ("username", "handle", "comment", "postedAt", "postedDate")
 STAGE13_LABELS = {"normal", "nuisance"}
 THREE_LABELS = {"direct_nuisance", "reactive", "normal"}
@@ -75,6 +79,9 @@ def validate_raw_records(data: Any, *, exact_fields: bool = True) -> list[dict]:
                 f"record {i}: raw Stage 13 input must contain exactly {list(FIELDS)}; "
                 f"extra={sorted(set(r)-expected)}"
             )
+        for field in FIELDS:
+            if not isinstance(r[field], str):
+                raise ValueError(f"record {i}: raw field {field!r} must be a JSON string")
     return data
 
 
@@ -89,6 +96,9 @@ def validate_stage13_records(data: Any) -> list[dict]:
             raise ValueError(
                 f"record {i}: Stage 13 record fields must be exactly {sorted(expected)}"
             )
+        for field in FIELDS:
+            if not isinstance(r[field], str):
+                raise ValueError(f"record {i}: Stage 13 field {field!r} must be a JSON string")
         if r.get("label") not in STAGE13_LABELS:
             raise ValueError(f"record {i}: invalid Stage 13 label {r.get('label')!r}")
     return data
@@ -98,11 +108,27 @@ def default_reference() -> Path:
     return ROOT / "reference" / "stage13_labeled_REFERENCE.json"
 
 
+def default_private_reference() -> Path:
+    return REPOSITORY_ROOT / "var" / "integrated-labeling" / "stage13_reference.json"
+
+
+def default_operational_state() -> Path:
+    return REPOSITORY_ROOT / "docs" / "active" / "operations" / "integrated-labeling-state"
+
+
 def default_golden_registry() -> Path:
-    return ROOT / "reference" / "three_class_golden_adjudications.json"
+    return default_operational_state() / "three_class_golden_adjudications.json"
 
 
 def default_p2_registry() -> Path:
+    return default_operational_state() / "three_class_p2_adjudications.json"
+
+
+def default_baseline_golden_registry() -> Path:
+    return ROOT / "reference" / "three_class_golden_adjudications.json"
+
+
+def default_baseline_p2_registry() -> Path:
     return ROOT / "reference" / "three_class_p2_adjudications.json"
 
 
@@ -115,7 +141,12 @@ def cmd_prepare_stage13(args: argparse.Namespace) -> int:
         raise ValueError("--batch-size must be a positive integer")
 
     input_path = args.input_json
-    ref_path = args.reference or default_reference()
+    ref_path = args.reference
+    if ref_path is None:
+        ref_path = default_reference() if getattr(args, "bootstrap", False) else default_private_reference()
+    if not ref_path.exists():
+        mode = "bootstrap baseline" if getattr(args, "bootstrap", False) else "private previous successful run"
+        raise FileNotFoundError(f"Stage 13 {mode} reference is unavailable: {ref_path}")
     outdir = args.outdir
     outdir.mkdir(parents=True, exist_ok=True)
     batches_dir = outdir / "pending_batches"
@@ -346,10 +377,9 @@ def _load_bound_reference(args: argparse.Namespace, state: dict) -> tuple[Path, 
     ref_path = args.reference
     if ref_path is None:
         recorded = state.get("reference_file")
-        if recorded:
-            ref_path = Path(recorded)
-        if ref_path is None or not ref_path.exists():
-            ref_path = default_reference()
+        if not recorded:
+            raise FileNotFoundError("Stage 13 workspace does not contain a bound reference; supply --reference explicitly")
+        ref_path = Path(recorded)
     if not ref_path.exists():
         raise FileNotFoundError(
             f"bound Stage 13 reference is unavailable: {ref_path}. Supply --reference explicitly."
@@ -629,6 +659,193 @@ def load_three_overrides(path: Path | None) -> dict[str, dict]:
     return out
 
 
+EXPECTED_LABEL_BY_GOLDEN_REASON = {
+    "direct_target": "direct_nuisance",
+    "mixed_target": "direct_nuisance",
+    "spam": "direct_nuisance",
+    "anti_target": "reactive",
+    "support_reaction": "reactive",
+    "meta_reaction": "reactive",
+    "quoted_attack": "reactive",
+    "normal_context": "normal",
+}
+EXPECTED_LABEL_BY_P2_REASON = {
+    "confirm_normal": "normal",
+    "reactive_context": "reactive",
+    "direct_target": "direct_nuisance",
+    "spam_or_inappropriate_request": "direct_nuisance",
+}
+OPERATIONAL_RATIONALE = {
+    "direct_target": "Reviewed exact case as a direct nuisance target.",
+    "mixed_target": "Reviewed exact case as a mixed target requiring direct nuisance classification.",
+    "spam": "Reviewed exact case as spam or an inappropriate nuisance message.",
+    "anti_target": "Reviewed exact case as a reaction targeting an anti or critic.",
+    "support_reaction": "Reviewed exact case as a supportive reaction to criticism.",
+    "meta_reaction": "Reviewed exact case as a meta-level reaction to comment discourse.",
+    "quoted_attack": "Reviewed exact case as a quoted or referenced attack context.",
+    "normal_context": "Reviewed exact case and retained the normal classification.",
+    "confirm_normal": "Reviewed exact P2 case and retained the normal classification.",
+    "reactive_context": "Reviewed exact P2 case as a reaction context.",
+    "spam_or_inappropriate_request": "Reviewed exact P2 case as spam or an inappropriate request.",
+}
+
+
+def _operational_decision(decision: dict) -> dict:
+    reason_code = decision.get("reason_code")
+    if reason_code not in OPERATIONAL_RATIONALE:
+        raise ValueError(f"unsupported reason_code for operational registry: {reason_code!r}")
+    return {
+        "record_key": str(decision["record_key"]).lower(),
+        "stage13_label": decision["stage13_label"],
+        "label": decision["label"],
+        "reason_code": reason_code,
+        "rationale": OPERATIONAL_RATIONALE[reason_code],
+    }
+
+
+def _operational_registry(decisions: list[dict]) -> dict:
+    normalized = [_operational_decision(decision) for decision in decisions]
+    normalized.sort(key=lambda decision: decision["record_key"])
+    keys = [decision["record_key"] for decision in normalized]
+    if len(keys) != len(set(keys)):
+        raise ValueError("operational registry contains duplicate record_key values")
+    return {
+        "schema_version": 1,
+        "registry_version": "operational",
+        "decision_count": len(normalized),
+        "decisions": normalized,
+    }
+
+
+def _read_review_csv(path: Path) -> list[dict]:
+    with path.open("r", encoding="utf-8-sig", newline="") as f:
+        reader = csv.DictReader(f)
+        required = {"record_key", "label", "reason_code", "note"}
+        if not required.issubset(set(reader.fieldnames or [])):
+            raise ValueError(f"promotion CSV requires columns {sorted(required)}")
+        rows = []
+        for row_no, row in enumerate(reader, 2):
+            values = {key: (row.get(key) or "").strip() for key in required}
+            if not any(values.values()):
+                continue
+            if not all(values.values()):
+                raise ValueError(f"promotion CSV row {row_no}: record_key, label, reason_code, note are required")
+            rows.append({**values, "row_no": row_no})
+    return rows
+
+
+def _load_registry_for_promotion(path: Path, loader) -> dict[str, dict]:
+    if not path.exists():
+        return {}
+    registry, _ = loader(path)
+    return registry
+
+
+def _merge_operational_decision(target: dict[str, dict], decision: dict) -> None:
+    key = decision["record_key"]
+    existing = target.get(key)
+    normalized = _operational_decision(decision)
+    if existing is not None:
+        existing_normalized = _operational_decision(existing)
+        if existing_normalized != normalized:
+            raise ValueError(f"existing decision conflict for record_key {key}")
+        return
+    target[key] = normalized
+
+
+def promote_three_class_decisions(
+    audit_path: Path,
+    golden_review_path: Path,
+    p2_review_path: Path | None,
+    golden_registry_path: Path,
+    p2_registry_path: Path,
+    golden_output: Path,
+    p2_output: Path,
+) -> dict:
+    audits = load_json(audit_path)
+    if not isinstance(audits, list):
+        raise ValueError("three-class audit must be an array")
+    audit_by_key = {}
+    for audit in audits:
+        key = str(audit.get("record_key", "")).lower()
+        if len(key) != 24 or key in audit_by_key:
+            raise ValueError(f"invalid or duplicate audit record_key: {key!r}")
+        audit_by_key[key] = audit
+
+    golden = _load_registry_for_promotion(golden_registry_path, load_golden_registry)
+    p2 = _load_registry_for_promotion(p2_registry_path, load_p2_registry)
+    promoted = {"golden": 0, "p2": 0}
+
+    def process(rows: list[dict], *, is_p2: bool) -> None:
+        for row in rows:
+            key = row["record_key"].lower()
+            audit = audit_by_key.get(key)
+            if audit is None:
+                raise ValueError(f"review record_key is not present in current audit: {key}")
+            if not audit.get("review_required"):
+                raise ValueError(f"record_key is not a review target: {key}")
+            priority = audit.get("review_priority")
+            reasons = set(audit.get("review_reasons") or [])
+            if is_p2:
+                if priority != 2 or reasons != {"source_normal_direct_cue"}:
+                    raise ValueError(f"record_key is not an eligible P2 review target: {key}")
+                expected = EXPECTED_LABEL_BY_P2_REASON.get(row["reason_code"])
+                destination = p2
+            else:
+                if priority not in MANDATORY_REVIEW_PRIORITIES:
+                    raise ValueError(f"record_key is not a mandatory P0/P1 review target: {key}")
+                expected = EXPECTED_LABEL_BY_GOLDEN_REASON.get(row["reason_code"])
+                destination = golden
+            if expected is None or expected != row["label"]:
+                raise ValueError(f"reason_code/label mismatch for record_key {key}")
+            decision = {
+                "record_key": key,
+                "stage13_label": audit.get("stage13_label"),
+                "label": row["label"],
+                "reason_code": row["reason_code"],
+                "rationale": OPERATIONAL_RATIONALE[row["reason_code"]],
+            }
+            if decision["stage13_label"] not in STAGE13_LABELS:
+                raise ValueError(f"invalid stage13_label in current audit for record_key {key}")
+            _merge_operational_decision(destination, decision)
+            promoted["p2" if is_p2 else "golden"] += 1
+
+    process(_read_review_csv(golden_review_path), is_p2=False)
+    if p2_review_path is not None:
+        process(_read_review_csv(p2_review_path), is_p2=True)
+
+    overlap = sorted(set(golden) & set(p2))
+    if overlap:
+        raise ValueError(f"golden and P2 registries overlap; first={overlap[:20]}")
+    golden_payload = _operational_registry(list(golden.values()))
+    p2_payload = _operational_registry(list(p2.values()))
+    dump_json(golden_output, golden_payload)
+    dump_json(p2_output, p2_payload)
+    return {
+        "golden_promoted": promoted["golden"],
+        "p2_promoted": promoted["p2"],
+        "golden_count": golden_payload["decision_count"],
+        "p2_count": p2_payload["decision_count"],
+    }
+
+
+def bootstrap_operational_registries(
+    golden_source: Path,
+    p2_source: Path,
+    golden_output: Path,
+    p2_output: Path,
+) -> dict:
+    golden, _ = load_golden_registry(golden_source)
+    p2, _ = load_p2_registry(p2_source)
+    if set(golden) & set(p2):
+        raise ValueError("baseline golden and P2 registries overlap")
+    golden_payload = _operational_registry(list(golden.values()))
+    p2_payload = _operational_registry(list(p2.values()))
+    dump_json(golden_output, golden_payload)
+    dump_json(p2_output, p2_payload)
+    return {"golden_count": golden_payload["decision_count"], "p2_count": p2_payload["decision_count"]}
+
+
 def classify_three(
     record: dict,
     reactive_terms: list[str],
@@ -803,7 +1020,7 @@ def write_three_override_template(
     seen = set()
     with path.open("w", encoding="utf-8-sig", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["record_key", "label", "note"])
+        w.writerow(["record_key", "label", "reason_code", "note"])
         for a in audits:
             if not a["review_required"] or a["review_resolved"]:
                 continue
@@ -811,7 +1028,7 @@ def write_three_override_template(
                 continue
             if a["record_key"] in seen:
                 continue
-            w.writerow([a["record_key"], "", ""])
+            w.writerow([a["record_key"], "", "", ""])
             seen.add(a["record_key"])
 
 
@@ -978,7 +1195,17 @@ def cmd_validate(args: argparse.Namespace) -> int:
     checks.update(c)
     errors.extend(e)
 
-    reference_path = args.reference or default_reference()
+    if args.reference is not None:
+        reference_path = args.reference
+    elif getattr(args, "bootstrap", False):
+        reference_path = default_reference()
+    else:
+        reference_path = default_private_reference()
+    if not reference_path.exists():
+        raise FileNotFoundError(
+            f"Stage 13 validation reference is unavailable: {reference_path}. "
+            "Supply --reference explicitly or use --bootstrap only for bootstrap."
+        )
     reference = validate_stage13_records(load_json(reference_path))
     prior: dict[tuple, set[str]] = defaultdict(set)
     for r in reference:
@@ -1056,6 +1283,31 @@ def cmd_validate(args: argparse.Namespace) -> int:
     return 0 if all_pass else 1
 
 
+def cmd_promote_three_class(args: argparse.Namespace) -> int:
+    result = promote_three_class_decisions(
+        audit_path=args.audit,
+        golden_review_path=args.review_csv,
+        p2_review_path=args.p2_review_csv,
+        golden_registry_path=args.golden_registry or default_golden_registry(),
+        p2_registry_path=args.p2_registry or default_p2_registry(),
+        golden_output=args.out_golden or default_golden_registry(),
+        p2_output=args.out_p2 or default_p2_registry(),
+    )
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    return 0
+
+
+def cmd_bootstrap_three_class_state(args: argparse.Namespace) -> int:
+    result = bootstrap_operational_registries(
+        golden_source=args.golden_source or default_baseline_golden_registry(),
+        p2_source=args.p2_source or default_baseline_p2_registry(),
+        golden_output=args.out_golden or default_golden_registry(),
+        p2_output=args.out_p2 or default_p2_registry(),
+    )
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(description="Integrated Stage 13 -> 3-Class labeling pipeline")
     sub = ap.add_subparsers(dest="command", required=True)
@@ -1063,6 +1315,7 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("prepare-stage13", help="Prepare exact-reuse and pending Stage 13 review workspace")
     p.add_argument("input_json", type=Path)
     p.add_argument("--reference", type=Path)
+    p.add_argument("--bootstrap", action="store_true", help="Use immutable baseline only for the initial bootstrap")
     p.add_argument("--outdir", type=Path, required=True)
     p.add_argument("--batch-size", type=int, default=500)
     p.set_defaults(func=cmd_prepare_stage13)
@@ -1097,10 +1350,28 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--stage13", dest="stage13_json", type=Path, required=True)
     p.add_argument("--three-class", dest="three_class_json", type=Path, required=True)
     p.add_argument("--reference", type=Path)
+    p.add_argument("--bootstrap", action="store_true", help="Use immutable baseline only for the initial bootstrap")
     p.add_argument("--three-class-audit", type=Path)
     p.add_argument("--require-resolved", action="store_true")
     p.add_argument("--report", type=Path)
     p.set_defaults(func=cmd_validate)
+
+    p = sub.add_parser("promote-three-class", help="Promote reviewed exact decisions into operational registries")
+    p.add_argument("--audit", type=Path, required=True)
+    p.add_argument("--review-csv", type=Path, required=True)
+    p.add_argument("--p2-review-csv", type=Path)
+    p.add_argument("--golden-registry", type=Path)
+    p.add_argument("--p2-registry", type=Path)
+    p.add_argument("--out-golden", type=Path)
+    p.add_argument("--out-p2", type=Path)
+    p.set_defaults(func=cmd_promote_three_class)
+
+    p = sub.add_parser("bootstrap-three-class-state", help="Create minimal operational registries from immutable baselines")
+    p.add_argument("--golden-source", type=Path)
+    p.add_argument("--p2-source", type=Path)
+    p.add_argument("--out-golden", type=Path)
+    p.add_argument("--out-p2", type=Path)
+    p.set_defaults(func=cmd_bootstrap_three_class_state)
     return ap
 
 

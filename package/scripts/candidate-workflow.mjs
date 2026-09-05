@@ -21,7 +21,7 @@ import {
   validateRegistry,
   canonicalizeProposal,
 } from "../src/processing/keyword-candidates/candidate-workflow.js";
-import { prepareFullUpdate } from "../src/processing/keyword-candidates/update-flow.js";
+import { prepareFullUpdate, validateParentManifest } from "../src/processing/keyword-candidates/update-flow.js";
 import { validateGeneratedArtifacts } from "../src/processing/keyword-candidates/artifact-validation.js";
 import { HANDOFF_FILES, prepareHandoffBundle, verifyHandoffBundle } from "../src/processing/keyword-candidates/handoff-workflow.js";
 import { publishBundleAtomically, resolveCurrentPublicationDir } from "./adapters/keyword-publication.js";
@@ -43,7 +43,7 @@ function usage() {
   candidate-workflow canonicalize-proposal --request FILE --proposal FILE --registry FILE --taxonomy FILE --out FILE
   candidate-workflow validate-current --dir DIR --taxonomy FILE
   candidate-workflow prepare-handoff --publication-root DIR --dataset FILE --policy FILE --taxonomy FILE --outdir DIR [--labeling-summary FILE --labeling-validation FILE] [--request-id ID] [--source-ref REF] [--source-sha SHA]
-  candidate-workflow full-update --registry FILE --request FILE --proposal FILE --dataset FILE --policy FILE --taxonomy FILE --outdir DIR [--candidate-view FILE] [--pre-evaluation FILE] [--handoff-manifest FILE] [--run-id ID] [--published-at TIMESTAMP] [--export-dir DIR]
+  candidate-workflow full-update --registry FILE --request FILE --proposal FILE --dataset FILE --policy FILE --taxonomy FILE --parent-manifest FILE --outdir DIR [--candidate-view FILE] [--pre-evaluation FILE] [--handoff-manifest FILE] [--run-id ID] [--published-at TIMESTAMP] [--export-dir DIR]
 `);
 }
 
@@ -351,13 +351,15 @@ function validateCurrent(args) {
 }
 
 function fullUpdate(args) {
-  assertRequiredArgs(args, ["registry", "request", "proposal", "dataset", "policy", "taxonomy", "outdir"]);
+  assertRequiredArgs(args, ["registry", "request", "proposal", "dataset", "policy", "taxonomy", "parent-manifest", "outdir"]);
   const registry = readJson(args.registry);
   const request = readJson(args.request);
   const proposal = readJson(args.proposal);
   const dataset = readJson(args.dataset);
   const policy = readJson(args.policy);
   const taxonomy = readJson(args.taxonomy);
+  const parentManifest = readJson(args["parent-manifest"]);
+  validateParentManifest({ parentManifest, request });
   const candidateView = args["candidate-view"] ? readJson(args["candidate-view"]) : undefined;
   const preEvaluation = args["pre-evaluation"] ? readJson(args["pre-evaluation"]) : undefined;
   if (args["handoff-manifest"]) {
@@ -393,6 +395,7 @@ function fullUpdate(args) {
     preEvaluation,
     publishedAt,
     runId,
+    parentManifest,
     knownConflictKeys,
     evaluator: { version: "1.0.0", source_revision: "git:local" },
   });

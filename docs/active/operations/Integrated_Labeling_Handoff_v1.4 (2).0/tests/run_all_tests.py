@@ -48,6 +48,57 @@ def test_three_class_regressions():
     return len(cases)
 
 
+def test_raw_contract_is_strict_and_duplicate_preserving():
+    valid = [{f: "same" for f in mod.FIELDS}, {f: "same" for f in mod.FIELDS}]
+    assert_eq(len(mod.validate_raw_records(valid)), 2, "duplicate raw rows are preserved")
+    for field in mod.FIELDS:
+        invalid = {f: "value" for f in mod.FIELDS}
+        invalid[field] = None
+        assert_raises(ValueError, lambda invalid=invalid: mod.validate_raw_records([invalid]), f"raw null rejection: {field}")
+        invalid[field] = 1
+        assert_raises(ValueError, lambda invalid=invalid: mod.validate_raw_records([invalid]), f"raw number rejection: {field}")
+        invalid[field] = {}
+        assert_raises(ValueError, lambda invalid=invalid: mod.validate_raw_records([invalid]), f"raw object rejection: {field}")
+        invalid[field] = []
+        assert_raises(ValueError, lambda invalid=invalid: mod.validate_raw_records([invalid]), f"raw array rejection: {field}")
+    return 1
+
+
+def test_operational_registry_promotion_contract():
+    with tempfile.TemporaryDirectory() as td_raw:
+        td = Path(td_raw)
+        audit_path = td / "audit.json"
+        golden_key = "a" * 24
+        p2_key = "b" * 24
+        mod.dump_json(audit_path, [
+            {"record_key": golden_key, "stage13_label": "normal", "review_required": True, "review_priority": 1, "review_reasons": ["possible_reactive_without_primary_term"]},
+            {"record_key": p2_key, "stage13_label": "normal", "review_required": True, "review_priority": 2, "review_reasons": ["source_normal_direct_cue"]},
+        ])
+        golden_review = td / "golden.csv"
+        with golden_review.open("w", encoding="utf-8-sig", newline="") as f:
+            csv.writer(f).writerows([
+                ["record_key", "label", "reason_code", "note"],
+                [golden_key, "reactive", "quoted_attack", "human note is private"],
+            ])
+        p2_review = td / "p2.csv"
+        with p2_review.open("w", encoding="utf-8-sig", newline="") as f:
+            csv.writer(f).writerows([
+                ["record_key", "label", "reason_code", "note"],
+                [p2_key, "normal", "confirm_normal", "another private note"],
+            ])
+        golden_out, p2_out = td / "golden.json", td / "p2.json"
+        result = mod.promote_three_class_decisions(
+            audit_path, golden_review, p2_review, td / "missing-golden.json", td / "missing-p2.json", golden_out, p2_out
+        )
+        assert_eq(result["golden_count"], 1, "promoted golden count")
+        assert_eq(result["p2_count"], 1, "promoted p2 count")
+        golden = load(golden_out)
+        assert_eq(golden["decisions"][0]["record_key"], golden_key, "record key ordering")
+        assert_eq(golden["decisions"][0]["rationale"], "Reviewed exact case as a quoted or referenced attack context.", "safe rationale")
+        assert_eq("human note is private" in json.dumps(golden), False, "review note is not published")
+    return 3
+
+
 def test_baseline_three_class():
     baseline = mod.validate_stage13_records(load(ROOT / "reference" / "stage13_labeled_REFERENCE.json"))
     reactive = load(ROOT / "config" / "reactive_terms.json")
@@ -663,6 +714,8 @@ def main():
     results = []
     for name, fn in [
         ("three_class_regressions", test_three_class_regressions),
+        ("raw_contract_is_strict_and_duplicate_preserving", test_raw_contract_is_strict_and_duplicate_preserving),
+        ("operational_registry_promotion_contract", test_operational_registry_promotion_contract),
         ("baseline_three_class", test_baseline_three_class),
         ("stage13_exact_reuse_roundtrip", test_stage13_exact_reuse_roundtrip),
         ("stage13_pending_and_context", test_stage13_pending_and_context),

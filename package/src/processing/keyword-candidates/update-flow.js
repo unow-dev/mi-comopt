@@ -13,6 +13,25 @@ import {
   validateProposal,
 } from "./candidate-workflow.js";
 
+export function validateParentManifest({ parentManifest, request }) {
+  if (!parentManifest || typeof parentManifest !== "object" || Array.isArray(parentManifest)) {
+    const error = new Error("parent manifest must be a JSON object");
+    error.code = "PARENT_MANIFEST_MISMATCH";
+    throw error;
+  }
+  if (parentManifest.run_id !== request.base_publication?.run_id) {
+    const error = new Error("parent manifest run_id does not match request base publication");
+    error.code = "PARENT_MANIFEST_MISMATCH";
+    throw error;
+  }
+  if (parentManifest.registry_after_content_sha256 !== request.base_publication?.registry_content_sha256) {
+    const error = new Error("parent manifest registry_after_content_sha256 does not match request base publication");
+    error.code = "PARENT_MANIFEST_MISMATCH";
+    throw error;
+  }
+  return true;
+}
+
 export function prepareFullUpdate({
   request,
   proposal,
@@ -27,10 +46,15 @@ export function prepareFullUpdate({
   completedAt = publishedAt,
   runId,
   parentManifestContentSha256 = null,
+  parentManifest,
   evaluator,
   candidateIdFactory,
   knownConflictKeys = [],
 }) {
+  if (parentManifest) {
+    validateParentManifest({ parentManifest, request });
+    parentManifestContentSha256 = contentSha256(parentManifest);
+  }
   validateProposal(proposal, { request, registry, taxonomy });
   if (contentSha256(registry) !== request.base_publication.registry_content_sha256) {
     const staleError = new Error("base registry content hash does not match request");

@@ -1,0 +1,868 @@
+{
+  "schema_version": 1,
+  "registry_version": "operational",
+  "decision_count": 123,
+  "decisions": [
+    {
+      "record_key": "017fda9bf15dc4eb5c8ff361",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "Reviewed exact case as a reaction targeting an anti or critic."
+    },
+    {
+      "record_key": "0637aa0a323d73139d993f81",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "08474ad8de7a2d6bf8920297",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "09694c9e0f47c1bf0e2c85ae",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "meta_reaction",
+      "rationale": "Reviewed exact case as a meta-level reaction to comment discourse."
+    },
+    {
+      "record_key": "096f7313c014777dd5cd8459",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "Reviewed exact case as a mixed target requiring direct nuisance classification."
+    },
+    {
+      "record_key": "0ccf9b77bd9563a44a4b9cfa",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "Reviewed exact case as a reaction targeting an anti or critic."
+    },
+    {
+      "record_key": "0cd8bb90d98b0fe603ae94a5",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "0ee2a412b695813ee686ebd7",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "0ef281f793ede6be05c10f8b",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "meta_reaction",
+      "rationale": "Reviewed exact case as a meta-level reaction to comment discourse."
+    },
+    {
+      "record_key": "0f3d9253f3711c238f597fd1",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "0fbc5ba2a972d0eac344bbec",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "Reviewed exact case as a mixed target requiring direct nuisance classification."
+    },
+    {
+      "record_key": "0fe09f3fddae108d5250868e",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "Reviewed exact case as a reaction targeting an anti or critic."
+    },
+    {
+      "record_key": "10721d379463e412e948b2f3",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "10d57f52b5597de746116f11",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "116ebeccaccff37857db8b58",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "133bfddfe81b03c954688b3a",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "Reviewed exact case as a reaction targeting an anti or critic."
+    },
+    {
+      "record_key": "1406c4fda41ce276b4d4fa8e",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "Reviewed exact case as a reaction targeting an anti or critic."
+    },
+    {
+      "record_key": "147cb6ea15e2b520f9b3d5e1",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "Reviewed exact case and retained the normal classification."
+    },
+    {
+      "record_key": "15d291976cca8651f41b9aa4",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "Reviewed exact case as a reaction targeting an anti or critic."
+    },
+    {
+      "record_key": "18818fc95944647341d29bba",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "meta_reaction",
+      "rationale": "Reviewed exact case as a meta-level reaction to comment discourse."
+    },
+    {
+      "record_key": "1c3e9b683a4e3f3b03347a75",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "1ff67234bc24ca8510653fb6",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "2237fdf57171cba9e4fd7dce",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "Reviewed exact case as a mixed target requiring direct nuisance classification."
+    },
+    {
+      "record_key": "23c9d668dd173939df72d71d",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "Reviewed exact case as a mixed target requiring direct nuisance classification."
+    },
+    {
+      "record_key": "23e6db1fe16b69b9bb76bfe4",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "2ac7c191696358154bb62c7d",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "2f852b179a8227c2ad975ddd",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "30928bd028c414c3da6740a7",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "31b0358c00012bf279f728b8",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "meta_reaction",
+      "rationale": "Reviewed exact case as a meta-level reaction to comment discourse."
+    },
+    {
+      "record_key": "32aef7ea859e9e9b1c1227af",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "33c1e03ebba0b61891684b4f",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "Reviewed exact case as a reaction targeting an anti or critic."
+    },
+    {
+      "record_key": "356a67fd121d4f4a8f3da730",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "3b6a13b85bb1fd06b74b01b3",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "Reviewed exact case and retained the normal classification."
+    },
+    {
+      "record_key": "3ba83cb1fd04c3b199d0cb46",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "Reviewed exact case and retained the normal classification."
+    },
+    {
+      "record_key": "3c4f1af148fd1e752ec78b69",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "Reviewed exact case as a reaction targeting an anti or critic."
+    },
+    {
+      "record_key": "401729330a2354c72b2f514b",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "48fe4d42d5f48730580f3c46",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "4bf95093bac7c085bd2ce8fd",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "4c6db0b19941efb376400469",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "4c740299183d9a4bb7733666",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "4fe35c3f4795d8a7d3c4ea79",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "Reviewed exact case and retained the normal classification."
+    },
+    {
+      "record_key": "51501edcde8f0e013233322b",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "522c00bd98a3ca620216efed",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "Reviewed exact case as a direct nuisance target."
+    },
+    {
+      "record_key": "53916b9d92e5f03cfe43bd15",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "54f300e84094725392241ab7",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "56ed520ab076d1452373e799",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "58b1e951f5996bccd8f1d44f",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "5af96acf9da31b878af18059",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "Reviewed exact case and retained the normal classification."
+    },
+    {
+      "record_key": "5b7c63ce2fb3bb994e8d92e7",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "5b9e1dc9a3b787c3d71b31eb",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "5d0ba819d87c97fa1f865a43",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "Reviewed exact case and retained the normal classification."
+    },
+    {
+      "record_key": "5e13752b86981aa63eda5c52",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "616018b4060b0f7101744663",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "Reviewed exact case as a mixed target requiring direct nuisance classification."
+    },
+    {
+      "record_key": "65c12a7d9291fcafc05168de",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "Reviewed exact case and retained the normal classification."
+    },
+    {
+      "record_key": "6a07db84fcf3ce8d0c74c230",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "Reviewed exact case as a direct nuisance target."
+    },
+    {
+      "record_key": "6e05ada2bc63be88e086cb4e",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "Reviewed exact case as a mixed target requiring direct nuisance classification."
+    },
+    {
+      "record_key": "6f35eb727b01cdbdca1191d4",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "Reviewed exact case as a reaction targeting an anti or critic."
+    },
+    {
+      "record_key": "750369ae981de36b1bca9573",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "Reviewed exact case and retained the normal classification."
+    },
+    {
+      "record_key": "767b14a9b9fd3ab13d80a770",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "Reviewed exact case and retained the normal classification."
+    },
+    {
+      "record_key": "77aa1dd31868c63e4b414852",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "77fd06790135fbeb14126c25",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "7dae26d2645c4eae0a1206ff",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "meta_reaction",
+      "rationale": "Reviewed exact case as a meta-level reaction to comment discourse."
+    },
+    {
+      "record_key": "8a4927f24d23cc24af04583a",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "Reviewed exact case and retained the normal classification."
+    },
+    {
+      "record_key": "8a97867112503f148eb84b7f",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "8aeaf172898889b7b53a2272",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "Reviewed exact case as a mixed target requiring direct nuisance classification."
+    },
+    {
+      "record_key": "9270495f2cba33ea8bc5dabc",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "92fdc975a525b4f8fe038995",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "957e514b13bccc2a249a51ec",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "Reviewed exact case and retained the normal classification."
+    },
+    {
+      "record_key": "97563469410d39bbcab6255b",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "9d0943f26bd3528ad42d945c",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "meta_reaction",
+      "rationale": "Reviewed exact case as a meta-level reaction to comment discourse."
+    },
+    {
+      "record_key": "9d38725e3dac97f45cb059d5",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "Reviewed exact case as a reaction targeting an anti or critic."
+    },
+    {
+      "record_key": "a0f61c904166e0fca2ef3ac3",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "Reviewed exact case as a reaction targeting an anti or critic."
+    },
+    {
+      "record_key": "a6cedb25067548f23b1ab845",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "aa83996d96e9201ec142e122",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "aa9b2bfb0e66f429a3e34bc8",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "meta_reaction",
+      "rationale": "Reviewed exact case as a meta-level reaction to comment discourse."
+    },
+    {
+      "record_key": "ac32c04a6ece9fb8c2e05ac3",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "ae23d67c26951c79acb65dcb",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "Reviewed exact case and retained the normal classification."
+    },
+    {
+      "record_key": "ae4602990e4349395fb01a30",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "Reviewed exact case as a mixed target requiring direct nuisance classification."
+    },
+    {
+      "record_key": "ae593f37c0ee379946440566",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "af37ed1391196ca64ac85180",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "b1844fd066192263fa8128b2",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "b5a76c00037f822319c126b4",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "Reviewed exact case as a reaction targeting an anti or critic."
+    },
+    {
+      "record_key": "b5b3cf9929a6ba730cc92273",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "b604a5a84d9119d192434d9d",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "Reviewed exact case and retained the normal classification."
+    },
+    {
+      "record_key": "b76b81e6588bced09b3d20c9",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "Reviewed exact case and retained the normal classification."
+    },
+    {
+      "record_key": "b85f66d61acfa8a256e02f66",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "Reviewed exact case as a mixed target requiring direct nuisance classification."
+    },
+    {
+      "record_key": "ba74c539243d347117acd22c",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "Reviewed exact case and retained the normal classification."
+    },
+    {
+      "record_key": "bb4fa30338d98f7380bb4792",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "bc55bc1997b37720ef2d7580",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "meta_reaction",
+      "rationale": "Reviewed exact case as a meta-level reaction to comment discourse."
+    },
+    {
+      "record_key": "bca396639acc1941f38348b3",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "be328ad6b7c0f5f7007f62a8",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "be8a6963b76a09af6bae01c4",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "Reviewed exact case as a reaction targeting an anti or critic."
+    },
+    {
+      "record_key": "befd05fd4fe3b4cf07dfcc13",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "bf852b6f05977e05bc30d4b2",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "Reviewed exact case as a mixed target requiring direct nuisance classification."
+    },
+    {
+      "record_key": "bfc90942944ca6b9d0943197",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "Reviewed exact case as a reaction targeting an anti or critic."
+    },
+    {
+      "record_key": "c1122b7e524984f46390aefa",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "Reviewed exact case as a reaction targeting an anti or critic."
+    },
+    {
+      "record_key": "c3fe887a652812ed70f91f38",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "Reviewed exact case and retained the normal classification."
+    },
+    {
+      "record_key": "c7be038fdd257328bfadbb1e",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "Reviewed exact case and retained the normal classification."
+    },
+    {
+      "record_key": "ce20a40d4756054402710632",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "Reviewed exact case as a reaction targeting an anti or critic."
+    },
+    {
+      "record_key": "cfb5af7df6d2b0e476476bf0",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "d11cca9399eb7108036867a5",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "d74152494f5c20ab769b2ca1",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "d75cd82379e2788031fd26df",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "Reviewed exact case as a reaction targeting an anti or critic."
+    },
+    {
+      "record_key": "d789892dfa06d83245614f80",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "d928bf2289c7432917c53ee4",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "ddd33c30c4c22da7a7f2e38c",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "e16fc6b1fe8bd77f95ba520f",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "e29b18fc830509b4380b9609",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "e2d3a4873be61e0a17ac7d92",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "e3c3f7f6e89de6574ca2d284",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "Reviewed exact case and retained the normal classification."
+    },
+    {
+      "record_key": "e6d2731d42fe7aeef859452b",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "e6e8106a85f4c89c1b4607fd",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "e7048b7cadabe037aa8629bf",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "eb3e4a677781d7abb0068746",
+      "stage13_label": "nuisance",
+      "label": "direct_nuisance",
+      "reason_code": "mixed_target",
+      "rationale": "Reviewed exact case as a mixed target requiring direct nuisance classification."
+    },
+    {
+      "record_key": "ee8e0f35ef274412757493d0",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "f1e8b89ffd8547bd41397ac4",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "support_reaction",
+      "rationale": "Reviewed exact case as a supportive reaction to criticism."
+    },
+    {
+      "record_key": "f22beaf380f7ab58f7f9a8ee",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "Reviewed exact case as a reaction targeting an anti or critic."
+    },
+    {
+      "record_key": "f76530f1a89e33fed81fee55",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "f91e4ae07200a458a04b7932",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "Reviewed exact case and retained the normal classification."
+    },
+    {
+      "record_key": "f98b95df8ac192ebf56d2cdf",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "quoted_attack",
+      "rationale": "Reviewed exact case as a quoted or referenced attack context."
+    },
+    {
+      "record_key": "f9a3a1b2651ecc5231a79a5f",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "anti_target",
+      "rationale": "Reviewed exact case as a reaction targeting an anti or critic."
+    },
+    {
+      "record_key": "fb6f989340624b9ba010ba5a",
+      "stage13_label": "nuisance",
+      "label": "reactive",
+      "reason_code": "meta_reaction",
+      "rationale": "Reviewed exact case as a meta-level reaction to comment discourse."
+    },
+    {
+      "record_key": "fd7e0f1a42bb51d79f49ddb8",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "normal_context",
+      "rationale": "Reviewed exact case and retained the normal classification."
+    }
+  ]
+}

@@ -12,7 +12,7 @@ import {
 
 const PACKAGE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const DEFAULT_DATA_DIR = path.join(PACKAGE_ROOT, "src/data");
-const DEFAULT_POLICY = path.join(PACKAGE_ROOT, "../docs/active/issues/20260827-054534-account-block-candidate-list/account_block_candidate_handoff_v1.0.0/account_block_candidate_handoff/config/accountBlockCandidatePolicy.json");
+const DEFAULT_POLICY = path.join(PACKAGE_ROOT, "contracts/account-block-candidates/accountBlockCandidatePolicy-1.0.0.json");
 const GENERATOR = path.join(PACKAGE_ROOT, "scripts/account-block-candidate-workflow.mjs");
 
 function readJson(file, label) {

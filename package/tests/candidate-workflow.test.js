@@ -21,9 +21,10 @@ import {
 import { isNewCandidate } from "../src/ui/new-badge.js";
 import { prepareFullUpdate } from "../src/processing/keyword-candidates/update-flow.js";
 
+const contracts = path.resolve("contracts");
 const handoff = path.resolve("../docs/active/issues/20260824-065153-candidate-keyword-update-flow/candidate_keyword_update_handoff_v1.0.0");
-const policy = JSON.parse(fs.readFileSync(path.join(handoff, "policy/evaluation/1.0.0.json"), "utf8"));
-const taxonomy = JSON.parse(fs.readFileSync(path.join(handoff, "policy/taxonomy/1.0.0.json"), "utf8"));
+const policy = JSON.parse(fs.readFileSync(path.join(contracts, "keyword-candidates/evaluation-policy-1.0.0.json"), "utf8"));
+const taxonomy = JSON.parse(fs.readFileSync(path.join(contracts, "keyword-candidates/taxonomy-1.0.0.json"), "utf8"));
 const normalizationVectors = JSON.parse(fs.readFileSync(path.join(handoff, "fixtures/normalization_vectors.json"), "utf8"));
 const recommendationCases = JSON.parse(fs.readFileSync(path.join(handoff, "fixtures/recommendation_boundary_cases.json"), "utf8"));
 

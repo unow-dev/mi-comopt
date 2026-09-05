@@ -16,7 +16,7 @@ import {
 const packageRoot = path.resolve(".");
 const workflowScript = path.join(packageRoot, "scripts/account-block-candidate-workflow.mjs");
 const verifyScript = path.join(packageRoot, "scripts/verify-data.mjs");
-const policyPath = path.resolve("../docs/active/issues/20260827-054534-account-block-candidate-list/account_block_candidate_handoff_v1.0.0/account_block_candidate_handoff/config/accountBlockCandidatePolicy.json");
+const policyPath = path.resolve("contracts/account-block-candidates/accountBlockCandidatePolicy-1.0.0.json");
 const policy = JSON.parse(fs.readFileSync(policyPath, "utf8"));
 
 function row({ username = "user", handle = "alice", comment = "comment", postedAt = "9-1", postedDate = "2026-09-01", label = "direct_nuisance" } = {}) {

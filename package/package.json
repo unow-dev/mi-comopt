@@ -11,7 +11,11 @@
     "candidate-workflow": "node scripts/candidate-workflow.mjs",
     "account-candidate-workflow": "node scripts/account-block-candidate-workflow.mjs",
     "comment-db": "node scripts/comment-database.mjs",
-    "verify:data": "node scripts/verify-data.mjs"
+    "verify:data": "node scripts/verify-data.mjs",
+    "create:data-release": "node scripts/create-data-release.mjs",
+    "verify:release": "node scripts/verify-release.mjs",
+    "publish:joint-data": "node scripts/publish-joint-data.mjs",
+    "verify:deployed-release": "node scripts/verify-deployed-release.mjs"
   },
   "dependencies": {
     "react": "^19.1.1",

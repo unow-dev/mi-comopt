@@ -9,9 +9,9 @@ import { resolveCurrentPublicationDir } from "../scripts/adapters/keyword-public
 
 const packageRoot = path.resolve(".");
 const workflowScript = path.join(packageRoot, "scripts/candidate-workflow.mjs");
-const handoffDocs = path.resolve("../docs/active/issues/20260824-065153-candidate-keyword-update-flow/candidate_keyword_update_handoff_v1.0.0");
-const policyFile = path.join(handoffDocs, "policy/evaluation/1.0.0.json");
-const taxonomyFile = path.join(handoffDocs, "policy/taxonomy/1.0.0.json");
+const contractRoot = path.resolve("contracts");
+const policyFile = path.join(contractRoot, "keyword-candidates/evaluation-policy-1.0.0.json");
+const taxonomyFile = path.join(contractRoot, "keyword-candidates/taxonomy-1.0.0.json");
 const datasetFile = path.join(packageRoot, "tests/fixtures/e2e-dataset.json");
 const baseData = path.join(packageRoot, "src/data");
 const handoffNames = [
@@ -340,6 +340,7 @@ test("verified labeling handoff can proceed through full-update publication", ()
     "--candidate-view", path.join(handoffDir, "candidate_view.json"),
     "--pre-evaluation", path.join(handoffDir, "pre_evaluation.json"),
     "--handoff-manifest", path.join(handoffDir, "handoff_manifest.json"),
+    "--parent-manifest", path.join(root, "current/run_manifest.json"),
     "--outdir", root,
   ]);
   assert.equal(result.status, 0, result.stderr);
@@ -366,6 +367,7 @@ test("full-update verifies handoff bytes before publication", () => {
     "--candidate-view", path.join(handoffDir, "candidate_view.json"),
     "--pre-evaluation", path.join(handoffDir, "pre_evaluation.json"),
     "--handoff-manifest", path.join(handoffDir, "handoff_manifest.json"),
+    "--parent-manifest", path.join(root, "current/run_manifest.json"),
     "--outdir", root,
   ]);
   assert.notEqual(result.status, 0);

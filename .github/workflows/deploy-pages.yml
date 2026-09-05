@@ -1,6 +1,7 @@
 name: Deploy React UI to GitHub Pages
 
 on:
+  pull_request:
   push:
     branches:
       - main
@@ -14,7 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,8 +30,48 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run Integrated Labeling tests
+        run: python3 'docs/active/operations/Integrated_Labeling_Handoff_v1.4 (2).0/tests/run_all_tests.py'
+
+      - name: Run Node tests
+        run: npm test
+
+      - name: Verify account data
+        run: npm run verify:data
+
+      - name: Verify joint release
+        run: npm run verify:release
+
       - name: Build React UI
         run: npm run build
+
+      - name: Upload build output for Pages
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-dist
+          path: package/dist
+          if-no-files-found: error
+
+  deploy:
+    needs: validate
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download build output
+        uses: actions/download-artifact@v4
+        with:
+          name: package-dist
+          path: package/dist
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -42,16 +83,9 @@ jobs:
         with:
           path: package/dist
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Verify deployed data-release identity
+        run: node package/scripts/verify-deployed-release.mjs --url '${{ steps.deployment.outputs.page_url }}' --expected package/public/data-release.json

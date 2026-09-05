@@ -1,0 +1,2422 @@
+{
+  "schema_version": 1,
+  "registry_version": "operational",
+  "decision_count": 345,
+  "decisions": [
+    {
+      "record_key": "004bd0c0e7d3e25de2a68a1a",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "01b23cba56ed8a018f7c1a93",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "0211baa36c83efa94dc36e49",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "032e0e28f261f5e58d31bcb1",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "039ec24cc5b04162383a1be2",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "03acdc29a75b093eae2cef21",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "064fe9fb55b207aba00ad9b4",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "074678716026a23b42ba76fe",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "07dd2c15b0d50e2e9d413839",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "084502cf50d17b70abc48eb8",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "089d22d380127060ce475d83",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "089d2ff90ac188025917a312",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "0908d038bb73d79a0b80cf42",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "097dd8928b3f075c6fe2ace7",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "0bb5b886dfd24f0123c7a92f",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "0bd93d096ac411c25ed36fb9",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "0bf9df6e8ab824ca04475ac3",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "0c60007e5c2214e5c492bf77",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "0d759026a7a6da81022558ef",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "0dd88f438b97cad5476bf446",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "0ef827df24120643cee07886",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "0f2395528b7a6d92ae3a8328",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "1211ee49656cc076d4b216ca",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "1262ec6ee70589149c232011",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "12c00226dd56eac267a97e94",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "12e02329e944c46eb1a2b0f8",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "13dfb1172530b38dbd4127f2",
+      "stage13_label": "normal",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "Reviewed exact case as a direct nuisance target."
+    },
+    {
+      "record_key": "14148a73c400a43fda5ce895",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "14998801503e8cc333d36be1",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "14aa43c6cc5e35931ffb1f76",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "14cbbd2314a0d5618caf736f",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "17e392bce8e7f2288340d849",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "18c4193e10d280d168251fe4",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "19c40ab2539c749942c39c10",
+      "stage13_label": "normal",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "Reviewed exact case as a direct nuisance target."
+    },
+    {
+      "record_key": "19cc0a8ba91137a628df00c0",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "1a52cb9a14e027111893cf5e",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "1a6c563662277a73032bfdc7",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "1aa1447d4d7fe1354cf28da8",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "1ab8c2bc32cb72b283ffa531",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "1b2bef4df309e1af37fec9d2",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "1be42a6648ed66602d16bb1b",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "1bfd97323081009b75bafc33",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "1c5c30efa2f9f96d95777e20",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "1c6001b37cfd932b896e90a5",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "1c8465808ce000e4a3c441c1",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "1d46dbb96cf73e2eb3108b89",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "1d96df4fa531c27d8507e99c",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "1df69068ba60ce5c69abad39",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "1ff2e35307fe40c75b2026f2",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "201afd140830ea9f5c4d03bb",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "201ba5e9c6b2915121008f9f",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "204c9a7efe99623fc5c09e4f",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "20bdce78426b59a39db72738",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "21276fa2927943505d67959c",
+      "stage13_label": "normal",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "Reviewed exact case as a direct nuisance target."
+    },
+    {
+      "record_key": "213505895606b6abcd3d4609",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "21a16e74894dad10fc094e0c",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "2288c9b5f00abfac3c7c0deb",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "2332660007618d66c89aa6e5",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "23caa404cdc23fa7896fcd29",
+      "stage13_label": "normal",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "Reviewed exact case as a direct nuisance target."
+    },
+    {
+      "record_key": "23e3636f9c70a6e67e8f280c",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "251036ccf77b4cb5b4e84559",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "25956a0b3e7fc1d3413f6f7c",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "25f5b0ee683ec6d34c2941e2",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "264d810705b538f54566143f",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "26ba9a5c085cc4c382e66409",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "297ed89c66857d97ab93f00f",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "29d8859404fa2f965d2f712f",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "2b8777c540de6564b6c314d8",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "2cf7c3a3ef9c60699d15680c",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "2d71f8a109d9b07c997eb8da",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "2dab290cb5556bf4a9ab8f90",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "3049e8dbe2e3475f8d1e7354",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "30c6e18de51f98be1595168d",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "30d9b283d20abbf05854f6bf",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "3241a51c54c403fe6f05615f",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "32518a9bedd4da595321df2a",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "327d8e2f7a0a114b6e0caa2c",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "3452858d0d84a35966bc0ec9",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "3463412dad182be7193fa2cd",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "3477e2c5b02b63ebc086c20d",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "34dae46c8dd98326961ef75f",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "35d7585977ae19ffaeb6fef9",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "361500b33267fff394d1becb",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "3673e53b52f75102a5edbafa",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "3681b799c278549cad686c0b",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "386ed11608bdaf13f0f6c421",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "3989774db9e7a10bd44688f5",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "3a16a231efc6374e80dffd1c",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "3aed1b90a11d6ac5e1e84426",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "3b32477a60180ea2cd9ff643",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "3b4b5d889747ad904bf983f9",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "3bda619fe4540ef9a436b22a",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "3c1e26719c9b734bbe3be7e8",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "3c9d1fecc8a2e7af56aa25b3",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "3ccfe8444e9cdadf6e097f6c",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "3cfb5f63240885b785d8ebf1",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "3d5c1c6f27d68ea2096afa4f",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "3d7dd6f692efdd486c71c994",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "3df428b802376ec601a6bcaf",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "3eb619c7a6d1ba85e5c279e2",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "3f734f5a916ceb2aaae20e6c",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "427bc684a595298501603892",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "440961fafbffc85055f46465",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "443f0c4ddb9217cdb6f1ea64",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "4444be1b5585cfa97ea9af5c",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "44a243c82ebe41bcd8224514",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "44bf1850789255b94aaff52b",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "4551e98319b710b229f91d8e",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "47fb4c10ea2ef6f347bee75c",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "48956f194f2c9a4abea59694",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "4898a5026a10c6fc984361c5",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "4bef690f0b1eab81e8c51737",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "4d7b3ece3e37cc44d471fe1a",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "4e1ae6a131676c6c3ebbfa4f",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "4e22989c208df4f952f7e281",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "4e2589ce40064369afeb2916",
+      "stage13_label": "normal",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "Reviewed exact case as a direct nuisance target."
+    },
+    {
+      "record_key": "4e8951e7d5e9b74c9c23d799",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "4fff70383c33e68cbaef1372",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "50f2d377a268d1506dbe8a3a",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "51338b50cfbf4daed9ab46b0",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "51445b1c6f533dc4cd9d64d9",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "5207da406bc22093e32cbc07",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "520f50daa104de8882959b01",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "537be2b1eec28b3fd65b4ade",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "53f237491ae0f5a8598926f3",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "54848128f21b6a7826819eab",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "555cab324953ecddf8bb39a5",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "5912681fb4c6b970b3dfa17e",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "5947b250d355149094bf7785",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "59afdf28eb3d1d0e9a6959d6",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "5a29784e7789a0a2d0fe95bc",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "5ab4ad07e9d6cea13158fb9c",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "5b6fd7337941f327994a9d99",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "5ba3313944dc9e371b032bb8",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "5ba343447a6e863abbed0891",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "5d34827e75fe59e85dfb4ed3",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "5f634c87c0c85a53d43a20a6",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "603063b82485c3b740526b15",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "61a8e1461b61be0d214a7717",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "621a9dc1f6d33dcffc99a69b",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "623c2b000c2900f92c4104b2",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "63942e406c895b6c745384c3",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "658acc893b1a70eb1fa453b2",
+      "stage13_label": "normal",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "Reviewed exact case as a direct nuisance target."
+    },
+    {
+      "record_key": "658b2397a3873765a63da0d2",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "666c81c6f4de6997cecfd0c1",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "66ee80a5a67f82f1dc863e0a",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "67ed0ba83781f67829224c99",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "67fc671cf74d3e69225709bd",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "684bb15fddf331c1348f9f06",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "691af384b055f22eba082d2b",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "6a740f607e5aa2fc55530e34",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "6afcce6a5d09b41094f4dd1f",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "6b28a60bac2f84432aa4198a",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "6b981ff700a77e7d58894980",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "6bfd584df0a5fe29ebdbb34a",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "6c3e96ebcc0ba21dfa68863f",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "6cd8113dec3c81d89b480145",
+      "stage13_label": "normal",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "Reviewed exact case as a direct nuisance target."
+    },
+    {
+      "record_key": "6e8af20822563728bb3488e0",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "6f40a4f32a1c8ab67bd194c8",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "6f9942b29335c4298a63603f",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "70c43f94baeeb7f24c961416",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "71984774afae149c046ca371",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "72046f652c75546725fb4221",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "72409c0bfc195e47270d11ee",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "724b100a3efebb41ce5a7489",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "7261b688067d5d5ab8246caa",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "7433a24387a919c276413fcb",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "74899684de40aa015a17d969",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "74e4d78f485c02587ec5e870",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "750aabee1d6099b239af6014",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "775d51aa00cbdd1e59679bbd",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "77f4ae021938647353b78bf9",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "794e65c9e0a389fa5c0744eb",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "795f77bfa7467375103f14c7",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "7e19cd4d3737cdbd2af91ee1",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "7ee4ec9ed3b10f3615f28d19",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "80df574297a98cf923ba1436",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "80f3ae80c84e30858495dc41",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "8232ee872ec42f8ad6f4e220",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "82b2c274f99c4cc6b4baad76",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "82b93a44b9e8f77d1c306052",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "8352f849da53303f64d48713",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "835f5a9e4ac74c71028efdc0",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "84ebb2f485888f7c7c42073e",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "859a26b9048dd64787c9fb86",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "86de061337999b4a18cb71ca",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "87773dd3d089a137597e56b4",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "881a3625ccbc100774596be5",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "88e725de8b3ff97a4850a720",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "890745061b1bda7668603944",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "8ae52c87d7770414b4542d92",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "8cdc58d46b1ac7ab7044c26a",
+      "stage13_label": "normal",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "Reviewed exact case as a direct nuisance target."
+    },
+    {
+      "record_key": "8cf18ad634ae8f0260bc0c11",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "8d0f87d9d4cc7acc599c2fa8",
+      "stage13_label": "normal",
+      "label": "direct_nuisance",
+      "reason_code": "spam_or_inappropriate_request",
+      "rationale": "Reviewed exact P2 case as spam or an inappropriate request."
+    },
+    {
+      "record_key": "8dd13bd241ab6cdf59cfa356",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "8e7847c429ed86f7132b72b8",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "8f0cd6efd78ebaf7a138682a",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "8fb926dedb5b2cb56c054ffd",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "9127e2d8235373d38b4a9ee2",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "92514d6ffd91e5d26e98df2f",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "93d1077e7e8ce6969522c992",
+      "stage13_label": "normal",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "Reviewed exact case as a direct nuisance target."
+    },
+    {
+      "record_key": "940e5a597b5cd9e867c05129",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "94c391159a0a469cbb40486b",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "9508a29b15e68e7204c19c2f",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "95a842794e0035d614ee3478",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "96c3f9b1c0feb76d8f3e1ead",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "97c0a0e30294c0531f8180eb",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "99bba569a641517628a330bc",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "99bfa137683310566b254bc0",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "9cd17f53a53dbba989266a61",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "9d532c8f89e1c6fd905f0a3b",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "9de06ebe383127bc445a386f",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "9e288859ce67d4e20b0ee366",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "9e439567fa3eebd66c7d39c9",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "9e8190c15b4150683bbcbab9",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "9f63879ba98b43476b08803a",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "a09c8a555b39f3364242dde9",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "a185b19c1928fa88ca62aa89",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "a19c8c2a20a366a73fdc84d4",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "a22906d2a63fe3a67f00bf23",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "a22c2b08842c60fc6121d8f6",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "a3ae2945b85997f6df55fb31",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "a3c35ee6360cbe10b83e096c",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "a5e07925a15264fa3248ad24",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "a6275d92abffded93ac4f4f2",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "a7dff14e7740b0e398f40c60",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "aa7899feceaf67776404060c",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "ab14b12ea46cb8e5d58370dc",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "ab1cf5de6e7340c5ba5b1b5d",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "ac1ce310e42801c37cb6b803",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "ad3d18170416c4bbd9feb96c",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "ad5b6c8880be21659d877513",
+      "stage13_label": "normal",
+      "label": "direct_nuisance",
+      "reason_code": "spam_or_inappropriate_request",
+      "rationale": "Reviewed exact P2 case as spam or an inappropriate request."
+    },
+    {
+      "record_key": "aee061ddca81649d6624f0a4",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "af7098861012cd01b059caa6",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "af950754332aa6b68628da69",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "aff85293d999e7ff46977b51",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "b097754803b93e44e89456be",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "b1230c2c923bcaef091d00d2",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "b1a53f7a8a5047cbda1b76b1",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "b23779e98ebb77fbbc5a4976",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "b25d051d0e09b834d2ebb12d",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "b2a16dac6474889e867fe17e",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "b3bba56afb924e6fab82a50f",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "b408e37f070471cdf98d9776",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "b45d7bb81f2d2fe34e0109d5",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "b56c9b32f817e8d2e10c0e9d",
+      "stage13_label": "normal",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "Reviewed exact case as a direct nuisance target."
+    },
+    {
+      "record_key": "b5c97e0148bcd1ade566c78a",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "b6244bce39e9569860cdcce4",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "b6872a6c820ece12d049a0f2",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "b69ff3b9a04f130bf9c43453",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "b74a2eff2f99ed3dce538551",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "b87754f57c8235d871b605f6",
+      "stage13_label": "normal",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "Reviewed exact case as a direct nuisance target."
+    },
+    {
+      "record_key": "b895f533b935fffdfab8d607",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "b89f8c349b5af3e3ec28c8ba",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "b90412d56afdf21f789a2308",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "b93eecace3b57030334ddcf7",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "b9618bdcb980b288d35b6b94",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "ba91419788c5aa5fa053238d",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "bacd816a1aed515cbf3db077",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "bcdc71b8548a9fd3f4b97622",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "be1992816927d36275154eda",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "bfc67bd4152d9240a72424e5",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "bff755eac7806d1f88c41053",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "c0fd6dc8809cb00115ef9f9e",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "c22f22043c09391132518bd5",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "c29ce3e6dad206ffd52a5ce5",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "c4008131282ba94667a4aa80",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "c457e5c2b98a11e41270862f",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "c6e413b50e21af51740cbd06",
+      "stage13_label": "normal",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "Reviewed exact case as a direct nuisance target."
+    },
+    {
+      "record_key": "c6f7627b64175244cf99dd34",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "c76cae891ad98da6117ef50a",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "c79f6dc797f35b17d1eeefe3",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "c899bcd66643e6a903a83921",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "c8a0e00c5d99e1f2c3ead827",
+      "stage13_label": "normal",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "Reviewed exact case as a direct nuisance target."
+    },
+    {
+      "record_key": "ca2ca998d992d1e885a5eb06",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "cab60ae914e5b91e8fc107d3",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "cc12d788a53153c4792ec104",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "cd41e2b75f600c1c54e67aa1",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "ce74c650cde85ffb9c2fefb5",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "ce9bee67e65eb58faa810427",
+      "stage13_label": "normal",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "Reviewed exact case as a direct nuisance target."
+    },
+    {
+      "record_key": "cedbfead6908f391c795bdd5",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "cf970b2fa8da122d8d17ae5e",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "cfd8a5b4c1544075375c37eb",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "cfe0986eb2684e66fd42ee74",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "d2e69403ec049454ea2a51be",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "d306157eb0abdbb9776c4260",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "d365107a8d79fc075ba3d540",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "d4a213bf4f232140a85230fd",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "d4e6a6f6d2cf602c2568adfe",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "d4e8deb2ab8fcc0cdfc35856",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "d7dd38094c8d771c295ae5b6",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "d82810331361605d1f60edc8",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "d8298fdbc76abf90af990dc2",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "d844683200f4c999c933ceb5",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "d8da6b5d8ebba67bf8f579df",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "d9cac1b52e21381bf715407f",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "dc40f27fcaca9d1a5f20bbaf",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "dc6c511cb1176bb0a851b42a",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "dd76f13cdbd81e0c5bf08b3b",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "ddf748e110fbee83f04ec241",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "de95479873c97ac1222cf752",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "deae079d89002fddb6aafd6b",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "def43c98ea1249d3d8163589",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "df4075f87bb1f545b7e1da22",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "df8f6a3b1d781d72810f9128",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "df92af8136067f6a795b0392",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "e036e8ae5dda3a99ffa25f47",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "e1675ef2dba28d0813210a3b",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "e1d0146b38f1aa01227cdd3d",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "e270a804b007688d6dc2de7c",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "e2a2d462591c2be19b0c328c",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "e2a8954f88e63a7268d89341",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "e2bab540b446ab551b974131",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "e2d28a5d004843860f3226c7",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "e30b7ec92a9beb8048f7f70e",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "e4261c4ce8349c605a939769",
+      "stage13_label": "normal",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "Reviewed exact case as a direct nuisance target."
+    },
+    {
+      "record_key": "e5e5ec94efd3a97e26b59082",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "e62b2a8b7cd2b95965916c16",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "e7d8eef1d960e52030aa3e03",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "e952be6b47622ed5c09b9e93",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "e9805bfa74636945dd16eed5",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "ea205d08f9b4f65faebb1b8c",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "eaa86d5d94fb1b46669aa976",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "eafb3123cefc44f61153d79f",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "eb181d094110d28005e4a4ce",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "ec318195c8bc57aa57eb7637",
+      "stage13_label": "normal",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "Reviewed exact case as a direct nuisance target."
+    },
+    {
+      "record_key": "ed0bab614a2caa3cc0722cba",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "ed92bf61e73b51f93e9206eb",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "eef02bcab8828f3b020b178c",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "ef7aa859efd0812e12709908",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "f1170c0e9cfaaa6d902fccd3",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "f1590f54abb6db449787e708",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "f1807d55b1e11f4e99be2b99",
+      "stage13_label": "normal",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "Reviewed exact case as a direct nuisance target."
+    },
+    {
+      "record_key": "f36db6344ea95fd4b6be5e18",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "f634cd3b7842baa7219db7e9",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "f6b10bdd19b53401fefa16d9",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "f8ccd2141197931682878823",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "fa74fa074a144d6a5e1575a3",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "fb6825841c780df58348aa73",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "fc6326dcb130e42bb3b63510",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "fca03754a7875136e095373e",
+      "stage13_label": "normal",
+      "label": "direct_nuisance",
+      "reason_code": "direct_target",
+      "rationale": "Reviewed exact case as a direct nuisance target."
+    },
+    {
+      "record_key": "fca899ed38c33fdfa07f3807",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "fd0d8daa5811d6886cfd66b6",
+      "stage13_label": "normal",
+      "label": "reactive",
+      "reason_code": "reactive_context",
+      "rationale": "Reviewed exact P2 case as a reaction context."
+    },
+    {
+      "record_key": "fe0f0f8ef7e370765dfba85c",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    },
+    {
+      "record_key": "ffb5fa3b022400510d8ffb3d",
+      "stage13_label": "normal",
+      "label": "normal",
+      "reason_code": "confirm_normal",
+      "rationale": "Reviewed exact P2 case and retained the normal classification."
+    }
+  ]
+}
