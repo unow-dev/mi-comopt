@@ -1,0 +1,162 @@
+{
+  "package": "single-roundtrip-v1.5-implementation-handoff",
+  "schema_version": 1,
+  "purpose": "Implementation handoff for issue: 分類handoffの単一往復化",
+  "design_completion": "100% implementation-ready",
+  "source_archive_sha256": "9b2e8b4be4891853533db0b5d576544ce77a54fb122e6e1a6015fdde7d721692",
+  "file_count": 38,
+  "files": {
+    "ACCEPTANCE_TEST_MATRIX.md": {
+      "sha256": "9ce66c1438475885b591a15e578c0a87e741bc455f5b7a48604b3b607bbb16d9",
+      "bytes": 5853
+    },
+    "BASELINE_INTEGRITY_FINDINGS.md": {
+      "sha256": "56fc1f17de44feeaff58ff0cd5c507e1f89462fbf77d67bdf963f0538e54b369",
+      "bytes": 1749
+    },
+    "CODE_TOUCHPOINTS.md": {
+      "sha256": "0144940374fd72c90458017896648a7876a6be0118bdca6e0802a82a36f876ae",
+      "bytes": 2885
+    },
+    "DECISION_LOG_FINAL.md": {
+      "sha256": "2941e9711e92f6a11c62c3da16653a1b1a7405059eddee16ce7cb5bf1ae35344",
+      "bytes": 2947
+    },
+    "IMPLEMENTATION_PLAN.md": {
+      "sha256": "5a3a56e392556fc8d6441a29caf8bfa489bc252a58f742b46b10b5bbb5bb719f",
+      "bytes": 3505
+    },
+    "NORMATIVE_IMPLEMENTATION_SPEC.md": {
+      "sha256": "0cb1ace995e97e61434cc4ec250f913b4c8e571f6339e4c45024d966d3b10339",
+      "bytes": 15846
+    },
+    "README_START_HERE.md": {
+      "sha256": "df4858794bd62e30ae2df871cb48954b4548124f2a0a697954e6668bb6371a0d",
+      "bytes": 2542
+    },
+    "WORKER_CHECKLIST.md": {
+      "sha256": "63b4226d32594fbcdf368f68e124cdc3f8ecce1b0b0b90d39c182b2e9c7f819f",
+      "bytes": 1570
+    },
+    "baseline/supplied_v1.4_tree_sha256.json": {
+      "sha256": "99f3fe4d54a2f812a4ce042a9e2cade1a07d1392acb52f02ce537d629ed9c616",
+      "bytes": 6944
+    },
+    "contracts/RECEIPT_CONTRACT.md": {
+      "sha256": "6b42448ff26bf818a98ab2de3b5ae3c9377f890274a131980d208462a39031a6",
+      "bytes": 1193
+    },
+    "contracts/RESPONSE_PROTOCOL.md": {
+      "sha256": "dfc0d5e9cdac43c0515fec062c263c32bd46562ca6efd66bb32b12caa37c8e44",
+      "bytes": 1001
+    },
+    "contracts/classification_response.example.json": {
+      "sha256": "6dbcabaa658e7e814e931ca74b0661e135c23850e57b52773178864ca5afffbb",
+      "bytes": 469
+    },
+    "contracts/request-manifest.example.json": {
+      "sha256": "568d2bce6335016c93ed95120aa9f1495d5f56b62a06165a79d75368c696b4dd",
+      "bytes": 1368
+    },
+    "contracts/response-base.schema.json": {
+      "sha256": "0714f829ec0f37b773ddf6c9e87c67ba969b600d697343f01557b7eec07432c9",
+      "bytes": 1855
+    },
+    "source/ISSUE_BODY.md": {
+      "sha256": "45a089a89c6cb53b2bfb877f9e714e391a480d2036626335a09656ec481e5c9a",
+      "bytes": 1235
+    },
+    "source/downstream/account-block-candidate-workflow.test.js": {
+      "sha256": "e0a62db3235fcd7bbcba6290400ef030ec2181c6b61cdb0c35a6d4eb5d069500",
+      "bytes": 12487
+    },
+    "source/downstream/full-update.test.js": {
+      "sha256": "3633ee066febd0436c71dd0f9c6239da42a97461f79f40cbf6db7879a25e28b0",
+      "bytes": 2926
+    },
+    "source/downstream/handoff-workflow.js": {
+      "sha256": "537adffc3a6a4c603ef30841b2ba0f4c9852d48e4d942c64ed23d1dfd5f0f25e",
+      "bytes": 11817
+    },
+    "source/downstream/handoff.test.js": {
+      "sha256": "00fb7a7e75a8a83be4f84797d5d6d8529af6c8723a7639e82f70650587821253",
+      "bytes": 16223
+    },
+    "source/downstream/release.test.js": {
+      "sha256": "2a38784e1e2320abb8ff37bb2fe5b308009a0d3bb9d7e9951329a40012749338",
+      "bytes": 1585
+    },
+    "source/v1.4/DESIGN_DECISIONS.md": {
+      "sha256": "e5e4775d9dbce5146bb7f746d2edb001e234616381d2d1c9b78cb5eaf4740ad0",
+      "bytes": 8680
+    },
+    "source/v1.4/INTEGRITY.md": {
+      "sha256": "924b470f5eaefa048bb4634e1f90273e21c1d46f3e8534427932fea8cc375ec3",
+      "bytes": 842
+    },
+    "source/v1.4/PIPELINE_CONTRACT.md": {
+      "sha256": "16642fe4651d8d61c0793837e0ea289f5626cdf8d92c8310a1b91662bc6cda04",
+      "bytes": 3553
+    },
+    "source/v1.4/STAGE13_DECISION_BOUNDARIES.md": {
+      "sha256": "ff349246064dbc8dee7157df7fa85f633441a255044491ee0a221a9100cd5a54",
+      "bytes": 3072
+    },
+    "source/v1.4/STAGE13_LABELING_SPEC.md": {
+      "sha256": "4b62e7ca28b39e0c15660cc0229e1caaa7606f02a5becb8cf81c483ffd6ee8a3",
+      "bytes": 7757
+    },
+    "source/v1.4/STAGE13_REPRODUCIBILITY.md": {
+      "sha256": "d5d73c13fc4c3643c3e496f3018f5f99e0716302d63591951ff7c8a21b9b91c4",
+      "bytes": 2712
+    },
+    "source/v1.4/STAGE13_REVIEW_PROMPT.md": {
+      "sha256": "35f4e3a56fece84806cdc9b0e578dbbbba96ed6f6aec731c3539267b4380f0ec",
+      "bytes": 841
+    },
+    "source/v1.4/STAGE13_WORK_RULES.md": {
+      "sha256": "f19d8b5e97fafd7255ea03452ec87bf9fe85706870e463a6024d7a451110dd9f",
+      "bytes": 11034
+    },
+    "source/v1.4/THREE_CLASS_CHANGE_CONTROL.md": {
+      "sha256": "f5b0d9aba6c7c979b8348125b13589f01b05748f916fa3c9246c6e113cb4982f",
+      "bytes": 3216
+    },
+    "source/v1.4/THREE_CLASS_LABELING_SPEC.md": {
+      "sha256": "5fabc37ed5bceaf04bc04c5fd2a9cdb3186acb22282b12e70f6addd11de985a6",
+      "bytes": 10047
+    },
+    "source/v1.4/THREE_CLASS_REVIEW_PROMPT.md": {
+      "sha256": "a72d0519a14c97bb26b4a9d82d4c5eb483a6da19e7b5da480b09030f9d839ef3",
+      "bytes": 2152
+    },
+    "source/v1.4/integrated_policy.json": {
+      "sha256": "4dcbfdcfcdca0f1e601dd570115faea660a112f936d4edcb5de935e6cda3f5ff",
+      "bytes": 2228
+    },
+    "source/v1.4/manifest.json": {
+      "sha256": "0c73cc5ee36b4fb611f4d2bdc3ff3e571b6d2b02446c92e59a0ed122a8bd1492",
+      "bytes": 7346
+    },
+    "source/v1.4/pipeline.py": {
+      "sha256": "b1d605a165d66cfc2521f7728a0ef0e00475f6cd84565e1634639340a4bde722",
+      "bytes": 61718
+    },
+    "source/v1.4/reactive_terms.json": {
+      "sha256": "472fed633c3594d7915df03a21776bdefe0197508561df97981137e23b30135e",
+      "bytes": 786
+    },
+    "source/v1.4/review_cues.json": {
+      "sha256": "5d61b00ce6749d0615b9bdd36b15cb34139eced0fd238137eae10379c94d90f3",
+      "bytes": 1364
+    },
+    "source/v1.4/run_all_tests.py": {
+      "sha256": "f84ceba46419471bef88ba492edd00cf572595c09a65b0e1d53debb004a4dd5c",
+      "bytes": 39335
+    },
+    "source/v1.4/three_class_policy.json": {
+      "sha256": "b6b714960d35fece6072be4427b33b56cf5cf51d7f1b6ba68fabad5a42b56a7f",
+      "bytes": 4954
+    }
+  }
+}

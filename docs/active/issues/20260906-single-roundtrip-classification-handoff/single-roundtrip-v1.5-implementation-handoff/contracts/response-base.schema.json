@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "single-roundtrip-response-base.schema.json",
+  "title": "Single-roundtrip classification response base contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request_id",
+    "stage13_decisions",
+    "three_class_decisions"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "stage13_decisions": {
+      "type": "object"
+    },
+    "three_class_decisions": {
+      "type": "object"
+    }
+  },
+  "$defs": {
+    "nonEmptyNote": {
+      "type": "string",
+      "pattern": ".*\\S.*"
+    },
+    "stage13Decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label",
+        "note"
+      ],
+      "properties": {
+        "label": {
+          "enum": [
+            "normal",
+            "nuisance"
+          ]
+        },
+        "note": {
+          "$ref": "#/$defs/nonEmptyNote"
+        }
+      }
+    },
+    "threeClassDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reason_code",
+        "note"
+      ],
+      "properties": {
+        "reason_code": {
+          "enum": [
+            "direct_target",
+            "mixed_target",
+            "spam",
+            "anti_target",
+            "support_reaction",
+            "meta_reaction",
+            "quoted_attack",
+            "normal_context"
+          ]
+        },
+        "note": {
+          "$ref": "#/$defs/nonEmptyNote"
+        }
+      }
+    }
+  },
+  "description": "Prepare must generate a request-specific schema that replaces the two decision maps with exact task-key properties/required sets. Active-vs-inactive T conditions remain semantic Python validation."
+}

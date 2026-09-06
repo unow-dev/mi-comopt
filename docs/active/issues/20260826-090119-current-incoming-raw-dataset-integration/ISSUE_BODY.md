@@ -13,3 +13,9 @@
 そのため、最新分だけを処理するのか、以前のデータを含む完全なdatasetを再生成するのかが運用上曖昧になりやすく、過去データの取り込み漏れ、重複、入力順の変化および同一コメントの扱いを実行前に明確化する必要がある。
 
 また、過去の5フィールドが完全一致するレコードはreferenceの確定ラベルを再利用できる一方、コメント本文が同じでも日時などが異なるレコードは別レコードとして扱い、同一handleの過去contextを参照しながら再評価する契約になっている。この判定を維持するには、現状分・新規追加分・過去のラベル済みreferenceを混同せず、Stage13へ渡す統合済みraw JSONを明示的に作成する必要がある。
+
+## 新規データ入力境界
+
+新規側の5-field inputは、raw snapshot DB分析処理の明示SHA指定exportで生成された`new-comments.json`を利用する。対応する`new-comments.manifest.json`でoutput SHA、件数およびsnapshot coverageを検証してから統合する。
+
+このissueではlegacy 5-fieldとの統合、重複・順序の決定およびStage13投入datasetの生成を担当する。DBへ直接接続せず、DB issueが生成したJSONとmanifestをartifact入力として扱う。snapshotの自動latest選択、DB全量の暗黙exportおよびraw storeの整合性検証はこのissueの責務に含めない。

@@ -15,6 +15,7 @@ coverage/
 /var/*.sqlite3
 /var/*.sqlite3-*
 /var/integrated-labeling/
+/var/raw-snapshots/
 __pycache__/
 
 # Local environment files

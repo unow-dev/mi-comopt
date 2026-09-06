@@ -1,0 +1,81 @@
+{
+  "pipeline_version": "1.4.0",
+  "architecture": "serial_with_shared_audit_layer",
+  "stage13": {
+    "labels": [
+      "normal",
+      "nuisance"
+    ],
+    "exact_5_field_reference_match": "fixed_inheritance",
+    "same_handle_history": "allowed_for_semantic_adjudication",
+    "postedDate": "allowed_only_as_repetition_context",
+    "clean_output_fields": [
+      "username",
+      "handle",
+      "comment",
+      "postedAt",
+      "postedDate",
+      "label"
+    ],
+    "workspace_binding": {
+      "input_sha256": "required",
+      "per_row_5_field_sha256": "required",
+      "reference_sha256_recheck": "required"
+    }
+  },
+  "three_class": {
+    "labels": [
+      "direct_nuisance",
+      "reactive",
+      "normal"
+    ],
+    "semantic_inputs": [
+      "comment",
+      "stage13_label"
+    ],
+    "forbidden_semantic_inputs": [
+      "username",
+      "handle",
+      "postedAt",
+      "postedDate",
+      "past_comment_history"
+    ],
+    "normal_to_direct_nuisance": "never_auto_in_compatibility_mode",
+    "mandatory_review_priorities": [
+      0,
+      1
+    ],
+    "clean_output_fields": [
+      "username",
+      "handle",
+      "comment",
+      "postedAt",
+      "postedDate",
+      "label"
+    ],
+    "mandatory_review_note": "required_for_priorities_0_and_1",
+    "publication_gate": "publish_final_only_when_no_unresolved_priority_0_or_1",
+    "golden_adjudication": {
+      "enabled_by_default": true,
+      "registry": "reference/three_class_golden_adjudications.json",
+      "application_scope": "exact_record_key_only",
+      "semantic_generalization": false,
+      "manual_override_on_golden_key": "error"
+    },
+    "p2_adjudication": {
+      "enabled_by_default": true,
+      "registry": "reference/three_class_p2_adjudications.json",
+      "application_scope": "exact_record_key_and_p2_only_review_reason",
+      "semantic_generalization": false,
+      "manual_override_on_p2_key": "error",
+      "review_reason_drift": "error",
+      "baseline_high_confidence_adjudicated": 345,
+      "baseline_left_unresolved": 1
+    }
+  },
+  "audit": {
+    "strategy": "sidecar",
+    "clean_outputs_must_not_contain_internal_audit_fields": true,
+    "stale_final_behavior": "remove_before_unresolved_run"
+  }
+}

@@ -92,16 +92,51 @@ test("initializes the schema, indexes, foreign keys, and observation rows", (t) 
   assert.match(scalar(dbPath, "SELECT imported_at FROM imports").imported_at, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
   assert.deepEqual(
     query(dbPath, "SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name").map((row) => row.name),
-    ["comment_observations", "imports"],
+    ["authors", "comment_observations", "comments", "imports", "raw_snapshots", "snapshot_comment_observations", "snapshot_video_observations", "videos"],
   );
   assert.deepEqual(
     query(dbPath, "SELECT name FROM sqlite_master WHERE type = 'index' AND name LIKE 'idx_%' ORDER BY name").map((row) => row.name),
-    ["idx_comment_observations_collected_at", "idx_comment_observations_post_time"],
+    ["idx_comment_observations_collected_at", "idx_comment_observations_post_time", "idx_snapshot_comment_observations_comment"],
   );
   assert.deepEqual(
     query(dbPath, "PRAGMA table_info(comment_observations)").map((row) => row.name),
     ["observation_id", "import_id", "source_index", "source", "post_ref", "collected_at", "comment_text"],
   );
+});
+
+test("migrates a populated v1 database additively without losing v1 rows", async (t) => {
+  const { dbPath } = makeCase(t);
+  const legacy = new DatabaseSync(dbPath);
+  legacy.exec(fs.readFileSync(path.join(MIGRATIONS_DIR, "001-init.sql"), "utf8"));
+  legacy.prepare(
+    `INSERT INTO imports
+      (payload_sha256, imported_at, schema_version, observation_count)
+     VALUES (?, ?, ?, ?)`,
+  ).run("legacy-payload", "2026-09-04T00:00:00.000Z", 1, 1);
+  legacy.prepare(
+    `INSERT INTO comment_observations
+      (import_id, source_index, source, post_ref, collected_at, comment_text)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+  ).run(1, 0, "tiktok", "legacy-post", "2026-09-04T00:00:00.000Z", "legacy comment");
+  legacy.close();
+
+  const db = await openCommentDatabase(dbPath);
+  try {
+    assert.equal(db.prepare("PRAGMA user_version").get().user_version, APPLICATION_SCHEMA_VERSION);
+    assert.equal(db.prepare("SELECT COUNT(*) AS count FROM imports").get().count, 1);
+    assert.deepEqual(
+      { ...db.prepare("SELECT source, post_ref, collected_at, comment_text FROM comment_observations").get() },
+      {
+        source: "tiktok",
+        post_ref: "legacy-post",
+        collected_at: "2026-09-04T00:00:00.000Z",
+        comment_text: "legacy comment",
+      },
+    );
+    assert.equal(db.prepare("SELECT COUNT(*) AS count FROM raw_snapshots").get().count, 0);
+  } finally {
+    db.close();
+  }
 });
 
 test("normalizes valid timestamps and rejects invalid timestamps without changing rows", (t) => {
@@ -284,13 +319,13 @@ test("enables and enforces foreign keys on application connections", async (t) =
 test("fails closed for a newer schema without writing payload rows", (t) => {
   const { dbPath, inputPath } = makeCase(t);
   const db = new DatabaseSync(dbPath);
-  db.exec("PRAGMA user_version = 2");
+  db.exec(`PRAGMA user_version = ${APPLICATION_SCHEMA_VERSION + 1}`);
   db.close();
   writeJson(inputPath, { schemaVersion: 1, observations: [observation()] });
   const result = runCli(inputPath, dbPath);
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /SCHEMA_VERSION_UNSUPPORTED/);
-  assert.equal(scalar(dbPath, "PRAGMA user_version").user_version, 2);
+  assert.equal(scalar(dbPath, "PRAGMA user_version").user_version, APPLICATION_SCHEMA_VERSION + 1);
   assert.equal(scalar(dbPath, "SELECT COUNT(*) AS count FROM sqlite_master WHERE name = 'imports'").count, 0);
 });
 
@@ -299,6 +334,7 @@ test("resolves the default database and migrations from the repository, not proc
   assert.equal(path.dirname(DEFAULT_DB_PATH), path.join(repositoryRoot, "var"));
   assert.equal(MIGRATIONS_DIR, path.join(packageRoot, "db", "comment-database"));
   assert.equal(fs.existsSync(path.join(MIGRATIONS_DIR, "001-init.sql")), true);
+  assert.equal(fs.existsSync(path.join(MIGRATIONS_DIR, "002-raw-snapshots.sql")), true);
 
   const { dbPath, inputPath, root } = makeCase(t);
   const unrelatedCwd = path.join(root, "unrelated-cwd");
@@ -346,6 +382,7 @@ test("documents query limits, adapter boundary, privacy gate, and Git protection
   const gitignore = fs.readFileSync(path.join(repositoryRoot, ".gitignore"), "utf8");
   assert.match(gitignore, /^\/var\/\*\.sqlite3$/m);
   assert.match(gitignore, /^\/var\/\*\.sqlite3-\*$/m);
+  assert.match(gitignore, /^\/var\/raw-snapshots\/$/m);
   assert.equal(fs.existsSync(path.join(repositoryRoot, "var", "comment-history.sqlite3")), false);
   const rootPackage = JSON.parse(fs.readFileSync(path.join(repositoryRoot, "package.json"), "utf8"));
   const packageJson = JSON.parse(fs.readFileSync(path.join(packageRoot, "package.json"), "utf8"));

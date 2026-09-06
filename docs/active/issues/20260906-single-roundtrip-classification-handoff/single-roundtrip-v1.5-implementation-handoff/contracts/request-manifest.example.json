@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "protocol_version": "single-roundtrip-v1",
+  "pipeline_version": "1.5.0",
+  "request_id": "<computed-after-semantic-manifest>",
+  "bindings": {
+    "input_sha256": "<64hex>",
+    "stage13_reference_sha256": "<64hex>",
+    "golden_registry_sha256": "<64hex>",
+    "p2_registry_sha256": "<64hex>",
+    "reactive_terms_sha256": "<64hex>",
+    "review_cues_sha256": "<64hex>",
+    "three_class_policy_sha256": "<64hex>",
+    "implementation_manifest_sha256": "<64hex>"
+  },
+  "semantic": {
+    "files": [
+      {
+        "path": "REVIEW_INSTRUCTIONS.md",
+        "sha256": "<64hex>",
+        "bytes": 123
+      },
+      {
+        "path": "prompts/STAGE13_REVIEW_PROMPT.md",
+        "sha256": "<64hex>",
+        "bytes": 123
+      },
+      {
+        "path": "prompts/THREE_CLASS_REVIEW_PROMPT.md",
+        "sha256": "<64hex>",
+        "bytes": 123
+      },
+      {
+        "path": "stage13/batch_001.json",
+        "sha256": "<64hex>",
+        "bytes": 123
+      },
+      {
+        "path": "three_class/batch_001.json",
+        "sha256": "<64hex>",
+        "bytes": 123
+      }
+    ]
+  },
+  "derived": {
+    "files": [
+      {
+        "path": "response.schema.json",
+        "sha256": "<64hex>",
+        "bytes": 123
+      },
+      {
+        "path": "response_template.json",
+        "sha256": "<64hex>",
+        "bytes": 123
+      }
+    ]
+  }
+}

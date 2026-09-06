@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "request_id": "0000000000000000000000000000000000000000000000000000000000000000",
+  "stage13_decisions": {
+    "S000001": {
+      "label": "nuisance",
+      "note": "反復文脈を含め、対象への迷惑発言と判断した。"
+    }
+  },
+  "three_class_decisions": {
+    "T000001": {
+      "reason_code": "quoted_attack",
+      "note": "攻撃表現は引用・参照された批判文脈である。"
+    },
+    "T000002": null
+  }
+}

@@ -4,6 +4,12 @@ import { readFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  DEFAULT_RAW_ROOT,
+  ensureRawSnapshotStored,
+  parseAndValidateRawSnapshotBytes,
+  rawSnapshotRelativePath,
+} from "../raw-snapshot/raw-snapshot-contract.js";
 
 const moduleDirectory = path.dirname(fileURLToPath(import.meta.url));
 
@@ -11,10 +17,11 @@ export const PACKAGE_ROOT = path.resolve(moduleDirectory, "../..");
 export const REPOSITORY_ROOT = path.resolve(PACKAGE_ROOT, "..");
 export const DEFAULT_DB_PATH = path.join(REPOSITORY_ROOT, "var", "comment-history.sqlite3");
 export const MIGRATIONS_DIR = path.join(PACKAGE_ROOT, "db", "comment-database");
-export const APPLICATION_SCHEMA_VERSION = 1;
+export const APPLICATION_SCHEMA_VERSION = 2;
 
 const migrations = [
   { version: 1, filename: "001-init.sql" },
+  { version: 2, filename: "002-raw-snapshots.sql" },
 ];
 const timestampPattern = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,3}))?(Z|([+-])(\d{2}):(\d{2}))$/;
 const normalizedPayloadKeys = ["schemaVersion", "observations"];
@@ -345,6 +352,253 @@ async function importValidatedPayload(normalized, options) {
       db.close();
     } catch {
       // The import result or primary database error is more useful to the operator.
+    }
+  }
+}
+
+export { DEFAULT_RAW_ROOT };
+
+const rawErrorCodes = new Set([
+  "VALIDATION_ERROR",
+  "INPUT_READ_FAILED",
+  "RAW_STORE_WRITE_FAILED",
+  "RAW_STORE_CORRUPT",
+]);
+
+function preserveRawError(error) {
+  if (error instanceof CommentDatabaseError) return error;
+  if (rawErrorCodes.has(error?.code)) {
+    return new CommentDatabaseError(error.code, error.message, { cause: error });
+  }
+  return new CommentDatabaseError("IMPORT_FAILED", error instanceof Error ? error.message : String(error), { cause: error });
+}
+
+function databaseIntegrityError(message) {
+  return new CommentDatabaseError("DATABASE_INTEGRITY_ERROR", message);
+}
+
+function getOrCreateVideo(db, externalVideoId) {
+  db.prepare(
+    `INSERT INTO videos (platform, external_video_id)
+     VALUES (?, ?)
+     ON CONFLICT(platform, external_video_id) DO NOTHING`,
+  ).run("tiktok", externalVideoId);
+  const row = db.prepare(
+    "SELECT video_pk FROM videos WHERE platform = ? AND external_video_id = ?",
+  ).get("tiktok", externalVideoId);
+  if (row === undefined) throw new Error(`video master was not found after insert: ${externalVideoId}`);
+  return row.video_pk;
+}
+
+function getOrCreateAuthor(db, externalAuthorId) {
+  db.prepare(
+    `INSERT INTO authors (platform, external_author_id)
+     VALUES (?, ?)
+     ON CONFLICT(platform, external_author_id) DO NOTHING`,
+  ).run("tiktok", externalAuthorId);
+  const row = db.prepare(
+    "SELECT author_pk FROM authors WHERE platform = ? AND external_author_id = ?",
+  ).get("tiktok", externalAuthorId);
+  if (row === undefined) throw new Error(`author master was not found after insert: ${externalAuthorId}`);
+  return row.author_pk;
+}
+
+function getOrCreateComment(db, videoPk, externalCommentId) {
+  db.prepare(
+    `INSERT INTO comments (video_pk, external_comment_id)
+     VALUES (?, ?)
+     ON CONFLICT(video_pk, external_comment_id) DO NOTHING`,
+  ).run(videoPk, externalCommentId);
+  const row = db.prepare(
+    "SELECT comment_pk FROM comments WHERE video_pk = ? AND external_comment_id = ?",
+  ).get(videoPk, externalCommentId);
+  if (row === undefined) throw new Error(`comment master was not found after insert: ${externalCommentId}`);
+  return row.comment_pk;
+}
+
+function assertExistingRawSnapshotIntegrity(db, existing, expectedRawRelpath, expectedLoadedCount) {
+  if (existing.raw_relpath !== expectedRawRelpath) {
+    throw databaseIntegrityError(
+      `snapshot ${existing.payload_sha256} has unexpected raw_relpath ${existing.raw_relpath}`,
+    );
+  }
+  const observationCount = Number(db.prepare(
+    "SELECT COUNT(*) AS count FROM snapshot_comment_observations WHERE snapshot_id = ?",
+  ).get(existing.snapshot_id).count);
+  if (Number(existing.loaded_count) !== observationCount || Number(existing.loaded_count) !== expectedLoadedCount) {
+    throw databaseIntegrityError(
+      `snapshot ${existing.payload_sha256} loaded_count=${existing.loaded_count} does not match observations=${observationCount}`,
+    );
+  }
+  const videoObservationCount = Number(db.prepare(
+    "SELECT COUNT(*) AS count FROM snapshot_video_observations WHERE snapshot_id = ?",
+  ).get(existing.snapshot_id).count);
+  if (videoObservationCount !== 1) {
+    throw databaseIntegrityError(
+      `snapshot ${existing.payload_sha256} must have exactly one video observation, found ${videoObservationCount}`,
+    );
+  }
+}
+
+export async function importRawSnapshotFile(inputPath, options = {}) {
+  let bytes;
+  try {
+    bytes = await readFile(inputPath);
+  } catch (error) {
+    throw new CommentDatabaseError("INPUT_READ_FAILED", `${inputPath}: ${error.message}`);
+  }
+  return importRawSnapshotBytes(bytes, options);
+}
+
+export async function importRawSnapshotBytes(bytes, options = {}) {
+  let parsed;
+  try {
+    parsed = parseAndValidateRawSnapshotBytes(bytes);
+  } catch (error) {
+    throw preserveRawError(error);
+  }
+
+  try {
+    await ensureRawSnapshotStored(bytes, parsed.payloadSha256, options.rawRoot);
+  } catch (error) {
+    throw preserveRawError(error);
+  }
+
+  const db = await openCommentDatabase(options.dbPath);
+  const payload = parsed.payload;
+  const rawRelpath = rawSnapshotRelativePath(parsed.payloadSha256);
+  let transactionStarted = false;
+  try {
+    db.exec("BEGIN IMMEDIATE");
+    transactionStarted = true;
+
+    const existing = db.prepare(
+      `SELECT snapshot_id, payload_sha256, raw_relpath, loaded_count
+       FROM raw_snapshots WHERE payload_sha256 = ?`,
+    ).get(parsed.payloadSha256);
+    if (existing !== undefined) {
+      assertExistingRawSnapshotIntegrity(db, existing, rawRelpath, payload.comments.items.length);
+      db.exec("COMMIT");
+      transactionStarted = false;
+      return {
+        status: "already-imported",
+        payloadSha256: parsed.payloadSha256,
+        commentCount: payload.comments.items.length,
+        observationCount: payload.comments.items.length,
+      };
+    }
+
+    const snapshotResult = db.prepare(
+      `INSERT INTO raw_snapshots
+        (platform, raw_schema_version, payload_sha256, raw_relpath,
+         extracted_at, source_page_url, source_canonical_url, item_source,
+         loaded_count, reported_count, coverage_note, imported_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    ).run(
+      "tiktok",
+      payload.schemaVersion,
+      parsed.payloadSha256,
+      rawRelpath,
+      payload.extractedAt,
+      payload.source.pageUrl,
+      payload.source.canonicalUrl,
+      payload.source.itemSource,
+      payload.comments.loadedCount,
+      payload.comments.reportedCount,
+      payload.comments.note,
+      new Date().toISOString(),
+    );
+    const snapshotId = snapshotResult.lastInsertRowid;
+
+    const videoPk = parsed.effectiveVideoId === null
+      ? null
+      : getOrCreateVideo(db, parsed.effectiveVideoId);
+    const authorPk = payload.author.id === ""
+      ? null
+      : getOrCreateAuthor(db, payload.author.id);
+
+    db.prepare(
+      `INSERT INTO snapshot_video_observations
+        (snapshot_id, video_pk, author_pk, video_id_raw, canonical_url, title,
+         description, published_at, published_date, region_code, duration,
+         view_count, like_count, comment_count, share_count, favorite_count)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    ).run(
+      snapshotId,
+      videoPk,
+      authorPk,
+      payload.video.id,
+      payload.video.canonicalUrl,
+      payload.video.title,
+      payload.video.description,
+      payload.video.publishedAt,
+      payload.video.publishedDate,
+      payload.video.regionCode,
+      payload.video.duration,
+      payload.stats.viewCount,
+      payload.stats.likeCount,
+      payload.stats.commentCount,
+      payload.stats.shareCount,
+      payload.stats.favoriteCount,
+    );
+
+    const insertObservation = db.prepare(
+      `INSERT INTO snapshot_comment_observations
+        (snapshot_id, source_index, comment_pk, level, comment_id_raw,
+         video_id_raw, parent_comment_id_raw, username, handle, user_id_raw,
+         comment_text, posted_at, created_at, posted_date, like_count, reply_count)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    );
+    payload.comments.items.forEach((comment, sourceIndex) => {
+      const commentPk = videoPk !== null && comment.commentId !== ""
+        ? getOrCreateComment(db, videoPk, comment.commentId)
+        : null;
+      insertObservation.run(
+        snapshotId,
+        sourceIndex,
+        commentPk,
+        comment.level,
+        comment.commentId,
+        comment.videoId,
+        comment.parentCommentId,
+        comment.username,
+        comment.handle,
+        comment.userId,
+        comment.comment,
+        comment.postedAt,
+        comment.createdAt,
+        comment.postedDate,
+        comment.likeCount,
+        comment.replyCount,
+      );
+    });
+
+    const insertedObservationCount = Number(db.prepare(
+      "SELECT COUNT(*) AS count FROM snapshot_comment_observations WHERE snapshot_id = ?",
+    ).get(snapshotId).count);
+    if (insertedObservationCount !== payload.comments.loadedCount) {
+      throw databaseIntegrityError(
+        `snapshot ${parsed.payloadSha256} loaded_count=${payload.comments.loadedCount} does not match observations=${insertedObservationCount}`,
+      );
+    }
+
+    db.exec("COMMIT");
+    transactionStarted = false;
+    return {
+      status: "imported",
+      payloadSha256: parsed.payloadSha256,
+      commentCount: payload.comments.items.length,
+      observationCount: payload.comments.items.length,
+    };
+  } catch (error) {
+    if (transactionStarted) rollbackQuietly(db);
+    if (error instanceof CommentDatabaseError) throw error;
+    throw new CommentDatabaseError("IMPORT_FAILED", error.message, { cause: error });
+  } finally {
+    try {
+      db.close();
+    } catch {
+      // Preserve the import result or primary database error.
     }
   }
 }
