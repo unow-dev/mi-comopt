@@ -1,0 +1,19 @@
+{
+  "package_name": "three_class_labeling_handoff",
+  "version": "1.0.0",
+  "created_date": "2026-08-24",
+  "purpose": "Reproducible handoff for stage13 normal/nuisance -> direct_nuisance/reactive/normal labeling.",
+  "source_reference": {
+    "filename": "merged_array_stage13_labeled (3).json",
+    "sha256": "a46c140b1e979c7c2a5037c8fc4eb0797207bd2a6323ced51bfb7cf74e09ee17"
+  },
+  "runtime": {
+    "python": "3.9+",
+    "external_dependencies": []
+  },
+  "entrypoints": [
+    "src/label_comments.py",
+    "src/validate_labels.py",
+    "tests/run_tests.py"
+  ]
+}

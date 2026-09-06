@@ -1,0 +1,116 @@
+{
+  "policy_version": "1.4.0",
+  "profile": "stage13_compatible_three_class",
+  "description": "Upstream normal/nuisance labels remain the basis. Deterministic rules generate provisional labels; versioned exact-record P0/P1 golden adjudications and exact P2 adjudications resolve reviewed cases without generalizing to unseen records. normal->direct_nuisance remains never-auto in compatibility mode.",
+  "required_fields": [
+    "comment",
+    "label"
+  ],
+  "allowed_original_labels": [
+    "normal",
+    "nuisance"
+  ],
+  "allowed_output_labels": [
+    "direct_nuisance",
+    "reactive",
+    "normal"
+  ],
+  "semantic_priority": [
+    "direct_nuisance",
+    "reactive",
+    "normal"
+  ],
+  "automatic_transition_rules": {
+    "nuisance_and_reactive_term": "reactive",
+    "nuisance_without_reactive_term": "direct_nuisance",
+    "normal_and_reactive_term": "reactive",
+    "normal_without_reactive_term": "normal",
+    "normal_to_direct_nuisance": "never_auto"
+  },
+  "reactive_matching": {
+    "method": "raw_case_sensitive_substring",
+    "unicode_normalization": false,
+    "whitespace_normalization": false,
+    "note": "This intentionally mirrors the documented first-pass mechanism. Normalization may be used later for filter-keyword analysis, but not for compatibility labeling."
+  },
+  "review_priorities": {
+    "0": "Mixed-target nuisance/reactive content; mandatory adjudication.",
+    "1": "Likely missed reactive context; mandatory adjudication for strict finalization.",
+    "2": "Potential upstream normal/nuisance boundary issue; informative unless a full relabel is explicitly authorized."
+  },
+  "strict_finalization": {
+    "unresolved_priorities_that_fail": [
+      0,
+      1
+    ],
+    "priority_2_behavior": "report_but_do_not_fail; exact reviewed P2 decisions may resolve individual cases without changing the publication gate",
+    "publication_behavior": "three_class_labeled.json is published only when unresolved P0/P1 count is zero",
+    "candidate_output": "three_class_candidate.json is always written for inspectable intermediate results"
+  },
+  "historical_reference": {
+    "source_file": "merged_array_stage13_labeled (3).json",
+    "source_sha256": "a46c140b1e979c7c2a5037c8fc4eb0797207bd2a6323ced51bfb7cf74e09ee17",
+    "source_counts": {
+      "normal": 20810,
+      "nuisance": 623,
+      "total": 21433
+    },
+    "reported_previous_three_class_counts": {
+      "direct_nuisance": 521,
+      "reactive": 1054,
+      "normal": 19858
+    },
+    "deterministic_term_only_counts_on_same_source": {
+      "direct_nuisance": 520,
+      "reactive": 1096,
+      "normal": 19817
+    },
+    "known_gap": "The prior run contained 41 normal-candidate exclusions and 1 nuisance-candidate exclusion whose complete exception code was not recoverable. v1.4.0 does not claim to reconstruct those exceptions; its golden registry is a new, explicit spec-guided adjudication set."
+  },
+  "review_resolution": {
+    "priority_0_1": "golden exact-case adjudication or explicit manual override with non-empty note required",
+    "label_change_override": "non-empty note required",
+    "unknown_record_key": "error",
+    "duplicate_record_key": "error",
+    "golden_manual_conflict": "error",
+    "priority_2": "versioned exact-case P2 adjudication may resolve a P2-only case; unresolved P2 remains optional and does not block publication",
+    "p2_manual_conflict": "manual override of a P2-registry key is an error"
+  },
+  "golden_adjudication": {
+    "default_registry": "reference/three_class_golden_adjudications.json",
+    "identity": "record_key = SHA-256(first 24 hex) over five fields + Stage13 label",
+    "scope": "exact_record_only",
+    "generalization": "forbidden",
+    "precedence": "golden_adjudication > provisional_rule; manual overrides are rejected for golden keys",
+    "registry_change": "versioned change-control required",
+    "diagnostic_disable_flag": "--no-golden"
+  },
+  "p2_adjudication": {
+    "default_registry": "reference/three_class_p2_adjudications.json",
+    "identity": "same exact record_key used by 3-Class golden adjudication",
+    "scope": "P2-only exact records where review reasons are exactly source_normal_direct_cue",
+    "generalization": "forbidden",
+    "allowed_results": [
+      "normal",
+      "reactive",
+      "direct_nuisance"
+    ],
+    "precedence": "P0/P1 golden registry and P2 registry must not overlap; a P2 registry decision overrides the provisional label for that exact case; manual overrides are rejected for P2 keys",
+    "baseline_v1_3_0": {
+      "reviewed_high_confidence": 338,
+      "confirm_normal": 239,
+      "reactive": 82,
+      "direct_nuisance": 17,
+      "left_unresolved": 8
+    },
+    "diagnostic_disable_flag": "--no-p2-adjudications",
+    "term_only_flag": "--term-only",
+    "baseline_v1_4_0": {
+      "reviewed_exact_cases": 345,
+      "confirm_normal": 242,
+      "reactive": 83,
+      "direct_nuisance": 20,
+      "left_unresolved": 1
+    }
+  }
+}

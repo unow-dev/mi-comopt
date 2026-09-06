@@ -1,0 +1,29 @@
+{
+  "policy_version": "1.0.0",
+  "input_file": "/mnt/data/merged_array_stage13_labeled (3).json",
+  "records": 21433,
+  "final_label_counts": {
+    "reactive": 1096,
+    "normal": 19817,
+    "direct_nuisance": 520
+  },
+  "provisional_label_counts": {
+    "reactive": 1096,
+    "normal": 19817,
+    "direct_nuisance": 520
+  },
+  "transition_counts": {
+    "normal->reactive": 993,
+    "normal->normal": 19817,
+    "nuisance->direct_nuisance": 520,
+    "nuisance->reactive": 103
+  },
+  "review_items": 470,
+  "review_priority_counts": {
+    "1": 79,
+    "2": 346,
+    "0": 45
+  },
+  "unresolved_mandatory_reviews": 124,
+  "overrides_applied": 0
+}

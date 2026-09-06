@@ -1,0 +1,116 @@
+{
+  "pipeline_version": "1.4.0",
+  "three_class_policy_version": "1.4.0",
+  "acceptance_date": "2026-08-24",
+  "stage13_reference": {
+    "records": 21433,
+    "sha256": "a46c140b1e979c7c2a5037c8fc4eb0797207bd2a6323ced51bfb7cf74e09ee17",
+    "label_counts": {
+      "normal": 20810,
+      "nuisance": 623
+    },
+    "exact_reuse_roundtrip_sha256_identical": true,
+    "workspace_binding": "input_sha256+per_row_sha256+reference_sha256_recheck"
+  },
+  "three_class_term_only_compatibility": {
+    "candidate_label_counts": {
+      "reactive": 1096,
+      "normal": 19817,
+      "direct_nuisance": 520
+    },
+    "review_items": 470,
+    "review_priority_counts": {
+      "1": 79,
+      "2": 346,
+      "0": 45
+    },
+    "unresolved_mandatory_reviews": 124,
+    "unresolved_optional_p2_reviews": 346,
+    "candidate_sha256": "dc3620f6049766de3a8a485596cdfbbe2a29288a8295db79693ebdcc930096d7",
+    "reproduced_with": "--term-only"
+  },
+  "p0_p1_golden_adjudication": {
+    "registry": "reference/three_class_golden_adjudications.json",
+    "registry_sha256": "e4441bfc6d6bf11e6ab0602ffc10802dcac677352118704ee744023241ee8e7a",
+    "registry_version": "1.0.0",
+    "unique_record_keys": 123,
+    "baseline_rows_covered": 124,
+    "rows_applied": 124,
+    "exact_key_only": true,
+    "manual_override_on_registry_key_rejected": true
+  },
+  "p2_adjudication": {
+    "registry": "reference/three_class_p2_adjudications.json",
+    "registry_sha256": "e99d7d680952ce8f7760f77e934b85af3dde7077a62f76d032a6ca0972b3f2b6",
+    "registry_version": "1.1.0",
+    "baseline_rows_before": 346,
+    "rows_adjudicated": 345,
+    "label_counts": {
+      "normal": 242,
+      "reactive": 83,
+      "direct_nuisance": 20
+    },
+    "remaining_unresolved": 1,
+    "exact_p2_only_scope": true,
+    "reason_drift_fail_closed": true,
+    "manual_override_on_registry_key_rejected": true,
+    "golden_registry_overlap_rejected": true,
+    "v1_4_boundary_pass": {
+      "reviewed": 8,
+      "adjudicated": 7,
+      "left_unresolved": 1
+    }
+  },
+  "three_class_final": {
+    "label_counts": {
+      "reactive": 1225,
+      "normal": 19659,
+      "direct_nuisance": 549
+    },
+    "unresolved_mandatory_reviews": 0,
+    "unresolved_optional_p2_reviews": 1,
+    "final_published": true,
+    "final_sha256": "8c95a01ead137927c8a7d9b23c81deee41bcd8e7647e58fe072bdfffcabb5ff6",
+    "mandatory_override_template_rows": 0,
+    "optional_p2_override_template_rows": 1
+  },
+  "fail_closed_controls": {
+    "stale_stage13_input_rejected": true,
+    "stale_stage13_adjudication_fingerprint_rejected": true,
+    "unknown_three_class_override_rejected": true,
+    "duplicate_three_class_override_rejected": true,
+    "p0_p1_blank_note_rejected": true,
+    "unresolved_p0_p1_withholds_final": true,
+    "unresolved_run_removes_stale_final": true,
+    "duplicate_golden_key_rejected": true,
+    "blank_golden_rationale_rejected": true,
+    "manual_override_of_golden_rejected": true,
+    "golden_exact_key_scope_verified": true,
+    "golden_decision_count_mismatch_rejected": true,
+    "duplicate_p2_key_rejected": true,
+    "blank_p2_rationale_rejected": true,
+    "p2_stage13_normal_only": true,
+    "p2_exact_key_scope_verified": true,
+    "p2_reason_drift_rejected": true,
+    "manual_override_of_p2_rejected": true,
+    "p0_p1_p2_registry_overlap_rejected": true
+  },
+  "structural_validation": {
+    "stage13_count_matches_input": true,
+    "stage13_fields_exact": true,
+    "stage13_labels_valid": true,
+    "stage13_five_fields_and_order_preserved": true,
+    "three_class_count_matches_input": true,
+    "three_class_fields_exact": true,
+    "three_class_labels_valid": true,
+    "three_class_five_fields_and_order_preserved": true,
+    "stage13_exact_reference_labels_preserved": true,
+    "three_class_audit_array": true,
+    "three_class_audit_count_matches": true,
+    "three_class_audit_alignment": true,
+    "three_class_mandatory_reviews_resolved": true
+  },
+  "structural_validation_passed": true,
+  "test_groups_passed": 20,
+  "strict_final_note": "P0/P1 are fully resolved. 345 exact P2 cases are adjudicated; one text-only ambiguous P2 case remains optional and does not block publication."
+}
