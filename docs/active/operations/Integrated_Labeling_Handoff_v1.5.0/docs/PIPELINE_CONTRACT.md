@@ -66,15 +66,17 @@ candidate と final は同じ6フィールド構造で、`label` の許可値だ
 
 既定registry: `reference/three_class_golden_adjudications.json`
 
-- schema version: 1
-- key: 24hex `record_key`
-- `stage13_label`, `label`, `reason_code`, 非空`rationale`を必須とする。
-- duplicate keyはエラー。
-- current inputに存在しないgolden keyは無視する。registryは複数runで再利用するため。
-- current recordの`record_key`が一致した場合のみ適用する。
-- manual overrideが同じgolden keyを含む場合は、同じlabelでもエラー。
-- canonical decisionを変える場合はgolden registryをversion管理して更新する。
-- `--no-golden` はP0/P1 goldenだけを無効化する診断用。全adjudication無効のterm-only再現には `--term-only` を使う。
+
+## Single-roundtrip contract
+
+v1.5.0のhuman transactionは、`prepare-single-roundtrip`によるhandoff送付1回と、`finalize-single-roundtrip`によるresponse取得1回で完了する。内部の分類処理はStage13からThree-Classの順序を維持し、snapshotしたinput/reference/config/registryだけを参照する。
+
+- request identityは、bindingsとsemantic request filesのcanonical JSON SHA-256で決める。
+- Stage13 taskは完全一致する5-fieldのpending行だけをまとめ、source rowと順序は保持する。
+- Three-Class taskはexact `record_key`単位で、unresolved P0/P1だけを生成する。P2だけの未解決はtaskにしない。
+- responseはS/T task keyを完全coverageし、inactive Tは`null`、active Tは既存reason codeと非空noteを持つ。
+- accepted response、golden commit、final artifact、receiptはatomic/fail-closedに扱い、同一responseのretryだけを許可する。
+- `request/manifest.json`、snapshot manifest、response schemaはstrict duplicate-key JSONとして検証する。
 
 ## review template split
 

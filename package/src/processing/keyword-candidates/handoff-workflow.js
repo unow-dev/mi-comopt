@@ -13,7 +13,7 @@ import { validateGeneratedArtifacts } from "./artifact-validation.js";
 
 const SHA256_PATTERN = /^sha256:[0-9a-f]{64}$/;
 const PLAIN_SHA256_PATTERN = /^[0-9a-f]{64}$/;
-const LABELING_PIPELINE_VERSION = "1.4.0";
+const SUPPORTED_LABELING_PIPELINE_VERSIONS = new Set(["1.4.0", "1.5.0"]);
 
 export const HANDOFF_FILES = [
   "prompt.txt",
@@ -97,8 +97,11 @@ export function verifyLabelingEvidence({ labelingEvidence, datasetInput, explici
   if (!validation || typeof validation !== "object" || Array.isArray(validation)) {
     throw codedError("LABELING_EVIDENCE_INVALID", "labeling validation must be a JSON object");
   }
-  if (summary.pipeline_version !== LABELING_PIPELINE_VERSION || validation.pipeline_version !== LABELING_PIPELINE_VERSION) {
-    throw codedError("LABELING_EVIDENCE_INVALID", `pipeline_version must be ${LABELING_PIPELINE_VERSION}`);
+  if (
+    summary.pipeline_version !== validation.pipeline_version
+    || !SUPPORTED_LABELING_PIPELINE_VERSIONS.has(summary.pipeline_version)
+  ) {
+    throw codedError("LABELING_EVIDENCE_INVALID", "summary and validation pipeline_version must match a supported labeling version");
   }
   if (summary.final_published !== true) {
     throw codedError("LABELING_EVIDENCE_INVALID", "labeling summary is not final_published");

@@ -4,6 +4,7 @@ import path from "node:path";
 import {
   validateGeneratedArtifacts,
 } from "../src/processing/keyword-candidates/artifact-validation.js";
+import { contentSha256 } from "../src/processing/keyword-candidates/candidate-workflow.js";
 import {
   prefixedSha256,
   validateArtifactBindings,
@@ -138,8 +139,8 @@ function validateKeywordSide(files, contracts) {
   } catch (caught) {
     fail(caught.message ?? String(caught));
   }
-  if (meta.evaluation_policy_content_sha256 !== prefixedSha256(contracts.evaluationPolicy.bytes)) fail("keyword evaluation policy is not bound to the canonical runtime contract");
-  if (meta.taxonomy_content_sha256 !== prefixedSha256(contracts.taxonomy.bytes)) fail("keyword taxonomy is not bound to the canonical runtime contract");
+  if (meta.evaluation_policy_content_sha256 !== contentSha256(contracts.evaluationPolicy.value)) fail("keyword evaluation policy is not bound to the canonical runtime contract");
+  if (meta.taxonomy_content_sha256 !== contentSha256(contracts.taxonomy.value)) fail("keyword taxonomy is not bound to the canonical runtime contract");
   if (meta.run_id !== manifest.run_id) fail("keyword meta run_id does not match run manifest");
   if (meta.published_at !== manifest.published_at) fail("keyword meta published_at does not match run manifest");
   if (meta.dataset_artifact_sha256 !== manifest.source_dataset?.artifact_sha256) fail("keyword meta dataset SHA does not match run manifest");

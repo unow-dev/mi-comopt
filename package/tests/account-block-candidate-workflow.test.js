@@ -180,6 +180,15 @@ test("F12/F13/F17: summary gate accepts zero candidates but rejects unpublished 
   assert.throws(() => validateSummary({ ...base, final_output_sha256: "0".repeat(64) }, bytes), /検証/);
 });
 
+test("v1.5 final summary remains compatible with account candidates", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "account-candidate-v15-test-"));
+  const input = makeInputFiles(root, [direct("alice", 1), direct("alice", 2)], {
+    summary: { pipeline_version: "1.5.0" },
+  });
+  const generated = runGenerator(root, input);
+  assert.equal(generated.result.status, 0, generated.result.stderr);
+});
+
 test("F16/F18/F19/F20: CLI publication and verify:data enforce artifact bindings", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "account-candidate-test-"));
   const dataset = [direct("alice", 1), direct("alice", 2), row({ label: "normal", comment: "ordinary" })];

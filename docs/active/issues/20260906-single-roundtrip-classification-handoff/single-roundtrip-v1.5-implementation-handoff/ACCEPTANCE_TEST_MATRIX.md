@@ -127,3 +127,11 @@
 6. Accepted human decisions survive machine failures/retries.
 7. Downstream clean artifact contracts remain compatible.
 8. v1.4 operational flow stays frozen until cutover gate passes.
+
+## Execution Record: 2026-09-06
+
+- v1.5全回帰25群、v1.4全回帰24群、Node 78 tests、`verify:data`、production build、v1.5 manifest 43 filesを確認した。
+- G06は、finalized workspaceのroot receiptあり／promoted receiptのみのretry両経路で、異なる`--state-dir`を拒否することを確認した。
+- H09は、v1.5 finalを既存release builder/validatorへ接続する隔離fixtureで確認した。H10は、同一responseからのv1.4 fallback replayとv1.5 finalのStage13/Three-Class意味内容一致で確認した。
+- F01〜F10を独立した同時実行ハーネスで網羅する検証は未実施。今回の回帰ではlive golden/P2 conflict、accepted response retry、異なるresponse拒否、golden commit後retryを確認した。
+- H11はv1.4 default維持を確認済み。H12のcutover判断とPR5の通常runbook置換は人間の承認待ち。

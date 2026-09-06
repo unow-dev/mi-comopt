@@ -4,11 +4,14 @@ from __future__ import annotations
 import csv
 import importlib.util
 import json
+import subprocess
+import sys
 import tempfile
 from argparse import Namespace
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
 SPEC = importlib.util.spec_from_file_location("pipeline", ROOT / "src" / "pipeline.py")
 mod = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(mod)
@@ -710,6 +713,18 @@ def test_three_class_registry_overlap_rejected():
         )), "registry overlap rejection")
     return 1
 
+
+def test_single_roundtrip_acceptance():
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "tests" / "single_roundtrip_tests.py")],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise AssertionError(f"single-roundtrip acceptance failed:\n{result.stdout}\n{result.stderr}")
+    return 6
+
 def main():
     results = []
     for name, fn in [
@@ -737,6 +752,7 @@ def main():
         ("three_class_p2_registry_hygiene", test_three_class_p2_registry_hygiene),
         ("three_class_p2_reason_drift_fail_closed", test_three_class_p2_reason_drift_fail_closed),
         ("three_class_registry_overlap_rejected", test_three_class_registry_overlap_rejected),
+        ("single_roundtrip_acceptance", test_single_roundtrip_acceptance),
     ]:
         n = fn()
         results.append((name, n))

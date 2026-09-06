@@ -202,8 +202,38 @@ test("prepare-handoff rejects a partial labeling evidence pair", () => {
 });
 
 test("prepare-handoff rejects unsupported labeling pipeline versions", () => {
+  for (const pipelineVersion of ["1.3.0", "1.6.0"]) {
+    const root = makePublicationRoot();
+    const evidence = makeLabelingEvidence(root, { summary: { pipeline_version: pipelineVersion } });
+    const result = prepareWithOptions(root, path.join(root, "handoff"), {
+      dataset: evidence.datasetPath,
+      labelingSummary: evidence.summaryPath,
+      labelingValidation: evidence.validationPath,
+    });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /LABELING_EVIDENCE_INVALID/);
+  }
+});
+
+test("prepare-handoff accepts v1.5 labeling evidence", () => {
   const root = makePublicationRoot();
-  const evidence = makeLabelingEvidence(root, { summary: { pipeline_version: "1.3.0" } });
+  const evidence = makeLabelingEvidence(root, {
+    summary: { pipeline_version: "1.5.0" },
+    validation: { pipeline_version: "1.5.0" },
+  });
+  const result = prepareWithOptions(root, path.join(root, "handoff"), {
+    dataset: evidence.datasetPath,
+    labelingSummary: evidence.summaryPath,
+    labelingValidation: evidence.validationPath,
+  });
+  assert.equal(result.status, 0, result.stderr);
+});
+
+test("prepare-handoff rejects mixed labeling pipeline evidence", () => {
+  const root = makePublicationRoot();
+  const evidence = makeLabelingEvidence(root, {
+    summary: { pipeline_version: "1.5.0" },
+  });
   const result = prepareWithOptions(root, path.join(root, "handoff"), {
     dataset: evidence.datasetPath,
     labelingSummary: evidence.summaryPath,

@@ -1,6 +1,6 @@
-# Integrated Labeling Handoff v1.4.0
+# Integrated Labeling Handoff v1.5.0
 
-Stage 13 の `normal / nuisance` と、その確定結果を `direct_nuisance / reactive / normal` に分解する3分類工程を、1つの再現可能な handoff に統合したパッケージです。
+Stage 13 の `normal / nuisance` と、その確定結果を `direct_nuisance / reactive / normal` に分解する3分類工程を、1つの再現可能な handoff に統合したパッケージです。分類意味論はv1.4.0と同一で、人間との通信だけを単一往復へまとめます。
 
 ## 採択アーキテクチャ
 
@@ -20,7 +20,14 @@ Stage 13 の `normal / nuisance` と、その確定結果を `direct_nuisance / 
 
 Stage 13 と3分類の判定ロジックは融合しません。直列に接続し、共通監査層で束ねます。
 
-## v1.4.0 の重要変更
+## v1.5.0 の重要変更
+
+- `prepare-single-roundtrip` がStage13とThree-Classのsnapshot、request manifest、S/T task、response schema、ZIP transportを1つのworkspaceへ生成します。
+- `finalize-single-roundtrip` が1つのresponseをstrictに検証し、snapshotだけで最終成果物・監査情報・exact goldenを確定します。
+- exact 5-fieldのStage13 pending重複とexact `record_key`のThree-Class重複だけをdedupeします。未解決P2はmandatory taskになりません。
+- v1.4.0のpolicy version、clean artifact schema、下流互換性は維持します。
+
+## v1.4.0から保持する変更
 
 v1.3.0で意図的に残したP2 8件を、既存338件の境界例と現行仕様へ再照合しました。
 
@@ -61,7 +68,27 @@ v1.2.0のP0/P1 golden 123 unique key / 124行、およびv1.3.0のP2 338件は�
 - P0/P1/P2のadjudicationはexact `record_key` 以外へ波及させない。
 - P0/P1未解決の3分類はfinalとして公開しない。P2未解決は監査対象だがpublicationを妨げない。
 
-## 更新版5フィールドJSONから開始
+## Single-roundtripから開始
+
+```bash
+python src/pipeline.py prepare-single-roundtrip INPUT.json \
+  --reference STAGE13_REFERENCE.json \
+  --workspace WORKSPACE \
+  [--state-dir STATE_DIR]
+```
+
+human decisionが必要な場合は `WORKSPACE/request/` をcanonical packageとして送り、返却されたresponse JSONを一度だけ確定します。
+
+```bash
+python src/pipeline.py finalize-single-roundtrip \
+  --workspace WORKSPACE \
+  --response classification_response.json \
+  [--state-dir STATE_DIR]
+```
+
+成功時stdoutは単一JSON object、想定される入力・契約・競合エラーはstdoutを空にしてexit 3です。ZIPはtransport artifactであり、finalizeはcanonical workspaceを参照します。
+
+## v1.4互換の更新版5フィールドJSONから開始
 
 ```bash
 python src/pipeline.py prepare-stage13 INPUT.json --outdir work

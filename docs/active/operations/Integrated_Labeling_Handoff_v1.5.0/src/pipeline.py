@@ -11,6 +11,8 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
 
+from single_roundtrip import finalize_single_roundtrip, prepare_single_roundtrip
+
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY_ROOT = next(
     (parent for parent in Path(__file__).resolve().parents if (parent / ".git").exists()),
@@ -1308,6 +1310,18 @@ def cmd_bootstrap_three_class_state(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_prepare_single_roundtrip(args: argparse.Namespace) -> int:
+    result = prepare_single_roundtrip(args)
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    return 0
+
+
+def cmd_finalize_single_roundtrip(args: argparse.Namespace) -> int:
+    result = finalize_single_roundtrip(args)
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(description="Integrated Stage 13 -> 3-Class labeling pipeline")
     sub = ap.add_subparsers(dest="command", required=True)
@@ -1372,6 +1386,20 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--out-golden", type=Path)
     p.add_argument("--out-p2", type=Path)
     p.set_defaults(func=cmd_bootstrap_three_class_state)
+
+    p = sub.add_parser("prepare-single-roundtrip", help="Prepare one combined Stage13 and Three-Class handoff")
+    p.add_argument("input_json", type=Path)
+    p.add_argument("--reference", type=Path, required=True)
+    p.add_argument("--workspace", type=Path, required=True)
+    p.add_argument("--state-dir", type=Path)
+    p.add_argument("--batch-size", type=int, default=500)
+    p.set_defaults(func=cmd_prepare_single_roundtrip)
+
+    p = sub.add_parser("finalize-single-roundtrip", help="Finalize one combined Stage13 and Three-Class response")
+    p.add_argument("--workspace", type=Path, required=True)
+    p.add_argument("--response", type=Path, required=True)
+    p.add_argument("--state-dir", type=Path)
+    p.set_defaults(func=cmd_finalize_single_roundtrip)
     return ap
 
 

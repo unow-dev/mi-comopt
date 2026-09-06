@@ -24,20 +24,16 @@
   "remaining_p2_review": "reference/three_class_P2_REMAINING_REVIEW.json",
   "files": {
     "CHANGELOG.md": {
-      "sha256": "9a317ec764f8755ec9ee1605e0f7d4a72641e2d50f91edf24cd4c2ae848430f7",
-      "bytes": 3243
-    },
-    "INTEGRITY.md": {
-      "sha256": "924b470f5eaefa048bb4634e1f90273e21c1d46f3e8534427932fea8cc375ec3",
-      "bytes": 842
+      "sha256": "132ebd61dd67fa090c3ba94fda5ce62c8fce65c8e3b4f886ef179fa5c1653fed",
+      "bytes": 4418
     },
     "README_FIRST.md": {
-      "sha256": "d2df48e204b9bdb19c32e39da8460c77aab7df1246faf736596dd5566aaa293e",
-      "bytes": 4826
+      "sha256": "96433b8845d95bf0b13f77ec02d9b8bfab529e7a43088aef8577457ee342ca87",
+      "bytes": 6275
     },
     "RECURRING_UPDATE_WORK_TASK_SEQUENCE.md": {
-      "sha256": "83936472004b1ac5b71b2569b614c3674e77c49c4879bc910ac698be3209a912",
-      "bytes": 11355
+      "sha256": "44f167f1f715a9aef5a52b9ad371164c3a276ea19b1101f34c4566a57fe412d2",
+      "bytes": 12593
     },
     "VERSION": {
       "sha256": "acb57a7135b2d7d6e665f67f056e21353023b93835f54def1ae523bf76f1bfb3",
@@ -64,8 +60,8 @@
       "bytes": 8680
     },
     "docs/PIPELINE_CONTRACT.md": {
-      "sha256": "16642fe4651d8d61c0793837e0ea289f5626cdf8d92c8310a1b91662bc6cda04",
-      "bytes": 3553
+      "sha256": "38091380eaac0a962969971e5c95187c0278ff32d42af33a29d901faa1959937",
+      "bytes": 3954
     },
     "policy/01_STAGE13_REPRODUCIBILITY.md": {
       "sha256": "d5d73c13fc4c3643c3e496f3018f5f99e0716302d63591951ff7c8a21b9b91c4",
@@ -168,8 +164,12 @@
       "bytes": 10047
     },
     "src/pipeline.py": {
-      "sha256": "b1d605a165d66cfc2521f7728a0ef0e00475f6cd84565e1634639340a4bde722",
-      "bytes": 61718
+      "sha256": "61a5c6c294189274a45d0a4861955c72f034b0a782792414ba8c472879311aa4",
+      "bytes": 62943
+    },
+    "src/single_roundtrip.py": {
+      "sha256": "a821f62144777b01f87378e92fa0aa83f3b2830dd8e753d362d364cf79e51d84",
+      "bytes": 48460
     },
     "templates/stage13_adjudications.csv": {
       "sha256": "85dfc6b0cf4a078538451527303247a8d1ab0f112ad5f9e5be76083ca477c247",
@@ -184,8 +184,12 @@
       "bytes": 22
     },
     "tests/run_all_tests.py": {
-      "sha256": "f84ceba46419471bef88ba492edd00cf572595c09a65b0e1d53debb004a4dd5c",
-      "bytes": 39335
+      "sha256": "04fa58269cca87b4fcfbe0f2b51c0b7b1591e0aa7d03f2b77933f0b41ed48b93",
+      "bytes": 39847
+    },
+    "tests/single_roundtrip_tests.py": {
+      "sha256": "41e4ed060274cbfad4e5d2bde8b1d06bdf0bf1c0239687d4297d1fa40b153c05",
+      "bytes": 15448
     },
     "tests/three_class_regression_cases.json": {
       "sha256": "acf1d0cda8491d788511fc15b196bb8e8a34625f775a6d40d2df7e1d75c317f6",

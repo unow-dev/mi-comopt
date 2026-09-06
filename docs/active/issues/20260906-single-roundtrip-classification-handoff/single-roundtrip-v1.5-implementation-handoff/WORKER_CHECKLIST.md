@@ -46,14 +46,14 @@
 
 ## PR4
 
-- [ ] explicit `{1.4.0,1.5.0}` downstream whitelist
-- [ ] mixed versions reject
-- [ ] shadow parity
-- [ ] fallback parity with 0 re-review
-- [ ] account/release tests
+- [x] explicit `{1.4.0,1.5.0}` downstream whitelist
+- [x] mixed versions reject
+- [x] shadow parity
+- [x] fallback parity with 0 re-review
+- [x] account/release tests
 
 ## PR5
 
-- [ ] all gates pass before cutover
+- [x] all PR1-PR4 gates pass before cutover
 - [ ] only Stage13→strict Three-Class recurring block replaced
-- [ ] v1.4 retained
+- [x] v1.4 retained

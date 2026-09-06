@@ -33,6 +33,22 @@
 ## Work Notes
 
 - 対象runの作業領域は`work/<YYYYMMDD>/`とする。raw、ChatGPT回答、中間JSON、handoff、publication、ZIPはここに置き、`/work/`のignore設定によりコミットしない。
+- v1.5 single-roundtripのcutover gateが承認されるまでは、通常更新のStage13〜Three-Class defaultはv1.4 commandを維持する。検証runだけは次の2コマンドで実行し、既存のcandidate handoff以降へはv1.4互換summary/validationとfinal datasetを渡す。
+
+  ```bash
+  python3 'docs/active/operations/Integrated_Labeling_Handoff_v1.5.0/src/pipeline.py' prepare-single-roundtrip \
+    'work/<YYYYMMDD>/current_raw.json' \
+    --reference 'var/integrated-labeling/stage13_reference.json' \
+    --workspace 'work/<YYYYMMDD>/single-roundtrip' \
+    --state-dir 'var/integrated-labeling'
+
+  python3 'docs/active/operations/Integrated_Labeling_Handoff_v1.5.0/src/pipeline.py' finalize-single-roundtrip \
+    --workspace 'work/<YYYYMMDD>/single-roundtrip' \
+    --response 'work/<YYYYMMDD>/classification_response.json' \
+    --state-dir 'var/integrated-labeling'
+  ```
+
+- single-roundtripの`final/summary.json`と`final/validation_report.json`は、既存のcandidate/account/release契約へ渡す前に、`final/three_class_labeled.json`のSHA、mandatory review解決、`pipeline_version`の一致を確認する。ZIPはtransport artifactであり、finalizeはworkspaceのcanonical requestを使う。
 - 人間が配置するrawの標準パスは`work/<YYYYMMDD>/current_raw.json`。rawはtop-level arrayで、各レコードのキーを`username`、`handle`、`comment`、`postedAt`、`postedDate`の5つに限定する。
 - Stage 13の標準コマンドは次のとおり。初回bootstrapだけ`--bootstrap`でimmutable baselineを選択でき、通常更新では`var/integrated-labeling/stage13_reference.json`の存在を確認して同じprivate referenceを3コマンドすべてに明示する。private referenceがない通常runは停止する。
 

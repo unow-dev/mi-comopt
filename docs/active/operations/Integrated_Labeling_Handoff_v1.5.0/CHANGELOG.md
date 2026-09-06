@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 1.5.0 — 2026-09-06
+
+分類handoffをsingle-roundtrip protocolへ拡張。v1.4の分類意味論、clean artifact schema、P2の任意review契約は変更しない。
+
+- `prepare-single-roundtrip` が入力・reference・registry・config・実装manifestをsnapshotし、Stage13 S-taskとThree-Class potential T-taskを1つのrequestへ束ねる。
+- `finalize-single-roundtrip` がstrict duplicate-key JSON、task coverage、active/inactive branch、reason mapping、integrated validationを検証してからaccepted/finalをatomic確定する。
+- exact 5-field pending dedupe、exact `record_key` task grouping、zero-human path、golden conflict、same-response retryを追加。
+- v1.4 fallback用のStage13 adjudication CSV、prospective golden、P2 snapshotをfinal artifactへ出力し、旧CLIでstrict-final replayできることを確認。
+- downstream labeling evidenceは`1.4.0`/`1.5.0`の明示whitelistとsummary/validation version equalityを要求する。
+- v1.5の全回帰25群、v1.4の全回帰24群、Node 78テスト、data verification、production buildを確認。
+- 人間のcutover判断まではv1.4 recurring defaultを維持する。
+
 ## 1.4.0 — 2026-08-24
 
 v1.3.0で保留したP2 8件を境界再評価。
