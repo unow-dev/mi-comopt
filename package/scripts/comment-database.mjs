@@ -9,6 +9,7 @@ import {
   importRawSnapshotFile,
   openCommentDatabase,
 } from "../src/database/comment-database.js";
+import { importNewCommentsWrapperFile } from "./adapters/new-comments-wrapper.js";
 import { readSelectedSnapshots, verifyRawInputs } from "../src/database/raw-snapshot-repository.js";
 import { buildAnalysisArtifacts } from "../src/processing/analysis-input/raw-snapshot-projection.js";
 
@@ -24,6 +25,9 @@ function usageFor(command = undefined) {
   if (command === "import-raw-snapshot") {
     return "Usage: npm run comment-db -- import-raw-snapshot --input path/to/rich-raw-snapshot.json [--db path.sqlite3]";
   }
+  if (command === "import-new-comments" || command === "import-new-comments-wrapper") {
+    return "Usage: npm run comment-db -- import-new-comments --input path/to/new-comments.json [--db path.sqlite3]";
+  }
   if (command === "backfill-raw-inputs") {
     return "Usage: npm run comment-db -- backfill-raw-inputs --db path.sqlite3 --raw-root legacy/raw/root";
   }
@@ -37,6 +41,7 @@ function usageFor(command = undefined) {
     "Usage:",
     "  npm run comment-db -- import --input path/to/normalized-comments.json [--db path.sqlite3]",
     "  npm run comment-db -- import-raw-snapshot --input path/to/rich-raw-snapshot.json [--db path.sqlite3]",
+    "  npm run comment-db -- import-new-comments --input path/to/new-comments.json [--db path.sqlite3]",
     "  npm run comment-db -- backfill-raw-inputs --db path.sqlite3 --raw-root legacy/raw/root",
     "  npm run comment-db -- export-analysis-input --snapshot-ref <sha:index> --output path.json --manifest path.json [--db path.sqlite3]",
     "  npm run comment-db -- verify-raw-inputs [--snapshot-ref <sha:index> ...] [--db path.sqlite3]",
@@ -92,6 +97,8 @@ function parseArguments(argv) {
   const supportedCommands = new Set([
     "import",
     "import-raw-snapshot",
+    "import-new-comments",
+    "import-new-comments-wrapper",
     "backfill-raw-inputs",
     "export-analysis-input",
     "verify-raw-inputs",
@@ -106,6 +113,8 @@ function parseArguments(argv) {
   const allowedOptions = {
     import: new Set(["--input", "--db"]),
     "import-raw-snapshot": new Set(["--input", "--db"]),
+    "import-new-comments": new Set(["--input", "--db"]),
+    "import-new-comments-wrapper": new Set(["--input", "--db"]),
     "backfill-raw-inputs": new Set(["--db", "--raw-root"]),
     "export-analysis-input": new Set(["--snapshot-ref", "--snapshot-sha", "--output", "--manifest", "--db"]),
     "verify-raw-inputs": new Set(["--snapshot-ref", "--snapshot-sha", "--db"]),
@@ -138,7 +147,7 @@ function parseArguments(argv) {
     }
   }
 
-  if (command === "import" || command === "import-raw-snapshot") {
+  if (command === "import" || command === "import-raw-snapshot" || command === "import-new-comments" || command === "import-new-comments-wrapper") {
     if (args.input === undefined) throw new CliArgumentError("--input is required");
   }
   if (command === "backfill-raw-inputs") {
@@ -264,6 +273,12 @@ try {
     });
     const status = result.status === "already-imported" ? "already imported" : "imported";
     console.log(status + " payload=" + result.payloadSha256 + " comments=" + result.commentCount);
+  } else if (args.command === "import-new-comments" || args.command === "import-new-comments-wrapper") {
+    const result = await importNewCommentsWrapperFile(resolveInvocationPath(args.input), {
+      dbPath: args.db === undefined ? undefined : resolveInvocationPath(args.db),
+    });
+    const status = result.status === "already-imported" ? "already imported" : "imported";
+    console.log(status + " payload=" + result.payloadSha256 + " snapshots=" + result.snapshotCount + " comments=" + result.commentObservationCount);
   } else if (args.command === "backfill-raw-inputs") {
     const result = await backfillRawInputs({
       dbPath: resolveInvocationPath(args.db),

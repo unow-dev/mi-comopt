@@ -65,11 +65,15 @@ WHERE comment_text LIKE '%' || ? || '%';
 
 このDBの件数は観測件数であり、保証された一意コメント件数ではありません。FTS、filter判定、検出キーワード、ユーザー名・プロフィール情報、保持自動化はMVPに含みません。
 
-collector固有の変換adapterは本MVPの対象外です。実際のcollector出力からの変換では、取得元、投稿参照、実際の収集時刻、コメント本文の契約を確認し、値を推測・補完しないでください。詳細は `FOLLOW_UP_COLLECTOR_ADAPTER.md` を参照してください。
+collector固有の別形式やlegacy rawとの自動判別、legacy rawとのmerge/dedupe、Stage13 dataset生成、実データのrepository fixture化は対象外です。実データはlocal検証入力としてのみ扱い、raw本体をrepositoryへ追加しないでください。
 
-## rich raw snapshot と Comment DB v3
+## rich raw snapshot と Comment DB v4
 
 `import-raw-snapshot` は、draft 2020-12 JSON Schemaに適合し、`loadedCount` と実際のitems数が一致し、動画IDの矛盾がないTikTok rich raw snapshotだけを受け付けます。`extractedAt`、コメント本文・ID・日時などのraw文字列は保存時にtrim、Unicode正規化、日時変換または補完を行いません。schemaにない独自の件数・日時制約も追加しません。
+
+`import-new-comments` は、Collector側の厳格な `tiktokNewCommentsWrapper-1.0.0` contractで `new-comments.json` 全体をUTF-8・JSON・shape検証し、source順のsnapshot DTO列へ変換してから、generic `importRawInput` を1回だけ実行します。wrapperのrootは `items` のみで、空wrapper、loadedCount不一致、item内の動画ID不一致、未知のobject keyは拒否します。`import-new-comments-wrapper` は同じ契約を明示的に選択するCLI aliasです。
+
+元wrapperのbytesは再serializationせず、1つの `raw_inputs.payload_bytes` として保存します。`reportedCount`、videoの `duration` と5つの統計値はsourceの `null` を `null` のまま保存・読出しします。その他のrich metadataはraw bytesに保持し、generic DTOへ投影しません。
 
 入力ファイルのexact bytesをSHA-256でcontent-addressし、SQLiteの`raw_inputs.payload_bytes`へBLOBとして原本保存します。JSONの再serializationは行いません。`raw_snapshots`と観測行はこのBLOBから得たmaterializationです。
 
@@ -82,6 +86,8 @@ raw_inputs(payload_sha256, payload_bytes, byte_length, input_format, imported_at
 ```bash
 npm run comment-db -- import-raw-snapshot \
   --input path/to/tiktok-raw-snapshot.json \
+npm run comment-db -- import-new-comments \
+  --input path/to/new-comments.json \
 npm run comment-db -- backfill-raw-inputs \
   --db path/to/comment-history.sqlite3 \
   --raw-root path/to/legacy-raw-snapshots

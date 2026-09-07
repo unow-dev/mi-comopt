@@ -16,7 +16,7 @@ export const PACKAGE_ROOT = path.resolve(moduleDirectory, "../..");
 export const REPOSITORY_ROOT = path.resolve(PACKAGE_ROOT, "..");
 export const DEFAULT_DB_PATH = path.join(REPOSITORY_ROOT, "var", "comment-history.sqlite3");
 export const MIGRATIONS_DIR = path.join(PACKAGE_ROOT, "db", "comment-database");
-export const APPLICATION_SCHEMA_VERSION = 3;
+export const APPLICATION_SCHEMA_VERSION = 4;
 
 const migrations = [
   { version: 1, filename: "001-init.sql" },
@@ -28,6 +28,7 @@ const migrations = [
     prepare: prepareRichRawInputMigration,
     validate: validateRichRawInputMigration,
   },
+  { version: 4, filename: "004-nullable-rich-metadata.sql" },
 ];
 const LEGACY_RAW_INPUT_BACKFILL_TABLE = "legacy_raw_input_backfill";
 const LEGACY_INPUT_FORMAT = "tiktokRawSnapshot-1.0.0";
@@ -587,6 +588,10 @@ function assertDtoNumber(value, context) {
   }
 }
 
+function assertDtoNullableNumber(value, context) {
+  if (value !== null) assertDtoNumber(value, context);
+}
+
 function validateSnapshotDto(snapshot, snapshotIndex) {
   const context = `snapshot ${snapshotIndex}`;
   assertDtoKeys(snapshot, snapshotDtoKeys, context);
@@ -595,7 +600,7 @@ function validateSnapshotDto(snapshot, snapshotIndex) {
     assertDtoText(snapshot[field], `${context}.${field}`);
   }
   assertDtoInteger(snapshot.loadedCount, `${context}.loadedCount`);
-  assertDtoInteger(snapshot.reportedCount, `${context}.reportedCount`);
+  assertDtoNullableInteger(snapshot.reportedCount, `${context}.reportedCount`);
   if (!Array.isArray(snapshot.comments)) throw validationError(`${context}.comments must be an array`);
   if (snapshot.loadedCount !== snapshot.comments.length) {
     throw validationError(
@@ -611,9 +616,9 @@ function validateSnapshotDto(snapshot, snapshotIndex) {
   ]) {
     assertDtoText(snapshot.video[field], `${context}.video.${field}`);
   }
-  assertDtoNumber(snapshot.video.duration, `${context}.video.duration`);
+  assertDtoNullableNumber(snapshot.video.duration, `${context}.video.duration`);
   for (const field of ["viewCount", "likeCount", "commentCount", "shareCount", "favoriteCount"]) {
-    assertDtoInteger(snapshot.video[field], `${context}.video.${field}`);
+    assertDtoNullableInteger(snapshot.video[field], `${context}.video.${field}`);
   }
 
   snapshot.comments.forEach((comment, commentIndex) => {
@@ -787,7 +792,7 @@ function materializationForDatabase(db, snapshotRow) {
       sourceCanonicalUrl: snapshotRow.source_canonical_url,
       itemSource: snapshotRow.item_source,
       loadedCount: Number(snapshotRow.loaded_count),
-      reportedCount: Number(snapshotRow.reported_count),
+      reportedCount: snapshotRow.reported_count === null ? null : Number(snapshotRow.reported_count),
       coverageNote: snapshotRow.coverage_note,
     },
     video: video === null ? null : {
@@ -806,12 +811,12 @@ function materializationForDatabase(db, snapshotRow) {
       publishedAt: video.published_at,
       publishedDate: video.published_date,
       regionCode: video.region_code,
-      duration: Number(video.duration),
-      viewCount: Number(video.view_count),
-      likeCount: Number(video.like_count),
-      commentCount: Number(video.comment_count),
-      shareCount: Number(video.share_count),
-      favoriteCount: Number(video.favorite_count),
+      duration: video.duration === null ? null : Number(video.duration),
+      viewCount: video.view_count === null ? null : Number(video.view_count),
+      likeCount: video.like_count === null ? null : Number(video.like_count),
+      commentCount: video.comment_count === null ? null : Number(video.comment_count),
+      shareCount: video.share_count === null ? null : Number(video.share_count),
+      favoriteCount: video.favorite_count === null ? null : Number(video.favorite_count),
     },
     comments: commentRows.map((comment) => ({
       externalCommentId: comment.external_comment_id ?? null,

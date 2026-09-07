@@ -105,7 +105,7 @@ function toPlainSnapshot(row) {
     sourceCanonicalUrl: row.source_canonical_url,
     itemSource: row.item_source,
     loadedCount: Number(row.loaded_count),
-    reportedCount: Number(row.reported_count),
+    reportedCount: row.reported_count === null ? null : Number(row.reported_count),
     coverageNote: row.coverage_note,
     importedAt: row.imported_at,
   };
