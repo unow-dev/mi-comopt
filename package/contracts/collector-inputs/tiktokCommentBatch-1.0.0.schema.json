@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/tiktok-filter-keywords/tiktokCommentBatch-1.0.0.schema.json",
+  "title": "TikTok Comment Batch 1.0.0",
+  "description": "Strict versioned contract for an exact five-field comment array.",
+  "type": "array",
+  "items": {
+    "$ref": "#/$defs/comment"
+  },
+  "$defs": {
+    "comment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "username",
+        "handle",
+        "comment",
+        "postedAt",
+        "postedDate"
+      ],
+      "properties": {
+        "username": { "type": "string" },
+        "handle": { "type": "string" },
+        "comment": { "type": "string" },
+        "postedAt": { "type": "string" },
+        "postedDate": { "type": "string" }
+      }
+    }
+  }
+}

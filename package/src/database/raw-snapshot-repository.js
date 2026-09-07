@@ -33,6 +33,7 @@ function validateSnapshotReference(reference) {
 function selectedSnapshotRows(db, snapshotRefs = undefined) {
   const columns = `
     rs.snapshot_id,
+    rs.materialization_kind,
     rs.platform,
     rs.payload_sha256,
     rs.snapshot_index,
@@ -72,9 +73,49 @@ function assertSelectedSnapshotsFound(rows, snapshotRefs) {
   }
 }
 
-function readSnapshotObservations(db, snapshotId, payloadSha256, loadedCount) {
+function assertSourceIndices(rows, payloadSha256, snapshotIndex) {
+  rows.forEach((row, index) => {
+    if (Number(row.source_index) !== index) {
+      throw integrityError(
+        `snapshot ${payloadSha256}:${snapshotIndex} source_index=${row.source_index} must equal ${index}`,
+      );
+    }
+  });
+}
+
+function assertCommentRowShape(row, materializationKind, payloadSha256, snapshotIndex) {
+  const richFields = [
+    row.level,
+    row.comment_id_raw,
+    row.video_id_raw,
+    row.parent_comment_id_raw,
+    row.user_id_raw,
+    row.created_at,
+  ];
+  const allNull = richFields.every((value) => value === null);
+  const allPresent = richFields.every((value) => value !== null);
+  if (!allNull && !allPresent) {
+    throw integrityError(
+      `snapshot ${payloadSha256}:${snapshotIndex} comment observation has a partial rich-field group`,
+    );
+  }
+  if (materializationKind === "rich-snapshot" && !allPresent) {
+    throw integrityError(
+      `snapshot ${payloadSha256}:${snapshotIndex} rich comment observation has nullable rich fields`,
+    );
+  }
+  if (materializationKind === "comment-batch" && (!allNull || row.comment_pk !== null)) {
+    throw integrityError(
+      `snapshot ${payloadSha256}:${snapshotIndex} comment-batch observation has rich identity fields`,
+    );
+  }
+}
+
+function readSnapshotObservations(db, snapshotId, payloadSha256, snapshotIndex, loadedCount, materializationKind) {
   const rows = db.prepare(
-    `SELECT source_index, username, handle, comment_text, posted_at, posted_date
+    `SELECT source_index, comment_pk, level, comment_id_raw, video_id_raw,
+            parent_comment_id_raw, user_id_raw, created_at,
+            username, handle, comment_text, posted_at, posted_date
      FROM snapshot_comment_observations
      WHERE snapshot_id = ? ORDER BY source_index ASC`,
   ).all(snapshotId);
@@ -83,6 +124,8 @@ function readSnapshotObservations(db, snapshotId, payloadSha256, loadedCount) {
       `snapshot ${payloadSha256} loaded_count=${loadedCount} does not match observations=${rows.length}`,
     );
   }
+  assertSourceIndices(rows, payloadSha256, snapshotIndex);
+  rows.forEach((row) => assertCommentRowShape(row, materializationKind, payloadSha256, snapshotIndex));
   return rows.map((row) => ({
     sourceIndex: Number(row.source_index),
     username: row.username,
@@ -121,10 +164,20 @@ export function readSelectedSnapshots(db, snapshotRefs) {
   }
   const rows = selectedSnapshotRows(db, snapshotRefs);
   assertSelectedSnapshotsFound(rows, snapshotRefs);
-  return rows.map((row) => ({
-    snapshot: toPlainSnapshot(row),
-    observations: readSnapshotObservations(db, row.snapshot_id, row.payload_sha256, row.loaded_count),
-  }));
+  return rows.map((row) => {
+    verifySnapshotRow(db, row);
+    return {
+      snapshot: toPlainSnapshot(row),
+      observations: readSnapshotObservations(
+        db,
+        row.snapshot_id,
+        row.payload_sha256,
+        row.snapshot_index,
+        row.loaded_count,
+        row.materialization_kind,
+      ),
+    };
+  });
 }
 
 export const readAnalysisSnapshots = readSelectedSnapshots;
@@ -140,7 +193,7 @@ function selectedRowsForVerification(db, snapshotRefs) {
 function allRowsForPayloadShas(db, payloadShas) {
   if (payloadShas.length === 0) return [];
   return db.prepare(
-    `SELECT rs.snapshot_id, rs.platform, rs.payload_sha256, rs.snapshot_index,
+    `SELECT rs.snapshot_id, rs.materialization_kind, rs.platform, rs.payload_sha256, rs.snapshot_index,
             ri.input_format, rs.extracted_at, rs.source_page_url,
             rs.source_canonical_url, rs.item_source, rs.loaded_count,
             rs.reported_count, rs.coverage_note, ri.imported_at
@@ -203,12 +256,44 @@ function verifySnapshotRow(db, row) {
       `snapshot ${row.payload_sha256}:${row.snapshot_index} loaded_count=${row.loaded_count} does not match observations=${observationCount}`,
     );
   }
+  if (Number(row.loaded_count) < 0) {
+    throw integrityError(`snapshot ${row.payload_sha256}:${row.snapshot_index} has negative loaded_count`);
+  }
+  const observationRows = db.prepare(
+    `SELECT source_index, comment_pk, level, comment_id_raw, video_id_raw,
+            parent_comment_id_raw, user_id_raw, created_at
+     FROM snapshot_comment_observations
+     WHERE snapshot_id = ? ORDER BY source_index ASC`,
+  ).all(row.snapshot_id);
+  assertSourceIndices(observationRows, row.payload_sha256, row.snapshot_index);
+  observationRows.forEach((observation) => {
+    assertCommentRowShape(observation, row.materialization_kind, row.payload_sha256, row.snapshot_index);
+  });
+  const unavailableMetadata = [
+    row.extracted_at,
+    row.source_page_url,
+    row.source_canonical_url,
+    row.item_source,
+    row.coverage_note,
+  ];
+  if (row.materialization_kind === "rich-snapshot") {
+    if (unavailableMetadata.some((value) => value === null)) {
+      throw integrityError(`snapshot ${row.payload_sha256}:${row.snapshot_index} rich metadata is incomplete`);
+    }
+  } else if (row.materialization_kind === "comment-batch") {
+    if (unavailableMetadata.some((value) => value !== null) || row.reported_count !== null) {
+      throw integrityError(`snapshot ${row.payload_sha256}:${row.snapshot_index} comment-batch metadata is populated`);
+    }
+  } else {
+    throw integrityError(`snapshot ${row.payload_sha256}:${row.snapshot_index} has unsupported materialization kind`);
+  }
   const videoObservationCount = Number(db.prepare(
     "SELECT COUNT(*) AS count FROM snapshot_video_observations WHERE snapshot_id = ?",
   ).get(row.snapshot_id).count);
-  if (videoObservationCount !== 1) {
+  const expectedVideoObservationCount = row.materialization_kind === "rich-snapshot" ? 1 : 0;
+  if (videoObservationCount !== expectedVideoObservationCount) {
     throw integrityError(
-      `snapshot ${row.payload_sha256}:${row.snapshot_index} must have exactly one video observation, found ${videoObservationCount}`,
+      `snapshot ${row.payload_sha256}:${row.snapshot_index} expected ${expectedVideoObservationCount} video observations, found ${videoObservationCount}`,
     );
   }
 }

@@ -67,11 +67,13 @@ WHERE comment_text LIKE '%' || ? || '%';
 
 collector固有の別形式やlegacy rawとの自動判別、legacy rawとのmerge/dedupe、Stage13 dataset生成、実データのrepository fixture化は対象外です。実データはlocal検証入力としてのみ扱い、raw本体をrepositoryへ追加しないでください。
 
-## rich raw snapshot と Comment DB v4
+## rich raw snapshot と Comment DB v5
 
 `import-raw-snapshot` は、draft 2020-12 JSON Schemaに適合し、`loadedCount` と実際のitems数が一致し、動画IDの矛盾がないTikTok rich raw snapshotだけを受け付けます。`extractedAt`、コメント本文・ID・日時などのraw文字列は保存時にtrim、Unicode正規化、日時変換または補完を行いません。schemaにない独自の件数・日時制約も追加しません。
 
-`import-new-comments` は、Collector側の厳格な `tiktokNewCommentsWrapper-1.0.0` contractで `new-comments.json` 全体をUTF-8・JSON・shape検証し、source順のsnapshot DTO列へ変換してから、generic `importRawInput` を1回だけ実行します。wrapperのrootは `items` のみで、空wrapper、loadedCount不一致、item内の動画ID不一致、未知のobject keyは拒否します。`import-new-comments-wrapper` は同じ契約を明示的に選択するCLI aliasです。
+`import-new-comments` は、Collector側の厳格な `tiktokNewCommentsWrapper-1.0.0` contractで `new-comments.json` 全体をUTF-8・JSON・shape検証し、source順のrich snapshot DTO列へ変換してから、generic `importRawInput` を1回だけ実行します。wrapperのrootは `items` のみで、空wrapper、loadedCount不一致、item内の動画ID不一致、未知のobject keyは拒否します。`import-new-comments-wrapper` は同じ契約を明示的に選択するCLI aliasです。
+
+`import-comment-batch` は `tiktokCommentBatch-1.0.0` contractでroot array全体をUTF-8・JSON・exact five-field shape検証し、必ず1つの `comment-batch` materializationへ変換します。`[]`、空文字、whitespace-only、opaqueな日時文字列、重複は有効で、trim、Unicode正規化、日時解析、欠損補完、dedupeは行いません。batchではvideo observation、video/author/comment masterを生成せず、取得不能なmetadataとrich-only comment fieldsを`NULL`で保存します。
 
 元wrapperのbytesは再serializationせず、1つの `raw_inputs.payload_bytes` として保存します。`reportedCount`、videoの `duration` と5つの統計値はsourceの `null` を `null` のまま保存・読出しします。その他のrich metadataはraw bytesに保持し、generic DTOへ投影しません。
 
@@ -88,6 +90,8 @@ npm run comment-db -- import-raw-snapshot \
   --input path/to/tiktok-raw-snapshot.json \
 npm run comment-db -- import-new-comments \
   --input path/to/new-comments.json \
+npm run comment-db -- import-comment-batch \
+  --input path/to/comment-batch.json \
 npm run comment-db -- backfill-raw-inputs \
   --db path/to/comment-history.sqlite3 \
   --raw-root path/to/legacy-raw-snapshots
@@ -100,7 +104,7 @@ npm run comment-db -- verify-raw-inputs \
 
 ## 分析入力の読み取り境界
 
-明示指定したsnapshot reference（`payload_sha256:snapshot_index`）だけをDBから読み出し、既存Stage13互換の5-field JSONとprovenance manifestを生成します。snapshotはSHA・snapshot index昇順、snapshot内の観測はsource index昇順で並び、cross-snapshot dedupeは行いません。
+明示指定したsnapshot reference（`payload_sha256:snapshot_index`）だけをDBから読み出し、既存Stage13互換の5-field JSONとprovenance manifestを生成します。snapshotはSHA・snapshot index昇順、snapshot内の観測はsource index昇順で並び、cross-snapshot dedupeは行いません。richとcomment-batchは同じprojectionを使い、manifest schemaは3、projection versionは`1.0.0`を維持します。manifestへ`materialization_kind`は追加しません。
 
 ```bash
 npm run comment-db -- export-analysis-input \

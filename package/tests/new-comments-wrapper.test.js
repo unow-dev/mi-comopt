@@ -199,15 +199,15 @@ test("adapter keeps duplicate observations and maps every item exactly once", ()
   ]);
 });
 
-test("v4 generic import preserves all seven nullable fields and distinguishes null from zero", async (t) => {
+test("v5 generic import preserves all seven nullable fields and distinguishes null from zero", async (t) => {
   const { dbPath } = makeCase(t);
   const request = adaptNewCommentsWrapperBytes(fixtureBytes);
   const imported = await importRawInput(request, { dbPath });
   assert.equal(imported.snapshotCount, 2);
   assert.equal(imported.commentObservationCount, 3);
-  assert.equal(APPLICATION_SCHEMA_VERSION, 4);
-  assert.equal(DATABASE_SCHEMA_VERSION, 4);
-  assert.equal(query(dbPath, "PRAGMA user_version")[0].user_version, 4);
+  assert.equal(APPLICATION_SCHEMA_VERSION, 5);
+  assert.equal(DATABASE_SCHEMA_VERSION, 5);
+  assert.equal(query(dbPath, "PRAGMA user_version")[0].user_version, 5);
   assert.deepEqual(
     query(dbPath, "SELECT reported_count FROM raw_snapshots ORDER BY snapshot_index").map((row) => row.reported_count),
     [null, 294],
@@ -277,7 +277,7 @@ test("wrapper CLI imports one raw input with ordered snapshots and connects to a
       { payloadSha256: sha, snapshotIndex: 1 },
     ]);
     const artifacts = buildAnalysisArtifacts(selected);
-    assert.equal(artifacts.manifest.database_schema_version, 4);
+    assert.equal(artifacts.manifest.database_schema_version, 5);
     assert.equal(artifacts.manifest.snapshots[0].reported_count, null);
     assert.match(artifacts.manifestJson, /"reported_count": null/);
   } finally {

@@ -58,6 +58,18 @@ test("processing does not import outer layers or cross feature modules", () => {
   assert.match(fs.readFileSync(path.join(accountRoot, "account-block-candidate-workflow.js"), "utf8"), /\.\.\/shared\/workflow-validation-error\.js/);
 });
 
+test("database and processing do not import collector-specific modules", () => {
+  for (const layerRoot of [path.join(srcRoot, "database"), path.join(srcRoot, "processing")]) {
+    for (const sourceFile of filesUnder(layerRoot)) {
+      const source = fs.readFileSync(sourceFile, "utf8");
+      for (const specifier of importedSpecifiers(source)) {
+        const target = resolveLocalImport(sourceFile, specifier);
+        if (target) assert.equal(target.startsWith(path.join(srcRoot, "collector")), false, `${sourceFile} imports collector`);
+      }
+    }
+  }
+});
+
 test("candidate-data.js is the only UI module that imports generated JSON", () => {
   const uiRoot = path.join(srcRoot, "ui");
   const appSource = fs.readFileSync(path.join(uiRoot, "App.jsx"), "utf8");

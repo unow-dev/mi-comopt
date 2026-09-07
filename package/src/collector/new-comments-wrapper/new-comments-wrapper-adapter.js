@@ -6,6 +6,7 @@ import {
 
 function mapItemToSnapshotDto(item) {
   return {
+    materializationKind: "rich-snapshot",
     platform: "tiktok",
     extractedAt: item.extractedAt,
     sourcePageUrl: item.source.pageUrl,

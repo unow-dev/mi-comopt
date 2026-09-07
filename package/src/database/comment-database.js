@@ -16,7 +16,7 @@ export const PACKAGE_ROOT = path.resolve(moduleDirectory, "../..");
 export const REPOSITORY_ROOT = path.resolve(PACKAGE_ROOT, "..");
 export const DEFAULT_DB_PATH = path.join(REPOSITORY_ROOT, "var", "comment-history.sqlite3");
 export const MIGRATIONS_DIR = path.join(PACKAGE_ROOT, "db", "comment-database");
-export const APPLICATION_SCHEMA_VERSION = 4;
+export const APPLICATION_SCHEMA_VERSION = 5;
 
 const migrations = [
   { version: 1, filename: "001-init.sql" },
@@ -29,6 +29,7 @@ const migrations = [
     validate: validateRichRawInputMigration,
   },
   { version: 4, filename: "004-nullable-rich-metadata.sql" },
+  { version: 5, filename: "005-comment-batch-materialization.sql" },
 ];
 const LEGACY_RAW_INPUT_BACKFILL_TABLE = "legacy_raw_input_backfill";
 const LEGACY_INPUT_FORMAT = "tiktokRawSnapshot-1.0.0";
@@ -502,6 +503,7 @@ function databaseIntegrityError(message) {
 
 const rawInputKeys = ["payloadBytes", "inputFormat", "snapshots"];
 const snapshotDtoKeys = [
+  "materializationKind",
   "platform",
   "extractedAt",
   "sourcePageUrl",
@@ -546,6 +548,8 @@ const commentDtoKeys = [
   "likeCount",
   "replyCount",
 ];
+const commentBatchDtoKeys = ["materializationKind", "platform", "loadedCount", "comments"];
+const commentBatchCommentDtoKeys = ["username", "handle", "commentText", "postedAt", "postedDate"];
 
 function isRecord(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -592,7 +596,7 @@ function assertDtoNullableNumber(value, context) {
   if (value !== null) assertDtoNumber(value, context);
 }
 
-function validateSnapshotDto(snapshot, snapshotIndex) {
+function validateRichSnapshotDto(snapshot, snapshotIndex) {
   const context = `snapshot ${snapshotIndex}`;
   assertDtoKeys(snapshot, snapshotDtoKeys, context);
   assertDtoNonEmptyText(snapshot.platform, `${context}.platform`);
@@ -600,6 +604,7 @@ function validateSnapshotDto(snapshot, snapshotIndex) {
     assertDtoText(snapshot[field], `${context}.${field}`);
   }
   assertDtoInteger(snapshot.loadedCount, `${context}.loadedCount`);
+  if (snapshot.loadedCount < 0) throw validationError(`${context}.loadedCount must be >= 0`);
   assertDtoNullableInteger(snapshot.reportedCount, `${context}.reportedCount`);
   if (!Array.isArray(snapshot.comments)) throw validationError(`${context}.comments must be an array`);
   if (snapshot.loadedCount !== snapshot.comments.length) {
@@ -635,6 +640,41 @@ function validateSnapshotDto(snapshot, snapshotIndex) {
     assertDtoNullableInteger(comment.likeCount, `${commentContext}.likeCount`);
     assertDtoNullableInteger(comment.replyCount, `${commentContext}.replyCount`);
   });
+}
+
+function validateCommentBatchDto(snapshot, snapshotIndex) {
+  const context = `snapshot ${snapshotIndex}`;
+  assertDtoKeys(snapshot, commentBatchDtoKeys, context);
+  assertDtoNonEmptyText(snapshot.platform, `${context}.platform`);
+  assertDtoInteger(snapshot.loadedCount, `${context}.loadedCount`);
+  if (snapshot.loadedCount < 0) throw validationError(`${context}.loadedCount must be >= 0`);
+  if (!Array.isArray(snapshot.comments)) throw validationError(`${context}.comments must be an array`);
+  if (snapshot.loadedCount !== snapshot.comments.length) {
+    throw validationError(
+      `${context}.loadedCount (${snapshot.loadedCount}) must equal comments.length (${snapshot.comments.length})`,
+    );
+  }
+  snapshot.comments.forEach((comment, commentIndex) => {
+    const commentContext = `${context}.comments[${commentIndex}]`;
+    assertDtoKeys(comment, commentBatchCommentDtoKeys, commentContext);
+    for (const field of commentBatchCommentDtoKeys) {
+      assertDtoText(comment[field], `${commentContext}.${field}`);
+    }
+  });
+}
+
+function validateSnapshotDto(snapshot, snapshotIndex) {
+  if (!isRecord(snapshot)) throw validationError(`snapshot ${snapshotIndex} must be an object`);
+  if (!Object.hasOwn(snapshot, "materializationKind")) {
+    throw validationError(`snapshot ${snapshotIndex}.materializationKind is required`);
+  }
+  if (snapshot.materializationKind === "rich-snapshot") {
+    validateRichSnapshotDto(snapshot, snapshotIndex);
+  } else if (snapshot.materializationKind === "comment-batch") {
+    validateCommentBatchDto(snapshot, snapshotIndex);
+  } else {
+    throw validationError(`snapshot ${snapshotIndex}.materializationKind is unsupported`);
+  }
 }
 
 function validateRawInputRequest(request) {
@@ -698,18 +738,47 @@ function materializationConflict(message) {
 }
 
 function materializationForDto(snapshot, snapshotIndex) {
-  return {
+  const materialization = {
+    materializationKind: snapshot.materializationKind,
     snapshot: {
       platform: snapshot.platform,
       snapshotIndex,
-      extractedAt: snapshot.extractedAt,
-      sourcePageUrl: snapshot.sourcePageUrl,
-      sourceCanonicalUrl: snapshot.sourceCanonicalUrl,
-      itemSource: snapshot.itemSource,
+      extractedAt: snapshot.extractedAt ?? null,
+      sourcePageUrl: snapshot.sourcePageUrl ?? null,
+      sourceCanonicalUrl: snapshot.sourceCanonicalUrl ?? null,
+      itemSource: snapshot.itemSource ?? null,
       loadedCount: snapshot.loadedCount,
-      reportedCount: snapshot.reportedCount,
-      coverageNote: snapshot.coverageNote,
+      reportedCount: snapshot.reportedCount ?? null,
+      coverageNote: snapshot.coverageNote ?? null,
     },
+  };
+  if (snapshot.materializationKind === "comment-batch") {
+    return {
+      ...materialization,
+      video: null,
+      comments: snapshot.comments.map((comment, sourceIndex) => ({
+        sourceIndex,
+        externalCommentId: null,
+        externalCommentVideoId: null,
+        externalCommentVideoPlatform: null,
+        level: null,
+        commentIdRaw: null,
+        videoIdRaw: null,
+        parentCommentIdRaw: null,
+        username: comment.username,
+        handle: comment.handle,
+        userIdRaw: null,
+        commentText: comment.commentText,
+        postedAt: comment.postedAt,
+        createdAt: null,
+        postedDate: comment.postedDate,
+        likeCount: null,
+        replyCount: null,
+      })),
+    };
+  }
+  return {
+    ...materialization,
     video: {
       externalVideoId: snapshot.video.externalVideoId,
       externalVideoPlatform: snapshot.video.externalVideoId === null ? null : snapshot.platform,
@@ -729,7 +798,8 @@ function materializationForDto(snapshot, snapshotIndex) {
       shareCount: snapshot.video.shareCount,
       favoriteCount: snapshot.video.favoriteCount,
     },
-    comments: snapshot.comments.map((comment) => ({
+    comments: snapshot.comments.map((comment, sourceIndex) => ({
+      sourceIndex,
       externalCommentId: snapshot.video.externalVideoId === null ? null : comment.externalCommentId,
       externalCommentVideoId: comment.externalCommentId === null || snapshot.video.externalVideoId === null
         ? null
@@ -784,6 +854,7 @@ function materializationForDatabase(db, snapshotRow) {
   ).all(snapshotRow.snapshot_id);
   const video = videoRows.length === 1 ? videoRows[0] : null;
   return {
+    materializationKind: snapshotRow.materialization_kind,
     snapshot: {
       platform: snapshotRow.platform,
       snapshotIndex: Number(snapshotRow.snapshot_index),
@@ -819,6 +890,7 @@ function materializationForDatabase(db, snapshotRow) {
       favoriteCount: video.favorite_count === null ? null : Number(video.favorite_count),
     },
     comments: commentRows.map((comment) => ({
+      sourceIndex: Number(comment.source_index),
       externalCommentId: comment.external_comment_id ?? null,
       externalCommentVideoId: comment.external_comment_id === null || comment.external_comment_id === undefined
         ? null
@@ -826,7 +898,7 @@ function materializationForDatabase(db, snapshotRow) {
       externalCommentVideoPlatform: comment.external_comment_id === null || comment.external_comment_id === undefined
         ? null
         : comment.comment_video_platform,
-      level: Number(comment.level),
+      level: comment.level === null ? null : Number(comment.level),
       commentIdRaw: comment.comment_id_raw,
       videoIdRaw: comment.video_id_raw,
       parentCommentIdRaw: comment.parent_comment_id_raw,
@@ -844,7 +916,7 @@ function materializationForDatabase(db, snapshotRow) {
 }
 
 function assertSameMaterialization(expected, actual, payloadSha256, snapshotIndex) {
-  if (actual.video === null || JSON.stringify(expected) !== JSON.stringify(actual)) {
+  if (JSON.stringify(expected) !== JSON.stringify(actual)) {
     throw materializationConflict(
       `materialization differs for ${payloadSha256}:${snapshotIndex}`,
     );
@@ -870,7 +942,7 @@ function assertStoredRawInputIntegrity(db, stored, payloadBytes, inputFormat) {
 function assertExistingRawInputIntegrity(db, stored, request, payloadSha256) {
   assertStoredRawInputIntegrity(db, stored, request.payloadBytes, request.inputFormat);
   const snapshotRows = db.prepare(
-    `SELECT snapshot_id, platform, payload_sha256, snapshot_index, extracted_at,
+    `SELECT snapshot_id, materialization_kind, platform, payload_sha256, snapshot_index, extracted_at,
             source_page_url, source_canonical_url, item_source, loaded_count,
             reported_count, coverage_note
      FROM raw_snapshots
@@ -896,9 +968,9 @@ function insertRawInputMaterialization(db, request, payloadSha256) {
 
   const insertSnapshot = db.prepare(
     `INSERT INTO raw_snapshots
-      (platform, payload_sha256, snapshot_index, extracted_at, source_page_url,
+      (materialization_kind, platform, payload_sha256, snapshot_index, extracted_at, source_page_url,
        source_canonical_url, item_source, loaded_count, reported_count, coverage_note)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   );
   const insertVideoObservation = db.prepare(
     `INSERT INTO snapshot_video_observations
@@ -917,65 +989,77 @@ function insertRawInputMaterialization(db, request, payloadSha256) {
 
   let commentObservationCount = 0;
   request.snapshots.forEach((snapshot, snapshotIndex) => {
+    const isRichSnapshot = snapshot.materializationKind === "rich-snapshot";
     const snapshotResult = insertSnapshot.run(
+      snapshot.materializationKind,
       snapshot.platform,
       payloadSha256,
       snapshotIndex,
-      snapshot.extractedAt,
-      snapshot.sourcePageUrl,
-      snapshot.sourceCanonicalUrl,
-      snapshot.itemSource,
+      isRichSnapshot ? snapshot.extractedAt : null,
+      isRichSnapshot ? snapshot.sourcePageUrl : null,
+      isRichSnapshot ? snapshot.sourceCanonicalUrl : null,
+      isRichSnapshot ? snapshot.itemSource : null,
       snapshot.loadedCount,
-      snapshot.reportedCount,
-      snapshot.coverageNote,
+      isRichSnapshot ? snapshot.reportedCount : null,
+      isRichSnapshot ? snapshot.coverageNote : null,
     );
     const snapshotId = snapshotResult.lastInsertRowid;
-    const videoPk = snapshot.video.externalVideoId === null
-      ? null
-      : getOrCreateVideo(db, snapshot.platform, snapshot.video.externalVideoId);
-    const authorPk = snapshot.video.externalAuthorId === null
-      ? null
-      : getOrCreateAuthor(db, snapshot.platform, snapshot.video.externalAuthorId);
-    insertVideoObservation.run(
-      snapshotId,
-      videoPk,
-      authorPk,
-      snapshot.video.videoIdRaw,
-      snapshot.video.canonicalUrl,
-      snapshot.video.title,
-      snapshot.video.description,
-      snapshot.video.publishedAt,
-      snapshot.video.publishedDate,
-      snapshot.video.regionCode,
-      snapshot.video.duration,
-      snapshot.video.viewCount,
-      snapshot.video.likeCount,
-      snapshot.video.commentCount,
-      snapshot.video.shareCount,
-      snapshot.video.favoriteCount,
-    );
+    let videoPk = null;
+    if (isRichSnapshot) {
+      videoPk = snapshot.video.externalVideoId === null
+        ? null
+        : getOrCreateVideo(db, snapshot.platform, snapshot.video.externalVideoId);
+      const authorPk = snapshot.video.externalAuthorId === null
+        ? null
+        : getOrCreateAuthor(db, snapshot.platform, snapshot.video.externalAuthorId);
+      insertVideoObservation.run(
+        snapshotId,
+        videoPk,
+        authorPk,
+        snapshot.video.videoIdRaw,
+        snapshot.video.canonicalUrl,
+        snapshot.video.title,
+        snapshot.video.description,
+        snapshot.video.publishedAt,
+        snapshot.video.publishedDate,
+        snapshot.video.regionCode,
+        snapshot.video.duration,
+        snapshot.video.viewCount,
+        snapshot.video.likeCount,
+        snapshot.video.commentCount,
+        snapshot.video.shareCount,
+        snapshot.video.favoriteCount,
+      );
+    }
 
     snapshot.comments.forEach((comment, sourceIndex) => {
-      const commentPk = videoPk !== null && comment.externalCommentId !== null
+      const commentPk = isRichSnapshot && videoPk !== null && comment.externalCommentId !== null
         ? getOrCreateComment(db, videoPk, comment.externalCommentId)
         : null;
+      const richFields = isRichSnapshot
+        ? [
+          comment.level,
+          comment.commentIdRaw,
+          comment.videoIdRaw,
+          comment.parentCommentIdRaw,
+          comment.userIdRaw,
+          comment.createdAt,
+        ]
+        : [null, null, null, null, null, null];
       insertCommentObservation.run(
         snapshotId,
         sourceIndex,
         commentPk,
-        comment.level,
-        comment.commentIdRaw,
-        comment.videoIdRaw,
-        comment.parentCommentIdRaw,
+        ...richFields.slice(0, 4),
         comment.username,
         comment.handle,
-        comment.userIdRaw,
+        richFields[4],
         comment.commentText,
         comment.postedAt,
-        comment.createdAt,
+        richFields[5],
         comment.postedDate,
-        comment.likeCount,
-        comment.replyCount,
+        isRichSnapshot ? comment.likeCount : null,
+        isRichSnapshot ? comment.replyCount : null,
       );
       commentObservationCount += 1;
     });
@@ -1041,6 +1125,7 @@ export async function importRawInput(input, options = {}) {
 function mapTikTokSnapshotToDto(parsed) {
   const { payload } = parsed;
   return {
+    materializationKind: "rich-snapshot",
     platform: "tiktok",
     extractedAt: payload.extractedAt,
     sourcePageUrl: payload.source.pageUrl,

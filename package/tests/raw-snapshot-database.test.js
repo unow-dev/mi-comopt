@@ -192,6 +192,7 @@ function makeSnapshotDto(number, overrides = {}) {
     replyCount: null,
   }];
   const base = {
+    materializationKind: "rich-snapshot",
     platform: "tiktok",
     extractedAt: `2026-09-05T00:00:0${number}Z`,
     sourcePageUrl: `page-${number}`,
@@ -377,6 +378,7 @@ test("reimports exact bytes idempotently, separates byte-different JSON, and fai
   const parsed = parseAndValidateRawSnapshotBytes(firstBytes);
   const changedDto = makeSnapshotDto(99);
   const originalDto = {
+    materializationKind: "rich-snapshot",
     platform: "tiktok",
     extractedAt: parsed.payload.extractedAt,
     sourcePageUrl: parsed.payload.source.pageUrl,
@@ -486,8 +488,8 @@ test("migrates a populated v2 database only with verified legacy raw bytes", asy
   const bytes = writeRaw(caseData.inputPath, makeRaw());
   const legacy = createV2Fixture(caseData, bytes);
   const result = await backfillRawInputs({ dbPath: caseData.dbPath, rawRoot: caseData.rawRoot });
-  assert.deepEqual(result, { status: "migrated", schemaVersion: 4 });
-  assert.equal(scalar(caseData.dbPath, "PRAGMA user_version").user_version, 4);
+  assert.deepEqual(result, { status: "migrated", schemaVersion: 5 });
+  assert.equal(scalar(caseData.dbPath, "PRAGMA user_version").user_version, 5);
   assert.deepEqual(Buffer.from(scalar(caseData.dbPath, "SELECT payload_bytes FROM raw_inputs").payload_bytes), bytes);
   assert.deepEqual({ ...scalar(caseData.dbPath, "SELECT snapshot_id, observation_id, snapshot_index FROM raw_snapshots JOIN snapshot_comment_observations USING (snapshot_id)") }, {
     snapshot_id: 1, observation_id: 1, snapshot_index: 0,
@@ -507,7 +509,7 @@ test("migrates a populated v2 database only with verified legacy raw bytes", asy
     db.close();
   }
   assert.deepEqual(query(caseData.dbPath, "SELECT name FROM pragma_table_info('raw_snapshots') ORDER BY cid").map((row) => row.name), [
-    "snapshot_id", "platform", "payload_sha256", "snapshot_index", "extracted_at", "source_page_url", "source_canonical_url", "item_source", "loaded_count", "reported_count", "coverage_note",
+    "snapshot_id", "materialization_kind", "platform", "payload_sha256", "snapshot_index", "extracted_at", "source_page_url", "source_canonical_url", "item_source", "loaded_count", "reported_count", "coverage_note",
   ]);
 });
 
@@ -544,7 +546,7 @@ test("rejects normal open and failed backfills without changing populated v2", a
   assert.equal(scalar(changed.caseData.dbPath, "PRAGMA user_version").user_version, 2);
 });
 
-test("auto-migrates an empty v2 database and makes backfill idempotent on v4", async (t) => {
+test("auto-migrates an empty v2 database and makes backfill idempotent on v5", async (t) => {
   const caseData = makeCase(t);
   const db = new DatabaseSync(caseData.dbPath);
   db.exec(fs.readFileSync(path.join(MIGRATIONS_DIR, "001-init.sql"), "utf8"));
@@ -552,9 +554,9 @@ test("auto-migrates an empty v2 database and makes backfill idempotent on v4", a
   db.close();
   const opened = await openCommentDatabase(caseData.dbPath);
   opened.close();
-  assert.equal(scalar(caseData.dbPath, "PRAGMA user_version").user_version, 4);
+  assert.equal(scalar(caseData.dbPath, "PRAGMA user_version").user_version, 5);
   const result = await backfillRawInputs({ dbPath: caseData.dbPath, rawRoot: caseData.rawRoot });
-  assert.deepEqual(result, { status: "already-migrated", schemaVersion: 4 });
+  assert.deepEqual(result, { status: "already-migrated", schemaVersion: 5 });
 });
 
 test("exposes backfill through the CLI and requires both migration paths", (t) => {
