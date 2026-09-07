@@ -1,0 +1,65 @@
+{
+  "handoff_version": "1.0.0",
+  "decision_completion_percent": 100,
+  "source_discussion_bundle_sha256": "2a319668663a15dbbf10b5eed6992ef43cedefcf4c3bcf5ac5de13fa8fae6443",
+  "source_new_comments_sha256": "77a679587ce091207ccf8654213a9d454cd5af50849d10ebd8186a4dba440ee9",
+  "raw_new_comments_included": false,
+  "files": [
+    {
+      "path": "ACCEPTANCE_CRITERIA.md",
+      "sha256": "255ebf0027485d13e6fc8bff39124c8db9ae396f5de3e9432bd3119889a1b1d4"
+    },
+    {
+      "path": "DATABASE_CHANGES.md",
+      "sha256": "c7f61f8b205165261b0e1ba7b20ead0c64e7847476c3b22346bb2318dbfdaa99"
+    },
+    {
+      "path": "DECISIONS.md",
+      "sha256": "7ab9cedee6e6b0fa97a19a18c28f87cff1b609176f9c4d2cdfb47a0076d3d2d0"
+    },
+    {
+      "path": "IMPLEMENTATION_PLAN.md",
+      "sha256": "133d1bbafd212075f55abb89a893c2396324c6fc5a1494dce3062d3c3466dbcc"
+    },
+    {
+      "path": "MAPPING_MATRIX.md",
+      "sha256": "52fe0744b61d97469b4b932fb66701e4c5ed1324a6991029379bd76368609d79"
+    },
+    {
+      "path": "README.md",
+      "sha256": "c5e1c3d4e41ae0bdaf7f85c4b62741ad69168521385edb6d25bc36aef50074cb"
+    },
+    {
+      "path": "REVIEW_CHECKLIST.md",
+      "sha256": "30f6cc871b386093d25616d7208d0fdd6cfa68be23bfcaf1af7a873420022ffb"
+    },
+    {
+      "path": "SOURCE_PROFILE.json",
+      "sha256": "07e3045b5322ec2d52585ac01d304fb1136a13cf1471de3ca60af0a6db422a99"
+    },
+    {
+      "path": "SOURCE_PROFILE.md",
+      "sha256": "77768c2865b39e5b9b1513596b532fcb00762d7e8ea81d4b269bcac13fae938f"
+    },
+    {
+      "path": "TEST_PLAN.md",
+      "sha256": "4391ed18a13ccd845f28cf26d05f5b7af5c65f992677362292ed4762bf5f64d4"
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "45a1c5bd47d5aa32e998f980b685b0d8744b34b243e79486adef1a4e9a1a84ab"
+    },
+    {
+      "path": "contracts/tiktokNewCommentsWrapper-1.0.0.schema.json",
+      "sha256": "a3d59e07c13d6f1a654d172fdad8e45e8586875be7be3e7ec124a7c9f7de7a13"
+    },
+    {
+      "path": "drafts/004-nullable-rich-metadata.sql",
+      "sha256": "c8e9bd8e7ac3221d70c736888071f999670a773428c5fa924ba96369fdcdf825"
+    },
+    {
+      "path": "fixtures/representative-v1.json",
+      "sha256": "754809ba4a5ba0ae6dd7866f0c1bc2aa86770e51ff8af5bb93e2697bb3571783"
+    }
+  ]
+}

@@ -1,0 +1,548 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/tiktok-filter-keywords/tiktokNewCommentsWrapper-1.0.0.schema.json",
+  "title": "TikTok New Comments Wrapper 1.0.0",
+  "description": "Versioned contract for the supplied new-comments.json wrapper. Root is exactly {items}; each item follows the rich TikTok snapshot shape without schemaVersion. Nullability extends the legacy snapshot contract only where the supplied wrapper demonstrates legitimate null values.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "items"
+  ],
+  "properties": {
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/item"
+      }
+    }
+  },
+  "$defs": {
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "extractedAt",
+        "source",
+        "video",
+        "stats",
+        "author",
+        "music",
+        "hashtags",
+        "hashtagDetails",
+        "mentions",
+        "effects",
+        "stickers",
+        "comments"
+      ],
+      "properties": {
+        "extractedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "video": {
+          "$ref": "#/$defs/video"
+        },
+        "stats": {
+          "$ref": "#/$defs/videoStats"
+        },
+        "author": {
+          "$ref": "#/$defs/author"
+        },
+        "music": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/music"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "hashtags": {
+          "type": "array",
+          "items": {}
+        },
+        "hashtagDetails": {
+          "type": "array",
+          "items": {}
+        },
+        "mentions": {
+          "type": "array",
+          "items": {}
+        },
+        "effects": {
+          "type": "array",
+          "items": {}
+        },
+        "stickers": {
+          "type": "array",
+          "items": {}
+        },
+        "comments": {
+          "$ref": "#/$defs/comments"
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pageUrl",
+        "canonicalUrl",
+        "itemSource",
+        "topLevelKeys"
+      ],
+      "properties": {
+        "pageUrl": {
+          "type": "string"
+        },
+        "canonicalUrl": {
+          "type": "string"
+        },
+        "itemSource": {
+          "type": "string"
+        },
+        "topLevelKeys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "video": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "url",
+        "canonicalUrl",
+        "shareUrl",
+        "embedUrl",
+        "title",
+        "description",
+        "createTime",
+        "publishedAt",
+        "publishedDate",
+        "regionCode",
+        "duration",
+        "width",
+        "height",
+        "ratio",
+        "coverUrl",
+        "dynamicCoverUrl",
+        "originCoverUrl",
+        "playbackUrl",
+        "downloadUrl",
+        "isAigc",
+        "isStemVerified",
+        "voiceToText",
+        "playlistId",
+        "labels",
+        "tags"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "canonicalUrl": {
+          "type": "string"
+        },
+        "shareUrl": {
+          "type": "string"
+        },
+        "embedUrl": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "createTime": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ]
+        },
+        "publishedAt": {
+          "type": "string"
+        },
+        "publishedDate": {
+          "type": "string"
+        },
+        "regionCode": {
+          "type": "string"
+        },
+        "duration": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "width": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "height": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "ratio": {
+          "type": "string"
+        },
+        "coverUrl": {
+          "type": "string"
+        },
+        "dynamicCoverUrl": {
+          "type": "string"
+        },
+        "originCoverUrl": {
+          "type": "string"
+        },
+        "playbackUrl": {
+          "type": "string"
+        },
+        "downloadUrl": {
+          "type": "string"
+        },
+        "isAigc": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "isStemVerified": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "voiceToText": {
+          "type": "string"
+        },
+        "playlistId": {
+          "type": "string"
+        },
+        "labels": {
+          "type": "array",
+          "items": {}
+        },
+        "tags": {
+          "type": "array",
+          "items": {}
+        }
+      }
+    },
+    "videoStats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "viewCount",
+        "likeCount",
+        "commentCount",
+        "shareCount",
+        "favoriteCount"
+      ],
+      "properties": {
+        "viewCount": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "likeCount": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "commentCount": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "shareCount": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "favoriteCount": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      }
+    },
+    "author": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "secUid",
+        "username",
+        "nickname",
+        "signature",
+        "verified",
+        "privateAccount",
+        "avatarUrl",
+        "stats"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "secUid": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "nickname": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string"
+        },
+        "verified": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "privateAccount": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "avatarUrl": {
+          "type": "string"
+        },
+        "stats": {
+          "$ref": "#/$defs/authorStats"
+        }
+      }
+    },
+    "authorStats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "followerCount",
+        "followingCount",
+        "friendCount",
+        "heartCount",
+        "videoCount",
+        "diggCount"
+      ],
+      "properties": {
+        "followerCount": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "followingCount": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "friendCount": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "heartCount": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "videoCount": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "diggCount": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      }
+    },
+    "music": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "author",
+        "album",
+        "original",
+        "duration",
+        "coverUrl",
+        "playUrl"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "album": {
+          "type": "string"
+        },
+        "original": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "duration": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "coverUrl": {
+          "type": "string"
+        },
+        "playUrl": {
+          "type": "string"
+        }
+      }
+    },
+    "comments": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "loadedCount",
+        "reportedCount",
+        "note",
+        "items"
+      ],
+      "properties": {
+        "loadedCount": {
+          "type": "integer"
+        },
+        "reportedCount": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "note": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/commentItem"
+          }
+        }
+      }
+    },
+    "commentItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "level",
+        "commentId",
+        "videoId",
+        "parentCommentId",
+        "username",
+        "handle",
+        "userId",
+        "avatarUrl",
+        "comment",
+        "postedAt",
+        "createTime",
+        "createdAt",
+        "postedDate",
+        "likeCount",
+        "replyCount"
+      ],
+      "properties": {
+        "level": {
+          "type": "integer"
+        },
+        "commentId": {
+          "type": "string"
+        },
+        "videoId": {
+          "type": "string"
+        },
+        "parentCommentId": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "handle": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "avatarUrl": {
+          "type": "string"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "postedAt": {
+          "type": "string"
+        },
+        "createTime": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ]
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "postedDate": {
+          "type": "string"
+        },
+        "likeCount": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "replyCount": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}

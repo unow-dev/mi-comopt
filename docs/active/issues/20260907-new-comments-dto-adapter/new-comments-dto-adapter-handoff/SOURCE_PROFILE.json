@@ -1,0 +1,57 @@
+{
+  "source_file": "new-comments.json (not included in this handoff)",
+  "source_sha256": "77a679587ce091207ccf8654213a9d454cd5af50849d10ebd8186a4dba440ee9",
+  "source_line_count": 46393,
+  "root_keys": [
+    "items"
+  ],
+  "item_count": 8,
+  "total_comment_count": 2677,
+  "loaded_counts": [
+    217,
+    248,
+    408,
+    351,
+    397,
+    388,
+    342,
+    326
+  ],
+  "reported_counts": [
+    null,
+    294,
+    544,
+    564,
+    null,
+    null,
+    547,
+    null
+  ],
+  "item_sources": [
+    "",
+    "__UNIVERSAL_DATA_FOR_REHYDRATION__",
+    "__UNIVERSAL_DATA_FOR_REHYDRATION__",
+    "__UNIVERSAL_DATA_FOR_REHYDRATION__",
+    "",
+    "",
+    "__UNIVERSAL_DATA_FOR_REHYDRATION__",
+    ""
+  ],
+  "all_loaded_count_matches_items_length": true,
+  "all_comment_keysets_equal": true,
+  "all_item_keysets_equal": true,
+  "comment_id_empty_count": 2677,
+  "parent_comment_id_empty_count": 2677,
+  "user_id_empty_count": 2677,
+  "comment_like_count_null_count": 2677,
+  "comment_reply_count_null_count": 2677,
+  "nullable_dto_source_fields": {
+    "comments.reportedCount": 4,
+    "video.duration": 4,
+    "stats.viewCount": 4,
+    "stats.likeCount": 4,
+    "stats.commentCount": 4,
+    "stats.shareCount": 4,
+    "stats.favoriteCount": 4
+  }
+}

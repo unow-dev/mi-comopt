@@ -1,0 +1,227 @@
+{
+  "items": [
+    {
+      "extractedAt": "2026-09-05T08:23:10.227Z",
+      "source": {
+        "pageUrl": "https://www.tiktok.com/@fixture/video/7000000000000000001",
+        "canonicalUrl": "https://www.tiktok.com/@fixture/video/7000000000000000001",
+        "itemSource": "",
+        "topLevelKeys": []
+      },
+      "video": {
+        "id": "7000000000000000001",
+        "url": "https://www.tiktok.com/@fixture/video/7000000000000000001",
+        "canonicalUrl": "https://www.tiktok.com/@fixture/video/7000000000000000001",
+        "shareUrl": "https://www.tiktok.com/@fixture/video/7000000000000000001",
+        "embedUrl": "",
+        "title": "fixture title",
+        "description": "fixture description",
+        "createTime": null,
+        "publishedAt": "",
+        "publishedDate": "",
+        "regionCode": "",
+        "duration": null,
+        "width": null,
+        "height": null,
+        "ratio": "",
+        "coverUrl": "",
+        "dynamicCoverUrl": "",
+        "originCoverUrl": "",
+        "playbackUrl": "",
+        "downloadUrl": "",
+        "isAigc": null,
+        "isStemVerified": null,
+        "voiceToText": "",
+        "playlistId": "",
+        "labels": [],
+        "tags": []
+      },
+      "stats": {
+        "viewCount": null,
+        "likeCount": null,
+        "commentCount": null,
+        "shareCount": null,
+        "favoriteCount": null
+      },
+      "author": {
+        "id": "",
+        "secUid": "",
+        "username": "",
+        "nickname": "",
+        "signature": "",
+        "verified": null,
+        "privateAccount": null,
+        "avatarUrl": "",
+        "stats": {
+          "followerCount": null,
+          "followingCount": null,
+          "friendCount": null,
+          "heartCount": null,
+          "videoCount": null,
+          "diggCount": null
+        }
+      },
+      "music": {
+        "id": "",
+        "title": "",
+        "author": "",
+        "album": "",
+        "original": null,
+        "duration": null,
+        "coverUrl": "",
+        "playUrl": ""
+      },
+      "hashtags": [],
+      "hashtagDetails": [],
+      "mentions": [],
+      "effects": [],
+      "stickers": [],
+      "comments": {
+        "loadedCount": 2,
+        "reportedCount": null,
+        "note": "comments contains comments currently loaded in the page; it is not guaranteed to contain every comment on the video",
+        "items": [
+          {
+            "level": 1,
+            "commentId": "",
+            "videoId": "7000000000000000001",
+            "parentCommentId": "",
+            "username": "fixture-user-1",
+            "handle": "fixture_handle_1",
+            "userId": "",
+            "avatarUrl": "",
+            "comment": "fixture comment 1",
+            "postedAt": "1日前",
+            "createTime": null,
+            "createdAt": "",
+            "postedDate": "2026-09-04",
+            "likeCount": null,
+            "replyCount": null
+          },
+          {
+            "level": 1,
+            "commentId": "",
+            "videoId": "7000000000000000001",
+            "parentCommentId": "",
+            "username": "fixture-user-2",
+            "handle": "fixture_handle_2",
+            "userId": "",
+            "avatarUrl": "",
+            "comment": "fixture comment 2",
+            "postedAt": "1日前",
+            "createTime": null,
+            "createdAt": "",
+            "postedDate": "2026-09-04",
+            "likeCount": null,
+            "replyCount": null
+          }
+        ]
+      }
+    },
+    {
+      "extractedAt": "2026-09-05T08:24:10.227Z",
+      "source": {
+        "pageUrl": "https://www.tiktok.com/@fixture/video/7000000000000000002",
+        "canonicalUrl": "https://www.tiktok.com/@fixture/video/7000000000000000002",
+        "itemSource": "__UNIVERSAL_DATA_FOR_REHYDRATION__",
+        "topLevelKeys": [
+          "id",
+          "desc",
+          "createTime"
+        ]
+      },
+      "video": {
+        "id": "7000000000000000002",
+        "url": "https://www.tiktok.com/@fixture/video/7000000000000000002",
+        "canonicalUrl": "https://www.tiktok.com/@fixture/video/7000000000000000002",
+        "shareUrl": "https://www.tiktok.com/@fixture/video/7000000000000000002",
+        "embedUrl": "",
+        "title": "fixture rich title",
+        "description": "fixture rich description",
+        "createTime": "1787906327",
+        "publishedAt": "2026-08-28T08:38:47.000Z",
+        "publishedDate": "2026-08-28",
+        "regionCode": "",
+        "duration": 55,
+        "width": 720,
+        "height": 1280,
+        "ratio": "720p",
+        "coverUrl": "https://example.invalid/cover",
+        "dynamicCoverUrl": "https://example.invalid/dynamic",
+        "originCoverUrl": "https://example.invalid/origin",
+        "playbackUrl": "https://example.invalid/play",
+        "downloadUrl": "",
+        "isAigc": null,
+        "isStemVerified": null,
+        "voiceToText": "",
+        "playlistId": "",
+        "labels": [],
+        "tags": []
+      },
+      "stats": {
+        "viewCount": 181000,
+        "likeCount": 13800,
+        "commentCount": 294,
+        "shareCount": 245,
+        "favoriteCount": 1111
+      },
+      "author": {
+        "id": "7400000000000000000",
+        "secUid": "fixture-secuid",
+        "username": "fixture_author",
+        "nickname": "Fixture Author",
+        "signature": "fixture signature",
+        "verified": false,
+        "privateAccount": false,
+        "avatarUrl": "https://example.invalid/avatar",
+        "stats": {
+          "followerCount": 1000,
+          "followingCount": 100,
+          "friendCount": 50,
+          "heartCount": 5000,
+          "videoCount": 100,
+          "diggCount": 10
+        }
+      },
+      "music": {
+        "id": "7100000000000000000",
+        "title": "Fixture Music",
+        "author": "Fixture Author",
+        "album": "",
+        "original": true,
+        "duration": 55,
+        "coverUrl": "https://example.invalid/music-cover",
+        "playUrl": "https://example.invalid/music-play"
+      },
+      "hashtags": [],
+      "hashtagDetails": [],
+      "mentions": [],
+      "effects": [],
+      "stickers": [],
+      "comments": {
+        "loadedCount": 1,
+        "reportedCount": 294,
+        "note": "comments contains comments currently loaded in the page; it is not guaranteed to contain every comment on the video",
+        "items": [
+          {
+            "level": 1,
+            "commentId": "",
+            "videoId": "7000000000000000002",
+            "parentCommentId": "",
+            "username": "fixture-user-3",
+            "handle": "fixture_handle_3",
+            "userId": "",
+            "avatarUrl": "",
+            "comment": "fixture comment 3",
+            "postedAt": "1日前",
+            "createTime": null,
+            "createdAt": "",
+            "postedDate": "2026-09-04",
+            "likeCount": null,
+            "replyCount": null
+          }
+        ]
+      }
+    }
+  ]
+}
