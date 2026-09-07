@@ -89,15 +89,15 @@ Gate: output 5-field JSON contractは従来どおり。
 
 Repository外の実データで実行:
 
-- [ ] strict schemaを通る
-- [ ] expected count = 24,622
-- [ ] import count = 24,622
-- [ ] export count = 24,622
-- [ ] input[i] と export[i] の5値が全件一致
-- [ ] duplicate multiplicity一致
-- [ ] source order一致
-- [ ] reimportが`already-imported`
-- [ ] video/author/comment masterにbatch由来の新規rowなし
+- [x] strict schemaを通る
+- [x] expected count = 24,622
+- [x] import count = 24,622
+- [x] export count = 24,622
+- [x] input[i] と export[i] の5値が全件一致
+- [x] duplicate multiplicity一致
+- [x] source order一致
+- [x] reimportが`already-imported`
+- [x] video/author/comment masterにbatch由来の新規rowなし
 
 失敗時はschemaを緩めず、反例をissueへ戻す。
 

@@ -20,7 +20,7 @@
 - [x] 12. CLIと分析出力の検証範囲で、AIエージェントまたはCIが、引数・読取り・validation error・取込み・再取込み、richとbatchの混在選択、5-field出力、manifestの互換性、および決定的な並び順を確認する。
 - [x] 13. アーキテクチャと文書の整備範囲で、AIエージェントが、Collector固有処理をDatabase/Processingから分離する境界、利用方法、およびDB v5の契約を記録する。
 - [x] 14. 全体回帰と受入検証の範囲で、AIエージェントまたはCIが、必須test matrix、既存rich経路の回帰、architecture boundary、およびpackage全体のテストを確認する。
-- [ ] 15. private実データ受入の範囲で、AIエージェントまたはCIが、24,622件の厳格な検証、取込み・exportの全件五値一致、順序・重複・idempotency、およびbatch由来master row非生成を確認する。
+- [x] 15. private実データ受入の範囲で、AIエージェントまたはCIが、24,622件の厳格な検証、取込み・exportの全件五値一致、順序・重複・idempotency、およびbatch由来master row非生成を確認する。
 - [x] 16. 作業結果の範囲で、AIエージェントが、実施内容、検証結果、private実データの確認結果、残存する運用上の注意点、および仕様再オープンの要否を記録する。
 
 ## Work Notes
@@ -33,5 +33,7 @@
 - private実データはrepositoryへ追加せず、検証にのみ利用する。仕様を再オープンできるのは、実データが契約に適合しない具体例が見つかった場合、またはrich回帰を維持したv5実装が具体的に不可能と示された場合に限る。
 - ベースラインコミットは `0952e78`（`chore: baseline legacy 5-field import handoff`）。
 - `package/tests/comment-batch.test.js` を追加し、contract、adapter、exact-byte round-trip、NULL、master非生成、idempotency、CLI、analysis projection、source-index/kind破損を確認した。
-- `npm test` は96件すべて通過。private 24,622件はこのworkspaceへ提供されていないため、実データ受入（Task 15）は未実施であり、repositoryへ実データは追加していない。
-- 残存する運用注意点は、private実データをrepository外から指定してTEST_MATRIX.mdのTask 15を実行すること。現時点で仕様再オープン条件に該当する反例はない。
+- `npm test` は97件すべて通過。private実データはrepositoryへ追加せず、workspace外保存方針の入力を指定して受入検証を実施した。
+- private入力 `work/20260826/current_raw.json` は厳格契約を通過し、payload SHAは `98b1a2d6ca08fe61b8b821d4498e8bab8683d4cf0c4ac0843cb5b89f7a014c7c`。取込みは24,622 observations、exportも24,622 recordsだった。
+- 入力とexportは全件で5値・順序・重複数が一致し、manifestはschema 3、batch由来video observationは0、comment master linkは0、再取込みは`already imported`だった。
+- 残存する運用上の注意点は、既定DBがworkspace内の既存rich inputsと共存していること。今回のbatchは既存rich masterを参照・変更していない。仕様再オープン条件に該当する反例はない。
