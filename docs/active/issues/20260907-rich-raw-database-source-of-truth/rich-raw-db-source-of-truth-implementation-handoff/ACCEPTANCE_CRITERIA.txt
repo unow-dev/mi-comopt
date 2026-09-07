@@ -1,0 +1,22 @@
+1. Rich raw exact bytes are stored in SQLite BLOB and SHA-256 is over exact bytes.
+2. raw_inputs is authoritative; normalized rows are derived/materialized.
+3. One raw input can atomically contain 1..N snapshots.
+4. Snapshot identity/provenance is (payload_sha256, snapshot_index).
+5. Comment ordering remains snapshot_comment_observations.source_index.
+6. raw_schema_version/raw_relpath/imported_at are removed from raw_snapshots; input_format/imported_at live on raw_inputs.
+7. Generic Database import accepts exact bytes + collector-independent DTOs and does not parse collector wrappers.
+8. Existing single TikTok snapshot importer maps to one DTO and no longer writes normal raw filesystem copies.
+9. Generic master lookup uses DTO platform, not hard-coded tiktok.
+10. Rich import is a single BEGIN IMMEDIATE transaction for raw + normalized state.
+11. Exact duplicate returns already-imported only after raw and materialization integrity equality.
+12. Conflicting materialization fails closed and is not auto-repaired.
+13. DB can return exact raw bytes via readRawInput.
+14. v2 populated DB cannot migrate to v3 without full legacy raw backfill/verification.
+15. Backfill preserves existing normalized IDs/values and uses legacy snapshot_index=0.
+16. Normal open on populated v2 fails RAW_INPUT_BACKFILL_REQUIRED.
+17. Five-field analysis output remains exactly username,handle,comment,postedAt,postedDate.
+18. Projection version remains 1.0.0; manifest schema becomes 2; DB schema becomes 3.
+19. Canonical snapshot selection is --snapshot-ref <sha>:<snapshot_index>; legacy --snapshot-sha only resolves one-child inputs.
+20. verify-raw-store is replaced by DB-only verify-raw-inputs; normal rich import has no --raw-root.
+21. normalized-only import path remains unchanged.
+22. No new-comments.json-specific parser is added to Database/Processing in this issue.
