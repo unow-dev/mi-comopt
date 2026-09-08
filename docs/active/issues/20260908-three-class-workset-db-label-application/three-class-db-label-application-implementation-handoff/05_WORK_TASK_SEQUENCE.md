@@ -24,3 +24,4 @@
 - 同じ有効ラベルの再適用は成功し `unchanged` として数える。異なる既存ラベル、未登録 workset、再構成した ITEMS の不一致、または観測数・decision map の不変条件違反は、挿入前に失敗させる。MVP では訂正・更新・削除・force・dry-run を提供しない。
 - `apply-three-class-response` は `--workset` と `--response` を必須、`--db` を任意とし、成功時は対象観測だけを数えた 1 行の `APPLIED ...` サマリーを出力する。終了コードは既存の 0/1/2 規約を維持する。
 - 既存テストと追加テストを通過した後、リポジトリの既存コマンド `npm test` を実行する。migration による v5 から v6 への更新は、後続の業務上の反映失敗時に rollback しない一方、three-class ラベルの部分反映は残してはならない。
+- 検証結果は `npm test` 107件成功、JavaScript/Python 構文検査成功、handoff の `MANIFEST.sha256` 検証成功。
