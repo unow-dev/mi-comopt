@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "handoff": "db-three-class-workset-implementation",
+  "canonical_spec": "ISSUE_BODY_CANONICAL.md",
+  "implementation_readiness_percent": 100,
+  "files": [
+    {
+      "path": "ACCEPTANCE_CHECKLIST.md",
+      "sha256": "175681ddbd12743496c7d41798ee55d3b9c2054eb01bf4b3e857d5233ea56d66",
+      "bytes": 4669
+    },
+    {
+      "path": "FINAL_DECISIONS.md",
+      "sha256": "7f277f3fd0f5bcbee79272f42437d8fb99ef21d99fd25579785c6c73fce80bb4",
+      "bytes": 3121
+    },
+    {
+      "path": "IMPLEMENTATION_HANDOFF.md",
+      "sha256": "9f7d1622b70a88eefe6a5eb1832d18b1e6fb1385ad6cc1d8e14c291f07e86b36",
+      "bytes": 12531
+    },
+    {
+      "path": "ISSUE_BODY_CANONICAL.md",
+      "sha256": "a1fe49bf250c2d2b1010c851e7fa9a4aafd98141af514748f5bf54269fd5b91f",
+      "bytes": 11660
+    },
+    {
+      "path": "README_FIRST.md",
+      "sha256": "ce0864eb1140b048a50ee02037da0b2b674cac4ceb5c5bae40a0f2687c61ba12",
+      "bytes": 2080
+    },
+    {
+      "path": "SHA256SUMS.txt",
+      "sha256": "b2794e4943445999e62ab50eb2214104ef2123966f6ff80aef4122ef48bcc81f",
+      "bytes": 6757
+    },
+    {
+      "path": "reference/discussion-set/DISCUSSION_SET_CONTENTS.md",
+      "sha256": "bba4b80998accfe70874394efd8f1eeffff75e2eb058e0cd939787e7869fa95d",
+      "bytes": 3688
+    },
+    {
+      "path": "reference/discussion-set/ISSUE_BODY.md",
+      "sha256": "d816416d1fedd9f5f5f322b25464225b0391a8d45366359c0daba3fe0a2a579c",
+      "bytes": 2278
+    },
+    {
+      "path": "reference/discussion-set/sources/docs/active/operations/Integrated_Labeling_Handoff_v1.5.0/README_FIRST.md",
+      "sha256": "96433b8845d95bf0b13f77ec02d9b8bfab529e7a43088aef8577457ee342ca87",
+      "bytes": 6275
+    },
+    {
+      "path": "reference/discussion-set/sources/docs/active/operations/Integrated_Labeling_Handoff_v1.5.0/config/integrated_policy.json",
+      "sha256": "784259319c1c195fe485448ae850387709954118d39a14d718727008f2f4cb46",
+      "bytes": 2228
+    },
+    {
+      "path": "reference/discussion-set/sources/docs/active/operations/Integrated_Labeling_Handoff_v1.5.0/config/reactive_terms.json",
+      "sha256": "472fed633c3594d7915df03a21776bdefe0197508561df97981137e23b30135e",
+      "bytes": 786
+    },
+    {
+      "path": "reference/discussion-set/sources/docs/active/operations/Integrated_Labeling_Handoff_v1.5.0/config/review_cues.json",
+      "sha256": "5d61b00ce6749d0615b9bdd36b15cb34139eced0fd238137eae10379c94d90f3",
+      "bytes": 1364
+    },
+    {
+      "path": "reference/discussion-set/sources/docs/active/operations/Integrated_Labeling_Handoff_v1.5.0/config/three_class_policy.json",
+      "sha256": "b6b714960d35fece6072be4427b33b56cf5cf51d7f1b6ba68fabad5a42b56a7f",
+      "bytes": 4954
+    },
+    {
+      "path": "reference/discussion-set/sources/docs/active/operations/Integrated_Labeling_Handoff_v1.5.0/docs/DESIGN_DECISIONS.md",
+      "sha256": "e5e4775d9dbce5146bb7f746d2edb001e234616381d2d1c9b78cb5eaf4740ad0",
+      "bytes": 8680
+    },
+    {
+      "path": "reference/discussion-set/sources/docs/active/operations/Integrated_Labeling_Handoff_v1.5.0/docs/PIPELINE_CONTRACT.md",
+      "sha256": "38091380eaac0a962969971e5c95187c0278ff32d42af33a29d901faa1959937",
+      "bytes": 3954
+    },
+    {
+      "path": "reference/discussion-set/sources/docs/active/operations/Integrated_Labeling_Handoff_v1.5.0/manifest.json",
+      "sha256": "59ed567d412ec849c65b6343d3242384bc7d449e625e7d9b5c4524ca7e8b0457",
+      "bytes": 7804
+    },
+    {
+      "path": "reference/discussion-set/sources/docs/active/operations/Integrated_Labeling_Handoff_v1.5.0/policy/01_STAGE13_REPRODUCIBILITY.md",
+      "sha256": "d5d73c13fc4c3643c3e496f3018f5f99e0716302d63591951ff7c8a21b9b91c4",
+      "bytes": 2712
+    },
+    {
+      "path": "reference/discussion-set/sources/docs/active/operations/Integrated_Labeling_Handoff_v1.5.0/policy/04_THREE_CLASS_CHANGE_CONTROL.md",
+      "sha256": "f5b0d9aba6c7c979b8348125b13589f01b05748f916fa3c9246c6e113cb4982f",
+      "bytes": 3216
+    },
+    {
+      "path": "reference/discussion-set/sources/docs/active/operations/Integrated_Labeling_Handoff_v1.5.0/prompts/STAGE13_REVIEW_PROMPT.md",
+      "sha256": "35f4e3a56fece84806cdc9b0e578dbbbba96ed6f6aec731c3539267b4380f0ec",
+      "bytes": 841
+    },
+    {
+      "path": "reference/discussion-set/sources/docs/active/operations/Integrated_Labeling_Handoff_v1.5.0/prompts/THREE_CLASS_REVIEW_PROMPT.md",
+      "sha256": "a72d0519a14c97bb26b4a9d82d4c5eb483a6da19e7b5da480b09030f9d839ef3",
+      "bytes": 2152
+    },
+    {
+      "path": "reference/discussion-set/sources/docs/active/operations/Integrated_Labeling_Handoff_v1.5.0/specs/01_STAGE13_LABELING_SPEC.md",
+      "sha256": "4b62e7ca28b39e0c15660cc0229e1caaa7606f02a5becb8cf81c483ffd6ee8a3",
+      "bytes": 7757
+    },
+    {
+      "path": "reference/discussion-set/sources/docs/active/operations/Integrated_Labeling_Handoff_v1.5.0/specs/03_THREE_CLASS_LABELING_SPEC.md",
+      "sha256": "5fabc37ed5bceaf04bc04c5fd2a9cdb3186acb22282b12e70f6addd11de985a6",
+      "bytes": 10047
+    },
+    {
+      "path": "reference/discussion-set/sources/docs/active/operations/Integrated_Labeling_Handoff_v1.5.0/src/pipeline.py",
+      "sha256": "61a5c6c294189274a45d0a4861955c72f034b0a782792414ba8c472879311aa4",
+      "bytes": 62943
+    },
+    {
+      "path": "reference/discussion-set/sources/docs/active/operations/Integrated_Labeling_Handoff_v1.5.0/src/single_roundtrip.py",
+      "sha256": "a821f62144777b01f87378e92fa0aa83f3b2830dd8e753d362d364cf79e51d84",
+      "bytes": 48460
+    },
+    {
+      "path": "reference/discussion-set/sources/docs/active/operations/Integrated_Labeling_Handoff_v1.5.0/tests/run_all_tests.py",
+      "sha256": "04fa58269cca87b4fcfbe0f2b51c0b7b1591e0aa7d03f2b77933f0b41ed48b93",
+      "bytes": 39847
+    },
+    {
+      "path": "reference/discussion-set/sources/docs/active/operations/Integrated_Labeling_Handoff_v1.5.0/tests/single_roundtrip_tests.py",
+      "sha256": "41e4ed060274cbfad4e5d2bde8b1d06bdf0bf1c0239687d4297d1fa40b153c05",
+      "bytes": 15448
+    },
+    {
+      "path": "reference/discussion-set/sources/docs/active/operations/integrated-labeling-state/three_class_golden_adjudications.json",
+      "sha256": "0b5a5757d7a6f897bf452b90de82fba96a1b9fde4de8d18ea5938138170ba140",
+      "bytes": 30189
+    },
+    {
+      "path": "reference/discussion-set/sources/docs/active/operations/integrated-labeling-state/three_class_p2_adjudications.json",
+      "sha256": "fe03b6388eda55bbb5430c88a0b0eeb9de96fec13ea77fedaea082bc11c1c8b9",
+      "bytes": 82454
+    },
+    {
+      "path": "reference/discussion-set/sources/package/contracts/collector-inputs/tiktokCommentBatch-1.0.0.schema.json",
+      "sha256": "05eaf666c6fa252265e228319f2a4767d0f584a6cb4cfa553a2c0db07b7c39d8",
+      "bytes": 820
+    },
+    {
+      "path": "reference/discussion-set/sources/package/contracts/raw-snapshots/tiktokRawSnapshot-1.0.0.schema.json",
+      "sha256": "68795052faef51c52cdb23000535464584a4da6d0fbe4e2420b1c3115a4e2956",
+      "bytes": 9591
+    },
+    {
+      "path": "reference/discussion-set/sources/package/db/comment-database/001-init.sql",
+      "sha256": "fb1b841248d43027923a478e326e4790e7c3f7a249dcd6e0403bf9788fd42b10",
+      "bytes": 992
+    },
+    {
+      "path": "reference/discussion-set/sources/package/db/comment-database/002-raw-snapshots.sql",
+      "sha256": "810c69c8559a34ef5c710966d5d627a167679d4534588ade891254524d6da1ba",
+      "bytes": 3036
+    },
+    {
+      "path": "reference/discussion-set/sources/package/db/comment-database/005-comment-batch-materialization.sql",
+      "sha256": "74579404a95a6794857eff59524c615e11c8bf017228b327590fe433eaba7b94",
+      "bytes": 5115
+    },
+    {
+      "path": "reference/discussion-set/sources/package/package.json",
+      "sha256": "c26646bd0d562a89e2a3beef699ec2ac09b5a01d5f4e13499098eba46ac530e3",
+      "bytes": 975
+    },
+    {
+      "path": "reference/discussion-set/sources/package/scripts/adapters/comment-batch.js",
+      "sha256": "616c26a59a6385e665b3f10d9fd1beb7fc125fa60c961993aaddf5cd5ce40858",
+      "bytes": 583
+    },
+    {
+      "path": "reference/discussion-set/sources/package/scripts/comment-database.mjs",
+      "sha256": "c9d1bcf66f15422158b81a9a4b6c495d7a600a6bf6caa3022459a673b7f65af6",
+      "bytes": 14554
+    },
+    {
+      "path": "reference/discussion-set/sources/package/src/collector/comment-batch/comment-batch-adapter.js",
+      "sha256": "eccbadc1428e0d101a6ab04d661b848c97545ec02be203dabc7ad3d833e90f86",
+      "bytes": 759
+    },
+    {
+      "path": "reference/discussion-set/sources/package/src/collector/comment-batch/comment-batch-contract.js",
+      "sha256": "170a8a42dcfacfa48fa3419fb6e397ec6e95e6512d388bd84a18dca4bd554374",
+      "bytes": 2568
+    },
+    {
+      "path": "reference/discussion-set/sources/package/src/database/comment-database.js",
+      "sha256": "a7781b2a78c794161c7f83a5540639b1ad6943d796725cf673df7543f6d6ff15",
+      "bytes": 46223
+    },
+    {
+      "path": "reference/discussion-set/sources/package/src/database/raw-snapshot-repository.js",
+      "sha256": "04c94c7276517decdb027ec58a91f41fad13b00c4bfda86e3b67e9fc0f4d211b",
+      "bytes": 13593
+    },
+    {
+      "path": "reference/discussion-set/sources/package/src/processing/analysis-input/raw-snapshot-projection.js",
+      "sha256": "0debfd4a6a1bcf74f5c5f2f281b9ddae26cc1c9da940d0409152a0824b190e0f",
+      "bytes": 2778
+    },
+    {
+      "path": "reference/discussion-set/sources/package/src/raw-snapshot/raw-snapshot-contract.js",
+      "sha256": "d025a158585dde46aa67d4dd6dd9566fda5ce5381a1843420f907758c446f3c8",
+      "bytes": 3577
+    },
+    {
+      "path": "reference/discussion-set/sources/package/tests/comment-batch.test.js",
+      "sha256": "946fe537d0b05c0f626b459bf0ee64ac5be01100e0d794113f7da809b549666a",
+      "bytes": 12461
+    },
+    {
+      "path": "reference/discussion-set/sources/package/tests/raw-snapshot-analysis-input.test.js",
+      "sha256": "4c248585d86bb863519a5e1235d7c86ad62bb47a6fca02b93cf838db5d7055ea",
+      "bytes": 12163
+    }
+  ]
+}
