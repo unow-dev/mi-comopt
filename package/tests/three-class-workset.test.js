@@ -362,6 +362,9 @@ test("supports empty ITEMS and refuses legacy generator options or output overwr
   const responsePath = path.join(caseData.root, "empty-response.json");
   writeJson(responsePath, { workset_id: items.workset_id, decisions: {} });
   assert.equal(runCli("validate-three-class-response", ["--workset", output, "--response", responsePath]).status, 0);
+  const applied = runCli("apply-three-class-response", ["--workset", output, "--response", responsePath, "--db", caseData.dbPath]);
+  assert.equal(applied.status, 0, applied.stderr);
+  assert.equal(applied.stdout, `APPLIED workset=${items.workset_id} observations=0 inserted=0 unchanged=0\n`);
 
   const legacy = runCli("generate-three-class-workset", [
     "--snapshot-ref", `${imported.payloadSha256}:0`,

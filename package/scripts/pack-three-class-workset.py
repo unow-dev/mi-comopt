@@ -153,7 +153,7 @@ def package(args: argparse.Namespace) -> dict[str, Any]:
         if temporary_name is not None:
             try:
                 os.unlink(temporary_name)
-            except FileNotFoundError:
+            except OSError:
                 pass
         if linked_output and not completed:
             try:

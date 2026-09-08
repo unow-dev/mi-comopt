@@ -419,7 +419,11 @@ export async function generateThreeClassWorkset({
     if (error instanceof ProtocolValidationError) rethrowProtocol(error);
     throw worksetError("WORKSET_GENERATION_FAILED", error.message, { cause: error });
   } finally {
-    if (db !== undefined) db.close();
+    try {
+      if (db !== undefined) db.close();
+    } catch {
+      // Preserve the original generation or registration error.
+    }
     if (stagingRoot !== undefined && !stagingCleaned) {
       try {
         await rm(stagingRoot, { recursive: true, force: true });
@@ -530,6 +534,10 @@ export async function applyThreeClassResponse({ dbPath, worksetPath, responsePat
       };
     });
   } finally {
-    db.close();
+    try {
+      db.close();
+    } catch {
+      // Preserve the application result or primary transaction error.
+    }
   }
 }
