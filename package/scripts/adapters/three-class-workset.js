@@ -1,6 +1,6 @@
 import { spawnSync } from "node:child_process";
-import { createHash } from "node:crypto";
-import { mkdtemp, mkdir, readFile, rename, rm, writeFile, lstat } from "node:fs/promises";
+import { randomUUID } from "node:crypto";
+import { access, lstat, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
   CommentDatabaseError,
@@ -12,32 +12,49 @@ import {
   resolveSelectedSnapshotRefs,
 } from "../../src/database/raw-snapshot-repository.js";
 import { buildAnalysisArtifacts } from "../../src/processing/analysis-input/raw-snapshot-projection.js";
+import {
+  ARCHIVE_MEMBER_NAMES,
+  ProtocolValidationError,
+  assertExactKeys,
+  assertValidWorksetArchiveMembers,
+  buildResponseSchema,
+  deepEqual,
+  parseStrictJson,
+  readStrictJsonFile,
+  serializeJson,
+  validateHistory,
+  validateItems,
+  LABEL_SET,
+  ITEM_ID_PATTERN,
+  UUID_V4_PATTERN,
+  PROTOCOL_VERSION,
+} from "../../src/three-class-workset/protocol.js";
 
-const PIPELINE_PATH = path.join(
-  REPOSITORY_ROOT,
-  "docs",
-  "active",
-  "operations",
-  "Integrated_Labeling_Handoff_v1.5.0",
-  "src",
-  "pipeline.py",
-);
 const PACKAGER_PATH = path.join(REPOSITORY_ROOT, "package", "scripts", "pack-three-class-workset.py");
-const README_TEMPLATE_PATH = path.join(REPOSITORY_ROOT, "package", "templates", "three-class-workset", "README_FIRST.md");
-const SHA256_PATTERN = /^[0-9a-f]{64}$/;
+const PROMPT_TEMPLATE_PATH = path.join(REPOSITORY_ROOT, "package", "templates", "three-class-workset", "PROMPT.md");
+const RULES_TEMPLATE_PATH = path.join(REPOSITORY_ROOT, "package", "templates", "three-class-workset", "RULES.md");
 
 function worksetError(code, message, options = {}) {
   return new CommentDatabaseError(code, message, options);
 }
 
-async function assertAbsent(target, code, description) {
+function rethrowProtocol(error) {
+  if (error instanceof ProtocolValidationError) {
+    const prefix = `${error.code}: `;
+    const message = error.message.startsWith(prefix) ? error.message.slice(prefix.length) : error.message;
+    throw worksetError(error.code, message, { cause: error });
+  }
+  throw error;
+}
+
+async function assertAbsent(target, description) {
   try {
     await lstat(target);
   } catch (error) {
     if (error.code === "ENOENT") return;
-    throw worksetError(code, `${description} cannot be inspected: ${target}: ${error.message}`, { cause: error });
+    throw worksetError("OUTPUT_WRITE_FAILED", `${description} cannot be inspected: ${target}: ${error.message}`, { cause: error });
   }
-  throw worksetError(code, `${description} already exists: ${target}`);
+  throw worksetError("OUTPUT_WRITE_FAILED", `refusing to overwrite ${description}: ${target}`);
 }
 
 async function assertRegularFile(target, description) {
@@ -45,130 +62,227 @@ async function assertRegularFile(target, description) {
   try {
     stats = await lstat(target);
   } catch (error) {
-    throw worksetError("INTEGRITY_MISMATCH", `${description} is unavailable: ${target}: ${error.message}`, { cause: error });
+    throw worksetError("ARCHIVE_INVALID", `${description} is unavailable: ${target}: ${error.message}`, { cause: error });
   }
   if (stats.isSymbolicLink() || !stats.isFile()) {
-    throw worksetError("INTEGRITY_MISMATCH", `${description} must be a regular file: ${target}`);
+    throw worksetError("ARCHIVE_INVALID", `${description} must be a regular file: ${target}`);
   }
 }
 
-function parseJsonObject(bytes, description) {
-  let value;
-  try {
-    value = JSON.parse(bytes.toString("utf8"));
-  } catch (error) {
-    throw worksetError("INTEGRITY_MISMATCH", `${description} is not valid JSON: ${error.message}`, { cause: error });
-  }
-  if (value === null || typeof value !== "object" || Array.isArray(value)) {
-    throw worksetError("INTEGRITY_MISMATCH", `${description} must be a JSON object`);
-  }
-  return value;
+function pythonExecutable() {
+  return process.env.TIKTOK_FILTER_KEYWORDS_PYTHON ?? process.env.PYTHON ?? "python3";
 }
 
-function sha256(bytes) {
-  return createHash("sha256").update(bytes).digest("hex");
-}
-
-function runPython(args, description) {
-  const executable = process.env.TIKTOK_FILTER_KEYWORDS_PYTHON ?? process.env.PYTHON ?? "python3";
-  const result = spawnSync(executable, args, {
+function runPython(args, failureCode, description) {
+  const result = spawnSync(pythonExecutable(), args, {
     cwd: REPOSITORY_ROOT,
     encoding: "utf8",
-    maxBuffer: 16 * 1024 * 1024,
+    maxBuffer: 64 * 1024 * 1024,
   });
   if (result.error !== undefined) {
-    throw worksetError("PIPELINE_INVOCATION_FAILED", `${description} could not be started: ${result.error.message}`, { cause: result.error });
+    throw worksetError(failureCode, `${description} could not be started: ${result.error.message}`, { cause: result.error });
   }
   if (result.status !== 0) {
     const details = (result.stderr || result.stdout || "").trim();
-    throw worksetError(
-      description === "pipeline" ? "PIPELINE_INVOCATION_FAILED" : "PACKAGING_FAILED",
-      `${description} failed with exit code ${result.status}${details ? `: ${details}` : ""}`,
-    );
+    throw worksetError(failureCode, `${description} failed with exit code ${result.status}${details ? `: ${details}` : ""}`);
   }
   return result.stdout;
 }
 
-function parseSubprocessJson(stdout, description) {
-  let value;
+function parseSubprocessJson(stdout, failureCode, description) {
   try {
-    value = JSON.parse(stdout);
+    const value = JSON.parse(stdout);
+    if (value === null || typeof value !== "object" || Array.isArray(value)) {
+      throw new Error("expected an object");
+    }
+    return value;
   } catch (error) {
-    throw worksetError(
-      description === "pipeline" ? "PIPELINE_INVOCATION_FAILED" : "PACKAGING_FAILED",
-      `${description} did not return a JSON object: ${error.message}`,
-      { cause: error },
-    );
+    throw worksetError(failureCode, `${description} returned invalid JSON: ${error.message}`, { cause: error });
   }
-  if (value === null || typeof value !== "object" || Array.isArray(value)) {
-    throw worksetError(
-      description === "pipeline" ? "PIPELINE_INVOCATION_FAILED" : "PACKAGING_FAILED",
-      `${description} did not return a JSON object`,
-    );
-  }
-  return value;
 }
 
 async function writeExclusive(target, bytes, description) {
   try {
     await writeFile(target, bytes, { flag: "wx" });
   } catch (error) {
-    throw worksetError("INTEGRITY_MISMATCH", `${description} could not be written: ${target}: ${error.message}`, { cause: error });
+    throw worksetError("OUTPUT_WRITE_FAILED", `${description} could not be written: ${target}: ${error.message}`, { cause: error });
   }
 }
 
-async function verifyPipelineBinding(stagingWorkspace, pipelineResult, inputBytes) {
-  const snapshotInput = path.join(stagingWorkspace, "snapshot", "input.json");
-  const requestManifestPath = path.join(stagingWorkspace, "request", "manifest.json");
-  const receiptPath = path.join(stagingWorkspace, "prepare_receipt.json");
-  for (const [target, description] of [
-    [snapshotInput, "pipeline snapshot/input.json"],
-    [requestManifestPath, "request manifest"],
-    [receiptPath, "prepare receipt"],
-  ]) {
-    await assertRegularFile(target, description);
+function archiveBytesFromInspection(value) {
+  if (value === null || typeof value !== "object" || !Array.isArray(value.members)) {
+    throw worksetError("ARCHIVE_INVALID", "archive inspector returned no member list");
+  }
+  const entries = new Map();
+  for (const member of value.members) {
+    if (
+      member === null
+      || typeof member !== "object"
+      || typeof member.name !== "string"
+      || typeof member.data !== "string"
+    ) {
+      throw worksetError("ARCHIVE_INVALID", "archive inspector returned an invalid member");
+    }
+    if (entries.has(member.name)) throw worksetError("ARCHIVE_INVALID", `duplicate ZIP member: ${member.name}`);
+    entries.set(member.name, Buffer.from(member.data, "base64"));
+  }
+  return entries;
+}
+
+function inspectArchive(worksetPath) {
+  const stdout = runPython(
+    [PACKAGER_PATH, "inspect", "--input", worksetPath],
+    "ARCHIVE_INVALID",
+    "workset ZIP inspection",
+  );
+  return archiveBytesFromInspection(parseSubprocessJson(stdout, "ARCHIVE_INVALID", "workset ZIP inspection"));
+}
+
+function requireArchiveMembers(entries) {
+  try {
+    assertValidWorksetArchiveMembers([...entries.keys()]);
+  } catch (error) {
+    rethrowProtocol(error);
+  }
+}
+
+function requireJson(value, description) {
+  try {
+    return parseStrictJson(value, description);
+  } catch (error) {
+    rethrowProtocol(error);
+  }
+}
+
+async function readCanonicalTemplates() {
+  try {
+    return {
+      prompt: await readFile(PROMPT_TEMPLATE_PATH),
+      rules: await readFile(RULES_TEMPLATE_PATH),
+    };
+  } catch (error) {
+    throw worksetError("TEMPLATE_MISMATCH", `canonical v1 templates could not be read: ${error.message}`, { cause: error });
+  }
+}
+
+function validateWorksetContents(entries, templates) {
+  requireArchiveMembers(entries);
+  if (!entries.get("PROMPT.md").equals(templates.prompt)) {
+    throw worksetError("TEMPLATE_MISMATCH", "PROMPT.md does not match the canonical v1 prompt");
+  }
+  if (!entries.get("RULES.md").equals(templates.rules)) {
+    throw worksetError("TEMPLATE_MISMATCH", "RULES.md does not match the canonical v1 rules");
   }
 
-  const snapshotInputBytes = await readFile(snapshotInput);
-  if (!snapshotInputBytes.equals(inputBytes)) {
-    throw worksetError("INTEGRITY_MISMATCH", "pipeline snapshot/input.json differs from the DB analysis projection");
+  let history;
+  let items;
+  let bundledSchema;
+  try {
+    history = validateHistory(requireJson(entries.get("HISTORY.json"), "HISTORY.json"));
+  } catch (error) {
+    rethrowProtocol(error);
   }
-  const requestManifest = parseJsonObject(await readFile(requestManifestPath), "request manifest");
-  const receipt = parseJsonObject(await readFile(receiptPath), "prepare receipt");
-  const inputSha = sha256(inputBytes);
-  if (requestManifest.bindings?.input_sha256 !== inputSha) {
-    throw worksetError("INTEGRITY_MISMATCH", "request manifest input binding differs from the DB analysis projection");
+  try {
+    items = validateItems(requireJson(entries.get("ITEMS.json"), "ITEMS.json"));
+  } catch (error) {
+    rethrowProtocol(error);
   }
-  if (receipt.bindings?.input_sha256 !== inputSha) {
-    throw worksetError("INTEGRITY_MISMATCH", "prepare receipt input binding differs from the DB analysis projection");
+  try {
+    bundledSchema = requireJson(entries.get("response.schema.json"), "response.schema.json");
+  } catch (error) {
+    rethrowProtocol(error);
   }
-  const requestId = requestManifest.request_id;
-  if (!SHA256_PATTERN.test(requestId ?? "") || receipt.request_id !== requestId || pipelineResult.request_id !== requestId) {
-    throw worksetError("INTEGRITY_MISMATCH", "pipeline request_id bindings do not agree");
+  let expectedSchema;
+  try {
+    expectedSchema = buildResponseSchema(items.workset_id);
+  } catch (error) {
+    rethrowProtocol(error);
   }
-  if (pipelineResult.workspace !== undefined && path.resolve(pipelineResult.workspace) !== path.resolve(stagingWorkspace)) {
-    throw worksetError("INTEGRITY_MISMATCH", "pipeline returned an unexpected workspace path");
+  if (!deepEqual(bundledSchema, expectedSchema)) {
+    throw worksetError("INVALID_SCHEMA", "bundled response.schema.json does not match the local v1 schema");
   }
-  return { requestId, state: pipelineResult.state ?? receipt.state };
+  return {
+    history,
+    items,
+    schema: expectedSchema,
+    worksetId: items.workset_id,
+    itemIds: new Set(items.items.map((item) => item.id)),
+  };
+}
+
+export async function validateWorksetArchive(worksetPath) {
+  await assertRegularFile(worksetPath, "workset ZIP");
+  const entries = inspectArchive(worksetPath);
+  const templates = await readCanonicalTemplates();
+  return validateWorksetContents(entries, templates);
+}
+
+function validateResponseValue(response, workset) {
+  try {
+    assertExactKeys(response, ["workset_id", "decisions"], "response.json", "INVALID_RESPONSE");
+  } catch (error) {
+    rethrowProtocol(error);
+  }
+  if (response.workset_id !== workset.worksetId) {
+    throw worksetError("WORKSET_ID_MISMATCH", "response workset_id does not match ITEMS.json");
+  }
+  if (response.decisions === null || typeof response.decisions !== "object" || Array.isArray(response.decisions)) {
+    throw worksetError("INVALID_RESPONSE", "response decisions must be an object");
+  }
+  const decisionIds = Object.keys(response.decisions);
+  for (const id of decisionIds) {
+    if (!ITEM_ID_PATTERN.test(id)) throw worksetError("INVALID_RESPONSE", `invalid response item id: ${id}`);
+    if (!LABEL_SET.has(response.decisions[id])) {
+      throw worksetError("INVALID_RESPONSE", `invalid response label for ${id}`);
+    }
+  }
+  if (decisionIds.length !== workset.itemIds.size || decisionIds.some((id) => !workset.itemIds.has(id))) {
+    throw worksetError("DECISION_COVERAGE_MISMATCH", "response decisions must exactly cover ITEMS.json IDs");
+  }
+  return response;
+}
+
+export async function validateThreeClassResponse({ worksetPath, responsePath }) {
+  const workset = await validateWorksetArchive(worksetPath);
+  let response;
+  try {
+    await assertRegularFile(responsePath, "response JSON");
+    response = parseStrictJson(await readFile(responsePath), "response.json");
+  } catch (error) {
+    if (error instanceof CommentDatabaseError) throw error;
+    if (error instanceof ProtocolValidationError) rethrowProtocol(error);
+    throw worksetError("INVALID_RESPONSE", `response JSON could not be read: ${error.message}`, { cause: error });
+  }
+  validateResponseValue(response, workset);
+  return {
+    worksetId: workset.worksetId,
+    decisionCount: Object.keys(response.decisions).length,
+  };
 }
 
 export async function generateThreeClassWorkset({
   dbPath,
   snapshotRefs = [],
   snapshotShas = [],
-  referencePath,
-  workspacePath,
-  stateDir,
+  historyPath,
+  outputPath,
 }) {
-  if (typeof referencePath !== "string" || referencePath.length === 0) {
-    throw worksetError("VALIDATION_ERROR", "referencePath is required");
+  if (typeof historyPath !== "string" || historyPath.length === 0) {
+    throw worksetError("VALIDATION_ERROR", "historyPath is required");
   }
-  if (typeof workspacePath !== "string" || workspacePath.length === 0) {
-    throw worksetError("VALIDATION_ERROR", "workspacePath is required");
+  if (typeof outputPath !== "string" || outputPath.length === 0) {
+    throw worksetError("VALIDATION_ERROR", "outputPath is required");
   }
-  const finalWorkspace = path.resolve(workspacePath);
-  await assertAbsent(finalWorkspace, "WORKSPACE_EXISTS", "workspace");
-  await mkdir(path.dirname(finalWorkspace), { recursive: true });
+  const finalOutput = path.resolve(outputPath);
+  await assertAbsent(finalOutput, "workset output");
+  const templates = await readCanonicalTemplates();
+
+  let history;
+  try {
+    history = validateHistory(await readStrictJsonFile(historyPath, "history input"), { deduplicate: true });
+  } catch (error) {
+    rethrowProtocol(error);
+  }
 
   let db;
   let stagingRoot;
@@ -177,70 +291,77 @@ export async function generateThreeClassWorkset({
     const resolvedRefs = resolveSelectedSnapshotRefs(db, { snapshotRefs, snapshotShas });
     const selectedSnapshots = readSelectedSnapshots(db, resolvedRefs);
     const artifacts = buildAnalysisArtifacts(selectedSnapshots);
-    const inputBytes = Buffer.from(artifacts.outputJson, "utf8");
-    const manifestBytes = Buffer.from(artifacts.manifestJson, "utf8");
-    if (sha256(inputBytes) !== artifacts.manifest.output_sha256) {
-      throw worksetError("INTEGRITY_MISMATCH", "analysis projection output hash does not match its manifest");
+    const seenComments = new Set();
+    const items = [];
+    for (const record of artifacts.records) {
+      if (typeof record.comment !== "string") {
+        throw worksetError("DATABASE_INTEGRITY_ERROR", "projected record comment must be a string");
+      }
+      if (seenComments.has(record.comment)) continue;
+      seenComments.add(record.comment);
+      items.push({ id: `I${items.length + 1}`, comment: record.comment });
     }
-    stagingRoot = await mkdtemp(path.join(path.dirname(finalWorkspace), `.${path.basename(finalWorkspace)}.workset-`));
-    const stagingInput = path.join(stagingRoot, "analysis_input.json");
-    const stagingManifest = path.join(stagingRoot, "analysis_input.manifest.json");
-    await writeExclusive(stagingInput, inputBytes, "analysis projection");
-    await writeExclusive(stagingManifest, manifestBytes, "analysis projection manifest");
-    const stagingWorkspace = path.join(stagingRoot, "workspace");
-    const pipelineArgs = [
-      PIPELINE_PATH,
-      "prepare-single-roundtrip",
-      stagingInput,
-      "--reference",
-      path.resolve(referencePath),
-      "--workspace",
-      stagingWorkspace,
-    ];
-    if (stateDir !== undefined) pipelineArgs.push("--state-dir", path.resolve(stateDir));
-    const pipelineResult = parseSubprocessJson(runPython(pipelineArgs, "pipeline"), "pipeline");
-    const binding = await verifyPipelineBinding(stagingWorkspace, pipelineResult, inputBytes);
-
-    const readmeBytes = await readFile(README_TEMPLATE_PATH);
-    await writeExclusive(path.join(stagingWorkspace, "README_FIRST.md"), readmeBytes, "workset README");
-    await mkdir(path.join(stagingWorkspace, "provenance"));
-    await writeExclusive(path.join(stagingWorkspace, "provenance", "analysis_input.json"), inputBytes, "provenance analysis input");
-    await writeExclusive(path.join(stagingWorkspace, "provenance", "analysis_input.manifest.json"), manifestBytes, "provenance analysis manifest");
-
-    const packagingResult = parseSubprocessJson(
-      runPython([PACKAGER_PATH, "--workspace", stagingWorkspace], "packager"),
-      "packager",
-    );
-    if (!SHA256_PATTERN.test(packagingResult.workset_id ?? "") || packagingResult.request_id !== binding.requestId) {
-      throw worksetError("INTEGRITY_MISMATCH", "packager identity bindings are invalid");
-    }
-    const expectedZipPath = path.join(stagingWorkspace, `three_class_workset_${packagingResult.workset_id}.zip`);
-    const expectedManifestPath = path.join(stagingWorkspace, "workset_manifest.json");
-    if (path.resolve(packagingResult.zip_path ?? "") !== path.resolve(expectedZipPath)) {
-      throw worksetError("PACKAGING_FAILED", "packager returned an unexpected ZIP path");
-    }
-    if (path.resolve(packagingResult.manifest_path ?? "") !== path.resolve(expectedManifestPath)) {
-      throw worksetError("PACKAGING_FAILED", "packager returned an unexpected manifest path");
-    }
-    await assertRegularFile(expectedZipPath, "workset ZIP");
-    await assertRegularFile(expectedManifestPath, "workset manifest");
-    const worksetManifest = parseJsonObject(await readFile(expectedManifestPath), "workset manifest");
-    if (worksetManifest.workset_id !== packagingResult.workset_id || worksetManifest.request_id !== binding.requestId) {
-      throw worksetError("INTEGRITY_MISMATCH", "workset manifest identity bindings are invalid");
-    }
-
-    const result = {
-      requestId: binding.requestId,
-      worksetId: packagingResult.workset_id,
-      state: binding.state,
-      workspacePath: finalWorkspace,
-      zipPath: path.join(finalWorkspace, path.basename(expectedZipPath)),
-      manifestPath: path.join(finalWorkspace, "workset_manifest.json"),
+    const worksetId = randomUUID();
+    const itemsValue = {
+      protocol_version: PROTOCOL_VERSION,
+      workset_id: worksetId,
+      items,
     };
-    await rename(stagingWorkspace, finalWorkspace);
-    return result;
+    const schemaValue = buildResponseSchema(worksetId);
+
+    const outputParent = path.dirname(finalOutput);
+    await access(outputParent).catch((error) => {
+      throw worksetError("OUTPUT_WRITE_FAILED", `output parent is unavailable: ${outputParent}: ${error.message}`, { cause: error });
+    });
+    stagingRoot = await mkdtemp(path.join(outputParent, ".three-class-workset-"));
+    const promptPath = path.join(stagingRoot, "PROMPT.md");
+    const rulesPath = path.join(stagingRoot, "RULES.md");
+    const historyFilePath = path.join(stagingRoot, "HISTORY.json");
+    const itemsPath = path.join(stagingRoot, "ITEMS.json");
+    const schemaPath = path.join(stagingRoot, "response.schema.json");
+    await writeExclusive(promptPath, templates.prompt, "PROMPT.md");
+    await writeExclusive(rulesPath, templates.rules, "RULES.md");
+    await writeExclusive(historyFilePath, serializeJson(history), "HISTORY.json");
+    await writeExclusive(itemsPath, serializeJson(itemsValue), "ITEMS.json");
+    await writeExclusive(schemaPath, serializeJson(schemaValue), "response.schema.json");
+
+    const packageOutput = parseSubprocessJson(
+      runPython(
+        [
+          PACKAGER_PATH,
+          "package",
+          "--output",
+          finalOutput,
+          "--prompt",
+          promptPath,
+          "--rules",
+          rulesPath,
+          "--history",
+          historyFilePath,
+          "--items",
+          itemsPath,
+          "--schema",
+          schemaPath,
+        ],
+        "PACKAGING_FAILED",
+        "workset ZIP packaging",
+      ),
+      "PACKAGING_FAILED",
+      "workset ZIP packaging",
+    );
+    if (packageOutput.member_count !== ARCHIVE_MEMBER_NAMES.length) {
+      throw worksetError("PACKAGING_FAILED", "packager returned an unexpected member count");
+    }
+    const verified = await validateWorksetArchive(finalOutput);
+    return {
+      worksetId: verified.worksetId,
+      itemCount: verified.items.items.length,
+      historyCount: verified.history.items.length,
+      outputPath: finalOutput,
+    };
   } catch (error) {
     if (error instanceof CommentDatabaseError) throw error;
+    if (error instanceof ProtocolValidationError) rethrowProtocol(error);
     throw worksetError("WORKSET_GENERATION_FAILED", error.message, { cause: error });
   } finally {
     if (db !== undefined) db.close();

@@ -17,7 +17,10 @@ import {
   verifyRawInputs,
 } from "../src/database/raw-snapshot-repository.js";
 import { buildAnalysisArtifacts } from "../src/processing/analysis-input/raw-snapshot-projection.js";
-import { generateThreeClassWorkset } from "./adapters/three-class-workset.js";
+import {
+  generateThreeClassWorkset,
+  validateThreeClassResponse,
+} from "./adapters/three-class-workset.js";
 
 class CliArgumentError extends Error {}
 
@@ -47,7 +50,10 @@ function usageFor(command = undefined) {
     return "Usage: npm run comment-db -- verify-raw-inputs [--snapshot-ref <sha:index> ...] [--db path.sqlite3]";
   }
   if (command === "generate-three-class-workset") {
-    return "Usage: npm run comment-db -- generate-three-class-workset (--snapshot-ref <sha:index> ... | --snapshot-sha <sha256> ...) --reference path.json --workspace path [--db path.sqlite3] [--state-dir path]";
+    return "Usage: npm run comment-db -- generate-three-class-workset (--snapshot-ref <sha:index> ... | --snapshot-sha <sha256> ...) --history path.json --output path.zip [--db path.sqlite3]";
+  }
+  if (command === "validate-three-class-response") {
+    return "Usage: npm run comment-db -- validate-three-class-response --workset path.zip --response path.json";
   }
   return [
     "Usage:",
@@ -58,7 +64,8 @@ function usageFor(command = undefined) {
     "  npm run comment-db -- backfill-raw-inputs --db path.sqlite3 --raw-root legacy/raw/root",
     "  npm run comment-db -- export-analysis-input --snapshot-ref <sha:index> --output path.json --manifest path.json [--db path.sqlite3]",
     "  npm run comment-db -- verify-raw-inputs [--snapshot-ref <sha:index> ...] [--db path.sqlite3]",
-    "  npm run comment-db -- generate-three-class-workset (--snapshot-ref <sha:index> ... | --snapshot-sha <sha256> ...) --reference path.json --workspace path [--db path.sqlite3] [--state-dir path]",
+    "  npm run comment-db -- generate-three-class-workset (--snapshot-ref <sha:index> ... | --snapshot-sha <sha256> ...) --history path.json --output path.zip [--db path.sqlite3]",
+    "  npm run comment-db -- validate-three-class-response --workset path.zip --response path.json",
   ].join("\n");
 }
 
@@ -118,6 +125,7 @@ function parseArguments(argv) {
     "export-analysis-input",
     "verify-raw-inputs",
     "generate-three-class-workset",
+    "validate-three-class-response",
   ]);
   if (!supportedCommands.has(command)) {
     throw new CliArgumentError("unknown command: " + command);
@@ -135,7 +143,8 @@ function parseArguments(argv) {
     "backfill-raw-inputs": new Set(["--db", "--raw-root"]),
     "export-analysis-input": new Set(["--snapshot-ref", "--snapshot-sha", "--output", "--manifest", "--db"]),
     "verify-raw-inputs": new Set(["--snapshot-ref", "--snapshot-sha", "--db"]),
-    "generate-three-class-workset": new Set(["--snapshot-ref", "--snapshot-sha", "--reference", "--workspace", "--db", "--state-dir"]),
+    "generate-three-class-workset": new Set(["--snapshot-ref", "--snapshot-sha", "--history", "--output", "--db"]),
+    "validate-three-class-response": new Set(["--workset", "--response"]),
   }[command];
   const args = { command, snapshotRefs: [], snapshotRefKeys: [], snapshotShas: [] };
   for (let index = 1; index < argv.length; index += 1) {
@@ -153,12 +162,12 @@ function parseArguments(argv) {
       setOnce(args, "output", requireOptionValue(argv, index, option), option);
     } else if (option === "--manifest") {
       setOnce(args, "manifest", requireOptionValue(argv, index, option), option);
-    } else if (option === "--reference") {
-      setOnce(args, "reference", requireOptionValue(argv, index, option), option);
-    } else if (option === "--workspace") {
-      setOnce(args, "workspace", requireOptionValue(argv, index, option), option);
-    } else if (option === "--state-dir") {
-      setOnce(args, "stateDir", requireOptionValue(argv, index, option), option);
+    } else if (option === "--history") {
+      setOnce(args, "history", requireOptionValue(argv, index, option), option);
+    } else if (option === "--workset") {
+      setOnce(args, "workset", requireOptionValue(argv, index, option), option);
+    } else if (option === "--response") {
+      setOnce(args, "response", requireOptionValue(argv, index, option), option);
     } else if (option === "--snapshot-sha") {
       parseSnapshotSha(args, requireOptionValue(argv, index, option));
     } else if (option === "--snapshot-ref") {
@@ -166,7 +175,7 @@ function parseArguments(argv) {
     } else {
       throw new CliArgumentError("unknown option: " + option);
     }
-    if (["--input", "--db", "--raw-root", "--output", "--manifest", "--reference", "--workspace", "--state-dir", "--snapshot-sha", "--snapshot-ref"].includes(option)) {
+    if (["--input", "--db", "--raw-root", "--output", "--manifest", "--history", "--workset", "--response", "--snapshot-sha", "--snapshot-ref"].includes(option)) {
       index += 1;
     }
   }
@@ -192,8 +201,12 @@ function parseArguments(argv) {
     if (args.snapshotRefs.length === 0 && args.snapshotShas.length === 0) {
       throw new CliArgumentError("at least one --snapshot-ref or --snapshot-sha is required");
     }
-    if (args.reference === undefined) throw new CliArgumentError("--reference is required");
-    if (args.workspace === undefined) throw new CliArgumentError("--workspace is required");
+    if (args.history === undefined) throw new CliArgumentError("--history is required");
+    if (args.output === undefined) throw new CliArgumentError("--output is required");
+  }
+  if (command === "validate-three-class-response") {
+    if (args.workset === undefined) throw new CliArgumentError("--workset is required");
+    if (args.response === undefined) throw new CliArgumentError("--response is required");
   }
   return args;
 }
@@ -274,9 +287,8 @@ async function generateWorkset(args) {
     dbPath: args.db === undefined ? undefined : resolveInvocationPath(args.db),
     snapshotRefs: args.snapshotRefs.map((reference) => ({ ...reference })),
     snapshotShas: [...args.snapshotShas],
-    referencePath: resolveInvocationPath(args.reference),
-    workspacePath: resolveInvocationPath(args.workspace),
-    stateDir: args.stateDir === undefined ? undefined : resolveInvocationPath(args.stateDir),
+    historyPath: resolveInvocationPath(args.history),
+    outputPath: resolveInvocationPath(args.output),
   });
 }
 
@@ -333,7 +345,13 @@ try {
     }
   } else if (args.command === "generate-three-class-workset") {
     const result = await generateWorkset(args);
-    console.log(`generated workset=${result.worksetId} request=${result.requestId} state=${result.state} workspace=${result.workspacePath} zip=${result.zipPath}`);
+    console.log(`generated workset=${result.worksetId} items=${result.itemCount} history=${result.historyCount} zip=${result.outputPath}`);
+  } else if (args.command === "validate-three-class-response") {
+    const result = await validateThreeClassResponse({
+      worksetPath: resolveInvocationPath(args.workset),
+      responsePath: resolveInvocationPath(args.response),
+    });
+    console.log(`VALID workset=${result.worksetId} decisions=${result.decisionCount}`);
   }
 } catch (error) {
   const message = error instanceof Error ? error.message : String(error);

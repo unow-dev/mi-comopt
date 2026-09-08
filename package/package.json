@@ -11,6 +11,7 @@
     "candidate-workflow": "node scripts/candidate-workflow.mjs",
     "account-candidate-workflow": "node scripts/account-block-candidate-workflow.mjs",
     "comment-db": "node scripts/comment-database.mjs",
+    "migrate:three-class-history": "node scripts/migrate-three-class-history.mjs",
     "verify:data": "node scripts/verify-data.mjs",
     "create:data-release": "node scripts/create-data-release.mjs",
     "verify:release": "node scripts/verify-release.mjs",

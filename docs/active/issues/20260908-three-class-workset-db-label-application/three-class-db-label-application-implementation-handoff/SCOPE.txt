@@ -1,0 +1,20 @@
+IN:
+- migration 006
+- workset -> generation-time snapshot provenance registry
+- validated-response apply CLI
+- exact-comment duplicate expansion inside registered snapshots
+- DB-wide existing-label consistency preflight by exact comment
+- current observation label table
+- same-value replay/no-op
+- atomic apply
+
+OUT:
+- correction/update/delete
+- application/audit history
+- source_workset_id on labels
+- workset/response/projection hashes
+- legacy workset rescue/import/rebind
+- snapshot selectors on apply
+- comment master normalization
+- DB semantic triggers
+- automatic writes to non-selected snapshots

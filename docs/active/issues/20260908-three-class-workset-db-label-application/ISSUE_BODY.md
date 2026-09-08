@@ -1,0 +1,13 @@
+# Issue: v1 three-class判定結果をComment DBへ反映するスクリプトを追加する
+
+## 目的
+
+検証済みの`three-class-workset-v1` responseに含まれるcomment単位の3-class判定結果を、workset生成時に選択したComment DB snapshot内で完全一致するcommentの全観測行へ安全に反映できる状態にする。
+
+## 背景
+
+現在のv1 workset経路は、Comment DBから選択したsnapshotのcommentを完全一致で重複排除し、ChatGPTが各commentを`direct_nuisance`、`reactive`、`normal`のいずれかへ判定し、ローカルvalidatorがresponseの構造・workset ID・全item IDの完全性を確認するところまでを実現している。
+
+一方、検証後のresponseをComment DBへ保存する経路はまだ存在しない。v1の`ITEMS.json`は同一workset内でcommentを一意に扱う一方、DB上のsnapshot_comment_observationsには同一commentが複数回出現し得るため、判定結果をどの範囲の観測へ反映するか、raw観測を変更せずに判定結果をどのように保持するか、再適用や訂正をどのように扱うかを定めた反映経路が必要である。
+
+今回の対象DBでは、24,622観測が20,096種類のunique commentへ集約され、830種類のcommentが複数回出現している。判定は観測行ごとではなくcommentをキーとするため、同じcommentが複数行に存在する場合は、responseの該当labelをworkset生成時に選択したsnapshot内の一致行すべてへ適用する方針とする。選択範囲外のsnapshotにある同一commentは、この反映の対象としない。

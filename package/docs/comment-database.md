@@ -116,23 +116,46 @@ npm run comment-db -- export-analysis-input \
 
 出力レコードは`username`、`handle`、`comment`、`postedAt`、`postedDate`の5キーだけです。`commentId`、`userId`、DB内部ID、snapshot SHAなどのDBメタデータはレコードへ漏らしません。outputとmanifestはUTF-8、2スペース整形、末尾改行付きで、既存ファイルを上書きしません。manifestに生成時刻は含まれず、同じsnapshot集合からbyte-identicalに再生成できます。
 
-## 3-class workset生成
+## three-class workset v1
 
-明示したsnapshotだけを既存のanalysis projectionへ投影し、v1.5.0の`prepare-single-roundtrip`を変更せずに実行して、finalize可能なworkspaceとChatGPTへ渡すportable ZIPを生成します。`--reference`と`--workspace`、および`--snapshot-ref`または`--snapshot-sha`を1件以上指定してください。SHA selectorは一意に解決できる場合だけ受け付け、refとSHAの混在・重複・曖昧なSHAは拒否します。
+明示したsnapshotだけを既存の順序付きprojectionへ投影し、`comment`だけを完全一致で先頭出現順に重複排除して、ChatGPTへ渡す5ファイルのZIPを生成します。`--snapshot-ref`または`--snapshot-sha`は1件以上、`--history`と`--output`は必須です。selectorの混在・重複・曖昧なSHAと、出力先の上書きは拒否します。
 
 ```bash
 npm run comment-db -- generate-three-class-workset \
   --snapshot-ref <sha>:<snapshot-index> \
-  --reference path/to/stage13-reference.json \
-  --workspace path/to/workspace \
-  [--db path/to/comment-history.sqlite3] \
-  [--state-dir path/to/integrated-labeling-state]
+  --history path/to/three_class_history.json \
+  --output path/to/workset.zip \
+  [--db path/to/comment-history.sqlite3]
 ```
 
-workspace内には既存pipelineの`request/`、`snapshot/`、`prepare_receipt.json`と、`README_FIRST.md`、`provenance/`、`workset_manifest.json`、`three_class_workset_<workset_id>.zip`が保持されます。ZIPにはREADME、`request/`全体、DB projectionのprovenance、workset manifestだけを含め、snapshotやinner handoff ZIPは含めません。既存workspaceの上書きは行わず、すべての検証とpackagingが成功した場合だけworkspaceを出現させます。
+ZIPのroot直下には、通常ファイル5個だけを一度ずつ含めます。
 
-ZIPの`workset_id`はcontainer bytesではなく、`request_id`とtransport memberの相対POSIX path・SHA-256・byte lengthから計算されます。`request/`がclassificationのcanonical packageで、`provenance/`はlineage確認専用です。S/T taskがないzero-handoff worksetではclassification responseは不要です。
+```text
+PROMPT.md
+RULES.md
+HISTORY.json
+ITEMS.json
+response.schema.json
+```
 
-このissueの後続責務は、生成された`new-comments.json`とmanifestを現状データとの統合処理へ渡すことです。legacy 5-fieldとのmerge、dedupe、Stage13 dataset全体の順序、ラベル、候補、UIおよびraw retentionはこのDB境界の責務ではありません。
+`ITEMS.json`のIDは`I1`からの連番、`workset_id`はUUID v4です。コメント本文は空文字列・空白のみ・任意Unicode・指示文に見える文字列もデータとしてそのまま扱います。`HISTORY.json`は参照例であり、ITEMSから既知コメントを除外したり、履歴ラベルを強制したりしません。
+
+ChatGPTから返されたJSONは、workset自体（ZIP境界、canonical template、HISTORY/ITEMS、UUID、schema）と、responseの厳格JSON・workset ID・全IDの完全一致をローカルで検証します。検証は次のコマンドで行います。
+
+```bash
+npm run comment-db -- validate-three-class-response \
+  --workset path/to/workset.zip \
+  --response path/to/response.json
+```
+
+有効なresponseは`workset_id`と`decisions`だけを持ち、`ITEMS.json`の全IDをちょうど一度ずつ含めます。欠落・過剰・不正label・重複JSON key・schema改変・unsafe ZIP memberは全体を拒否します。
+
+初期HISTORYは一回限りの移行として生成できます。runtime生成・検証は旧Stage13、single-roundtrip、golden/P2 registry、reactive-term、review cue、provenance、workspaceを参照しません。
+
+```bash
+npm run migrate:three-class-history
+```
+
+DBへの結果反映、finalize、HISTORY自動更新、batching/sharding、rationale/confidence、provenance/manifestはこのv1の対象外です。
 
 実データの運用開始前に、取得元サービスの利用規約、プライバシー要件、保存内容に適した保持方針を人間が確認・決定してください。コメント本文や投稿参照だけでも個人情報を含む、または明らかにする可能性があります。
