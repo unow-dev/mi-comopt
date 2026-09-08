@@ -116,6 +116,23 @@ npm run comment-db -- export-analysis-input \
 
 出力レコードは`username`、`handle`、`comment`、`postedAt`、`postedDate`の5キーだけです。`commentId`、`userId`、DB内部ID、snapshot SHAなどのDBメタデータはレコードへ漏らしません。outputとmanifestはUTF-8、2スペース整形、末尾改行付きで、既存ファイルを上書きしません。manifestに生成時刻は含まれず、同じsnapshot集合からbyte-identicalに再生成できます。
 
+## 3-class workset生成
+
+明示したsnapshotだけを既存のanalysis projectionへ投影し、v1.5.0の`prepare-single-roundtrip`を変更せずに実行して、finalize可能なworkspaceとChatGPTへ渡すportable ZIPを生成します。`--reference`と`--workspace`、および`--snapshot-ref`または`--snapshot-sha`を1件以上指定してください。SHA selectorは一意に解決できる場合だけ受け付け、refとSHAの混在・重複・曖昧なSHAは拒否します。
+
+```bash
+npm run comment-db -- generate-three-class-workset \
+  --snapshot-ref <sha>:<snapshot-index> \
+  --reference path/to/stage13-reference.json \
+  --workspace path/to/workspace \
+  [--db path/to/comment-history.sqlite3] \
+  [--state-dir path/to/integrated-labeling-state]
+```
+
+workspace内には既存pipelineの`request/`、`snapshot/`、`prepare_receipt.json`と、`README_FIRST.md`、`provenance/`、`workset_manifest.json`、`three_class_workset_<workset_id>.zip`が保持されます。ZIPにはREADME、`request/`全体、DB projectionのprovenance、workset manifestだけを含め、snapshotやinner handoff ZIPは含めません。既存workspaceの上書きは行わず、すべての検証とpackagingが成功した場合だけworkspaceを出現させます。
+
+ZIPの`workset_id`はcontainer bytesではなく、`request_id`とtransport memberの相対POSIX path・SHA-256・byte lengthから計算されます。`request/`がclassificationのcanonical packageで、`provenance/`はlineage確認専用です。S/T taskがないzero-handoff worksetではclassification responseは不要です。
+
 このissueの後続責務は、生成された`new-comments.json`とmanifestを現状データとの統合処理へ渡すことです。legacy 5-fieldとのmerge、dedupe、Stage13 dataset全体の順序、ラベル、候補、UIおよびraw retentionはこのDB境界の責務ではありません。
 
 実データの運用開始前に、取得元サービスの利用規約、プライバシー要件、保存内容に適した保持方針を人間が確認・決定してください。コメント本文や投稿参照だけでも個人情報を含む、または明らかにする可能性があります。

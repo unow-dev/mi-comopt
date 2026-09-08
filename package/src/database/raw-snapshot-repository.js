@@ -5,6 +5,33 @@ function snapshotReferenceKey(reference) {
   return `${reference.payloadSha256}:${reference.snapshotIndex}`;
 }
 
+export function resolveLegacySnapshotRefs(db, snapshotShas) {
+  return snapshotShas.map((payloadSha256) => {
+    const rows = db.prepare(
+      "SELECT snapshot_index FROM raw_snapshots WHERE payload_sha256 = ? ORDER BY snapshot_index ASC",
+    ).all(payloadSha256);
+    if (rows.length === 0) {
+      throw new CommentDatabaseError("SNAPSHOT_NOT_FOUND", `raw input has no snapshot: ${payloadSha256}`);
+    }
+    if (rows.length > 1) {
+      throw new CommentDatabaseError(
+        "SNAPSHOT_SELECTION_AMBIGUOUS",
+        `raw input has multiple snapshots; use --snapshot-ref: ${payloadSha256}`,
+      );
+    }
+    return { payloadSha256, snapshotIndex: Number(rows[0].snapshot_index) };
+  });
+}
+
+export function resolveSelectedSnapshotRefs(db, { snapshotRefs = [], snapshotShas = [] } = {}) {
+  if (snapshotRefs.length > 0 && snapshotShas.length > 0) {
+    throw new CommentDatabaseError("VALIDATION_ERROR", "--snapshot-ref and --snapshot-sha may not be combined");
+  }
+  if (snapshotRefs.length > 0) return snapshotRefs;
+  if (snapshotShas.length > 0) return resolveLegacySnapshotRefs(db, snapshotShas);
+  throw new CommentDatabaseError("SNAPSHOT_NOT_FOUND", "at least one snapshot reference is required");
+}
+
 function snapshotNotFound(reference) {
   return new CommentDatabaseError(
     "SNAPSHOT_NOT_FOUND",

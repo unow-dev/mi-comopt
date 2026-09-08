@@ -11,8 +11,13 @@ import {
 } from "../src/database/comment-database.js";
 import { importNewCommentsWrapperFile } from "./adapters/new-comments-wrapper.js";
 import { importCommentBatchFile } from "./adapters/comment-batch.js";
-import { readSelectedSnapshots, verifyRawInputs } from "../src/database/raw-snapshot-repository.js";
+import {
+  readSelectedSnapshots,
+  resolveSelectedSnapshotRefs,
+  verifyRawInputs,
+} from "../src/database/raw-snapshot-repository.js";
 import { buildAnalysisArtifacts } from "../src/processing/analysis-input/raw-snapshot-projection.js";
+import { generateThreeClassWorkset } from "./adapters/three-class-workset.js";
 
 class CliArgumentError extends Error {}
 
@@ -41,6 +46,9 @@ function usageFor(command = undefined) {
   if (command === "verify-raw-inputs") {
     return "Usage: npm run comment-db -- verify-raw-inputs [--snapshot-ref <sha:index> ...] [--db path.sqlite3]";
   }
+  if (command === "generate-three-class-workset") {
+    return "Usage: npm run comment-db -- generate-three-class-workset (--snapshot-ref <sha:index> ... | --snapshot-sha <sha256> ...) --reference path.json --workspace path [--db path.sqlite3] [--state-dir path]";
+  }
   return [
     "Usage:",
     "  npm run comment-db -- import --input path/to/normalized-comments.json [--db path.sqlite3]",
@@ -50,6 +58,7 @@ function usageFor(command = undefined) {
     "  npm run comment-db -- backfill-raw-inputs --db path.sqlite3 --raw-root legacy/raw/root",
     "  npm run comment-db -- export-analysis-input --snapshot-ref <sha:index> --output path.json --manifest path.json [--db path.sqlite3]",
     "  npm run comment-db -- verify-raw-inputs [--snapshot-ref <sha:index> ...] [--db path.sqlite3]",
+    "  npm run comment-db -- generate-three-class-workset (--snapshot-ref <sha:index> ... | --snapshot-sha <sha256> ...) --reference path.json --workspace path [--db path.sqlite3] [--state-dir path]",
   ].join("\n");
 }
 
@@ -108,6 +117,7 @@ function parseArguments(argv) {
     "backfill-raw-inputs",
     "export-analysis-input",
     "verify-raw-inputs",
+    "generate-three-class-workset",
   ]);
   if (!supportedCommands.has(command)) {
     throw new CliArgumentError("unknown command: " + command);
@@ -125,6 +135,7 @@ function parseArguments(argv) {
     "backfill-raw-inputs": new Set(["--db", "--raw-root"]),
     "export-analysis-input": new Set(["--snapshot-ref", "--snapshot-sha", "--output", "--manifest", "--db"]),
     "verify-raw-inputs": new Set(["--snapshot-ref", "--snapshot-sha", "--db"]),
+    "generate-three-class-workset": new Set(["--snapshot-ref", "--snapshot-sha", "--reference", "--workspace", "--db", "--state-dir"]),
   }[command];
   const args = { command, snapshotRefs: [], snapshotRefKeys: [], snapshotShas: [] };
   for (let index = 1; index < argv.length; index += 1) {
@@ -142,6 +153,12 @@ function parseArguments(argv) {
       setOnce(args, "output", requireOptionValue(argv, index, option), option);
     } else if (option === "--manifest") {
       setOnce(args, "manifest", requireOptionValue(argv, index, option), option);
+    } else if (option === "--reference") {
+      setOnce(args, "reference", requireOptionValue(argv, index, option), option);
+    } else if (option === "--workspace") {
+      setOnce(args, "workspace", requireOptionValue(argv, index, option), option);
+    } else if (option === "--state-dir") {
+      setOnce(args, "stateDir", requireOptionValue(argv, index, option), option);
     } else if (option === "--snapshot-sha") {
       parseSnapshotSha(args, requireOptionValue(argv, index, option));
     } else if (option === "--snapshot-ref") {
@@ -149,7 +166,7 @@ function parseArguments(argv) {
     } else {
       throw new CliArgumentError("unknown option: " + option);
     }
-    if (["--input", "--db", "--raw-root", "--output", "--manifest", "--snapshot-sha", "--snapshot-ref"].includes(option)) {
+    if (["--input", "--db", "--raw-root", "--output", "--manifest", "--reference", "--workspace", "--state-dir", "--snapshot-sha", "--snapshot-ref"].includes(option)) {
       index += 1;
     }
   }
@@ -170,6 +187,13 @@ function parseArguments(argv) {
     }
     if (args.output === undefined) throw new CliArgumentError("--output is required");
     if (args.manifest === undefined) throw new CliArgumentError("--manifest is required");
+  }
+  if (command === "generate-three-class-workset") {
+    if (args.snapshotRefs.length === 0 && args.snapshotShas.length === 0) {
+      throw new CliArgumentError("at least one --snapshot-ref or --snapshot-sha is required");
+    }
+    if (args.reference === undefined) throw new CliArgumentError("--reference is required");
+    if (args.workspace === undefined) throw new CliArgumentError("--workspace is required");
   }
   return args;
 }
@@ -217,27 +241,11 @@ async function writeExportArtifacts(outputPath, manifestPath, artifacts) {
   }
 }
 
-function resolveLegacySnapshotRefs(db, snapshotShas) {
-  return snapshotShas.map((payloadSha256) => {
-    const rows = db.prepare(
-      "SELECT snapshot_index FROM raw_snapshots WHERE payload_sha256 = ? ORDER BY snapshot_index ASC",
-    ).all(payloadSha256);
-    if (rows.length === 0) {
-      throw new CommentDatabaseError("SNAPSHOT_NOT_FOUND", `raw input has no snapshot: ${payloadSha256}`);
-    }
-    if (rows.length > 1) {
-      throw new CommentDatabaseError(
-        "SNAPSHOT_SELECTION_AMBIGUOUS",
-        `raw input has multiple snapshots; use --snapshot-ref: ${payloadSha256}`,
-      );
-    }
-    return { payloadSha256, snapshotIndex: Number(rows[0].snapshot_index) };
+function resolveCliSelectedSnapshotRefs(db, args) {
+  return resolveSelectedSnapshotRefs(db, {
+    snapshotRefs: args.snapshotRefs,
+    snapshotShas: args.snapshotShas,
   });
-}
-
-function resolveSelectedSnapshotRefs(db, args) {
-  if (args.snapshotRefs.length > 0) return args.snapshotRefs;
-  return resolveLegacySnapshotRefs(db, args.snapshotShas);
 }
 
 async function exportAnalysisInput(args) {
@@ -248,7 +256,7 @@ async function exportAnalysisInput(args) {
   }
   const db = await openCommentDatabase(args.db === undefined ? undefined : resolveInvocationPath(args.db));
   try {
-    const selectedSnapshots = readSelectedSnapshots(db, resolveSelectedSnapshotRefs(db, args));
+    const selectedSnapshots = readSelectedSnapshots(db, resolveCliSelectedSnapshotRefs(db, args));
     const artifacts = buildAnalysisArtifacts(selectedSnapshots);
     await writeExportArtifacts(outputPath, manifestPath, artifacts);
     return {
@@ -259,6 +267,17 @@ async function exportAnalysisInput(args) {
   } finally {
     db.close();
   }
+}
+
+async function generateWorkset(args) {
+  return generateThreeClassWorkset({
+    dbPath: args.db === undefined ? undefined : resolveInvocationPath(args.db),
+    snapshotRefs: args.snapshotRefs.map((reference) => ({ ...reference })),
+    snapshotShas: [...args.snapshotShas],
+    referencePath: resolveInvocationPath(args.reference),
+    workspacePath: resolveInvocationPath(args.workspace),
+    stateDir: args.stateDir === undefined ? undefined : resolveInvocationPath(args.stateDir),
+  });
 }
 
 try {
@@ -305,13 +324,16 @@ try {
     const db = await openCommentDatabase(args.db === undefined ? undefined : resolveInvocationPath(args.db));
     try {
       const snapshotRefs = args.snapshotRefs.length > 0 || args.snapshotShas.length > 0
-        ? resolveSelectedSnapshotRefs(db, args)
+        ? resolveCliSelectedSnapshotRefs(db, args)
         : undefined;
       const result = verifyRawInputs(db, { snapshotRefs });
       console.log("verified raw_inputs=" + result.rawInputCount + " snapshots=" + result.snapshotCount);
     } finally {
       db.close();
     }
+  } else if (args.command === "generate-three-class-workset") {
+    const result = await generateWorkset(args);
+    console.log(`generated workset=${result.worksetId} request=${result.requestId} state=${result.state} workspace=${result.workspacePath} zip=${result.zipPath}`);
   }
 } catch (error) {
   const message = error instanceof Error ? error.message : String(error);

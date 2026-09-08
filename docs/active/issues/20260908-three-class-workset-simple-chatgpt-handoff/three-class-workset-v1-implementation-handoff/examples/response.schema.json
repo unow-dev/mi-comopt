@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "workset_id",
+    "decisions"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "workset_id": {
+      "const": "7dcb0b3e-8acc-4e61-984d-7a2df6123456"
+    },
+    "decisions": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^I[1-9][0-9]*$"
+      },
+      "additionalProperties": {
+        "enum": [
+          "direct_nuisance",
+          "reactive",
+          "normal"
+        ]
+      }
+    }
+  }
+}

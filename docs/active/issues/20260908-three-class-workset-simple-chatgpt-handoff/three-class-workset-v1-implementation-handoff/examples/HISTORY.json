@@ -1,0 +1,13 @@
+{
+  "protocol_version": "three-class-workset-v1",
+  "items": [
+    {
+      "comment": "アンチしてる奴頭おかしい",
+      "label": "reactive"
+    },
+    {
+      "comment": "何歳ですか？",
+      "label": "normal"
+    }
+  ]
+}
