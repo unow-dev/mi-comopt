@@ -488,8 +488,8 @@ test("migrates a populated v2 database only with verified legacy raw bytes", asy
   const bytes = writeRaw(caseData.inputPath, makeRaw());
   const legacy = createV2Fixture(caseData, bytes);
   const result = await backfillRawInputs({ dbPath: caseData.dbPath, rawRoot: caseData.rawRoot });
-  assert.deepEqual(result, { status: "migrated", schemaVersion: 5 });
-  assert.equal(scalar(caseData.dbPath, "PRAGMA user_version").user_version, 5);
+  assert.deepEqual(result, { status: "migrated", schemaVersion: 6 });
+  assert.equal(scalar(caseData.dbPath, "PRAGMA user_version").user_version, 6);
   assert.deepEqual(Buffer.from(scalar(caseData.dbPath, "SELECT payload_bytes FROM raw_inputs").payload_bytes), bytes);
   assert.deepEqual({ ...scalar(caseData.dbPath, "SELECT snapshot_id, observation_id, snapshot_index FROM raw_snapshots JOIN snapshot_comment_observations USING (snapshot_id)") }, {
     snapshot_id: 1, observation_id: 1, snapshot_index: 0,
@@ -546,7 +546,7 @@ test("rejects normal open and failed backfills without changing populated v2", a
   assert.equal(scalar(changed.caseData.dbPath, "PRAGMA user_version").user_version, 2);
 });
 
-test("auto-migrates an empty v2 database and makes backfill idempotent on v5", async (t) => {
+test("auto-migrates an empty v2 database and makes backfill idempotent on v6", async (t) => {
   const caseData = makeCase(t);
   const db = new DatabaseSync(caseData.dbPath);
   db.exec(fs.readFileSync(path.join(MIGRATIONS_DIR, "001-init.sql"), "utf8"));
@@ -554,9 +554,9 @@ test("auto-migrates an empty v2 database and makes backfill idempotent on v5", a
   db.close();
   const opened = await openCommentDatabase(caseData.dbPath);
   opened.close();
-  assert.equal(scalar(caseData.dbPath, "PRAGMA user_version").user_version, 5);
+  assert.equal(scalar(caseData.dbPath, "PRAGMA user_version").user_version, 6);
   const result = await backfillRawInputs({ dbPath: caseData.dbPath, rawRoot: caseData.rawRoot });
-  assert.deepEqual(result, { status: "already-migrated", schemaVersion: 5 });
+  assert.deepEqual(result, { status: "already-migrated", schemaVersion: 6 });
 });
 
 test("exposes backfill through the CLI and requires both migration paths", (t) => {

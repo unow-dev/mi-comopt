@@ -92,7 +92,7 @@ test("initializes the schema, indexes, foreign keys, and observation rows", (t) 
   assert.match(scalar(dbPath, "SELECT imported_at FROM imports").imported_at, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
   assert.deepEqual(
     query(dbPath, "SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name").map((row) => row.name),
-    ["authors", "comment_observations", "comments", "imports", "raw_inputs", "raw_snapshots", "snapshot_comment_observations", "snapshot_video_observations", "videos"],
+    ["authors", "comment_observations", "comments", "imports", "raw_inputs", "raw_snapshots", "snapshot_comment_observations", "snapshot_comment_three_class_labels", "snapshot_video_observations", "three_class_workset_snapshots", "three_class_worksets", "videos"],
   );
   assert.deepEqual(
     query(dbPath, "SELECT name FROM sqlite_master WHERE type = 'index' AND name LIKE 'idx_%' ORDER BY name").map((row) => row.name),

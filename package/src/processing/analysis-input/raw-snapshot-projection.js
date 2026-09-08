@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 export const ANALYSIS_INPUT_FIELDS = ["username", "handle", "comment", "postedAt", "postedDate"];
 export const ANALYSIS_PROJECTION_VERSION = "1.0.0";
 export const ANALYSIS_MANIFEST_SCHEMA_VERSION = 3;
-export const DATABASE_SCHEMA_VERSION = 5;
+export const DATABASE_SCHEMA_VERSION = 6;
 
 function compareSnapshots(left, right) {
   if (left.snapshot.payloadSha256 < right.snapshot.payloadSha256) return -1;

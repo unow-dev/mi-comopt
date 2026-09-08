@@ -108,7 +108,7 @@ test("comment-batch persistence round-trips exact five fields without rich or ma
   assert.equal(imported.payloadSha256, expectedSha);
   assert.equal(imported.snapshotCount, 1);
   assert.equal(imported.commentObservationCount, 3);
-  assert.equal(query(dbPath, "PRAGMA user_version")[0].user_version, 5);
+  assert.equal(query(dbPath, "PRAGMA user_version")[0].user_version, 6);
   const rawRow = query(dbPath, "SELECT payload_bytes, input_format FROM raw_inputs")[0];
   assert.deepEqual(Buffer.from(rawRow.payload_bytes), bytes);
   assert.equal(rawRow.input_format, COMMENT_BATCH_INPUT_FORMAT);

@@ -1,6 +1,6 @@
 import { spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { access, lstat, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { access, lstat, mkdtemp, readFile, rm, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
   CommentDatabaseError,
@@ -11,6 +11,15 @@ import {
   readSelectedSnapshots,
   resolveSelectedSnapshotRefs,
 } from "../../src/database/raw-snapshot-repository.js";
+import {
+  insertObservationLabel,
+  readExistingCommentLabels,
+  readExistingTargetLabels,
+  readTargetObservations,
+  readWorksetSnapshotRefs,
+  registerWorkset,
+  worksetExists,
+} from "../../src/database/three-class-label-repository.js";
 import { buildAnalysisArtifacts } from "../../src/processing/analysis-input/raw-snapshot-projection.js";
 import {
   ARCHIVE_MEMBER_NAMES,
@@ -36,6 +45,39 @@ const RULES_TEMPLATE_PATH = path.join(REPOSITORY_ROOT, "package", "templates", "
 
 function worksetError(code, message, options = {}) {
   return new CommentDatabaseError(code, message, options);
+}
+
+function buildThreeClassItems(records) {
+  const seenComments = new Set();
+  const items = [];
+  for (const record of records) {
+    if (typeof record.comment !== "string") {
+      throw worksetError("DATABASE_INTEGRITY_ERROR", "projected record comment must be a string");
+    }
+    if (seenComments.has(record.comment)) continue;
+    seenComments.add(record.comment);
+    items.push({ id: `I${items.length + 1}`, comment: record.comment });
+  }
+  return items;
+}
+
+function withImmediateTransaction(db, action) {
+  db.exec("BEGIN IMMEDIATE");
+  let committed = false;
+  try {
+    const result = action();
+    db.exec("COMMIT");
+    committed = true;
+    return result;
+  } finally {
+    if (!committed) {
+      try {
+        db.exec("ROLLBACK");
+      } catch {
+        // Preserve the original transaction error.
+      }
+    }
+  }
 }
 
 function rethrowProtocol(error) {
@@ -242,7 +284,7 @@ function validateResponseValue(response, workset) {
   return response;
 }
 
-export async function validateThreeClassResponse({ worksetPath, responsePath }) {
+async function readValidatedThreeClassSubmission({ worksetPath, responsePath }) {
   const workset = await validateWorksetArchive(worksetPath);
   let response;
   try {
@@ -254,6 +296,11 @@ export async function validateThreeClassResponse({ worksetPath, responsePath }) 
     throw worksetError("INVALID_RESPONSE", `response JSON could not be read: ${error.message}`, { cause: error });
   }
   validateResponseValue(response, workset);
+  return { workset, response };
+}
+
+export async function validateThreeClassResponse({ worksetPath, responsePath }) {
+  const { workset, response } = await readValidatedThreeClassSubmission({ worksetPath, responsePath });
   return {
     worksetId: workset.worksetId,
     decisionCount: Object.keys(response.decisions).length,
@@ -286,21 +333,14 @@ export async function generateThreeClassWorkset({
 
   let db;
   let stagingRoot;
+  let stagingCleaned = false;
+  let outputOwned = false;
   try {
     db = await openCommentDatabase(dbPath);
     const resolvedRefs = resolveSelectedSnapshotRefs(db, { snapshotRefs, snapshotShas });
     const selectedSnapshots = readSelectedSnapshots(db, resolvedRefs);
     const artifacts = buildAnalysisArtifacts(selectedSnapshots);
-    const seenComments = new Set();
-    const items = [];
-    for (const record of artifacts.records) {
-      if (typeof record.comment !== "string") {
-        throw worksetError("DATABASE_INTEGRITY_ERROR", "projected record comment must be a string");
-      }
-      if (seenComments.has(record.comment)) continue;
-      seenComments.add(record.comment);
-      items.push({ id: `I${items.length + 1}`, comment: record.comment });
-    }
+    const items = buildThreeClassItems(artifacts.records);
     const worksetId = randomUUID();
     const itemsValue = {
       protocol_version: PROTOCOL_VERSION,
@@ -352,7 +392,22 @@ export async function generateThreeClassWorkset({
     if (packageOutput.member_count !== ARCHIVE_MEMBER_NAMES.length) {
       throw worksetError("PACKAGING_FAILED", "packager returned an unexpected member count");
     }
+    await assertRegularFile(finalOutput, "generated workset ZIP");
+    outputOwned = true;
     const verified = await validateWorksetArchive(finalOutput);
+    try {
+      await rm(stagingRoot, { recursive: true, force: false });
+      stagingCleaned = true;
+    } catch (error) {
+      throw worksetError("OUTPUT_WRITE_FAILED", `staging directory could not be removed: ${stagingRoot}: ${error.message}`, { cause: error });
+    }
+    withImmediateTransaction(db, () => {
+      registerWorkset(db, {
+        worksetId: verified.worksetId,
+        snapshotIds: selectedSnapshots.map(({ snapshot }) => snapshot.snapshotId),
+      });
+    });
+    outputOwned = false;
     return {
       worksetId: verified.worksetId,
       itemCount: verified.items.items.length,
@@ -365,6 +420,116 @@ export async function generateThreeClassWorkset({
     throw worksetError("WORKSET_GENERATION_FAILED", error.message, { cause: error });
   } finally {
     if (db !== undefined) db.close();
-    if (stagingRoot !== undefined) await rm(stagingRoot, { recursive: true, force: true });
+    if (stagingRoot !== undefined && !stagingCleaned) {
+      try {
+        await rm(stagingRoot, { recursive: true, force: true });
+      } catch {
+        // Preserve the original generation or registration error.
+      }
+    }
+    if (outputOwned) {
+      try {
+        await unlink(finalOutput);
+      } catch {
+        // Preserve the original generation or registration error.
+      }
+    }
+  }
+}
+
+export async function applyThreeClassResponse({ dbPath, worksetPath, responsePath }) {
+  const { workset, response } = await readValidatedThreeClassSubmission({ worksetPath, responsePath });
+  const db = await openCommentDatabase(dbPath);
+  try {
+    return withImmediateTransaction(db, () => {
+      if (!worksetExists(db, workset.worksetId)) {
+        throw worksetError("WORKSET_NOT_REGISTERED", `workset is not registered: ${workset.worksetId}`);
+      }
+
+      const snapshotRefs = readWorksetSnapshotRefs(db, workset.worksetId);
+      if (snapshotRefs.length === 0) {
+        throw worksetError("DATABASE_INTEGRITY_ERROR", `registered workset has no snapshots: ${workset.worksetId}`);
+      }
+      const selectedSnapshots = readSelectedSnapshots(db, snapshotRefs);
+      const artifacts = buildAnalysisArtifacts(selectedSnapshots);
+      const regeneratedItems = buildThreeClassItems(artifacts.records);
+      if (!deepEqual(regeneratedItems, workset.items.items)) {
+        throw worksetError("WORKSET_SOURCE_MISMATCH", `registered source does not reproduce workset ITEMS: ${workset.worksetId}`);
+      }
+
+      const decisionByComment = new Map();
+      for (const item of workset.items.items) {
+        decisionByComment.set(item.comment, response.decisions[item.id]);
+      }
+
+      const existingCommentLabels = new Map();
+      for (const row of readExistingCommentLabels(db)) {
+        if (!decisionByComment.has(row.commentText)) continue;
+        const labels = existingCommentLabels.get(row.commentText) ?? [];
+        labels.push(row);
+        existingCommentLabels.set(row.commentText, labels);
+      }
+      for (const [commentText, rows] of existingCommentLabels) {
+        const requestedLabel = decisionByComment.get(commentText);
+        const conflict = rows.find((row) => row.label !== requestedLabel);
+        if (conflict !== undefined) {
+          throw worksetError(
+            "LABEL_CONFLICT",
+            `comment label conflicts for workset ${workset.worksetId}: existing=${conflict.label} requested=${requestedLabel} observation=${conflict.exampleObservationId}`,
+          );
+        }
+      }
+
+      const targetObservations = readTargetObservations(db, workset.worksetId);
+      const expectedObservationCount = selectedSnapshots.reduce(
+        (sum, bundle) => sum + bundle.observations.length,
+        0,
+      );
+      if (targetObservations.length !== expectedObservationCount) {
+        throw worksetError(
+          "DATABASE_INTEGRITY_ERROR",
+          `target observation count ${targetObservations.length} does not match source count ${expectedObservationCount}`,
+        );
+      }
+      for (const target of targetObservations) {
+        if (!decisionByComment.has(target.commentText)) {
+          throw worksetError("DATABASE_INTEGRITY_ERROR", `target comment is absent from decision map: observation ${target.observationId}`);
+        }
+      }
+
+      const existingTargetLabels = new Map(
+        readExistingTargetLabels(db, workset.worksetId).map((row) => [row.observationId, row.label]),
+      );
+      const pending = [];
+      let unchanged = 0;
+      for (const target of targetObservations) {
+        const requestedLabel = decisionByComment.get(target.commentText);
+        const currentLabel = existingTargetLabels.get(target.observationId);
+        if (currentLabel === undefined) {
+          pending.push({ observationId: target.observationId, label: requestedLabel });
+        } else if (currentLabel === requestedLabel) {
+          unchanged += 1;
+        } else {
+          throw worksetError(
+            "LABEL_CONFLICT",
+            `target label conflicts for workset ${workset.worksetId}: existing=${currentLabel} requested=${requestedLabel} observation=${target.observationId}`,
+          );
+        }
+      }
+
+      for (const row of pending) insertObservationLabel(db, row);
+      const inserted = pending.length;
+      if (inserted + unchanged !== targetObservations.length) {
+        throw worksetError("DATABASE_INTEGRITY_ERROR", "label application counts do not match target observations");
+      }
+      return {
+        worksetId: workset.worksetId,
+        observations: targetObservations.length,
+        inserted,
+        unchanged,
+      };
+    });
+  } finally {
+    db.close();
   }
 }

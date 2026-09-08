@@ -124,6 +124,8 @@ def package(args: argparse.Namespace) -> dict[str, Any]:
         raise ArchiveError(f"output parent must be a directory: {output_parent}")
 
     temporary_name: str | None = None
+    linked_output = False
+    completed = False
     try:
         descriptor, temporary_name = tempfile.mkstemp(prefix=f".{output.name}.", dir=str(output_parent))
         os.close(descriptor)
@@ -137,11 +139,13 @@ def package(args: argparse.Namespace) -> dict[str, Any]:
             os.link(temporary_name, output)
         except FileExistsError as error:
             raise ArchiveError(f"refusing to overwrite existing output: {output}") from error
+        linked_output = True
         os.unlink(temporary_name)
         temporary_name = None
         members = read_archive(output)
         if [member["name"] for member in members] != list(EXPECTED_NAMES):
             raise ArchiveError("generated ZIP member boundary mismatch")
+        completed = True
         return {"zip_path": str(output), "member_count": len(members)}
     except OSError as error:
         raise ArchiveError(f"ZIP generation failed: {error}") from error
@@ -150,6 +154,11 @@ def package(args: argparse.Namespace) -> dict[str, Any]:
             try:
                 os.unlink(temporary_name)
             except FileNotFoundError:
+                pass
+        if linked_output and not completed:
+            try:
+                output.unlink()
+            except OSError:
                 pass
 
 

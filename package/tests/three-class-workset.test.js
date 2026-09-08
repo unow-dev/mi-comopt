@@ -4,6 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { DatabaseSync } from "node:sqlite";
 import test from "node:test";
 
 const packageRoot = path.resolve(import.meta.dirname, "..");
@@ -157,6 +158,17 @@ function makeValidHistory(filePath, items = []) {
   return writeJson(filePath, { protocol_version: "three-class-workset-v1", items });
 }
 
+function readItems(zipPath) {
+  return JSON.parse(zipMember(zipPath, "ITEMS.json"));
+}
+
+function responseFor(items, label = "normal") {
+  return {
+    workset_id: items.workset_id,
+    decisions: Object.fromEntries(items.items.map((item) => [item.id, label])),
+  };
+}
+
 const baseRows = [
   { username: "a", handle: "@a", comment: "A", postedAt: "1", postedDate: "2026-09-08" },
   { username: "b", handle: "@b", comment: "B", postedAt: "2", postedDate: "2026-09-08" },
@@ -223,6 +235,115 @@ test("generates exactly five members with comment-only first-occurrence ITEMS an
   const validated = runCli("validate-three-class-response", ["--workset", output, "--response", responsePath]);
   assert.equal(validated.status, 0, validated.stderr);
   assert.match(validated.stdout, new RegExp(`VALID workset=${items.workset_id} decisions=6`));
+});
+
+test("applies labels to every selected observation and replays idempotently", (t) => {
+  const caseData = makeCase(t);
+  const imported = importBatch(caseData, baseRows);
+  const output = path.join(caseData.root, "workset.zip");
+  assert.equal(runCli("generate-three-class-workset", [
+    "--snapshot-ref", `${imported.payloadSha256}:0`,
+    "--history", historyPath,
+    "--output", output,
+    "--db", caseData.dbPath,
+  ]).status, 0);
+  const responsePath = path.join(caseData.root, "response.json");
+  writeJson(responsePath, responseFor(readItems(output)));
+
+  const first = runCli("apply-three-class-response", ["--workset", output, "--response", responsePath, "--db", caseData.dbPath]);
+  assert.equal(first.status, 0, first.stderr);
+  assert.match(first.stdout, /APPLIED workset=[0-9a-f-]{36} observations=7 inserted=7 unchanged=0\n/);
+  const second = runCli("apply-three-class-response", ["--workset", output, "--response", responsePath, "--db", caseData.dbPath]);
+  assert.equal(second.status, 0, second.stderr);
+  assert.match(second.stdout, /observations=7 inserted=0 unchanged=7\n/);
+
+  const db = new DatabaseSync(caseData.dbPath);
+  try {
+    assert.equal(db.prepare("SELECT COUNT(*) AS count FROM snapshot_comment_three_class_labels").get().count, 7);
+    assert.equal(db.prepare("SELECT COUNT(*) AS count FROM snapshot_comment_observations").get().count, 7);
+  } finally {
+    db.close();
+  }
+});
+
+test("does not write non-selected snapshots and rejects a global exact-comment conflict", (t) => {
+  const caseData = makeCase(t);
+  const selected = importBatch(caseData, [
+    { username: "a", handle: "@a", comment: "same", postedAt: "1", postedDate: "2026-09-08" },
+    { username: "b", handle: "@b", comment: "selected", postedAt: "2", postedDate: "2026-09-08" },
+  ]);
+  const nonSelected = importBatch(caseData, [
+    { username: "c", handle: "@c", comment: "same", postedAt: "3", postedDate: "2026-09-08" },
+  ]);
+  const output = path.join(caseData.root, "workset.zip");
+  assert.equal(runCli("generate-three-class-workset", [
+    "--snapshot-ref", `${selected.payloadSha256}:0`,
+    "--history", historyPath,
+    "--output", output,
+    "--db", caseData.dbPath,
+  ]).status, 0);
+
+  const db = new DatabaseSync(caseData.dbPath);
+  try {
+    const observation = db.prepare(
+      `SELECT sco.observation_id
+       FROM snapshot_comment_observations AS sco
+       JOIN raw_snapshots AS rs ON rs.snapshot_id = sco.snapshot_id
+       WHERE rs.payload_sha256 = ? AND sco.comment_text = ?`,
+    ).get(nonSelected.payloadSha256, "same");
+    db.prepare("INSERT INTO snapshot_comment_three_class_labels (observation_id, label) VALUES (?, ?)").run(observation.observation_id, "reactive");
+  } finally {
+    db.close();
+  }
+
+  const responsePath = path.join(caseData.root, "response.json");
+  writeJson(responsePath, responseFor(readItems(output), "normal"));
+  const result = runCli("apply-three-class-response", ["--workset", output, "--response", responsePath, "--db", caseData.dbPath]);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /LABEL_CONFLICT/);
+  const verify = new DatabaseSync(caseData.dbPath);
+  try {
+    assert.equal(verify.prepare("SELECT COUNT(*) AS count FROM snapshot_comment_three_class_labels").get().count, 1);
+    assert.equal(verify.prepare(
+      `SELECT COUNT(*) AS count
+       FROM snapshot_comment_three_class_labels AS labels
+       JOIN snapshot_comment_observations AS sco ON sco.observation_id = labels.observation_id
+       JOIN raw_snapshots AS rs ON rs.snapshot_id = sco.snapshot_id
+       WHERE rs.payload_sha256 = ?`,
+    ).get(selected.payloadSha256).count, 0);
+  } finally {
+    verify.close();
+  }
+});
+
+test("rejects an unregistered workset and a source mismatch", (t) => {
+  const sourceCase = makeCase(t);
+  const imported = importBatch(sourceCase, baseRows.slice(0, 2));
+  const output = path.join(sourceCase.root, "workset.zip");
+  assert.equal(runCli("generate-three-class-workset", [
+    "--snapshot-ref", `${imported.payloadSha256}:0`,
+    "--history", historyPath,
+    "--output", output,
+    "--db", sourceCase.dbPath,
+  ]).status, 0);
+  const responsePath = path.join(sourceCase.root, "response.json");
+  writeJson(responsePath, responseFor(readItems(output)));
+
+  const otherCase = makeCase(t);
+  importBatch(otherCase, baseRows.slice(0, 2));
+  const unregistered = runCli("apply-three-class-response", ["--workset", output, "--response", responsePath, "--db", otherCase.dbPath]);
+  assert.equal(unregistered.status, 1);
+  assert.match(unregistered.stderr, /WORKSET_NOT_REGISTERED/);
+
+  const db = new DatabaseSync(sourceCase.dbPath);
+  try {
+    db.prepare("UPDATE snapshot_comment_observations SET comment_text = ? WHERE source_index = 0").run("changed");
+  } finally {
+    db.close();
+  }
+  const mismatched = runCli("apply-three-class-response", ["--workset", output, "--response", responsePath, "--db", sourceCase.dbPath]);
+  assert.equal(mismatched.status, 1);
+  assert.match(mismatched.stderr, /WORKSET_SOURCE_MISMATCH/);
 });
 
 test("supports empty ITEMS and refuses legacy generator options or output overwrite", (t) => {

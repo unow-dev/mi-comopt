@@ -18,6 +18,7 @@ import {
 } from "../src/database/raw-snapshot-repository.js";
 import { buildAnalysisArtifacts } from "../src/processing/analysis-input/raw-snapshot-projection.js";
 import {
+  applyThreeClassResponse,
   generateThreeClassWorkset,
   validateThreeClassResponse,
 } from "./adapters/three-class-workset.js";
@@ -55,6 +56,9 @@ function usageFor(command = undefined) {
   if (command === "validate-three-class-response") {
     return "Usage: npm run comment-db -- validate-three-class-response --workset path.zip --response path.json";
   }
+  if (command === "apply-three-class-response") {
+    return "Usage: npm run comment-db -- apply-three-class-response --workset path.zip --response path.json [--db path.sqlite3]";
+  }
   return [
     "Usage:",
     "  npm run comment-db -- import --input path/to/normalized-comments.json [--db path.sqlite3]",
@@ -66,6 +70,7 @@ function usageFor(command = undefined) {
     "  npm run comment-db -- verify-raw-inputs [--snapshot-ref <sha:index> ...] [--db path.sqlite3]",
     "  npm run comment-db -- generate-three-class-workset (--snapshot-ref <sha:index> ... | --snapshot-sha <sha256> ...) --history path.json --output path.zip [--db path.sqlite3]",
     "  npm run comment-db -- validate-three-class-response --workset path.zip --response path.json",
+    "  npm run comment-db -- apply-three-class-response --workset path.zip --response path.json [--db path.sqlite3]",
   ].join("\n");
 }
 
@@ -126,6 +131,7 @@ function parseArguments(argv) {
     "verify-raw-inputs",
     "generate-three-class-workset",
     "validate-three-class-response",
+    "apply-three-class-response",
   ]);
   if (!supportedCommands.has(command)) {
     throw new CliArgumentError("unknown command: " + command);
@@ -145,6 +151,7 @@ function parseArguments(argv) {
     "verify-raw-inputs": new Set(["--snapshot-ref", "--snapshot-sha", "--db"]),
     "generate-three-class-workset": new Set(["--snapshot-ref", "--snapshot-sha", "--history", "--output", "--db"]),
     "validate-three-class-response": new Set(["--workset", "--response"]),
+    "apply-three-class-response": new Set(["--workset", "--response", "--db"]),
   }[command];
   const args = { command, snapshotRefs: [], snapshotRefKeys: [], snapshotShas: [] };
   for (let index = 1; index < argv.length; index += 1) {
@@ -205,6 +212,10 @@ function parseArguments(argv) {
     if (args.output === undefined) throw new CliArgumentError("--output is required");
   }
   if (command === "validate-three-class-response") {
+    if (args.workset === undefined) throw new CliArgumentError("--workset is required");
+    if (args.response === undefined) throw new CliArgumentError("--response is required");
+  }
+  if (command === "apply-three-class-response") {
     if (args.workset === undefined) throw new CliArgumentError("--workset is required");
     if (args.response === undefined) throw new CliArgumentError("--response is required");
   }
@@ -352,6 +363,13 @@ try {
       responsePath: resolveInvocationPath(args.response),
     });
     console.log(`VALID workset=${result.worksetId} decisions=${result.decisionCount}`);
+  } else if (args.command === "apply-three-class-response") {
+    const result = await applyThreeClassResponse({
+      dbPath: args.db === undefined ? undefined : resolveInvocationPath(args.db),
+      worksetPath: resolveInvocationPath(args.workset),
+      responsePath: resolveInvocationPath(args.response),
+    });
+    console.log(`APPLIED workset=${result.worksetId} observations=${result.observations} inserted=${result.inserted} unchanged=${result.unchanged}`);
   }
 } catch (error) {
   const message = error instanceof Error ? error.message : String(error);

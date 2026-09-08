@@ -67,7 +67,7 @@ WHERE comment_text LIKE '%' || ? || '%';
 
 collector固有の別形式やlegacy rawとの自動判別、legacy rawとのmerge/dedupe、Stage13 dataset生成、実データのrepository fixture化は対象外です。実データはlocal検証入力としてのみ扱い、raw本体をrepositoryへ追加しないでください。
 
-## rich raw snapshot と Comment DB v5
+## rich raw snapshot と Comment DB v6
 
 `import-raw-snapshot` は、draft 2020-12 JSON Schemaに適合し、`loadedCount` と実際のitems数が一致し、動画IDの矛盾がないTikTok rich raw snapshotだけを受け付けます。`extractedAt`、コメント本文・ID・日時などのraw文字列は保存時にtrim、Unicode正規化、日時変換または補完を行いません。schemaにない独自の件数・日時制約も追加しません。
 
@@ -150,12 +150,23 @@ npm run comment-db -- validate-three-class-response \
 
 有効なresponseは`workset_id`と`decisions`だけを持ち、`ITEMS.json`の全IDをちょうど一度ずつ含めます。欠落・過剰・不正label・重複JSON key・schema改変・unsafe ZIP memberは全体を拒否します。
 
+生成したworksetは、生成時に選択した `raw_snapshots.snapshot_id` と同じComment DB内で登録されます。応答反映時は登録済みsnapshotを再投影して `ITEMS.json` と完全一致することを確認し、選択snapshotの観測行だけへ現在ラベルを挿入します。raw観測は変更せず、同じラベルの再適用は冪等に `unchanged` として扱い、異なる既存ラベルは全体を拒否します。
+
+```bash
+npm run comment-db -- apply-three-class-response \
+  --workset path/to/workset.zip \
+  --response path/to/response.json \
+  [--db path/to/comment-history.sqlite3]
+```
+
+成功時は `APPLIED workset=<uuid> observations=<N> inserted=<N> unchanged=<N>` を1行出力します。`--snapshot-ref`、`--snapshot-sha`、`--force`、`--replace`、`--allow-correction`、`--dry-run` は反映コマンドでは受け付けません。
+
 初期HISTORYは一回限りの移行として生成できます。runtime生成・検証は旧Stage13、single-roundtrip、golden/P2 registry、reactive-term、review cue、provenance、workspaceを参照しません。
 
 ```bash
 npm run migrate:three-class-history
 ```
 
-DBへの結果反映、finalize、HISTORY自動更新、batching/sharding、rationale/confidence、provenance/manifestはこのv1の対象外です。
+finalize、HISTORY自動更新、batching/sharding、rationale/confidence、訂正履歴はこのv1の対象外です。
 
 実データの運用開始前に、取得元サービスの利用規約、プライバシー要件、保存内容に適した保持方針を人間が確認・決定してください。コメント本文や投稿参照だけでも個人情報を含む、または明らかにする可能性があります。
