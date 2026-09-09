@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "handoff": "comment-db-three-class-keyword-candidate-implementation",
+  "implementation_readiness_percent": 100,
+  "files": {
+    "ACCEPTANCE_TESTS.md": {
+      "sha256": "2ce8b23547e6c7002eba46c14f98de0fefe2c2fa83a54de60c334e0a16db0aca",
+      "bytes": 7332
+    },
+    "DECISIONS.md": {
+      "sha256": "ef6beda244b927ca7c908934205337153f6adee1fabcdb8e685fc25a08d7fc71",
+      "bytes": 2823
+    },
+    "IMPLEMENTATION_SPEC.md": {
+      "sha256": "4028e44220abd5c935cec299e02c36a86c4a0d6edd3c2b73f91158713d637221",
+      "bytes": 22493
+    },
+    "README_FIRST.md": {
+      "sha256": "2ddb9106e93a2e4f50289c8a9525e51abb37e9af659581f323a2155075c0177d",
+      "bytes": 2690
+    },
+    "SOURCE_MAP.md": {
+      "sha256": "b258ffc2cf34c4cc205d766d3dc151ef57676bbf7de933f7c5eaf67d09d94f2c",
+      "bytes": 5550
+    },
+    "references/DISCUSSION_SET_CONTENTS.md": {
+      "sha256": "9ccabcc7dc297516c1c17b4a491a86f63d2639d941155da7aa25a35273564f92",
+      "bytes": 6478
+    },
+    "references/ISSUE_BODY.md": {
+      "sha256": "e97c3483f119d41fddc403655d1cf16591b209beae84b82a89715f8c0e75b2db",
+      "bytes": 4376
+    }
+  }
+}
