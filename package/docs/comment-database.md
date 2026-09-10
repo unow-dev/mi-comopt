@@ -35,6 +35,17 @@ DBを指定しない場合は `<リポジトリルート>/var/comment-history.sq
 
 同じ正規化payloadを再投入すると成功扱いのno-opになります。payload hashは正規化後の観測tupleを並べ替えて計算するSHA-256であり、JSONの空白やプロパティ順、配列順には依存しません。ただし観測の重複数は保持されるためhashに影響します。
 
+UIへ3分類ラベルの内訳を反映する場合は、対象snapshotを明示して集計JSONを出力します。出力先が既に存在する場合は原子的に置き換えます。ブラウザはComment DBを直接参照せず、出力された `src/data/threeClassLabelSummary.json` を読み込みます。
+
+```bash
+npm run comment-db -- export-three-class-label-summary-ui \
+  --snapshot-ref <sha>:<snapshot-index> \
+  --output src/data/threeClassLabelSummary.json \
+  [--db path/to/comment-history.sqlite3]
+```
+
+出力にはschema version、対象snapshot reference、ラベル別件数、総件数だけを含めます。ラベル未完了やsnapshot観測とのsource index不一致は、集計JSONを出力せず失敗します。
+
 ## SQLiteクエリ例
 
 投稿・収集時刻で確認する例:
@@ -67,7 +78,7 @@ WHERE comment_text LIKE '%' || ? || '%';
 
 collector固有の別形式やlegacy rawとの自動判別、legacy rawとのmerge/dedupe、Stage13 dataset生成、実データのrepository fixture化は対象外です。実データはlocal検証入力としてのみ扱い、raw本体をrepositoryへ追加しないでください。
 
-## rich raw snapshot と Comment DB v6
+## rich raw snapshot と Comment DB v8
 
 `import-raw-snapshot` は、draft 2020-12 JSON Schemaに適合し、`loadedCount` と実際のitems数が一致し、動画IDの矛盾がないTikTok rich raw snapshotだけを受け付けます。`extractedAt`、コメント本文・ID・日時などのraw文字列は保存時にtrim、Unicode正規化、日時変換または補完を行いません。schemaにない独自の件数・日時制約も追加しません。
 
@@ -138,7 +149,7 @@ ITEMS.json
 response.schema.json
 ```
 
-`ITEMS.json`のIDは`I1`からの連番、`workset_id`はUUID v4です。コメント本文は空文字列・空白のみ・任意Unicode・指示文に見える文字列もデータとしてそのまま扱います。`HISTORY.json`は参照例であり、ITEMSから既知コメントを除外したり、履歴ラベルを強制したりしません。
+`ITEMS.json`のIDは`I1`からの連番、`workset_id`はUUID v4です。コメント本文は空文字列・空白のみ・任意Unicode・指示文に見える文字列もデータとしてそのまま扱います。Comment DBに三分類ラベルが存在するコメントは、JavaScript/SQLiteの完全一致キーで既存の評価例として`HISTORY.json`へ統合し、`ITEMS.json`から除外します。DB内で複数ラベルがある場合は`normal < reactive < direct_nuisance`で最悪ラベルを採用し、入力HISTORYだけに存在するコメントは除外根拠にしません。
 
 ChatGPTから返されたJSONは、workset自体（ZIP境界、canonical template、HISTORY/ITEMS、UUID、schema）と、responseの厳格JSON・workset ID・全IDの完全一致をローカルで検証します。検証は次のコマンドで行います。
 
@@ -150,7 +161,7 @@ npm run comment-db -- validate-three-class-response \
 
 有効なresponseは`workset_id`と`decisions`だけを持ち、`ITEMS.json`の全IDをちょうど一度ずつ含めます。欠落・過剰・不正label・重複JSON key・schema改変・unsafe ZIP memberは全体を拒否します。
 
-生成したworksetは、生成時に選択した `raw_snapshots.snapshot_id` と同じComment DB内で登録されます。応答反映時は登録済みsnapshotを再投影して `ITEMS.json` と完全一致することを確認し、選択snapshotの観測行だけへ現在ラベルを挿入します。raw観測は変更せず、同じラベルの再適用は冪等に `unchanged` として扱い、異なる既存ラベルは全体を拒否します。
+生成したworksetは、生成時に選択した `raw_snapshots.snapshot_id` と同じComment DB内で登録され、実際に除外したコメントだけがprovenanceとして固定されます。応答反映時は登録済みsnapshotと除外集合から `ITEMS.json` を再現して完全一致を確認します。除外された観測は変更せず、responseのdecisionに対応する観測だけへラベルを挿入するため、成功時の`observations`は`inserted + unchanged`と一致します。raw観測は変更せず、同じラベルの再適用は冪等に`unchanged`として扱い、異なる既存ラベルは全体を拒否します。
 
 ```bash
 npm run comment-db -- apply-three-class-response \
@@ -163,7 +174,7 @@ npm run comment-db -- apply-three-class-response \
 
 ## 公開済み three-class final の同期
 
-公開済み `three_class_labeled.json` を正本として、指定した1つのsnapshotへラベルを反映できます。対応付けは `comment` の完全一致だけで行い、同一コメントに複数ラベルがある場合は `direct_nuisance > reactive > normal` の順で最も悪いラベルを採用し、対象snapshot内の同一コメント全 observation へ統一反映します。既存ラベルは必要に応じて更新され、raw観測と非対象snapshotは変更しません。
+公開済み `three_class_labeled.json` を一回限りのbackfill／再実行可能な運用アダプターとして、指定した1つのsnapshotへラベルを反映できます。対応付けは `comment` の完全一致だけで行い、同一コメントに複数ラベルがある場合は共有ルールの`normal < reactive < direct_nuisance`で最悪ラベルを採用し、対象snapshot内の同一コメント全 observation へ統一反映します。通常運用の正本はComment DBであり、workset runtimeからこの同期処理は呼び出しません。
 
 ```bash
 npm run comment-db -- sync-three-class-final \

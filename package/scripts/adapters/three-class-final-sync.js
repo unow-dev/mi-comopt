@@ -10,12 +10,10 @@ import {
   readSnapshotThreeClassLabelTargets,
   updateObservationLabel,
 } from "../../src/database/three-class-label-repository.js";
-
-const LABEL_PRIORITY = new Map([
-  ["normal", 1],
-  ["reactive", 2],
-  ["direct_nuisance", 3],
-]);
+import {
+  THREE_CLASS_LABEL_PRIORITY,
+  worseThreeClassLabel,
+} from "../../src/three-class/label-resolution.js";
 
 function syncError(code, message, options = {}) {
   return new CommentDatabaseError(code, message, options);
@@ -46,7 +44,7 @@ export function buildThreeClassFinalLabelMap(records) {
     if (!isRecord(record) || typeof record.comment !== "string") {
       throw syncError("THREE_CLASS_FINAL_INVALID", `records[${index}].comment must be a string`);
     }
-    if (!LABEL_PRIORITY.has(record.label)) {
+    if (!THREE_CLASS_LABEL_PRIORITY.has(record.label)) {
       throw syncError("THREE_CLASS_FINAL_INVALID", `records[${index}].label is invalid`);
     }
 
@@ -54,9 +52,7 @@ export function buildThreeClassFinalLabelMap(records) {
     if (current !== undefined && current !== record.label) {
       commentsWithConflicts.add(record.comment);
     }
-    if (current === undefined || LABEL_PRIORITY.get(record.label) > LABEL_PRIORITY.get(current)) {
-      labelByComment.set(record.comment, record.label);
-    }
+    labelByComment.set(record.comment, worseThreeClassLabel(current, record.label));
   });
 
   return { labelByComment, commentsWithConflicts };

@@ -182,7 +182,7 @@ test("exports explicit snapshots as deterministic exact-five-field JSON and mani
   ]);
   assert.equal(manifest.schema_version, 3);
   assert.equal(manifest.projection_version, "1.0.0");
-  assert.equal(manifest.database_schema_version, 7);
+  assert.equal(manifest.database_schema_version, 8);
   assert.equal(manifest.output_sha256, createHash("sha256").update(outputBytes).digest("hex"));
   assert.equal(manifest.output_record_count, 3);
   assert.deepEqual(manifest.snapshots.map((snapshot) => [snapshot.payload_sha256, snapshot.snapshot_index, snapshot.input_format]), orderedShas.map((sha) => [sha, 0, "tiktokRawSnapshot-1.0.0"]));

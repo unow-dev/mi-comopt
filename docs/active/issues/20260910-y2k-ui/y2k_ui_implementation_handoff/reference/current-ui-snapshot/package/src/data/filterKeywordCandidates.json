@@ -1,0 +1,1707 @@
+[
+  {
+    "candidate_id": "kw_9d0663f5-d053-4db1-933c-3beb74c77565",
+    "keyword": "わからせ",
+    "variants": [
+      "わからせ",
+      "分からせ"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 23,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.092369,
+    "normal_hit_rate": 0,
+    "utility_score": 23,
+    "introduced_at": "2026-09-09T09:45:34Z"
+  },
+  {
+    "candidate_id": "kw_08edcfcb-6baa-4cf6-b747-fd6bc104361c",
+    "keyword": "ちょっと待ってほしい",
+    "variants": [
+      "ちょっと待ってほしい"
+    ],
+    "category_id": "copypasta_spam",
+    "category": "コピペ・長文スパム",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 13,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.052209,
+    "normal_hit_rate": 0,
+    "utility_score": 13,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_d33bcb15-f655-40e8-9f37-13fb148447e2",
+    "keyword": "唐揚げだけは",
+    "variants": [
+      "唐揚げだけは",
+      "今日の弁当には唐揚げ"
+    ],
+    "category_id": "copypasta_spam",
+    "category": "コピペ・長文スパム",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 13,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.052209,
+    "normal_hit_rate": 0,
+    "utility_score": 13,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_ba7f870e-f9e8-42ff-b2b0-31431b6bf730",
+    "keyword": "かわいいなー俺もこういう子と付き合いたかったな",
+    "variants": [
+      "かわいいなー俺もこういう子と付き合いたかったな"
+    ],
+    "category_id": "copypasta_spam",
+    "category": "コピペ・長文スパム",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 12,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.048193,
+    "normal_hit_rate": 0,
+    "utility_score": 12,
+    "introduced_at": "2026-08-26T14:51:16Z"
+  },
+  {
+    "candidate_id": "kw_1a40efb1-c337-4593-92f4-5f3f25979271",
+    "keyword": "ここまで読んでくれた人",
+    "variants": [
+      "ここまで読んでくれた人"
+    ],
+    "category_id": "copypasta_spam",
+    "category": "コピペ・長文スパム",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 12,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.048193,
+    "normal_hit_rate": 0,
+    "utility_score": 12,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_4f83beb4-060a-48ff-8ce4-79cc66f10484",
+    "keyword": "冷蔵庫には意思がある",
+    "variants": [
+      "冷蔵庫には意思がある"
+    ],
+    "category_id": "copypasta_spam",
+    "category": "コピペ・長文スパム",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 12,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.048193,
+    "normal_hit_rate": 0,
+    "utility_score": 12,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_e6bbc4ba-fe41-4a6b-ab4d-11135e6d8950",
+    "keyword": "十七歳の春",
+    "variants": [
+      "十七歳の春"
+    ],
+    "category_id": "copypasta_spam",
+    "category": "コピペ・長文スパム",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 8,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.032129,
+    "normal_hit_rate": 0,
+    "utility_score": 8,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_4e23b14d-272b-41c2-88f3-72d82546a544",
+    "keyword": "何歳まで",
+    "variants": [
+      "何歳まで",
+      "なんさいまで"
+    ],
+    "category_id": "age_mockery",
+    "category": "年齢いじり",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 8,
+    "reactive_hits": 1,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.032129,
+    "normal_hit_rate": 0,
+    "utility_score": 8,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_1502debd-122e-4854-a362-76c85f943d0c",
+    "keyword": "DM",
+    "variants": [
+      "DM"
+    ],
+    "category_id": "spam_solicitation",
+    "category": "スパム・勧誘",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 8,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.032129,
+    "normal_hit_rate": 0,
+    "utility_score": 8,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_be621ad0-f658-4684-b2fb-0cc720db7c86",
+    "keyword": "フォローしろ",
+    "variants": [
+      "フォローしろ"
+    ],
+    "category_id": "spam_solicitation",
+    "category": "スパム・勧誘",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 7,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.028112,
+    "normal_hit_rate": 0,
+    "utility_score": 7,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_4b341039-81b9-4a95-8a6f-2b53318fab4b",
+    "keyword": "勘違いさせた",
+    "variants": [
+      "勘違いさせた"
+    ],
+    "category_id": "behavior_mockery",
+    "category": "行動嘲笑",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 7,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.028112,
+    "normal_hit_rate": 0,
+    "utility_score": 7,
+    "introduced_at": "2026-09-09T09:45:34Z"
+  },
+  {
+    "candidate_id": "kw_fadfb2ea-9808-4534-8b29-4d94a323fa7d",
+    "keyword": "他のコメントどこ",
+    "variants": [
+      "他のコメントどこ",
+      "他のコメントどこいった"
+    ],
+    "category_id": "copypasta_spam",
+    "category": "コピペ・長文スパム",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 4,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.016064,
+    "normal_hit_rate": 0,
+    "utility_score": 4,
+    "introduced_at": "2026-08-26T14:51:16Z"
+  },
+  {
+    "candidate_id": "kw_6efc0626-23c4-49ca-89bf-5f3578d7b904",
+    "keyword": "フォロー返し",
+    "variants": [
+      "フォロー返し",
+      "フォロー返しして",
+      "フォロー返して"
+    ],
+    "category_id": "spam_solicitation",
+    "category": "スパム・勧誘",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 4,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.016064,
+    "normal_hit_rate": 0,
+    "utility_score": 4,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_8e9936ff-4d0a-4240-a9f7-e6672f1228de",
+    "keyword": "フォロー返ししてください",
+    "variants": [
+      "フォロー返ししてください",
+      "フォロー返しして"
+    ],
+    "category_id": "spam_solicitation",
+    "category": "スパム・勧誘",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 3,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.012048,
+    "normal_hit_rate": 0,
+    "utility_score": 3,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_da7dbc9e-026d-4387-92e6-82dd0f997b03",
+    "keyword": "炎上商法",
+    "variants": [
+      "炎上商法"
+    ],
+    "category_id": "behavior_mockery",
+    "category": "行動嘲笑",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 3,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.012048,
+    "normal_hit_rate": 0,
+    "utility_score": 3,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_8caced30-851c-42d0-904d-3d99b2bab5dc",
+    "keyword": "炎上目的",
+    "variants": [
+      "炎上目的",
+      "炎上わざと"
+    ],
+    "category_id": "behavior_mockery",
+    "category": "行動嘲笑",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 3,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.012048,
+    "normal_hit_rate": 0,
+    "utility_score": 3,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_7fd7396d-5b73-432e-8cfc-ef8027e7b64f",
+    "keyword": "アラサーでこれは",
+    "variants": [
+      "アラサーでこれは",
+      "アラサーがこれは"
+    ],
+    "category_id": "age_mockery",
+    "category": "年齢いじり",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.008032,
+    "normal_hit_rate": 0,
+    "utility_score": 2,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_0d12c2f7-e3a3-4591-afb4-a3ab2bb58ed3",
+    "keyword": "舐めてくれそう",
+    "variants": [
+      "舐めてくれそう",
+      "なめてくれそう"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.008032,
+    "normal_hit_rate": 0,
+    "utility_score": 2,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_0d3b0e78-edf7-4145-b215-852004533d67",
+    "keyword": "おばさん",
+    "variants": [
+      "おばさん",
+      "オバサン"
+    ],
+    "category_id": "age_mockery",
+    "category": "年齢いじり",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 3,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.008032,
+    "normal_hit_rate": 0,
+    "utility_score": 2,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_45658a0f-d307-4106-be92-8ae9ca3f1ac3",
+    "keyword": "手帳もち",
+    "variants": [
+      "手帳もち",
+      "手帳持ち"
+    ],
+    "category_id": "attribute_attack",
+    "category": "属性攻撃",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.008032,
+    "normal_hit_rate": 0,
+    "utility_score": 2,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_66c93586-a9a0-4fd8-a641-78f465f30cfa",
+    "keyword": "おかず",
+    "variants": [
+      "おかず"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.008032,
+    "normal_hit_rate": 0,
+    "utility_score": 2,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_4acb0965-7f5a-4871-9455-e90152f264c8",
+    "keyword": "叩かれ",
+    "variants": [
+      "叩かれ",
+      "叩かれて",
+      "叩かれまく"
+    ],
+    "category_id": "reaction",
+    "category": "反応系",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 89,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.008032,
+    "normal_hit_rate": 0,
+    "utility_score": 2,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_f27c4788-c54d-43d4-a608-df53146b39c8",
+    "keyword": "抜ける",
+    "variants": [
+      "抜ける"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "高推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.008032,
+    "normal_hit_rate": 0,
+    "utility_score": 2,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_83f671de-627a-4da2-9477-a3b288531892",
+    "keyword": "エロ",
+    "variants": [
+      "エロ",
+      "えろ"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "中推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 10,
+    "reactive_hits": 4,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.909091,
+    "direct_recall_contribution": 0.040161,
+    "normal_hit_rate": 0.000043,
+    "utility_score": 9,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_3364af54-d528-4c45-a138-0e2932dbddaf",
+    "keyword": "いいねしてください",
+    "variants": [
+      "いいねしてください",
+      "いいねしないと呪われる",
+      "いいねたくさんほしい",
+      "いいねほしい",
+      "いいねや再投稿お願いします",
+      "いいね増やして",
+      "いいね頼んだ",
+      "バズらして",
+      "再投稿してください",
+      "拡散しよう"
+    ],
+    "category_id": "spam_solicitation",
+    "category": "スパム・勧誘",
+    "recommendation": "中推奨",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 9,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.9,
+    "direct_recall_contribution": 0.036145,
+    "normal_hit_rate": 0.000043,
+    "utility_score": 8,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_8cd519c1-a422-4d19-bc4e-61d7bfa11e19",
+    "keyword": "俺の時計、時間を食べてる説",
+    "variants": [
+      "俺の時計、時間を食べてる説",
+      "俺の時計",
+      "時間を食べてる説"
+    ],
+    "category_id": "copypasta_spam",
+    "category": "コピペ・長文スパム",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_21430fac-550e-4f42-b0c7-8dcceda42466",
+    "keyword": "貴方の時間を5分だけ",
+    "variants": [
+      "貴方の時間を5分だけ",
+      "あなたの時間を5分だけ"
+    ],
+    "category_id": "copypasta_spam",
+    "category": "コピペ・長文スパム",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_4903a0cd-11b6-4597-8004-797b3488064e",
+    "keyword": "自分のことフォロー",
+    "variants": [
+      "自分のことフォロー"
+    ],
+    "category_id": "spam_solicitation",
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_43f5b84b-7634-4de4-9064-bc422a73bb49",
+    "keyword": "ガチ恋の人いいね",
+    "variants": [
+      "ガチ恋の人いいね"
+    ],
+    "category_id": "spam_solicitation",
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_381dfda6-292e-46df-b575-3fb90d5c0715",
+    "keyword": "フォロー返します",
+    "variants": [
+      "フォロー返します"
+    ],
+    "category_id": "spam_solicitation",
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_0171fe3e-ae2c-4c21-aba9-2b45eeb85534",
+    "keyword": "可愛い私見て感",
+    "variants": [
+      "可愛い私見て感",
+      "かわいい私見て感"
+    ],
+    "category_id": "behavior_mockery",
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_aec9a8ac-7f01-4cdd-b4ce-19a987085106",
+    "keyword": "救いようがない",
+    "variants": [
+      "救いようがない"
+    ],
+    "category_id": "hate_mockery",
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_90bba903-6a2e-4f70-85b4-9f22689ef2f8",
+    "keyword": "DMください",
+    "variants": [
+      "DMください"
+    ],
+    "category_id": "spam_solicitation",
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_61688f69-b2a4-4d7e-a368-97241a3a84c0",
+    "keyword": "おばさん気味",
+    "variants": [
+      "おばさん気味"
+    ],
+    "category_id": "age_mockery",
+    "category": "年齢いじり",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_ed458a1c-4c7c-432e-b822-1d2ef1e121c6",
+    "keyword": "バニーガール",
+    "variants": [
+      "バニーガール"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_74fb2256-4253-45b8-a62e-36d397290563",
+    "keyword": "ブロスタとは",
+    "variants": [
+      "ブロスタとは"
+    ],
+    "category_id": "copypasta_spam",
+    "category": "コピペ・長文スパム",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": "2026-08-26T14:51:16Z"
+  },
+  {
+    "candidate_id": "kw_21bbbef8-5610-4ec3-acc7-7e4d8c9c19c5",
+    "keyword": "脇に住みたい",
+    "variants": [
+      "脇に住みたい"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_ffa5ede5-0d1e-447f-b84c-2dc7177b51e2",
+    "keyword": "DMおいで",
+    "variants": [
+      "DMおいで"
+    ],
+    "category_id": "spam_solicitation",
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_859c8361-cbd8-4325-8caa-3141e4d0f2f3",
+    "keyword": "DM欲しい",
+    "variants": [
+      "DM欲しい"
+    ],
+    "category_id": "spam_solicitation",
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_49e6011e-8d1f-4fb5-8d0c-728c005398a8",
+    "keyword": "性欲強そう",
+    "variants": [
+      "性欲強そう"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_ab03d280-0cec-4325-bf1d-6d8f572524d5",
+    "keyword": "裸足助かる",
+    "variants": [
+      "裸足助かる"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_5cc93423-1fee-4c25-8f79-77c05ebe0f3e",
+    "keyword": "話したい人",
+    "variants": [
+      "話したい人"
+    ],
+    "category_id": "spam_solicitation",
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_0ac46ede-8e34-437b-b062-026c014ac997",
+    "keyword": "DMきて",
+    "variants": [
+      "DMきて"
+    ],
+    "category_id": "spam_solicitation",
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_3ee2a87d-ba2f-492c-9569-e119b51540c4",
+    "keyword": "ガチエロ",
+    "variants": [
+      "ガチエロ",
+      "がちえろ"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_c9876294-c630-43c6-becb-1b8fcc65febd",
+    "keyword": "脇きれい",
+    "variants": [
+      "脇きれい",
+      "脇綺麗"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_38452182-7bab-4228-b4c9-cf5b71eab983",
+    "keyword": "顔がえろ",
+    "variants": [
+      "顔がえろ",
+      "顔がエロ"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_4d60b319-164b-4640-95c3-ecb3be760947",
+    "keyword": "性欲",
+    "variants": [
+      "性欲"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_3d57a836-3ad9-45d8-963d-d298f9f8c0eb",
+    "keyword": "洗脳",
+    "variants": [
+      "洗脳"
+    ],
+    "category_id": "behavior_mockery",
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 0,
+    "precision_excluding_reactive": 1,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_2a070db4-dea9-4d3f-995d-64dbf382f188",
+    "keyword": "胸",
+    "variants": [
+      "胸"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 9,
+    "reactive_hits": 1,
+    "normal_hits": 3,
+    "precision_excluding_reactive": 0.75,
+    "direct_recall_contribution": 0.036145,
+    "normal_hit_rate": 0.00013,
+    "utility_score": 6,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_68c133b9-a772-4568-aa4b-1baa7778df46",
+    "keyword": "承認欲求",
+    "variants": [
+      "承認欲求"
+    ],
+    "category_id": "hate_mockery",
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 3,
+    "reactive_hits": 3,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.75,
+    "direct_recall_contribution": 0.012048,
+    "normal_hit_rate": 0.000043,
+    "utility_score": 2,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_2cf45b1e-eb63-4398-b1ed-fdfe262a684a",
+    "keyword": "ヤレる",
+    "variants": [
+      "ヤレる",
+      "やれる"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 3,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.75,
+    "direct_recall_contribution": 0.012048,
+    "normal_hit_rate": 0.000043,
+    "utility_score": 2,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_b8d5df8a-4d81-4e45-9c0e-8b08b28d86ed",
+    "keyword": "フォローして",
+    "variants": [
+      "フォローして",
+      "フォローお願い",
+      "フォローお願いします"
+    ],
+    "category_id": "spam_solicitation",
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 18,
+    "reactive_hits": 1,
+    "normal_hits": 11,
+    "precision_excluding_reactive": 0.62069,
+    "direct_recall_contribution": 0.072289,
+    "normal_hit_rate": 0.000475,
+    "utility_score": 7,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_b3572bd7-9620-4918-8d1b-7953d4e80f52",
+    "keyword": "アンチ",
+    "variants": [
+      "アンチ"
+    ],
+    "category_id": "reaction",
+    "category": "反応系",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 6,
+    "reactive_hits": 714,
+    "normal_hits": 4,
+    "precision_excluding_reactive": 0.6,
+    "direct_recall_contribution": 0.024096,
+    "normal_hit_rate": 0.000173,
+    "utility_score": 2,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_73eb99f7-1a23-4aed-b8b5-2340ee7254eb",
+    "keyword": "脇",
+    "variants": [
+      "脇",
+      "わき"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 6,
+    "reactive_hits": 0,
+    "normal_hits": 4,
+    "precision_excluding_reactive": 0.6,
+    "direct_recall_contribution": 0.024096,
+    "normal_hit_rate": 0.000173,
+    "utility_score": 2,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_9d286c28-c615-4757-818c-d26b01cb3c4e",
+    "keyword": "いいねして",
+    "variants": [
+      "いいねして"
+    ],
+    "category_id": "spam_solicitation",
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 7,
+    "reactive_hits": 2,
+    "normal_hits": 5,
+    "precision_excluding_reactive": 0.583333,
+    "direct_recall_contribution": 0.028112,
+    "normal_hit_rate": 0.000216,
+    "utility_score": 2,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_543a2785-c9bf-4a25-b07d-0a53df5bdfd9",
+    "keyword": "舐め",
+    "variants": [
+      "舐め",
+      "なめ"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 9,
+    "reactive_hits": 1,
+    "normal_hits": 8,
+    "precision_excluding_reactive": 0.529412,
+    "direct_recall_contribution": 0.036145,
+    "normal_hit_rate": 0.000345,
+    "utility_score": 1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_3ac59061-0370-41ca-b3c4-dbf2c987f4a1",
+    "keyword": "アラサー",
+    "variants": [
+      "アラサー"
+    ],
+    "category_id": "age_mockery",
+    "category": "年齢いじり",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 5,
+    "reactive_hits": 2,
+    "normal_hits": 5,
+    "precision_excluding_reactive": 0.5,
+    "direct_recall_contribution": 0.02008,
+    "normal_hit_rate": 0.000216,
+    "utility_score": 0,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_5b9a7f43-a8a9-4ffa-9046-345266f5e422",
+    "keyword": "これはきつい",
+    "variants": [
+      "これはきつい",
+      "これはキツい",
+      "これはキツイ"
+    ],
+    "category_id": "hate_mockery",
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.5,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0.000043,
+    "utility_score": 0,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_97b16293-04f7-4762-8fcb-09356d2de65c",
+    "keyword": "抜いた",
+    "variants": [
+      "抜いた",
+      "抜い"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.5,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0.000043,
+    "utility_score": 0,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_8202d903-457e-4a44-9814-dbe58b509d19",
+    "keyword": "興奮",
+    "variants": [
+      "興奮"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.5,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0.000043,
+    "utility_score": 0,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_0a1b4c91-8757-4083-b7c6-fefa093e8889",
+    "keyword": "裸足",
+    "variants": [
+      "裸足"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 1,
+    "precision_excluding_reactive": 0.5,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0.000043,
+    "utility_score": 0,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_e9376531-fc58-427d-b404-4dd9e9649663",
+    "keyword": "がちできつい",
+    "variants": [
+      "がちできつい",
+      "がちでキツい",
+      "ガチできつい",
+      "ガチでキツい",
+      "ガチでキツイ"
+    ],
+    "category_id": "hate_mockery",
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 3,
+    "precision_excluding_reactive": 0.4,
+    "direct_recall_contribution": 0.008032,
+    "normal_hit_rate": 0.00013,
+    "utility_score": -1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_1ffd6c41-5ae9-484b-9137-b499b9b435ec",
+    "keyword": "きついって",
+    "variants": [
+      "きついって",
+      "キツいって",
+      "キツイって"
+    ],
+    "category_id": "hate_mockery",
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 5,
+    "reactive_hits": 19,
+    "normal_hits": 9,
+    "precision_excluding_reactive": 0.357143,
+    "direct_recall_contribution": 0.02008,
+    "normal_hit_rate": 0.000389,
+    "utility_score": -4,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_abd386ce-652d-4065-9d0f-05ad2a4361c3",
+    "keyword": "匂い嗅",
+    "variants": [
+      "匂い嗅",
+      "におい嗅"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 2,
+    "precision_excluding_reactive": 0.333333,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0.000086,
+    "utility_score": -1,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_e9223abc-a983-4f04-94cb-a9f86e272189",
+    "keyword": "きつすぎ",
+    "variants": [
+      "きつすぎ",
+      "きつすぎる",
+      "キツすぎ",
+      "キツすぎる"
+    ],
+    "category_id": "hate_mockery",
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 4,
+    "reactive_hits": 2,
+    "normal_hits": 11,
+    "precision_excluding_reactive": 0.266667,
+    "direct_recall_contribution": 0.016064,
+    "normal_hit_rate": 0.000475,
+    "utility_score": -7,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_2dbf5e40-fcb8-4131-b43a-7475139cd195",
+    "keyword": "キモい",
+    "variants": [
+      "キモい",
+      "きも",
+      "きもい",
+      "キモイ"
+    ],
+    "category_id": "hate_mockery",
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 4,
+    "reactive_hits": 8,
+    "normal_hits": 12,
+    "precision_excluding_reactive": 0.25,
+    "direct_recall_contribution": 0.016064,
+    "normal_hit_rate": 0.000518,
+    "utility_score": -8,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_50b67f67-b37c-4aa8-ba8d-23487966a9ef",
+    "keyword": "ブス",
+    "variants": [
+      "ブス",
+      "ぶす"
+    ],
+    "category_id": "appearance_attack",
+    "category": "容姿攻撃",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 3,
+    "reactive_hits": 8,
+    "normal_hits": 9,
+    "precision_excluding_reactive": 0.25,
+    "direct_recall_contribution": 0.012048,
+    "normal_hit_rate": 0.000389,
+    "utility_score": -6,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_4c91246c-8a83-449c-ae23-9b5a33549baa",
+    "keyword": "きつ",
+    "variants": [
+      "きつ",
+      "キツ"
+    ],
+    "category_id": "hate_mockery",
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 35,
+    "reactive_hits": 113,
+    "normal_hits": 130,
+    "precision_excluding_reactive": 0.212121,
+    "direct_recall_contribution": 0.140562,
+    "normal_hit_rate": 0.005614,
+    "utility_score": -95,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_4eb60f66-3eb2-47dd-bf5c-2f1e49905b90",
+    "keyword": "何歳すか",
+    "variants": [
+      "何歳すか",
+      "何歳ですか",
+      "何歳でちゅか"
+    ],
+    "category_id": "age_mockery",
+    "category": "年齢いじり",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 0,
+    "normal_hits": 8,
+    "precision_excluding_reactive": 0.2,
+    "direct_recall_contribution": 0.008032,
+    "normal_hit_rate": 0.000345,
+    "utility_score": -6,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_f098098d-4c54-40d3-940d-85c1c532df5b",
+    "keyword": "25で",
+    "variants": [
+      "25で"
+    ],
+    "category_id": "age_mockery",
+    "category": "年齢いじり",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 5,
+    "normal_hits": 4,
+    "precision_excluding_reactive": 0.2,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0.000173,
+    "utility_score": -3,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_03f7817d-7192-4b38-95c4-87b30a527850",
+    "keyword": "共感性羞恥",
+    "variants": [
+      "共感性羞恥",
+      "共感羞恥"
+    ],
+    "category_id": "hate_mockery",
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 2,
+    "normal_hits": 9,
+    "precision_excluding_reactive": 0.181818,
+    "direct_recall_contribution": 0.008032,
+    "normal_hit_rate": 0.000389,
+    "utility_score": -7,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_398aff3e-1dc4-4f01-abb6-e0aa10ca8366",
+    "keyword": "きついな",
+    "variants": [
+      "きついな",
+      "キツいな",
+      "キツイな"
+    ],
+    "category_id": "hate_mockery",
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 6,
+    "normal_hits": 6,
+    "precision_excluding_reactive": 0.142857,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0.000259,
+    "utility_score": -5,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_9220b946-8434-408b-892a-01671d0d4c7c",
+    "keyword": "違和感",
+    "variants": [
+      "違和感"
+    ],
+    "category_id": "behavior_mockery",
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 1,
+    "normal_hits": 14,
+    "precision_excluding_reactive": 0.125,
+    "direct_recall_contribution": 0.008032,
+    "normal_hit_rate": 0.000605,
+    "utility_score": -12,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_0d377405-9ac3-413f-ab1b-e3c12f130c13",
+    "keyword": "可愛いでしょ感",
+    "variants": [
+      "可愛いでしょ感",
+      "かわいいでしょ",
+      "可愛いでしょ"
+    ],
+    "category_id": "behavior_mockery",
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 1,
+    "normal_hits": 7,
+    "precision_excluding_reactive": 0.125,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0.000302,
+    "utility_score": -6,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_61dcb846-45da-4b3b-ba9f-80a1f32a9f7e",
+    "keyword": "これは痛い",
+    "variants": [
+      "これは痛い",
+      "これはいたい"
+    ],
+    "category_id": "hate_mockery",
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 1,
+    "normal_hits": 7,
+    "precision_excluding_reactive": 0.125,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0.000302,
+    "utility_score": -6,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_b6fb5b18-6ebb-405b-996d-5190e10919a6",
+    "keyword": "インキャ",
+    "variants": [
+      "インキャ",
+      "陰キャ"
+    ],
+    "category_id": "attribute_attack",
+    "category": "属性攻撃",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 1,
+    "normal_hits": 7,
+    "precision_excluding_reactive": 0.125,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0.000302,
+    "utility_score": -6,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_1c166a4e-6452-43e8-a8fb-cc78e2069acc",
+    "keyword": "ぶりっ子",
+    "variants": [
+      "ぶりっ子",
+      "ぶりっこ"
+    ],
+    "category_id": "hate_mockery",
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 14,
+    "normal_hits": 8,
+    "precision_excluding_reactive": 0.111111,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0.000345,
+    "utility_score": -7,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_c3251f6b-8f3c-4fb9-aec1-6de246dedd44",
+    "keyword": "痛い",
+    "variants": [
+      "痛い",
+      "いたい",
+      "イタイ"
+    ],
+    "category_id": "hate_mockery",
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 12,
+    "reactive_hits": 98,
+    "normal_hits": 125,
+    "precision_excluding_reactive": 0.087591,
+    "direct_recall_contribution": 0.048193,
+    "normal_hit_rate": 0.005398,
+    "utility_score": -113,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_59973320-2baa-4717-a4c6-c5080f3f1762",
+    "keyword": "AV",
+    "variants": [
+      "AV"
+    ],
+    "category_id": "sexual_objectification",
+    "category": "性的・対象化",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 3,
+    "reactive_hits": 0,
+    "normal_hits": 33,
+    "precision_excluding_reactive": 0.083333,
+    "direct_recall_contribution": 0.012048,
+    "normal_hit_rate": 0.001425,
+    "utility_score": -30,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_be21326d-d5e8-4160-ad86-7d27b5c2abc3",
+    "keyword": "いいねまで",
+    "variants": [
+      "いいねまで"
+    ],
+    "category_id": "spam_solicitation",
+    "category": "スパム・勧誘",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 0,
+    "normal_hits": 12,
+    "precision_excluding_reactive": 0.076923,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0.000518,
+    "utility_score": -11,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_e951dce4-1b34-4742-b889-711683903b04",
+    "keyword": "あざとい",
+    "variants": [
+      "あざとい"
+    ],
+    "category_id": "hate_mockery",
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 3,
+    "normal_hits": 16,
+    "precision_excluding_reactive": 0.058824,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0.000691,
+    "utility_score": -15,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_251fedc5-3966-40c3-bd0c-dc1af4469c7d",
+    "keyword": "冷笑",
+    "variants": [
+      "冷笑"
+    ],
+    "category_id": "behavior_mockery",
+    "category": "行動嘲笑",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 11,
+    "normal_hits": 26,
+    "precision_excluding_reactive": 0.037037,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0.001123,
+    "utility_score": -25,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_6432be41-bc90-47af-9ac1-36973f24b86a",
+    "keyword": "可愛くない",
+    "variants": [
+      "可愛くない",
+      "かわいくない"
+    ],
+    "category_id": "appearance_attack",
+    "category": "容姿攻撃",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 15,
+    "normal_hits": 27,
+    "precision_excluding_reactive": 0.035714,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0.001166,
+    "utility_score": -26,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_76bd7568-806f-41d8-93d2-99994b3f4616",
+    "keyword": "25歳",
+    "variants": [
+      "25歳",
+      "25ってマジか",
+      "25才"
+    ],
+    "category_id": "age_mockery",
+    "category": "年齢いじり",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 1,
+    "reactive_hits": 11,
+    "normal_hits": 28,
+    "precision_excluding_reactive": 0.034483,
+    "direct_recall_contribution": 0.004016,
+    "normal_hit_rate": 0.001209,
+    "utility_score": -27,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_86f39138-3462-4afb-a4b7-e8cfd006768e",
+    "keyword": "嫉妬",
+    "variants": [
+      "嫉妬"
+    ],
+    "category_id": "reaction",
+    "category": "反応系",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 109,
+    "normal_hits": 70,
+    "precision_excluding_reactive": 0.027778,
+    "direct_recall_contribution": 0.008032,
+    "normal_hit_rate": 0.003023,
+    "utility_score": -68,
+    "introduced_at": null
+  },
+  {
+    "candidate_id": "kw_16e35bca-01af-4993-8d2d-3b43c35eb1f6",
+    "keyword": "無理",
+    "variants": [
+      "無理",
+      "むり",
+      "ムリ"
+    ],
+    "category_id": "hate_mockery",
+    "category": "嫌悪・嘲笑",
+    "recommendation": "任意",
+    "match_type": "normalized_substring",
+    "direct_nuisance_hits": 2,
+    "reactive_hits": 30,
+    "normal_hits": 98,
+    "precision_excluding_reactive": 0.02,
+    "direct_recall_contribution": 0.008032,
+    "normal_hit_rate": 0.004232,
+    "utility_score": -96,
+    "introduced_at": null
+  }
+]

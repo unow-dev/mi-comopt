@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "snapshot_ref": {
+    "payload_sha256": "98b1a2d6ca08fe61b8b821d4498e8bab8683d4cf0c4ac0843cb5b89f7a014c7c",
+    "snapshot_index": 0
+  },
+  "total": 24622,
+  "counts": {
+    "direct_nuisance": 731,
+    "reactive": 1339,
+    "normal": 22552
+  }
+}

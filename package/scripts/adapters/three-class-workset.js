@@ -16,6 +16,7 @@ import {
   readExistingCommentLabels,
   readExistingTargetLabels,
   readTargetObservations,
+  readWorksetExcludedComments,
   readWorksetSnapshotRefs,
   registerWorkset,
   worksetExists,
@@ -38,6 +39,7 @@ import {
   UUID_V4_PATTERN,
   PROTOCOL_VERSION,
 } from "../../src/three-class-workset/protocol.js";
+import { worseThreeClassLabel } from "../../src/three-class/label-resolution.js";
 
 const PACKAGER_PATH = path.join(REPOSITORY_ROOT, "package", "scripts", "pack-three-class-workset.py");
 const PROMPT_TEMPLATE_PATH = path.join(REPOSITORY_ROOT, "package", "templates", "three-class-workset", "PROMPT.md");
@@ -47,18 +49,75 @@ function worksetError(code, message, options = {}) {
   return new CommentDatabaseError(code, message, options);
 }
 
-function buildThreeClassItems(records) {
+export function buildEffectiveCommentLabelMap(rows) {
+  const labelByComment = new Map();
+  for (const row of rows) {
+    const current = labelByComment.get(row.commentText);
+    if (current === undefined) {
+      labelByComment.set(row.commentText, {
+        label: row.label,
+        firstObservationId: row.exampleObservationId,
+      });
+      continue;
+    }
+    labelByComment.set(row.commentText, {
+      label: worseThreeClassLabel(current.label, row.label),
+      firstObservationId: Math.min(current.firstObservationId, row.exampleObservationId),
+    });
+  }
+  return labelByComment;
+}
+
+export function mergeThreeClassHistory(history, effectiveCommentLabels) {
+  const inputComments = new Set();
+  const items = history.items.map((item) => {
+    inputComments.add(item.comment);
+    const effective = effectiveCommentLabels.get(item.comment);
+    return {
+      comment: item.comment,
+      label: effective?.label ?? item.label,
+    };
+  });
+
+  const dbOnly = [...effectiveCommentLabels.entries()]
+    .filter(([commentText]) => !inputComments.has(commentText))
+    .sort(([leftComment, leftValue], [rightComment, rightValue]) => {
+      if (leftValue.firstObservationId !== rightValue.firstObservationId) {
+        return leftValue.firstObservationId - rightValue.firstObservationId;
+      }
+      if (leftComment < rightComment) return -1;
+      if (leftComment > rightComment) return 1;
+      return 0;
+    })
+    .map(([comment, { label }]) => ({ comment, label }));
+
+  return {
+    protocol_version: history.protocol_version,
+    items: [...items, ...dbOnly],
+  };
+}
+
+export function buildThreeClassItemPlan(records, excludedComments = new Set()) {
   const seenComments = new Set();
   const items = [];
+  const actuallyExcludedComments = new Set();
   for (const record of records) {
     if (typeof record.comment !== "string") {
       throw worksetError("DATABASE_INTEGRITY_ERROR", "projected record comment must be a string");
     }
     if (seenComments.has(record.comment)) continue;
     seenComments.add(record.comment);
+    if (excludedComments.has(record.comment)) {
+      actuallyExcludedComments.add(record.comment);
+      continue;
+    }
     items.push({ id: `I${items.length + 1}`, comment: record.comment });
   }
-  return items;
+  return { items, actuallyExcludedComments };
+}
+
+export function buildThreeClassItems(records, excludedComments = new Set()) {
+  return buildThreeClassItemPlan(records, excludedComments).items;
 }
 
 function withImmediateTransaction(db, action) {
@@ -340,12 +399,14 @@ export async function generateThreeClassWorkset({
     const resolvedRefs = resolveSelectedSnapshotRefs(db, { snapshotRefs, snapshotShas });
     const selectedSnapshots = readSelectedSnapshots(db, resolvedRefs);
     const artifacts = buildAnalysisArtifacts(selectedSnapshots);
-    const items = buildThreeClassItems(artifacts.records);
+    const effectiveCommentLabels = buildEffectiveCommentLabelMap(readExistingCommentLabels(db));
+    const generatedHistory = mergeThreeClassHistory(history, effectiveCommentLabels);
+    const itemPlan = buildThreeClassItemPlan(artifacts.records, new Set(effectiveCommentLabels.keys()));
     const worksetId = randomUUID();
     const itemsValue = {
       protocol_version: PROTOCOL_VERSION,
       workset_id: worksetId,
-      items,
+      items: itemPlan.items,
     };
     const schemaValue = buildResponseSchema(worksetId);
 
@@ -361,7 +422,7 @@ export async function generateThreeClassWorkset({
     const schemaPath = path.join(stagingRoot, "response.schema.json");
     await writeExclusive(promptPath, templates.prompt, "PROMPT.md");
     await writeExclusive(rulesPath, templates.rules, "RULES.md");
-    await writeExclusive(historyFilePath, serializeJson(history), "HISTORY.json");
+    await writeExclusive(historyFilePath, serializeJson(generatedHistory), "HISTORY.json");
     await writeExclusive(itemsPath, serializeJson(itemsValue), "ITEMS.json");
     await writeExclusive(schemaPath, serializeJson(schemaValue), "response.schema.json");
 
@@ -405,6 +466,7 @@ export async function generateThreeClassWorkset({
       registerWorkset(db, {
         worksetId: verified.worksetId,
         snapshotIds: selectedSnapshots.map(({ snapshot }) => snapshot.snapshotId),
+        excludedComments: [...itemPlan.actuallyExcludedComments],
       });
     });
     outputOwned = false;
@@ -456,8 +518,17 @@ export async function applyThreeClassResponse({ dbPath, worksetPath, responsePat
       }
       const selectedSnapshots = readSelectedSnapshots(db, snapshotRefs);
       const artifacts = buildAnalysisArtifacts(selectedSnapshots);
-      const regeneratedItems = buildThreeClassItems(artifacts.records);
-      if (!deepEqual(regeneratedItems, workset.items.items)) {
+      const registeredExcludedComments = new Set(readWorksetExcludedComments(db, workset.worksetId));
+      const regeneratedPlan = buildThreeClassItemPlan(artifacts.records, registeredExcludedComments);
+      for (const commentText of registeredExcludedComments) {
+        if (!regeneratedPlan.actuallyExcludedComments.has(commentText)) {
+          throw worksetError(
+            "WORKSET_SOURCE_MISMATCH",
+            `registered excluded comment is absent from source: ${workset.worksetId}: ${JSON.stringify(commentText)}`,
+          );
+        }
+      }
+      if (!deepEqual(regeneratedPlan.items, workset.items.items)) {
         throw worksetError("WORKSET_SOURCE_MISMATCH", `registered source does not reproduce workset ITEMS: ${workset.worksetId}`);
       }
 
@@ -495,18 +566,17 @@ export async function applyThreeClassResponse({ dbPath, worksetPath, responsePat
           `target observation count ${targetObservations.length} does not match source count ${expectedObservationCount}`,
         );
       }
-      for (const target of targetObservations) {
-        if (!decisionByComment.has(target.commentText)) {
-          throw worksetError("DATABASE_INTEGRITY_ERROR", `target comment is absent from decision map: observation ${target.observationId}`);
-        }
-      }
+      const responseTargets = targetObservations.filter((target) => decisionByComment.has(target.commentText));
+      const responseTargetObservationIds = new Set(responseTargets.map((target) => target.observationId));
 
       const existingTargetLabels = new Map(
-        readExistingTargetLabels(db, workset.worksetId).map((row) => [row.observationId, row.label]),
+        readExistingTargetLabels(db, workset.worksetId)
+          .filter((row) => responseTargetObservationIds.has(row.observationId))
+          .map((row) => [row.observationId, row.label]),
       );
       const pending = [];
       let unchanged = 0;
-      for (const target of targetObservations) {
+      for (const target of responseTargets) {
         const requestedLabel = decisionByComment.get(target.commentText);
         const currentLabel = existingTargetLabels.get(target.observationId);
         if (currentLabel === undefined) {
@@ -523,12 +593,12 @@ export async function applyThreeClassResponse({ dbPath, worksetPath, responsePat
 
       for (const row of pending) insertObservationLabel(db, row);
       const inserted = pending.length;
-      if (inserted + unchanged !== targetObservations.length) {
+      if (inserted + unchanged !== responseTargets.length) {
         throw worksetError("DATABASE_INTEGRITY_ERROR", "label application counts do not match target observations");
       }
       return {
         worksetId: workset.worksetId,
-        observations: targetObservations.length,
+        observations: responseTargets.length,
         inserted,
         unchanged,
       };

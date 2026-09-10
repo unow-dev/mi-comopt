@@ -11,7 +11,7 @@ export function worksetExists(db, worksetId) {
   return row !== undefined;
 }
 
-export function registerWorkset(db, { worksetId, snapshotIds }) {
+export function registerWorkset(db, { worksetId, snapshotIds, excludedComments = [] }) {
   db.prepare(
     "INSERT INTO three_class_worksets (workset_id) VALUES (?)",
   ).run(worksetId);
@@ -22,6 +22,14 @@ export function registerWorkset(db, { worksetId, snapshotIds }) {
   );
   for (const snapshotId of snapshotIds) {
     insertSnapshot.run(worksetId, snapshotId);
+  }
+  const insertExcludedComment = db.prepare(
+    `INSERT INTO three_class_workset_excluded_comments
+       (workset_id, comment_text)
+     VALUES (?, ?)`,
+  );
+  for (const commentText of new Set(excludedComments)) {
+    insertExcludedComment.run(worksetId, commentText);
   }
 }
 
@@ -37,6 +45,15 @@ export function readWorksetSnapshotRefs(db, worksetId) {
     payloadSha256: row.payload_sha256,
     snapshotIndex: Number(row.snapshot_index),
   }));
+}
+
+export function readWorksetExcludedComments(db, worksetId) {
+  return db.prepare(
+    `SELECT comment_text
+     FROM three_class_workset_excluded_comments
+     WHERE workset_id = ?
+     ORDER BY comment_text ASC`,
+  ).all(worksetId).map((row) => row.comment_text);
 }
 
 export function readTargetObservations(db, worksetId) {
@@ -64,7 +81,8 @@ export function readExistingCommentLabels(db) {
      FROM snapshot_comment_three_class_labels AS labels
      JOIN snapshot_comment_observations AS sco
        ON sco.observation_id = labels.observation_id
-     GROUP BY sco.comment_text, labels.label`,
+     GROUP BY sco.comment_text, labels.label
+     ORDER BY sco.comment_text ASC, labels.label ASC`,
   ).all().map((row) => ({
     commentText: row.comment_text,
     label: row.label,

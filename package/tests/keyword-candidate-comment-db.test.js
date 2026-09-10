@@ -122,7 +122,7 @@ test("migration 007 creates publication storage without uniqueness on request id
   const caseData = makeCase(t);
   const db = await openCommentDatabase(caseData.dbPath);
   try {
-    assert.equal(db.prepare("PRAGMA user_version").get().user_version, 7);
+    assert.equal(db.prepare("PRAGMA user_version").get().user_version, 8);
     assert.deepEqual(
       db.prepare("PRAGMA table_info(keyword_candidate_publications)").all().map((row) => row.name),
       [

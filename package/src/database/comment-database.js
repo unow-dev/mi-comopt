@@ -16,7 +16,7 @@ export const PACKAGE_ROOT = path.resolve(moduleDirectory, "../..");
 export const REPOSITORY_ROOT = path.resolve(PACKAGE_ROOT, "..");
 export const DEFAULT_DB_PATH = path.join(REPOSITORY_ROOT, "var", "comment-history.sqlite3");
 export const MIGRATIONS_DIR = path.join(PACKAGE_ROOT, "db", "comment-database");
-export const APPLICATION_SCHEMA_VERSION = 7;
+export const APPLICATION_SCHEMA_VERSION = 8;
 
 const migrations = [
   { version: 1, filename: "001-init.sql" },
@@ -32,6 +32,7 @@ const migrations = [
   { version: 5, filename: "005-comment-batch-materialization.sql" },
   { version: 6, filename: "006-three-class-label-application.sql" },
   { version: 7, filename: "007-keyword-candidate-publications.sql" },
+  { version: 8, filename: "008-three-class-workset-labeled-comment-exclusion.sql" },
 ];
 const LEGACY_RAW_INPUT_BACKFILL_TABLE = "legacy_raw_input_backfill";
 const LEGACY_INPUT_FORMAT = "tiktokRawSnapshot-1.0.0";

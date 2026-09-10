@@ -27,6 +27,7 @@ import {
   exportKeywordCandidatesUi,
   generateKeywordCandidateHandoff,
 } from "./adapters/keyword-candidate-comment-db.js";
+import { exportThreeClassLabelSummaryUi } from "./adapters/three-class-label-summary.js";
 import { syncThreeClassFinal } from "./adapters/three-class-final-sync.js";
 
 class CliArgumentError extends Error {}
@@ -74,6 +75,9 @@ function usageFor(command = undefined) {
   if (command === "export-keyword-candidates-ui") {
     return "Usage: npm run comment-db -- export-keyword-candidates-ui --output path/filterKeywordCandidates.json [--db path.sqlite3]";
   }
+  if (command === "export-three-class-label-summary-ui") {
+    return "Usage: npm run comment-db -- export-three-class-label-summary-ui --snapshot-ref <sha:index> --output path/threeClassLabelSummary.json [--db path.sqlite3]";
+  }
   if (command === "sync-three-class-final") {
     return "Usage: npm run comment-db -- sync-three-class-final --input path/to/three_class_labeled.json --snapshot-ref <sha:index> [--db path.sqlite3]";
   }
@@ -92,6 +96,7 @@ function usageFor(command = undefined) {
     "  npm run comment-db -- generate-keyword-candidate-handoff --snapshot-ref <sha:index> --publication-root path --output path.zip [--db path.sqlite3]",
     "  npm run comment-db -- apply-keyword-candidate-publication --handoff-manifest path/handoff_manifest.json --publication-root path [--db path.sqlite3]",
     "  npm run comment-db -- export-keyword-candidates-ui --output path/filterKeywordCandidates.json [--db path.sqlite3]",
+    "  npm run comment-db -- export-three-class-label-summary-ui --snapshot-ref <sha:index> --output path/threeClassLabelSummary.json [--db path.sqlite3]",
     "  npm run comment-db -- sync-three-class-final --input path/to/three_class_labeled.json --snapshot-ref <sha:index> [--db path.sqlite3]",
   ].join("\n");
 }
@@ -157,6 +162,7 @@ function parseArguments(argv) {
     "generate-keyword-candidate-handoff",
     "apply-keyword-candidate-publication",
     "export-keyword-candidates-ui",
+    "export-three-class-label-summary-ui",
     "sync-three-class-final",
   ]);
   if (!supportedCommands.has(command)) {
@@ -181,6 +187,7 @@ function parseArguments(argv) {
     "generate-keyword-candidate-handoff": new Set(["--snapshot-ref", "--publication-root", "--output", "--db"]),
     "apply-keyword-candidate-publication": new Set(["--handoff-manifest", "--publication-root", "--db"]),
     "export-keyword-candidates-ui": new Set(["--output", "--db"]),
+    "export-three-class-label-summary-ui": new Set(["--snapshot-ref", "--output", "--db"]),
     "sync-three-class-final": new Set(["--input", "--snapshot-ref", "--db"]),
   }[command];
   const args = { command, snapshotRefs: [], snapshotRefKeys: [], snapshotShas: [] };
@@ -263,6 +270,10 @@ function parseArguments(argv) {
     if (args.publicationRoot === undefined) throw new CliArgumentError("--publication-root is required");
   }
   if (command === "export-keyword-candidates-ui") {
+    if (args.output === undefined) throw new CliArgumentError("--output is required");
+  }
+  if (command === "export-three-class-label-summary-ui") {
+    if (args.snapshotRefs.length !== 1) throw new CliArgumentError("exactly one --snapshot-ref is required");
     if (args.output === undefined) throw new CliArgumentError("--output is required");
   }
   if (command === "sync-three-class-final") {
@@ -349,6 +360,14 @@ async function generateWorkset(args) {
     snapshotRefs: args.snapshotRefs.map((reference) => ({ ...reference })),
     snapshotShas: [...args.snapshotShas],
     historyPath: resolveInvocationPath(args.history),
+    outputPath: resolveInvocationPath(args.output),
+  });
+}
+
+async function exportThreeClassLabelSummary(args) {
+  return exportThreeClassLabelSummaryUi({
+    dbPath: args.db === undefined ? undefined : resolveInvocationPath(args.db),
+    snapshotRef: { ...args.snapshotRefs[0] },
     outputPath: resolveInvocationPath(args.output),
   });
 }
@@ -440,6 +459,9 @@ try {
       dbPath: args.db === undefined ? undefined : resolveInvocationPath(args.db),
       outputPath: resolveInvocationPath(args.output),
     });
+    console.log(JSON.stringify(result));
+  } else if (args.command === "export-three-class-label-summary-ui") {
+    const result = await exportThreeClassLabelSummary(args);
     console.log(JSON.stringify(result));
   } else if (args.command === "sync-three-class-final") {
     const result = await syncThreeClassFinal({

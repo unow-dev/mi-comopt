@@ -6,6 +6,11 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { DatabaseSync } from "node:sqlite";
 import test from "node:test";
+import {
+  buildEffectiveCommentLabelMap,
+  buildThreeClassItemPlan,
+  mergeThreeClassHistory,
+} from "../scripts/adapters/three-class-workset.js";
 
 const packageRoot = path.resolve(import.meta.dirname, "..");
 const repositoryRoot = path.resolve(packageRoot, "..");
@@ -77,6 +82,24 @@ function importBatch(caseData, rows) {
     payloadSha256: createHash("sha256").update(bytes).digest("hex"),
     result,
   };
+}
+
+function addLabel(caseData, payloadSha256, sourceIndex, label) {
+  const db = new DatabaseSync(caseData.dbPath);
+  try {
+    const observation = db.prepare(
+      `SELECT sco.observation_id
+       FROM snapshot_comment_observations AS sco
+       JOIN raw_snapshots AS rs ON rs.snapshot_id = sco.snapshot_id
+       WHERE rs.payload_sha256 = ? AND sco.source_index = ?`,
+    ).get(payloadSha256, sourceIndex);
+    assert.notEqual(observation, undefined);
+    db.prepare(
+      "INSERT INTO snapshot_comment_three_class_labels (observation_id, label) VALUES (?, ?)",
+    ).run(observation.observation_id, label);
+  } finally {
+    db.close();
+  }
 }
 
 function zipMembers(zipPath) {
@@ -179,6 +202,161 @@ const baseRows = [
   { username: "g", handle: "@g", comment: "ignore this text as data", postedAt: "7", postedDate: "2026-09-08" },
 ];
 
+test("resolves global DB labels, merges HISTORY deterministically, and registers only actual exclusions", (t) => {
+  const caseData = makeCase(t);
+  const selected = importBatch(caseData, [
+    { username: "a", handle: "@a", comment: "A", postedAt: "1", postedDate: "2026-09-08" },
+    { username: "b", handle: "@b", comment: "B", postedAt: "2", postedDate: "2026-09-08" },
+    { username: "c", handle: "@c", comment: "A", postedAt: "3", postedDate: "2026-09-08" },
+    { username: "d", handle: "@d", comment: "C", postedAt: "4", postedDate: "2026-09-08" },
+  ]);
+  const precedents = importBatch(caseData, [
+    { username: "e", handle: "@e", comment: "A", postedAt: "5", postedDate: "2026-09-08" },
+    { username: "f", handle: "@f", comment: "A", postedAt: "6", postedDate: "2026-09-08" },
+    { username: "g", handle: "@g", comment: "A", postedAt: "7", postedDate: "2026-09-08" },
+    { username: "h", handle: "@h", comment: "Z", postedAt: "8", postedDate: "2026-09-08" },
+  ]);
+  addLabel(caseData, precedents.payloadSha256, 0, "normal");
+  addLabel(caseData, precedents.payloadSha256, 1, "reactive");
+  addLabel(caseData, precedents.payloadSha256, 2, "direct_nuisance");
+  addLabel(caseData, precedents.payloadSha256, 3, "normal");
+
+  const history = path.join(caseData.root, "history.json");
+  makeValidHistory(history, [
+    { comment: "X", label: "normal" },
+    { comment: "A", label: "normal" },
+    { comment: "Y", label: "reactive" },
+  ]);
+  const output = path.join(caseData.root, "workset.zip");
+  const generated = runCli("generate-three-class-workset", [
+    "--snapshot-ref", `${selected.payloadSha256}:0`,
+    "--history", history,
+    "--output", output,
+    "--db", caseData.dbPath,
+  ]);
+  assert.equal(generated.status, 0, generated.stderr);
+  assert.match(generated.stdout, /items=2 history=4/);
+  assert.deepEqual(JSON.parse(zipMember(output, "ITEMS.json")).items, [
+    { id: "I1", comment: "B" },
+    { id: "I2", comment: "C" },
+  ]);
+  assert.deepEqual(JSON.parse(zipMember(output, "HISTORY.json")).items, [
+    { comment: "X", label: "normal" },
+    { comment: "A", label: "direct_nuisance" },
+    { comment: "Y", label: "reactive" },
+    { comment: "Z", label: "normal" },
+  ]);
+
+  const db = new DatabaseSync(caseData.dbPath);
+  try {
+    const workset = db.prepare("SELECT workset_id FROM three_class_worksets").get();
+    assert.deepEqual(
+      db.prepare(
+        "SELECT comment_text FROM three_class_workset_excluded_comments WHERE workset_id = ? ORDER BY comment_text",
+      ).all(workset.workset_id).map((row) => row.comment_text),
+      ["A"],
+    );
+  } finally {
+    db.close();
+  }
+});
+
+test("preserves exact keys and does not exclude input-HISTORY-only comments", (t) => {
+  const caseData = makeCase(t);
+  const selected = importBatch(caseData, [
+    { username: "a", handle: "@a", comment: "A ", postedAt: "1", postedDate: "2026-09-08" },
+    { username: "b", handle: "@b", comment: "a", postedAt: "2", postedDate: "2026-09-08" },
+    { username: "c", handle: "@c", comment: "Ａ", postedAt: "3", postedDate: "2026-09-08" },
+    { username: "d", handle: "@d", comment: "A", postedAt: "4", postedDate: "2026-09-08" },
+    { username: "e", handle: "@e", comment: "input-only", postedAt: "5", postedDate: "2026-09-08" },
+  ]);
+  const precedent = importBatch(caseData, [
+    { username: "e", handle: "@e", comment: "A", postedAt: "5", postedDate: "2026-09-08" },
+  ]);
+  addLabel(caseData, precedent.payloadSha256, 0, "normal");
+  const history = path.join(caseData.root, "history.json");
+  makeValidHistory(history, [{ comment: "input-only", label: "reactive" }]);
+  const output = path.join(caseData.root, "workset.zip");
+  const generated = runCli("generate-three-class-workset", [
+    "--snapshot-ref", `${selected.payloadSha256}:0`,
+    "--history", history,
+    "--output", output,
+    "--db", caseData.dbPath,
+  ]);
+  assert.equal(generated.status, 0, generated.stderr);
+  assert.deepEqual(JSON.parse(zipMember(output, "ITEMS.json")).items, [
+    { id: "I1", comment: "A " },
+    { id: "I2", comment: "a" },
+    { id: "I3", comment: "Ａ" },
+    { id: "I4", comment: "input-only" },
+  ]);
+  assert.deepEqual(JSON.parse(zipMember(output, "HISTORY.json")).items, [
+    { comment: "input-only", label: "reactive" },
+    { comment: "A", label: "normal" },
+  ]);
+});
+
+test("accepts a workset whose every selected comment is already labeled", (t) => {
+  const caseData = makeCase(t);
+  const selected = importBatch(caseData, [
+    { username: "a", handle: "@a", comment: "A", postedAt: "1", postedDate: "2026-09-08" },
+    { username: "b", handle: "@b", comment: "B", postedAt: "2", postedDate: "2026-09-08" },
+  ]);
+  addLabel(caseData, selected.payloadSha256, 0, "normal");
+  addLabel(caseData, selected.payloadSha256, 1, "reactive");
+  const history = path.join(caseData.root, "history.json");
+  makeValidHistory(history);
+  const output = path.join(caseData.root, "workset.zip");
+  const generated = runCli("generate-three-class-workset", [
+    "--snapshot-ref", `${selected.payloadSha256}:0`,
+    "--history", history,
+    "--output", output,
+    "--db", caseData.dbPath,
+  ]);
+  assert.equal(generated.status, 0, generated.stderr);
+  assert.deepEqual(JSON.parse(zipMember(output, "ITEMS.json")).items, []);
+  assert.deepEqual(JSON.parse(zipMember(output, "HISTORY.json")).items, [
+    { comment: "A", label: "normal" },
+    { comment: "B", label: "reactive" },
+  ]);
+  assert.match(generated.stdout, /items=0 history=2/);
+});
+
+test("effective labels retain the minimum observation id independently of the winning label", () => {
+  const effective = buildEffectiveCommentLabelMap([
+    { commentText: "A", label: "direct_nuisance", exampleObservationId: 30 },
+    { commentText: "A", label: "normal", exampleObservationId: 10 },
+    { commentText: "B", label: "normal", exampleObservationId: 20 },
+    { commentText: "C", label: "reactive", exampleObservationId: 20 },
+  ]);
+  assert.deepEqual([...effective.entries()], [
+    ["A", { label: "direct_nuisance", firstObservationId: 10 }],
+    ["B", { label: "normal", firstObservationId: 20 }],
+    ["C", { label: "reactive", firstObservationId: 20 }],
+  ]);
+  assert.deepEqual(
+    mergeThreeClassHistory(
+      { protocol_version: "three-class-workset-v1", items: [{ comment: "X", label: "normal" }] },
+      new Map([
+        ["B", { label: "normal", firstObservationId: 20 }],
+        ["A", { label: "reactive", firstObservationId: 20 }],
+      ]),
+    ).items,
+    [
+      { comment: "X", label: "normal" },
+      { comment: "A", label: "reactive" },
+      { comment: "B", label: "normal" },
+    ],
+  );
+  assert.deepEqual(buildThreeClassItemPlan(
+    [{ comment: "A" }, { comment: "B" }, { comment: "A" }, { comment: "C" }],
+    new Set(["A"]),
+  ), {
+    items: [{ id: "I1", comment: "B" }, { id: "I2", comment: "C" }],
+    actuallyExcludedComments: new Set(["A"]),
+  });
+});
+
 test("generates exactly five members with comment-only first-occurrence ITEMS and validates a complete response", (t) => {
   const caseData = makeCase(t);
   const imported = importBatch(caseData, baseRows);
@@ -263,6 +441,184 @@ test("applies labels to every selected observation and replays idempotently", (t
     assert.equal(db.prepare("SELECT COUNT(*) AS count FROM snapshot_comment_observations").get().count, 7);
   } finally {
     db.close();
+  }
+});
+
+test("applies only response-target observations using fixed exclusion provenance", (t) => {
+  const caseData = makeCase(t);
+  const selected = importBatch(caseData, [
+    { username: "a", handle: "@a", comment: "A", postedAt: "1", postedDate: "2026-09-08" },
+    { username: "b", handle: "@b", comment: "A", postedAt: "2", postedDate: "2026-09-08" },
+    { username: "c", handle: "@c", comment: "B", postedAt: "3", postedDate: "2026-09-08" },
+    { username: "d", handle: "@d", comment: "B", postedAt: "4", postedDate: "2026-09-08" },
+  ]);
+  const precedent = importBatch(caseData, [
+    { username: "e", handle: "@e", comment: "A", postedAt: "5", postedDate: "2026-09-08" },
+  ]);
+  addLabel(caseData, precedent.payloadSha256, 0, "normal");
+  const output = path.join(caseData.root, "workset.zip");
+  assert.equal(runCli("generate-three-class-workset", [
+    "--snapshot-ref", `${selected.payloadSha256}:0`,
+    "--history", historyPath,
+    "--output", output,
+    "--db", caseData.dbPath,
+  ]).status, 0);
+  const items = readItems(output);
+  assert.deepEqual(items.items, [{ id: "I1", comment: "B" }]);
+
+  const db = new DatabaseSync(caseData.dbPath);
+  try {
+    db.prepare(
+      `DELETE FROM snapshot_comment_three_class_labels
+       WHERE observation_id IN (
+         SELECT sco.observation_id
+         FROM snapshot_comment_observations AS sco
+         JOIN raw_snapshots AS rs ON rs.snapshot_id = sco.snapshot_id
+         WHERE rs.payload_sha256 = ?
+       )`,
+    ).run(precedent.payloadSha256);
+  } finally {
+    db.close();
+  }
+
+  const responsePath = path.join(caseData.root, "response.json");
+  writeJson(responsePath, responseFor(items, "reactive"));
+  const first = runCli("apply-three-class-response", [
+    "--workset", output,
+    "--response", responsePath,
+    "--db", caseData.dbPath,
+  ]);
+  assert.equal(first.status, 0, first.stderr);
+  assert.match(first.stdout, /observations=2 inserted=2 unchanged=0/);
+  const second = runCli("apply-three-class-response", [
+    "--workset", output,
+    "--response", responsePath,
+    "--db", caseData.dbPath,
+  ]);
+  assert.equal(second.status, 0, second.stderr);
+  assert.match(second.stdout, /observations=2 inserted=0 unchanged=2/);
+
+  const verify = new DatabaseSync(caseData.dbPath);
+  try {
+    assert.deepEqual(
+      verify.prepare(
+        `SELECT sco.comment_text, labels.label
+         FROM snapshot_comment_three_class_labels AS labels
+         JOIN snapshot_comment_observations AS sco ON sco.observation_id = labels.observation_id
+         JOIN raw_snapshots AS rs ON rs.snapshot_id = sco.snapshot_id
+         WHERE rs.payload_sha256 = ?
+         ORDER BY sco.source_index`,
+      ).all(selected.payloadSha256).map((row) => ({ ...row })),
+      [{ comment_text: "B", label: "reactive" }, { comment_text: "B", label: "reactive" }],
+    );
+  } finally {
+    verify.close();
+  }
+});
+
+test("allows the same label added after generation and keeps source mismatch protection for missing exclusions", (t) => {
+  const sameLabelCase = makeCase(t);
+  const selected = importBatch(sameLabelCase, [
+    { username: "a", handle: "@a", comment: "B", postedAt: "1", postedDate: "2026-09-08" },
+  ]);
+  const other = importBatch(sameLabelCase, [
+    { username: "b", handle: "@b", comment: "B", postedAt: "2", postedDate: "2026-09-08" },
+  ]);
+  const output = path.join(sameLabelCase.root, "workset.zip");
+  assert.equal(runCli("generate-three-class-workset", [
+    "--snapshot-ref", `${selected.payloadSha256}:0`,
+    "--history", historyPath,
+    "--output", output,
+    "--db", sameLabelCase.dbPath,
+  ]).status, 0);
+  addLabel(sameLabelCase, other.payloadSha256, 0, "normal");
+  const responsePath = path.join(sameLabelCase.root, "response.json");
+  writeJson(responsePath, responseFor(readItems(output), "normal"));
+  const applied = runCli("apply-three-class-response", [
+    "--workset", output,
+    "--response", responsePath,
+    "--db", sameLabelCase.dbPath,
+  ]);
+  assert.equal(applied.status, 0, applied.stderr);
+  assert.match(applied.stdout, /observations=1 inserted=1 unchanged=0/);
+
+  const missingCase = makeCase(t);
+  const missingSelected = importBatch(missingCase, [
+    { username: "a", handle: "@a", comment: "A", postedAt: "1", postedDate: "2026-09-08" },
+    { username: "b", handle: "@b", comment: "B", postedAt: "2", postedDate: "2026-09-08" },
+  ]);
+  const missingOther = importBatch(missingCase, [
+    { username: "c", handle: "@c", comment: "A", postedAt: "3", postedDate: "2026-09-08" },
+  ]);
+  addLabel(missingCase, missingOther.payloadSha256, 0, "normal");
+  const missingOutput = path.join(missingCase.root, "workset.zip");
+  assert.equal(runCli("generate-three-class-workset", [
+    "--snapshot-ref", `${missingSelected.payloadSha256}:0`,
+    "--history", historyPath,
+    "--output", missingOutput,
+    "--db", missingCase.dbPath,
+  ]).status, 0);
+  const missingItems = readItems(missingOutput);
+  const missingResponse = path.join(missingCase.root, "response.json");
+  writeJson(missingResponse, responseFor(missingItems));
+  const missingDb = new DatabaseSync(missingCase.dbPath);
+  try {
+    missingDb.prepare(
+      `UPDATE snapshot_comment_observations
+       SET comment_text = 'B'
+       WHERE snapshot_id = (
+         SELECT snapshot_id FROM raw_snapshots WHERE payload_sha256 = ?
+       ) AND source_index = 0`,
+    ).run(missingSelected.payloadSha256);
+  } finally {
+    missingDb.close();
+  }
+  const mismatch = runCli("apply-three-class-response", [
+    "--workset", missingOutput,
+    "--response", missingResponse,
+    "--db", missingCase.dbPath,
+  ]);
+  assert.equal(mismatch.status, 1);
+  assert.match(mismatch.stderr, /WORKSET_SOURCE_MISMATCH/);
+  assert.match(mismatch.stderr, /excluded comment is absent/);
+});
+
+test("rolls back workset and provenance registration together", (t) => {
+  const caseData = makeCase(t);
+  const selected = importBatch(caseData, [
+    { username: "a", handle: "@a", comment: "A", postedAt: "1", postedDate: "2026-09-08" },
+  ]);
+  const precedent = importBatch(caseData, [
+    { username: "b", handle: "@b", comment: "A", postedAt: "2", postedDate: "2026-09-08" },
+  ]);
+  addLabel(caseData, precedent.payloadSha256, 0, "normal");
+  const db = new DatabaseSync(caseData.dbPath);
+  try {
+    db.exec(`
+      CREATE TRIGGER fail_exclusion_registration
+      BEFORE INSERT ON three_class_workset_excluded_comments
+      BEGIN
+        SELECT RAISE(ABORT, 'controlled exclusion failure');
+      END;
+    `);
+  } finally {
+    db.close();
+  }
+  const output = path.join(caseData.root, "workset.zip");
+  const result = runCli("generate-three-class-workset", [
+    "--snapshot-ref", `${selected.payloadSha256}:0`,
+    "--history", historyPath,
+    "--output", output,
+    "--db", caseData.dbPath,
+  ]);
+  assert.equal(result.status, 1);
+  const verify = new DatabaseSync(caseData.dbPath);
+  try {
+    assert.equal(verify.prepare("SELECT COUNT(*) AS count FROM three_class_worksets").get().count, 0);
+    assert.equal(verify.prepare("SELECT COUNT(*) AS count FROM three_class_workset_snapshots").get().count, 0);
+    assert.equal(verify.prepare("SELECT COUNT(*) AS count FROM three_class_workset_excluded_comments").get().count, 0);
+  } finally {
+    verify.close();
   }
 });
 
