@@ -1,0 +1,6 @@
+README.md
+HANDOFF.md
+ACCEPTANCE_TESTS.md
+reference/discussion-set/ISSUE_BODY.md
+reference/discussion-set/DISCUSSION_SET_CONTENTS.md
+reference/discussion-set/sources/... (original supplied discussion source snapshot)

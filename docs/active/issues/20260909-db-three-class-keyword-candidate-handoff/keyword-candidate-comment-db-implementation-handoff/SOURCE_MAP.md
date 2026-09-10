@@ -157,7 +157,7 @@ Useful reference implementations:
 
 - `readJsonWithBytes()` for retaining exact input bytes.
 - `readRuntimeContractBytes()` and contract root resolution.
-- `writeExclusiveHandoff()` semantics.
+- `writeExclusiveHandoff()` の排他的な出力境界。Comment DB経路ではファイル集合の構成だけを参照し、最終出力は専用packagerでZIP化する。
 - `readHandoffBundle()` semantics.
 - `prepareHandoff()` shows exact `prepareHandoffBundle()` inputs.
 - `fullUpdate()` shows existing handoff verification before candidate publication.

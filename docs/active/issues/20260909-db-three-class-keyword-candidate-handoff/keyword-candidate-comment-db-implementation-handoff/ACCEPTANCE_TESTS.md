@@ -25,14 +25,14 @@ All cases below are required. Test names are suggestions, not contractual identi
 
 ## C. `generate-keyword-candidate-handoff`
 
-16. Exactly one valid `--snapshot-ref` produces a complete existing candidate handoff file set plus `handoff_manifest.json`.
+16. Exactly one valid `--snapshot-ref` produces an exclusive ZIP containing the complete candidate handoff file set plus `handoff_manifest.json`.
 17. Generated request source SHA equals SHA-256 of exact `source_dataset.json` bytes.
 18. Generated request source ref equals `<payload_sha256>:<snapshot_index>`.
 19. Handoff manifest hashes every `HANDOFF_FILES` member correctly.
 20. Existing current publication policy/taxonomy/source bindings are checked by reused `prepareHandoffBundle()` behavior.
 21. `--snapshot-sha` is rejected for this command.
 22. Zero or multiple `--snapshot-ref` values are rejected.
-23. Existing output directory causes exclusive-output failure and is not modified.
+23. Existing output ZIP causes exclusive-output failure and is not modified.
 24. Handoff generation does not insert a keyword-candidate publication DB row.
 
 ## D. Handoff/source verification during DB apply

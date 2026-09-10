@@ -205,9 +205,9 @@ test("latest generic import preserves all seven nullable fields and distinguishe
   const imported = await importRawInput(request, { dbPath });
   assert.equal(imported.snapshotCount, 2);
   assert.equal(imported.commentObservationCount, 3);
-  assert.equal(APPLICATION_SCHEMA_VERSION, 6);
-  assert.equal(DATABASE_SCHEMA_VERSION, 6);
-  assert.equal(query(dbPath, "PRAGMA user_version")[0].user_version, 6);
+  assert.equal(APPLICATION_SCHEMA_VERSION, 7);
+  assert.equal(DATABASE_SCHEMA_VERSION, 7);
+  assert.equal(query(dbPath, "PRAGMA user_version")[0].user_version, 7);
   assert.deepEqual(
     query(dbPath, "SELECT reported_count FROM raw_snapshots ORDER BY snapshot_index").map((row) => row.reported_count),
     [null, 294],
@@ -277,7 +277,7 @@ test("wrapper CLI imports one raw input with ordered snapshots and connects to a
       { payloadSha256: sha, snapshotIndex: 1 },
     ]);
     const artifacts = buildAnalysisArtifacts(selected);
-    assert.equal(artifacts.manifest.database_schema_version, 6);
+    assert.equal(artifacts.manifest.database_schema_version, 7);
     assert.equal(artifacts.manifest.snapshots[0].reported_count, null);
     assert.match(artifacts.manifestJson, /"reported_count": null/);
   } finally {

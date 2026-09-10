@@ -161,6 +161,19 @@ npm run comment-db -- apply-three-class-response \
 
 成功時は `APPLIED workset=<uuid> observations=<N> inserted=<N> unchanged=<N>` を1行出力します。`--snapshot-ref`、`--snapshot-sha`、`--force`、`--replace`、`--allow-correction`、`--dry-run` は反映コマンドでは受け付けません。
 
+## 公開済み three-class final の同期
+
+公開済み `three_class_labeled.json` を正本として、指定した1つのsnapshotへラベルを反映できます。対応付けは `comment` の完全一致だけで行い、同一コメントに複数ラベルがある場合は `direct_nuisance > reactive > normal` の順で最も悪いラベルを採用し、対象snapshot内の同一コメント全 observation へ統一反映します。既存ラベルは必要に応じて更新され、raw観測と非対象snapshotは変更しません。
+
+```bash
+npm run comment-db -- sync-three-class-final \
+  --input path/to/three_class_labeled.json \
+  --snapshot-ref <sha>:<snapshot-index> \
+  [--db path/to/comment-history.sqlite3]
+```
+
+入力不正時はDBを変更せず、反映処理はトランザクション内で行います。成功時はJSONで、重複ラベルの統合数、insert・update・unchanged件数、および未対応コメント数を出力します。
+
 初期HISTORYは一回限りの移行として生成できます。runtime生成・検証は旧Stage13、single-roundtrip、golden/P2 registry、reactive-term、review cue、provenance、workspaceを参照しません。
 
 ```bash

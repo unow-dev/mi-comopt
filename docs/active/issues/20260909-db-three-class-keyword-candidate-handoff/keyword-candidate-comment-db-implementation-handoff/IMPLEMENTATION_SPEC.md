@@ -249,7 +249,7 @@ Add to `scripts/comment-database.mjs`:
 npm run comment-db -- generate-keyword-candidate-handoff \
   --snapshot-ref <sha:index> \
   --publication-root <dir> \
-  --output <dir> \
+  --output <path.zip> \
   [--db <sqlite>]
 ```
 
@@ -259,7 +259,7 @@ npm run comment-db -- generate-keyword-candidate-handoff \
 - `--snapshot-sha` is not supported for this command;
 - `--publication-root` required;
 - `--output` required;
-- output directory must not already exist;
+- output ZIP file must not already exist;
 - use existing comment-db path resolution behavior.
 
 ### Inputs reused from repository
@@ -307,7 +307,7 @@ Do not add `--policy`, `--taxonomy`, or runtime-contract path options to this DB
     - `explicitSourceSha` from exact dataset bytes;
     - canonical `explicitSourceRef`;
     - runtime contract bytes.
-12. Write returned handoff files to a newly-created exclusive output directory. Reuse the semantics of existing candidate CLI `writeExclusiveHandoff()`; do not overwrite an existing directory.
+12. Write returned handoff files to a private temporary directory, then package exactly those files and `handoff_manifest.json` into a newly-created exclusive ZIP output. The ZIP must contain only regular, flat members, preserve the handoff file bytes, and never overwrite an existing output file. Remove the temporary directory after packaging.
 13. Do not write any DB keyword-candidate publication row in this command.
 
 This command intentionally does not use `labelingEvidence`: the DB’s immutable applied three-class labels + exact dataset regeneration are the provenance boundary for this issue.
@@ -320,7 +320,7 @@ Add:
 
 ```bash
 npm run comment-db -- apply-keyword-candidate-publication \
-  --handoff-manifest <handoff-dir>/handoff_manifest.json \
+  --handoff-manifest <extracted-handoff-dir>/handoff_manifest.json \
   --publication-root <dir> \
   [--db <sqlite>]
 ```

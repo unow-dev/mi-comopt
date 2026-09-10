@@ -92,11 +92,11 @@ test("initializes the schema, indexes, foreign keys, and observation rows", (t) 
   assert.match(scalar(dbPath, "SELECT imported_at FROM imports").imported_at, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
   assert.deepEqual(
     query(dbPath, "SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name").map((row) => row.name),
-    ["authors", "comment_observations", "comments", "imports", "raw_inputs", "raw_snapshots", "snapshot_comment_observations", "snapshot_comment_three_class_labels", "snapshot_video_observations", "three_class_workset_snapshots", "three_class_worksets", "videos"],
+    ["authors", "comment_observations", "comments", "imports", "keyword_candidate_publications", "raw_inputs", "raw_snapshots", "snapshot_comment_observations", "snapshot_comment_three_class_labels", "snapshot_video_observations", "three_class_workset_snapshots", "three_class_worksets", "videos"],
   );
   assert.deepEqual(
     query(dbPath, "SELECT name FROM sqlite_master WHERE type = 'index' AND name LIKE 'idx_%' ORDER BY name").map((row) => row.name),
-    ["idx_comment_observations_collected_at", "idx_comment_observations_post_time", "idx_snapshot_comment_observations_comment"],
+    ["idx_comment_observations_collected_at", "idx_comment_observations_post_time", "idx_keyword_candidate_publications_current", "idx_keyword_candidate_publications_snapshot", "idx_snapshot_comment_observations_comment"],
   );
   assert.deepEqual(
     query(dbPath, "PRAGMA table_info(comment_observations)").map((row) => row.name),
