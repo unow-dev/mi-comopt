@@ -1,26 +1,30 @@
-# Work Task Sequence: Y2K UI implementation
+# Work Task Sequence: Y2K UI実装
 
 ## Purpose
 
-既存UIの情報設計と機能挙動を維持したまま、明るいAqua / desktop系の一貫したY2K visual systemを適用し、操作性・意味識別・アクセシビリティ・responsive表示を満たした状態にする。
+既存UIの情報設計・データ・判定ロジックと操作挙動を維持したまま、`y2k-ui-lib` の公式component visualに基づくY2K UIを適用し、機能回帰・アクセシビリティ・レスポンシブ表示を含む受入条件を満たした状態にする。
 
 ## Task Sequence
 
-- [ ] 1. 実装開始前の確認範囲で、AIエージェントが、正本仕様、変更対象、現行UIの構造、受入条件、および対象外事項を確認する。
-- [ ] 2. semantic styling hookの変更範囲で、AIエージェントが、フィルターボタンへ意味に対応したスタイル用classを追加する。
-- [ ] 3. 基本visual systemの実装範囲で、AIエージェントが、固定color token、surface階層、shape、typography、および主要状態の表現を適用する。
-- [ ] 4. 意味表現の実装範囲で、AIエージェントが、badge・filter・label barを指定されたsemantic color familyへ統一する。
-- [ ] 5. 操作性とresponsive表示の実装範囲で、AIエージェントが、focus-visible、motion設定、既存breakpointでの表示強度、および320px幅での表示を受入条件に適合させる。
-- [ ] 6. 変更境界とvisual QAの検証範囲で、AIエージェントが、機能回帰・Scope逸脱・各viewと代表状態・semantic color・contrast・viewport表示を確認する。
-- [ ] 7. 自動検証の範囲で、AIエージェントまたはCIが、実リポジトリ上のtestとbuildを実行して結果を確認する。
-- [ ] 8. 作業結果の範囲で、AIエージェントが、実施内容、Visual QA結果、test/build結果、およびPR用証跡を記録する。
+- [ ] 1. 要求整理の範囲で、AIエージェントが、確定仕様、変更対象、優先順位、受入条件、および対象外事項を確認する。
+- [ ] 2. 実装前確認の範囲で、AIエージェントが、現行UIの構造、既存componentの状態、依存設定、テストbaseline、および実装後に比較すべき機能境界を確認する。
+- [ ] 3. 仕様逸脱判断の範囲で、人間が、既存機能・データ境界・判定ロジック・公式visual/APIの維持が困難な事項、またはhandoff外の変更が必要な事項について、実装継続または別Issue化を判断する。
+- [ ] 4. 依存と構成の実装範囲で、AIエージェントが、固定バージョンのUIライブラリ、Vite/JavaScript向け設定、パス解決、およびlockfileを整備する。
+- [ ] 5. 公式component導入の範囲で、AIエージェントが、確定したcomponent群を公式参照commitのvisual・API・state表現に沿って利用可能な状態へ整備する。
+- [ ] 6. Themeと共通ユーティリティの実装範囲で、AIエージェントが、指定theme token、semantic color map、`cn()` の結合規則、および公式componentの許可差分を適用する。
+- [ ] 7. 画面構成の実装範囲で、AIエージェントが、3ビュー切替、Hero、keyword候補、account候補、label summary、空状態、およびcopy通知を確定したcomponent compositionへ統合する。
+- [ ] 8. 機能回帰と表示責務の実装範囲で、AIエージェントが、既存filter・NEW判定・copy fallback・detail情報・summary情報を維持し、旧component visualと不要なtoast/state/CSSを整理する。
+- [ ] 9. 自動検証の範囲で、AIエージェントまたはCIが、依存導入後のtest・build・smoke test・candidate data adapter・NEW badge関連検証を実行し、baselineとの差分を確認する。
+- [ ] 10. レスポンシブとVisual QAの範囲で、AIエージェントまたはCIが、1280px・768px・320pxの6状態について、overflow、重なり、長文、detail metrics、keyboard focus、および禁止された装飾の有無を確認する。
+- [ ] 11. 受入と作業結果の範囲で、AIエージェントが、acceptance checklist、scope guard、実施内容、検証結果、未解決事項、および運用上の注意点を記録する。
 
 ## Work Notes
 
-- 実装仕様の唯一の正本は `ISSUE_BODY.md` とする。`IMPLEMENTATION_HANDOFF.md` は変更境界、`VERIFICATION_CHECKLIST.md` は完了時の確認項目として参照する。
-- 変更を許可するのは `src/ui/styles.css` と `src/ui/App.jsx` のみである。`App.jsx` はフィルターボタンのsemantic styling class追加に限り、DOM構造、文言、state、handler、データ参照、filter条件、ARIA、機能仕様を変更しない。
-- semantic filter colorはDOM順に依存させず、既存のactive modifierと意味別classを併用する。badge、対応filter、label barには指定されたsemantic paletteを一貫して使用する。
-- 装飾強度はHero・view switcher・card frameをStrong、controls・buttons・detail・metrics・toastをMedium、反復rowをWeakとする。指定外のfont、asset、DOM装飾、常時animation、scanline、noise、rainbow chrome等は追加しない。
-- 可読性・意味識別、操作状態の明確さ、既存レイアウト維持、Y2K装飾の強さの順で判断する。palette、DOM構造、機能仕様、Acceptance Criteriaの変更が必要になった場合は、実装で判断せず人間へ差し戻す。
-- `reference/current-ui-snapshot/` は現行構造を確認するための参照資料であり、完全なrepository checkoutではない。最終的なvisual QA、`npm test`、`npm run build` は実リポジトリで判定する。
-- PR証跡にはdesktop・920px・600px・320px、3 view、detail open、selected filter、toast、keyboard focus、Visual QA、test/buildの結果を含める。
+- handoffの優先順位は、`inputs/globals.css`、`references/UPSTREAM_REFERENCE.md` の固定commit、既存UIの機能・データ境界、`IMPLEMENTATION_HANDOFF.md` の実装規約の順とする。
+- 対象範囲はUI、公式component、共通ユーティリティ、Vite/package設定、および新規lock/configファイルに限定する。`src/data/*`、候補抽出・分類・NEW判定ロジック、既存architecture testの欠損ディレクトリ問題は変更しない。
+- 公式componentはbutton、badge、card、tabs、checkbox、label、collapsible、progress、sonner、empty、toggle、toggle-groupを対象とする。3ビューはTabs、推奨度はsingle ToggleGroup、NEWはCheckbox + Label、候補はCard、詳細はCollapsible、通知はSonnerで表現する。
+- 公式visualの2px outline、flat pastel surface、compact radius、hover/focus/active state、既定のDOM/API/spacingを維持する。gradient、glassmorphism、neon glow、大きなdrop shadow、偽window controls、独自animationは追加しない。
+- semantic colorは `implementation/semantic-color-map.md` に従い、Y2K色のHEXをFeature側へ追加しない。domainのpinkとシステムエラーの`destructive`を混同しない。
+- copy処理はclipboard APIと既存document fallbackを維持し、成功時は指定文言のSonner、両方式失敗時のみ`destructive`のerror toastを表示する。
+- 受入時の3 viewportは、Keyword初期表示、Keyword詳細1件展開、Keyword推奨度filter + NEW filter、Account初期表示 + 根拠1件展開、Label summary、Copy toast表示の6状態で確認する。
+- baselineの既知failureは3件であり、実装後のfailureをbaselineより増やさない。`npm run build`は依存導入とlockfile生成後の必須確認とする。

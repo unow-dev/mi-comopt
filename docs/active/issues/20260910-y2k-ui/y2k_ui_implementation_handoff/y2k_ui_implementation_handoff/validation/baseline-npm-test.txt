@@ -1,0 +1,150 @@
+
+> tiktok-filter-keywords@1.0.0 test
+> node --test tests/*.test.js
+
+TAP version 13
+# Subtest: src/lib contains only the account compatibility shim
+not ok 1 - src/lib contains only the account compatibility shim
+  ---
+  duration_ms: 2.802855
+  type: 'test'
+  location: '/mnt/data/y2k_ui_discussion_set/sources/package/tests/architecture-boundaries.test.js:29:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   'utils.js'
+    -   'account-block-candidate-workflow.js'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'account-block-candidate-workflow.js'
+  actual:
+    0: 'utils.js'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///mnt/data/y2k_ui_discussion_set/sources/package/tests/architecture-boundaries.test.js:31:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: processing does not import outer layers or cross feature modules
+not ok 2 - processing does not import outer layers or cross feature modules
+  ---
+  duration_ms: 0.600929
+  type: 'test'
+  location: '/mnt/data/y2k_ui_discussion_set/sources/package/tests/architecture-boundaries.test.js:38:1'
+  failureType: 'testCodeFailure'
+  error: "ENOENT: no such file or directory, scandir '/mnt/data/y2k_ui_discussion_set/sources/package/src/processing'"
+  code: 'ENOENT'
+  stack: |-
+    Object.readdirSync (node:fs:1584:26)
+    filesUnder (file:///mnt/data/y2k_ui_discussion_set/sources/package/tests/architecture-boundaries.test.js:12:26)
+    TestContext.<anonymous> (file:///mnt/data/y2k_ui_discussion_set/sources/package/tests/architecture-boundaries.test.js:42:28)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: database and processing do not import collector-specific modules
+not ok 3 - database and processing do not import collector-specific modules
+  ---
+  duration_ms: 0.164728
+  type: 'test'
+  location: '/mnt/data/y2k_ui_discussion_set/sources/package/tests/architecture-boundaries.test.js:61:1'
+  failureType: 'testCodeFailure'
+  error: "ENOENT: no such file or directory, scandir '/mnt/data/y2k_ui_discussion_set/sources/package/src/database'"
+  code: 'ENOENT'
+  stack: |-
+    Object.readdirSync (node:fs:1584:26)
+    filesUnder (file:///mnt/data/y2k_ui_discussion_set/sources/package/tests/architecture-boundaries.test.js:12:26)
+    TestContext.<anonymous> (file:///mnt/data/y2k_ui_discussion_set/sources/package/tests/architecture-boundaries.test.js:63:30)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: candidate-data.js is the only UI module that imports generated JSON
+ok 4 - candidate-data.js is the only UI module that imports generated JSON
+  ---
+  duration_ms: 1.610063
+  type: 'test'
+  ...
+# Subtest: keyword artifact is converted to the UI model without unused artifact fields
+ok 5 - keyword artifact is converted to the UI model without unused artifact fields
+  ---
+  duration_ms: 1.246905
+  type: 'test'
+  ...
+# Subtest: account artifact is converted to a focused UI evidence model
+ok 6 - account artifact is converted to a focused UI evidence model
+  ---
+  duration_ms: 0.215706
+  type: 'test'
+  ...
+# Subtest: workflow config is converted to the UI model
+ok 7 - workflow config is converted to the UI model
+  ---
+  duration_ms: 0.955484
+  type: 'test'
+  ...
+# Subtest: three-class label summary is converted to the UI model
+ok 8 - three-class label summary is converted to the UI model
+  ---
+  duration_ms: 0.215035
+  type: 'test'
+  ...
+# Subtest: NEW badge has no value without a known introduction time
+ok 9 - NEW badge has no value without a known introduction time
+  ---
+  duration_ms: 0.669221
+  type: 'test'
+  ...
+# Subtest: NEW badge is visible at introduction
+ok 10 - NEW badge is visible at introduction
+  ---
+  duration_ms: 0.398102
+  type: 'test'
+  ...
+# Subtest: NEW badge is visible one millisecond before the display boundary
+ok 11 - NEW badge is visible one millisecond before the display boundary
+  ---
+  duration_ms: 0.109405
+  type: 'test'
+  ...
+# Subtest: NEW badge is hidden at the display boundary
+ok 12 - NEW badge is hidden at the display boundary
+  ---
+  duration_ms: 0.128895
+  type: 'test'
+  ...
+# Subtest: NEW badge is hidden after the display boundary
+ok 13 - NEW badge is hidden after the display boundary
+  ---
+  duration_ms: 0.107874
+  type: 'test'
+  ...
+# Subtest: package contains the browser entrypoint
+ok 14 - package contains the browser entrypoint
+  ---
+  duration_ms: 1.076858
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 11
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 128.443107
