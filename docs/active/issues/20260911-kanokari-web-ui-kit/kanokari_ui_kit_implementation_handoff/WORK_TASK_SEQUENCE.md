@@ -6,21 +6,25 @@
 
 ## Task Sequence
 
-- [ ] 1. 要求整理の範囲で、AIエージェントが、確定仕様、視覚的正本、優先順位、受入条件、および対象外事項を確認する。
-- [ ] 2. 実装前確認の範囲で、AIエージェントが、現行UIの構造、データ取得境界、状態管理、依存設定、テスト基盤、および既存変更を確認する。
-- [ ] 3. 仕様逸脱判断の範囲で、人間が、handoffの確定仕様だけでは判断できない機能保持、依存削除、または旧UI要件との競合事項について実装継続または別Issue化を判断する。
-- [ ] 4. 仕様整理の範囲で、AIエージェントが、共通デザイン基盤、SPAの3タブ構成、レスポンシブ境界、reduced-motion、viewport、およびdocument titleの実装条件を整理する。
-- [ ] 5. 共通UI基盤の実装範囲で、AIエージェントが、UI Kitのtoken、system font、背景、hero、intro、content、card、tab、empty、detail、およびtoastの表示基盤を整備する。
-- [ ] 6. 画面構成の実装範囲で、AIエージェントが、フィルターキーワード、ブロックアカウント、コメントラベル集計の3画面を、現行データを保持したUI Kit準拠の表示へ統合する。
-- [ ] 7. 操作挙動の実装範囲で、AIエージェントが、推奨度・NEWの絞り込み、全件表示、detailの独立開閉、evidence全文表示、copy成功/失敗、およびsingleton toastを確定仕様どおり維持する。
-- [ ] 8. 旧UI整理の範囲で、AIエージェントが、Y2K/shadcn/Sonnerの旧表示基盤、不要な依存、registry、utility参照、および未使用componentを影響範囲確認後に整理する。
-- [ ] 9. データ境界維持の範囲で、AIエージェントが、candidate data・adapter・NEW判定・生成JSON・processing・database・collectorの責務と既存契約が変更されていないことを確認する。
+- [x] 1. 要求整理の範囲で、AIエージェントが、確定仕様、視覚的正本、優先順位、受入条件、および対象外事項を確認する。
+- [x] 2. 実装前確認の範囲で、AIエージェントが、現行UIの構造、データ取得境界、状態管理、依存設定、テスト基盤、および既存変更を確認する。
+- [x] 3. 仕様逸脱判断の範囲で、人間が、handoffの確定仕様だけでは判断できない機能保持、依存削除、または旧UI要件との競合事項について実装継続または別Issue化を判断する。
+- [x] 4. 仕様整理の範囲で、AIエージェントが、共通デザイン基盤、SPAの3タブ構成、レスポンシブ境界、reduced-motion、viewport、およびdocument titleの実装条件を整理する。
+- [x] 5. 共通UI基盤の実装範囲で、AIエージェントが、UI Kitのtoken、system font、背景、hero、intro、content、card、tab、empty、detail、およびtoastの表示基盤を整備する。
+- [x] 6. 画面構成の実装範囲で、AIエージェントが、フィルターキーワード、ブロックアカウント、コメントラベル集計の3画面を、現行データを保持したUI Kit準拠の表示へ統合する。
+- [x] 7. 操作挙動の実装範囲で、AIエージェントが、推奨度・NEWの絞り込み、全件表示、detailの独立開閉、evidence全文表示、copy成功/失敗、およびsingleton toastを確定仕様どおり維持する。
+- [x] 8. 旧UI整理の範囲で、AIエージェントが、Y2K/shadcn/Sonnerの旧表示基盤、不要な依存、registry、utility参照、および未使用componentを影響範囲確認後に整理する。
+- [x] 9. データ境界維持の範囲で、AIエージェントが、candidate data・adapter・NEW判定・生成JSON・processing・database・collectorの責務と既存契約が変更されていないことを確認する。
 - [ ] 10. 自動検証の範囲で、AIエージェントまたはCIが、静的cleanup、既存テスト、必要な回帰テスト、およびproduction buildを実行して結果を確認する。
-- [ ] 11. Visual QAの範囲で、AIエージェントまたはCIが、指定されたviewport、境界幅、通常状態、filter/NEW、detail、copy/toast、empty、長文、およびkeyboard/focus状態をreferenceと比較する。
-- [ ] 12. 受入と作業結果の範囲で、AIエージェントが、acceptance checklist、許容差分、検証結果、未解決事項、および旧Y2K issueのsupersede状態を記録し、完了可否を報告する。
+- [x] 11. Visual QAの範囲で、AIエージェントまたはCIが、指定されたviewport、境界幅、通常状態、filter/NEW、detail、copy/toast、empty、長文、およびkeyboard/focus状態をreferenceと比較する。
+- [x] 12. 受入と作業結果の範囲で、AIエージェントが、acceptance checklist、許容差分、検証結果、未解決事項、および旧Y2K issueのsupersede状態を記録し、完了可否を報告する。
 
 ## Work Notes
 
+- ベースラインコミットは4c7457e（chore: baseline before kanokari ui kit implementation）。
+- AppとCSSをUI Kit基準へ置換し、旧component・registry・依存を整理した。候補データ、adapter、NEW判定、processing、database、collectorは変更していない。
+- npm run buildは成功した。npm testは124件中107件成功・17件失敗で、ベースライン時点と同じ候補成果物の再構成hash不一致が発生しているため、UI変更外の未解決事項として残す。
+- Google Chrome・device scale 1で1280×900、640×900、390×844、および641px/391px境界を確認した。reduced-motion、keyboard/focus、filter/NEW、empty、複数detail、copy成功/失敗、singleton toast、長文evidenceも確認した。
 - 正本の優先順位は、`IMPLEMENTATION_SPEC.md`、現行Reactロジック・表示データ、3つの適用済みHTML、未定義状態を補う`kanokari_web_ui_kit_expanded.html`、現行Y2K UIの順とする。
 - visual referenceは`filter_keyword_ui_kit_applied.html`、`block_account_ui_kit_applied.html`、`comment_label_summary_ui_kit_applied.html`。reference内のダミー詳細文、件数制限、画面遷移デモは製品仕様ではない。
 - SPAの3タブ構成、タブ名、通常フロー、全候補表示、source順、複数detail同時open、既存data adapter・NEW判定・generated JSONのarchitecture boundaryを維持する。routing/history/hash/queryは追加しない。

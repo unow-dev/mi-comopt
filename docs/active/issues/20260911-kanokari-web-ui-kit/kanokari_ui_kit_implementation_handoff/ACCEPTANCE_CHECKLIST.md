@@ -177,3 +177,9 @@ referenceとの差が次のいずれかに該当するか確認。
 - [ ] SPA/accessibilityを維持するための視覚非影響差
 
 上記以外の差は原則修正対象。
+
+## Verification note
+
+- 2026-09-12時点の実リポジトリで、production buildは成功した。
+- 全テストは124件中107件成功・17件失敗。失敗はUI変更前から継続する候補成果物の再構成hash不一致であり、今回のUI変更範囲外の未解決事項である。
+- 実行対象コードの静的cleanup、3画面、主要viewport、境界幅、reduced-motion、keyboard/focus、filter/NEW、empty、detail、copy/toast、長文evidenceを確認した。

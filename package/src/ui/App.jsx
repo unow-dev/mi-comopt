@@ -1,21 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { toast } from "sonner";
+import { Tabs as TabsPrimitive } from "radix-ui";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Empty } from "@/components/ui/empty";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Toaster } from "@/components/ui/sonner";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
   accountCandidates,
   keywordCandidates,
@@ -24,9 +9,59 @@ import {
 } from "./candidate-data.js";
 import { isNewCandidate } from "./new-badge.js";
 
+const VIEW_TITLES = {
+  keywords: "フィルターキーワード候補",
+  accounts: "アカウントブロック候補",
+  labels: "コメントラベル集計",
+};
+
+const TABS = [
+  ["keywords", "フィルターキーワード"],
+  ["accounts", "ブロックアカウント"],
+  ["labels", "コメントラベル集計"],
+];
+
+const RECOMMENDATION_FILTERS = [
+  ["all", "すべて"],
+  ["high", "高推奨"],
+  ["medium", "中推奨"],
+  ["optional", "任意"],
+];
+
+const RECOMMENDATION_VALUES = {
+  all: null,
+  high: "高推奨",
+  medium: "中推奨",
+  optional: "任意",
+};
+
+const LABEL_SUMMARY_ROWS = [
+  {
+    key: "directNuisance",
+    label: "direct_nuisance",
+    description: "直接的な迷惑コメント",
+    className: "direct",
+    badgeClassName: "pink",
+  },
+  {
+    key: "reactive",
+    label: "reactive",
+    description: "反応・参照コメント",
+    className: "reactive",
+    badgeClassName: "yellow",
+  },
+  {
+    key: "normal",
+    label: "normal",
+    description: "通常コメント",
+    className: "normal",
+    badgeClassName: "blue",
+  },
+];
+
 function formatPercent(value) {
-  if (typeof value !== "number") return "—";
-  return `${(value * 100).toFixed(1)}%`;
+  if (typeof value !== "number" || !Number.isFinite(value)) return "—";
+  return (value * 100).toFixed(1) + "%";
 }
 
 async function copyToClipboard(text) {
@@ -39,7 +74,7 @@ async function copyToClipboard(text) {
     }
   }
 
-  if (typeof document === "undefined") return false;
+  if (typeof document === "undefined" || !document.body) return false;
 
   const textarea = document.createElement("textarea");
   textarea.value = text;
@@ -49,7 +84,7 @@ async function copyToClipboard(text) {
   try {
     document.body.appendChild(textarea);
     textarea.select();
-    return document.execCommand("copy");
+    return document.execCommand("copy") === true;
   } catch {
     return false;
   } finally {
@@ -57,119 +92,74 @@ async function copyToClipboard(text) {
   }
 }
 
-const RECOMMENDATION_VARIANTS = {
-  高推奨: "mint",
-  中推奨: "lemon",
-  任意: "lilac",
-};
+function CopyButton({ value, onCopy, duration, ariaLabel, kind }) {
+  const [copied, setCopied] = useState(false);
+  const resetTimer = useRef(null);
 
-function RecommendationBadge({ value }) {
+  useEffect(() => () => {
+    if (resetTimer.current !== null) window.clearTimeout(resetTimer.current);
+  }, []);
+
+  async function handleClick() {
+    const succeeded = await onCopy(value, kind);
+    if (!succeeded) return;
+
+    setCopied(true);
+    if (resetTimer.current !== null) window.clearTimeout(resetTimer.current);
+    resetTimer.current = window.setTimeout(() => {
+      setCopied(false);
+      resetTimer.current = null;
+    }, duration);
+  }
+
   return (
-    <Badge variant={RECOMMENDATION_VARIANTS[value] ?? "lilac"} size="sm">
-      {value}
-    </Badge>
+    <button
+      className={"copy-btn" + (copied ? " copied" : "")}
+      type="button"
+      onClick={handleClick}
+      aria-label={ariaLabel || value + " をコピー"}
+    >
+      {copied ? "コピー済み" : "コピー"}
+    </button>
   );
 }
 
-const LABEL_SUMMARY_ROWS = [
-  {
-    key: "directNuisance",
-    label: "direct_nuisance",
-    description: "直接的な迷惑コメント",
-    variant: "pink",
-    progressClassName: "bg-y2k-pink",
-  },
-  {
-    key: "reactive",
-    label: "reactive",
-    description: "反応・参照コメント",
-    variant: "lemon",
-    progressClassName: "bg-y2k-lemon",
-  },
-  {
-    key: "normal",
-    label: "normal",
-    description: "通常コメント",
-    variant: "blue",
-    progressClassName: "bg-y2k-blue",
-  },
-];
-
-function LabelSummaryCard({ summary }) {
+function DetailToggle({ open, onToggle, controls, children }) {
   return (
-    <Card className="label-summary">
-      <CardHeader className="label-summary__header">
-        <div>
-          <span className="label-summary__eyebrow">集計対象</span>
-          <h2 id="label-summary-heading">
-            {summary.total.toLocaleString("ja-JP")}件のコメント
-          </h2>
-        </div>
-        <div className="label-summary__source">
-          <span>スナップショット</span>
-          <code>{summary.snapshotRef}</code>
-        </div>
-      </CardHeader>
-
-      <CardContent className="label-summary__rows">
-        {LABEL_SUMMARY_ROWS.map((row) => {
-          const count = summary.counts[row.key];
-          const ratio = summary.total > 0 ? count / summary.total : 0;
-
-          return (
-            <div className="label-summary__row" key={row.key}>
-              <div className="label-summary__row-header">
-                <div>
-                  <Badge variant={row.variant} size="sm">
-                    {row.label}
-                  </Badge>
-                  <span>{row.description}</span>
-                </div>
-                <div className="label-summary__row-values">
-                  <strong>{count.toLocaleString("ja-JP")}件</strong>
-                  <span>{formatPercent(ratio)}</span>
-                </div>
-              </div>
-              <Progress
-                value={ratio * 100}
-                aria-label={`${row.label}の割合`}
-                indicatorClassName={row.progressClassName}
-                className="label-summary__progress"
-              />
-            </div>
-          );
-        })}
-      </CardContent>
-    </Card>
+    <button
+      className="detail-toggle"
+      type="button"
+      aria-expanded={open}
+      aria-controls={controls}
+      onClick={onToggle}
+    >
+      <span className="chevron" aria-hidden="true">›</span>
+      <span>{children}</span>
+    </button>
   );
 }
 
-function DetailMetrics({ item }) {
-  const metrics = [
-    ["direct", item.directNuisanceHits, "命中"],
-    ["reactive", item.reactiveHits, "参考"],
-    ["normal", item.normalHits, "誤爆"],
-    ["精度", formatPercent(item.precisionExcludingReactive), "reactive除外"],
-  ];
-
+function DetailRow({ label, value }) {
   return (
-    <div className="detail-metrics">
-      {metrics.map(([label, value, description]) => (
-        <div className="detail-metric" key={label}>
-          <span>{label}</span>
-          <strong>{value}</strong>
-          <small>{description}</small>
-        </div>
-      ))}
+    <div className="detail-row">
+      <span>{label}</span>
+      <b>{value}</b>
     </div>
   );
 }
 
-function KeywordCard({ item, onCopy, now }) {
+function KeywordCard({ item, hidden, onCopy, now }) {
   const [open, setOpen] = useState(false);
+  const detailId = "keyword-detail-" + item.candidateId;
   const variants = (item.variants ?? []).filter(
     (variant) => variant !== item.keyword,
   );
+  const recommendationClass =
+    item.recommendation === "高推奨"
+      ? "high"
+      : item.recommendation === "中推奨"
+        ? "medium"
+        : "optional";
   const isNew = isNewCandidate(
     item.introducedAt,
     now,
@@ -177,156 +167,142 @@ function KeywordCard({ item, onCopy, now }) {
   );
 
   return (
-    <Card className="candidate-card keyword-card">
-      <CardContent className="candidate-card__main">
-        <div className="candidate-card__content">
-          <div className="keyword-card__title-row">
-            <strong className="keyword">{item.keyword}</strong>
-            <div className="keyword-card__badges">
-              <RecommendationBadge value={item.recommendation} />
-              <Badge variant="blue" size="sm">
-                {item.category}
-              </Badge>
-              {isNew && (
-                <Badge variant="pink" size="sm">
-                  NEW
-                </Badge>
-              )}
-            </div>
-          </div>
-        </div>
+    <article className="candidate-card" hidden={hidden}>
+      <div className="candidate-head">
+        <h2 className="keyword">{item.keyword}</h2>
+        <CopyButton
+          value={item.keyword}
+          onCopy={onCopy}
+          duration={1300}
+          kind="keyword"
+          ariaLabel={item.keyword + " をコピー"}
+        />
+      </div>
 
-        <div className="candidate-card__actions">
-          <Button
-            variant="outline"
-            size="sm"
-            className="copy-button"
-            type="button"
-            onClick={() => onCopy(item.keyword)}
-            aria-label={`${item.keyword} をコピー`}
-          >
-            コピー
-          </Button>
-        </div>
-      </CardContent>
+      <div className="badges" aria-label="分類">
+        <span className={"badge " + recommendationClass}>
+          {item.recommendation}
+        </span>
+        <span className="badge category">{item.category}</span>
+        {isNew && <span className="badge new">NEW</span>}
+      </div>
 
-      <Collapsible
+      <DetailToggle
         open={open}
-        onOpenChange={setOpen}
-        className="candidate-collapsible"
+        onToggle={() => setOpen((current) => !current)}
+        controls={detailId}
       >
-        <CollapsibleTrigger className="detail-trigger">詳細</CollapsibleTrigger>
-        <CollapsibleContent className="detail-content">
-          <DetailMetrics item={item} />
-
-          {variants.length > 0 && (
-            <div className="variants variants--details">
-              <span>表記揺れ</span>
-              <div className="variant-list">
-                {variants.map((variant) => (
-                  <code key={variant}>{variant}</code>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {item.matchType && (
-            <div className="match-type">
-              <span>マッチ方式</span>
-              <strong>{item.matchType}</strong>
-            </div>
-          )}
-        </CollapsibleContent>
-      </Collapsible>
-    </Card>
+        詳細
+      </DetailToggle>
+      <div
+        className={"detail-panel" + (open ? " open" : "")}
+        id={detailId}
+        hidden={!open}
+      >
+        <DetailRow
+          label="direct（命中）"
+          value={item.directNuisanceHits + "件"}
+        />
+        <DetailRow
+          label="reactive（参考）"
+          value={item.reactiveHits + "件"}
+        />
+        <DetailRow
+          label="normal（誤爆）"
+          value={item.normalHits + "件"}
+        />
+        <DetailRow
+          label="精度（reactive除外）"
+          value={formatPercent(item.precisionExcludingReactive)}
+        />
+        {variants.length > 0 && (
+          <DetailRow label="表記揺れ" value={variants.join(" / ")} />
+        )}
+        {item.matchType && (
+          <DetailRow label="マッチ方式" value={item.matchType} />
+        )}
+      </div>
+    </article>
   );
 }
 
 function AccountCard({ item, onCopy }) {
   const [open, setOpen] = useState(false);
+  const detailId = "account-detail-" + item.handle;
+  const evidence = item.evidence ?? [];
 
   return (
-    <Card className="candidate-card account-card">
-      <CardContent className="candidate-card__main">
-        <div className="candidate-card__content">
-          <strong className="account-handle">{item.handle}</strong>
-          <span className="account-count">
-            direct_nuisance {item.directNuisanceCount}件
-          </span>
+    <article className="account-card">
+      <div className="account-head">
+        <div>
+          <h2 className="account-name">{item.handle}</h2>
+          <p className="account-meta">
+            direct_nuisance{" "}
+            <span className="count">{item.directNuisanceCount}件</span>
+          </p>
         </div>
+        <CopyButton
+          value={item.handle}
+          onCopy={onCopy}
+          duration={1400}
+          kind="account"
+          ariaLabel={item.handle + " をコピー"}
+        />
+      </div>
 
-        <div className="candidate-card__actions">
-          <Button
-            variant="outline"
-            size="sm"
-            className="copy-button"
-            type="button"
-            onClick={() => onCopy(item.handle)}
-            aria-label={`${item.handle} をコピー`}
-          >
-            コピー
-          </Button>
-        </div>
-      </CardContent>
-
-      <Collapsible
+      <DetailToggle
         open={open}
-        onOpenChange={setOpen}
-        className="candidate-collapsible"
+        onToggle={() => setOpen((current) => !current)}
+        controls={detailId}
       >
-        <CollapsibleTrigger className="detail-trigger">
-          根拠を確認
-        </CollapsibleTrigger>
-        <CollapsibleContent className="detail-content">
-          <div className="account-evidence-heading">
-            <strong>根拠例 {item.evidence.length}件</strong>
-            <span>計{item.directNuisanceCount}件</span>
-          </div>
+        根拠を確認
+      </DetailToggle>
+      <div
+        className={"detail-panel" + (open ? " open" : "")}
+        id={detailId}
+        hidden={!open}
+      >
+        <DetailRow label="判定ラベル" value="direct_nuisance" />
+        <DetailRow
+          label="該当コメント数"
+          value={item.directNuisanceCount + "件"}
+        />
+        <DetailRow label="候補条件" value="2件以上" />
 
-          <ol className="account-evidence-list">
-            {item.evidence.map((evidence, index) => (
-              <li key={`${evidence.postedDate}-${evidence.postedAt}-${index}`}>
-                <div className="account-evidence-date">
-                  <time dateTime={evidence.postedDate}>{evidence.postedDate}</time>
-                  <span>{evidence.postedAt}</span>
-                </div>
-                <p>{evidence.comment}</p>
-              </li>
-            ))}
-          </ol>
-        </CollapsibleContent>
-      </Collapsible>
-    </Card>
+        <div className="account-evidence-heading">
+          <strong>根拠例 {evidence.length}件</strong>
+        </div>
+        <ol className="account-evidence-list">
+          {evidence.map((example, index) => (
+            <li
+              key={example.postedDate + "-" + example.postedAt + "-" + index}
+            >
+              <div className="account-evidence-date">
+                <time dateTime={example.postedDate}>{example.postedDate}</time>
+                <span>{example.postedAt}</span>
+              </div>
+              <p>{example.comment}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </article>
   );
 }
 
 function ViewHero({ eyebrow, title, description }) {
   return (
-    <Card className="hero-card">
-      <CardHeader className="hero-card__header">
+    <>
+      <header className="hero">
         <p className="eyebrow">{eyebrow}</p>
-        <h1>{title}</h1>
-      </CardHeader>
-      <CardContent>
-        <CardDescription className="description">{description}</CardDescription>
-      </CardContent>
-    </Card>
+        <h1 id="page-title">{title}</h1>
+      </header>
+      <div className="intro">
+        <p>{description}</p>
+      </div>
+    </>
   );
 }
-
-const RECOMMENDATION_FILTERS = [
-  ["all", "すべて", "blue"],
-  ["high", "高推奨", "mint"],
-  ["medium", "中推奨", "lemon"],
-  ["optional", "任意", "lilac"],
-];
-
-const RECOMMENDATION_VALUES = {
-  all: null,
-  high: "高推奨",
-  medium: "中推奨",
-  optional: "任意",
-};
 
 function KeywordFilters({
   recommendation,
@@ -335,74 +311,70 @@ function KeywordFilters({
   onNewOnlyChange,
 }) {
   return (
-    <section className="controls" aria-label="候補の絞り込み">
-      <ToggleGroup
-        type="single"
-        value={recommendation}
-        onValueChange={(value) => {
-          if (typeof value === "string" && value) onRecommendationChange(value);
-        }}
-        aria-label="推奨度"
-        className="recommendation-group"
-      >
-        {RECOMMENDATION_FILTERS.map(([value, label, variant]) => (
-          <ToggleGroupItem
+    <div className="filter-area">
+      <div className="filter-pills" role="group" aria-label="推奨度で絞り込み">
+        {RECOMMENDATION_FILTERS.map(([value, label]) => (
+          <button
+            className={
+              "pill" +
+              (value === "all" ? "" : " pill--" + value) +
+              (recommendation === value ? " active" : "")
+            }
             key={value}
-            value={value}
-            variant={variant}
-            size="sm"
-            className={`recommendation-filter recommendation-filter--${variant}`}
+            type="button"
+            data-filter={value}
+            aria-pressed={recommendation === value}
+            onClick={() => onRecommendationChange(value)}
           >
             {label}
-          </ToggleGroupItem>
+          </button>
         ))}
-      </ToggleGroup>
-
-      <div className="new-filter">
-        <Checkbox
-          id="new-only"
-          checked={newOnly}
-          onCheckedChange={(checked) => onNewOnlyChange(checked === true)}
-        />
-        <Label htmlFor="new-only">NEWのみ</Label>
       </div>
-    </section>
+      <label className="new-only">
+        <input
+          id="newOnly"
+          type="checkbox"
+          checked={newOnly}
+          onChange={(event) => onNewOnlyChange(event.target.checked)}
+        />
+        <span>NEWのみ</span>
+      </label>
+    </div>
   );
 }
 
-function KeywordResults({ candidates, onCopy, now }) {
-  if (candidates.length === 0) {
-    return (
-      <Empty
-        className="empty-state"
-        title="該当する候補がありません"
-        description="検索語または絞り込み条件を変更してください。"
-      />
-    );
-  }
-
+function KeywordResults({ visibleCandidateIds, onCopy, now }) {
   return (
-    <div className="candidate-list">
-      {candidates.map((item) => (
-        <KeywordCard key={item.candidateId} item={item} onCopy={onCopy} now={now} />
-      ))}
-    </div>
+    <>
+      <div className="candidate-list" id="candidateList">
+        {keywordCandidates.map((item) => (
+          <KeywordCard
+            key={item.candidateId}
+            item={item}
+            hidden={!visibleCandidateIds.has(item.candidateId)}
+            onCopy={onCopy}
+            now={now}
+          />
+        ))}
+      </div>
+      <div
+        className="empty"
+        id="emptyState"
+        hidden={visibleCandidateIds.size > 0}
+      >
+        条件に一致する候補はありません。
+      </div>
+    </>
   );
 }
 
 function AccountResults({ onCopy }) {
   if (accountCandidates.length === 0) {
-    return (
-      <Empty
-        className="empty-state"
-        title="該当するアカウント候補はありません"
-        description="現在のデータでは、候補条件を満たすアカウントはありません。"
-      />
-    );
+    return <div className="empty">該当するアカウント候補はありません。</div>;
   }
 
   return (
-    <div className="candidate-list">
+    <div className="account-list">
       {accountCandidates.map((item) => (
         <AccountCard key={item.handle} item={item} onCopy={onCopy} />
       ))}
@@ -410,31 +382,74 @@ function AccountResults({ onCopy }) {
   );
 }
 
-function ViewFooter({ view }) {
-  if (view === "keywords") {
-    return (
-      <footer>
-        <p>
-          JSONデータは <code>src/data/filterKeywordCandidates.json</code> に分離されています。候補の識別には永続的な <code>candidate_id</code> を使用します。
-        </p>
-      </footer>
-    );
-  }
-
-  if (view === "accounts") {
-    return (
-      <footer>
-        <p>アカウント候補は根拠を確認したうえで、利用者が手動で判断してください。</p>
-      </footer>
-    );
-  }
+function LabelSummaryCard({ summary }) {
+  const total = summary.total;
 
   return (
-    <footer>
-      <p>
-        集計データは <code>src/data/threeClassLabelSummary.json</code> をComment DBから出力して更新します。
-      </p>
-    </footer>
+    <section className="summary-panel" aria-labelledby="summary-heading">
+      <div className="summary-head">
+        <p className="summary-label" id="summary-heading">集計対象</p>
+        <p className="summary-total">
+          <span>{total.toLocaleString("ja-JP")}</span>件のコメント
+        </p>
+
+        <div className="snapshot-block">
+          <p className="snapshot-title">スナップショット</p>
+          <p className="snapshot-value">{summary.snapshotRef}</p>
+        </div>
+      </div>
+
+      <div className="label-list">
+        {LABEL_SUMMARY_ROWS.map((row) => {
+          const count = summary.counts[row.key];
+          const percentage = total > 0 ? (count / total) * 100 : 0;
+          const shown = percentage.toFixed(1);
+
+          return (
+            <article className={"label-card " + row.className} key={row.key}>
+              <div className="label-head">
+                <div className="label-copy">
+                  <span className={"badge " + row.badgeClassName}>
+                    {row.label}
+                  </span>
+                  <p className="label-description">{row.description}</p>
+                  <p className="label-stat">
+                    <span className="label-count">
+                      {count.toLocaleString("ja-JP")}件
+                    </span>
+                    <span className="label-percent">{shown}%</span>
+                  </p>
+                </div>
+              </div>
+              <div
+                className="progress-line"
+                role="progressbar"
+                aria-label={row.label}
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow={shown}
+              >
+                <i style={{ "--value": shown + "%" }} />
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function Toast({ state }) {
+  const className = [
+    "toast",
+    state ? "show" : "",
+    state?.type === "failure" ? "toast--failure" : "",
+  ].filter(Boolean).join(" ");
+
+  return (
+    <div className={className} role="status" aria-live="polite">
+      {state?.message}
+    </div>
   );
 }
 
@@ -442,117 +457,148 @@ export default function App() {
   const [view, setView] = useState("keywords");
   const [recommendation, setRecommendation] = useState("all");
   const [newOnly, setNewOnly] = useState(false);
-  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
-  const previousScrollY = useRef(0);
   const [now] = useState(() => new Date());
+  const [toastState, setToastState] = useState(null);
+  const toastTimer = useRef(null);
 
   useEffect(() => {
-    previousScrollY.current = window.scrollY;
+    document.title = VIEW_TITLES[view];
+  }, [view]);
 
-    function handleScroll() {
-      const currentScrollY = window.scrollY;
-
-      if (currentScrollY <= 8) {
-        setIsHeaderVisible(true);
-      } else if (currentScrollY > previousScrollY.current) {
-        setIsHeaderVisible(false);
-      } else if (currentScrollY < previousScrollY.current) {
-        setIsHeaderVisible(true);
-      }
-
-      previousScrollY.current = currentScrollY;
-    }
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+  useEffect(() => () => {
+    if (toastTimer.current !== null) window.clearTimeout(toastTimer.current);
   }, []);
 
-  const filteredCandidates = useMemo(
-    () =>
-      keywordCandidates.filter(
-        (item) =>
-          (RECOMMENDATION_VALUES[recommendation] === null ||
-            item.recommendation === RECOMMENDATION_VALUES[recommendation]) &&
-          (!newOnly ||
+  const visibleCandidateIds = useMemo(() => {
+    const expectedRecommendation = RECOMMENDATION_VALUES[recommendation];
+    return new Set(
+      keywordCandidates
+        .filter((item) => {
+          const matchesRecommendation =
+            expectedRecommendation === null ||
+            item.recommendation === expectedRecommendation;
+          const matchesNew =
+            !newOnly ||
             isNewCandidate(
               item.introducedAt,
               now,
               workflowConfig.newKeywordDisplayDays,
-            )),
-      ),
-    [newOnly, now, recommendation],
-  );
+            );
+          return matchesRecommendation && matchesNew;
+        })
+        .map((item) => item.candidateId),
+    );
+  }, [newOnly, now, recommendation]);
 
-  async function handleCopy(value) {
+  function showToast(message, type = "success") {
+    if (toastTimer.current !== null) window.clearTimeout(toastTimer.current);
+    setToastState({ message, type });
+    toastTimer.current = window.setTimeout(() => {
+      setToastState(null);
+      toastTimer.current = null;
+    }, 1600);
+  }
+
+  async function handleCopy(value, kind) {
     const copied = await copyToClipboard(value);
     if (copied) {
-      toast.success(`「${value}」をコピーしました`);
+      showToast(
+        kind === "account"
+          ? value + " をコピーしました"
+          : "「" + value + "」をコピーしました",
+      );
     } else {
-      toast.error(`「${value}」をコピーできませんでした`);
+      showToast(
+        kind === "account"
+          ? value + " をコピーできませんでした"
+          : "「" + value + "」をコピーできませんでした",
+        "failure",
+      );
     }
+    return copied;
   }
 
   return (
     <>
-      <main className="page-shell">
-        <Tabs
-          value={view}
-          onValueChange={(value) => setView(value)}
+      <main className="app-shell">
+        <TabsPrimitive.Root
           className="app-tabs"
+          value={view}
+          onValueChange={setView}
         >
-          <TabsList
-            aria-label="表示切替"
-            className={`view-switcher${isHeaderVisible ? "" : " view-switcher--hidden"}`}
-          >
-            <TabsTrigger value="keywords">フィルターキーワード</TabsTrigger>
-            <TabsTrigger value="accounts">ブロックアカウント</TabsTrigger>
-            <TabsTrigger value="labels">コメントラベル集計</TabsTrigger>
-          </TabsList>
+          <TabsPrimitive.List className="top-tabs" aria-label="管理メニュー">
+            {TABS.map(([value, label]) => (
+              <TabsPrimitive.Trigger
+                className={"top-tab" + (view === value ? " active" : "")}
+                key={value}
+                type="button"
+                value={value}
+                aria-current={view === value ? "page" : undefined}
+              >
+                {label}
+              </TabsPrimitive.Trigger>
+            ))}
+          </TabsPrimitive.List>
 
-          <TabsContent value="keywords" className="view-panel">
-            <ViewHero
-              eyebrow="FILTER KEYWORD CANDIDATES"
-              title="フィルターキーワード候補"
-              description="フィルターに追加するキーワード候補です。迷惑コメントへの該当数と誤判定の少なさで評価しています。詳細から判定結果を確認できます。"
-            />
-            <KeywordFilters
-              recommendation={recommendation}
-              onRecommendationChange={setRecommendation}
-              newOnly={newOnly}
-              onNewOnlyChange={setNewOnly}
-            />
-            <section className="results" aria-label="フィルターキーワード候補一覧">
-              <KeywordResults candidates={filteredCandidates} onCopy={handleCopy} now={now} />
+          <TabsPrimitive.Content className="view-panel" value="keywords">
+            <section className="page-card" aria-labelledby="page-title">
+              <ViewHero
+                eyebrow="FILTER KEYWORD CANDIDATES"
+                title="フィルターキーワード候補"
+                description="フィルターに追加するキーワード候補です。迷惑コメントへの該当数と誤判定の少なさで評価しています。詳細から判定結果を確認できます。"
+              />
+              <div className="content">
+                <KeywordFilters
+                  recommendation={recommendation}
+                  onRecommendationChange={setRecommendation}
+                  newOnly={newOnly}
+                  onNewOnlyChange={setNewOnly}
+                />
+                <section className="results" aria-label="フィルターキーワード候補一覧">
+                  <KeywordResults
+                    visibleCandidateIds={visibleCandidateIds}
+                    onCopy={handleCopy}
+                    now={now}
+                  />
+                </section>
+              </div>
             </section>
-            <ViewFooter view="keywords" />
-          </TabsContent>
+          </TabsPrimitive.Content>
 
-          <TabsContent value="accounts" className="view-panel">
-            <ViewHero
-              eyebrow="ACCOUNT BLOCK CANDIDATES"
-              title="アカウントブロック候補"
-              description="ブロック候補のアカウントです。同じアカウントから迷惑コメントが2件以上ある場合に候補としています。詳細から根拠を確認できます。"
-            />
-            <section className="results" aria-label="アカウントブロック候補一覧">
-              <AccountResults onCopy={handleCopy} />
+          <TabsPrimitive.Content className="view-panel" value="accounts">
+            <section className="page-card" aria-labelledby="page-title">
+              <ViewHero
+                eyebrow="ACCOUNT BLOCK CANDIDATES"
+                title="アカウントブロック候補"
+                description="ブロック候補のアカウントです。同じアカウントから迷惑コメントが2件以上ある場合に候補としています。詳細から根拠を確認できます。"
+              />
+              <div className="content">
+                <section className="results" aria-label="アカウントブロック候補一覧">
+                  <AccountResults onCopy={handleCopy} />
+                </section>
+              </div>
             </section>
-            <ViewFooter view="accounts" />
-          </TabsContent>
+          </TabsPrimitive.Content>
 
-          <TabsContent value="labels" className="view-panel">
-            <ViewHero
-              eyebrow="THREE-CLASS LABEL SUMMARY"
-              title="コメントラベル集計"
-              description="Comment DBに登録された3分類ラベルの内訳です。集計元のスナップショットを明示しています。"
-            />
-            <section className="results" aria-labelledby="label-summary-heading">
-              <LabelSummaryCard summary={threeClassLabelSummary} />
+          <TabsPrimitive.Content className="view-panel" value="labels">
+            <section className="page-card" aria-labelledby="page-title">
+              <ViewHero
+                eyebrow="THREE-CLASS LABEL SUMMARY"
+                title="コメントラベル集計"
+                description="Comment DBに登録された3分類ラベルの内訳です。集計元のスナップショットを明示しています。"
+              />
+              <div className="content">
+                <LabelSummaryCard summary={threeClassLabelSummary} />
+                <div className="data-note">
+                  <b>集計データ</b><br />
+                  <code>src/data/threeClassLabelSummary.json</code> を参照する画面として構成しています。表示値はスナップショット単位で固定し、3分類の合計と集計対象件数が一致する前提です。
+                </div>
+              </div>
             </section>
-            <ViewFooter view="labels" />
-          </TabsContent>
-        </Tabs>
+          </TabsPrimitive.Content>
+        </TabsPrimitive.Root>
       </main>
-      <Toaster />
+      <Toast state={toastState} />
     </>
   );
 }
