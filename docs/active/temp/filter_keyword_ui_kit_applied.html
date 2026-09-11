@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>フィルターキーワード候補</title>
+<style>
+  :root{
+    /* Source UI-kit tokens */
+    --navy:#1E2A56;
+    --blue:#4FC3F7;
+    --blue-strong:#29A9E8;
+    --cyan:#00C3D6;
+    --pink-soft:#FF8FB3;
+    --pink:#FF6B98;
+    --yellow:#FFC845;
+    --paper:#F8FAFF;
+    --mist:#EAF1F8;
+    --line:#D8E3F0;
+    --text:#20325E;
+    --muted:#7483A0;
+    --success:#2DBE89;
+    --danger:#F05A7E;
+    --shadow:0 14px 34px rgba(63,104,151,.16),0 2px 8px rgba(63,104,151,.10);
+    --shadow-soft:0 8px 20px rgba(63,104,151,.14);
+    --radius-sm:10px;
+    --radius-md:16px;
+    --radius-lg:24px;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",sans-serif;
+    background:
+      radial-gradient(circle at 8% 1%,rgba(255,255,255,.94) 0 3%,transparent 13%),
+      linear-gradient(180deg,#55b9f1 0,#b9eaff 30%,#edf8ff 100%);
+    min-height:100vh;
+  }
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:.24;
+    background-image:radial-gradient(circle,white 0 1.1px,transparent 1.2px);
+    background-size:26px 26px;
+    mask-image:linear-gradient(to bottom,#000,transparent 64%);
+  }
+  button,input{font:inherit}
+  button{cursor:pointer}
+
+  .app-shell{
+    width:min(920px,calc(100% - 28px));
+    margin:20px auto 48px;
+    position:relative;
+    z-index:1;
+  }
+
+  /* Header navigation uses the UI kit's segmented Tabs pattern. */
+  .top-tabs{
+    display:flex;
+    overflow:hidden;
+    margin:0 0 14px;
+    padding:0;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:16px;
+    box-shadow:var(--shadow-soft);
+  }
+  .top-tab{
+    flex:1 1 0;
+    min-width:0;
+    min-height:48px;
+    border:0;
+    border-right:1px solid #e7eef6;
+    border-radius:0;
+    padding:0 18px;
+    background:transparent;
+    color:var(--text);
+    font-size:14px;
+    font-weight:900;
+    letter-spacing:.01em;
+    transition:.18s ease;
+  }
+  .top-tab:last-child{border-right:0}
+  .top-tab:hover{background:#eef8ff;color:#25a8e6}
+  .top-tab:focus-visible{outline:3px solid rgba(79,195,247,.28);outline-offset:-3px}
+  .top-tab.active{
+    color:#fff;
+    background:linear-gradient(180deg,#56c3f7,#29a9e8);
+  }
+
+  .page-card{
+    overflow:hidden;
+    border:1px solid rgba(216,227,240,.95);
+    border-radius:28px;
+    background:rgba(248,252,255,.95);
+    backdrop-filter:blur(14px);
+    box-shadow:var(--shadow);
+  }
+
+  .hero{
+    padding:30px 34px 28px;
+    color:white;
+    background:
+      radial-gradient(circle at 95% 4%,rgba(255,255,255,.34),transparent 26%),
+      linear-gradient(135deg,#56c3f7 0,#29a9e8 72%,#16a4df 100%);
+  }
+  .eyebrow{
+    margin:0 0 10px;
+    font-size:12px;
+    font-weight:900;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    opacity:.92;
+  }
+  h1{
+    margin:0;
+    font-size:clamp(30px,5.3vw,50px);
+    line-height:1.16;
+    letter-spacing:-.035em;
+    font-weight:900;
+    text-wrap:balance;
+  }
+
+  .intro{
+    padding:24px 34px;
+    background:white;
+    border-bottom:1px solid #e8eff6;
+  }
+  .intro p{
+    margin:0;
+    color:#566884;
+    font-size:15px;
+    line-height:1.9;
+  }
+
+  .content{padding:26px 28px 32px}
+
+  .filter-area{
+    display:grid;
+    gap:15px;
+    padding-bottom:22px;
+  }
+  .filter-pills{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .pill{
+    min-height:40px;
+    border:1px solid #79cdf7;
+    border-radius:999px;
+    padding:0 18px;
+    background:white;
+    color:#2ba8df;
+    font-size:13px;
+    font-weight:900;
+    box-shadow:0 5px 12px rgba(64,123,171,.10);
+    transition:.16s ease;
+  }
+  .pill:hover{transform:translateY(-1px)}
+  .pill.active{
+    border-color:transparent;
+    color:white;
+    background:linear-gradient(180deg,#56c3f7,#29a9e8);
+  }
+  .pill[data-filter="high"]{border-color:#79d7bc;color:#188261}
+  .pill[data-filter="high"].active{color:white;background:linear-gradient(180deg,#42c99a,#2dbe89)}
+  .pill[data-filter="medium"]{border-color:#efcf72;color:#9a6a00}
+  .pill[data-filter="medium"].active{color:white;background:linear-gradient(180deg,#ffd567,#ffbc34)}
+  .pill[data-filter="optional"]{border-color:#f0a6bd;color:#c94f75}
+  .pill[data-filter="optional"].active{color:white;background:linear-gradient(180deg,#ff8bae,#ff6596)}
+
+  .new-only{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    width:max-content;
+    font-weight:800;
+    color:#3c537d;
+    user-select:none;
+  }
+  .new-only input{
+    appearance:none;
+    width:26px;
+    height:26px;
+    border:2px solid #aebed2;
+    border-radius:7px;
+    background:#fff;
+    display:grid;
+    place-content:center;
+    margin:0;
+    transition:.15s;
+  }
+  .new-only input:checked{border-color:#31b2ed;background:#31b2ed}
+  .new-only input:checked::after{
+    content:"✓";
+    color:white;
+    font-size:18px;
+    font-weight:900;
+    line-height:1;
+  }
+
+  .candidate-list{display:grid;gap:14px}
+  .candidate-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:18px;
+    box-shadow:var(--shadow-soft);
+    padding:18px 18px 16px;
+    transition:.18s ease;
+  }
+  .candidate-card:hover{
+    transform:translateY(-1px);
+    box-shadow:0 12px 26px rgba(63,104,151,.17);
+  }
+  .candidate-head{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:14px;
+    align-items:start;
+  }
+  .keyword{
+    margin:0;
+    color:var(--navy);
+    font-size:clamp(19px,3vw,25px);
+    line-height:1.45;
+    font-weight:900;
+    overflow-wrap:anywhere;
+  }
+  .copy-btn{
+    min-height:40px;
+    border:2px solid #ff78a0;
+    border-radius:999px;
+    padding:0 18px;
+    background:#fff;
+    color:var(--pink);
+    font-size:13px;
+    font-weight:900;
+    transition:.16s ease;
+  }
+  .copy-btn:hover{background:#fff6f9;transform:translateY(-1px)}
+  .copy-btn.copied{border-color:#75cdb0;color:#1d8b68;background:#effbf7}
+
+  .badges{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:14px;
+  }
+  .badge{
+    border-radius:999px;
+    padding:6px 12px;
+    color:#fff;
+    font-size:11px;
+    line-height:1;
+    font-weight:900;
+    box-shadow:0 4px 10px rgba(61,105,145,.10);
+    white-space:nowrap;
+  }
+  .badge.high{background:#2DBE89}
+  .badge.medium{background:#FFC143}
+  .badge.optional{background:#98A8BB}
+  .badge.category{background:#41B9EF}
+  .badge.new{background:#FF648F}
+
+  .detail-toggle{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    margin-top:13px;
+    padding:5px 2px;
+    border:0;
+    background:transparent;
+    color:#405b86;
+    font-size:13px;
+    font-weight:800;
+  }
+  .chevron{transition:.18s ease;font-size:18px;line-height:1}
+  .detail-toggle[aria-expanded="true"] .chevron{transform:rotate(90deg)}
+  .detail-panel{
+    display:none;
+    margin-top:10px;
+    padding:13px 14px;
+    border:1px solid #dceaf4;
+    border-radius:12px;
+    background:linear-gradient(135deg,#eff9ff,#fff6f9);
+    color:#607391;
+    font-size:12px;
+    line-height:1.75;
+  }
+  .detail-panel.open{display:block}
+
+  .empty{
+    display:none;
+    padding:28px 20px;
+    border:1px dashed #bfcfe0;
+    border-radius:16px;
+    background:rgba(255,255,255,.72);
+    color:var(--muted);
+    text-align:center;
+    font-size:13px;
+  }
+
+  .toast{
+    position:fixed;
+    right:20px;
+    bottom:20px;
+    z-index:20;
+    transform:translateY(130%);
+    opacity:0;
+    padding:13px 17px;
+    border-radius:12px;
+    background:#617ea2;
+    color:white;
+    box-shadow:var(--shadow);
+    font-size:13px;
+    font-weight:800;
+    transition:.24s ease;
+  }
+  .toast.show{transform:none;opacity:1}
+
+  @media (max-width:640px){
+    .app-shell{width:min(100% - 16px,620px);margin:8px auto 28px}
+    .top-tabs{overflow-x:auto;scrollbar-width:none}
+    .top-tabs::-webkit-scrollbar{display:none}
+    .top-tab{flex:0 0 auto;min-width:148px;min-height:44px;padding:0 17px;font-size:13px}
+    .page-card{border-radius:22px}
+    .hero{padding:24px 22px 22px}
+    .eyebrow{font-size:10px;margin-bottom:8px}
+    .intro{padding:20px 22px}
+    .intro p{font-size:14px;line-height:1.85}
+    .content{padding:20px 16px 24px}
+    .filter-pills{gap:8px}
+    .pill{min-height:38px;padding:0 14px;font-size:12px}
+    .candidate-card{padding:16px 15px 14px;border-radius:16px}
+    .candidate-head{gap:10px}
+    .copy-btn{min-height:38px;padding:0 15px;font-size:12px}
+    .badge{font-size:10px;padding:6px 10px}
+  }
+
+  @media (max-width:390px){
+    .candidate-head{grid-template-columns:1fr}
+    .copy-btn{justify-self:start}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{scroll-behavior:auto!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+  <main class="app-shell">
+    <nav class="top-tabs" aria-label="管理メニュー" role="tablist" data-top-tabs>
+      <button class="top-tab active" type="button" role="tab" aria-selected="true" aria-current="page">フィルターキーワード</button>
+      <button class="top-tab" type="button" role="tab" aria-selected="false">ブロックアカウント</button>
+      <button class="top-tab" type="button" role="tab" aria-selected="false">判定ログ</button>
+    </nav>
+
+    <section class="page-card" aria-labelledby="page-title">
+      <header class="hero">
+        <p class="eyebrow">FILTER KEYWORD CANDIDATES</p>
+        <h1 id="page-title">フィルターキーワード候補</h1>
+      </header>
+
+      <div class="intro">
+        <p>フィルターに追加するキーワード候補です。迷惑コメントへの該当数と誤判定の少なさで評価しています。詳細から判定結果を確認できます。</p>
+      </div>
+
+      <div class="content">
+        <div class="filter-area">
+          <div class="filter-pills" role="group" aria-label="推奨度で絞り込み">
+            <button class="pill active" type="button" data-filter="all" aria-pressed="true">すべて</button>
+            <button class="pill" type="button" data-filter="high" aria-pressed="false">高推奨</button>
+            <button class="pill" type="button" data-filter="medium" aria-pressed="false">中推奨</button>
+            <button class="pill" type="button" data-filter="optional" aria-pressed="false">任意</button>
+          </div>
+          <label class="new-only">
+            <input id="newOnly" type="checkbox">
+            <span>NEWのみ</span>
+          </label>
+        </div>
+
+        <div class="candidate-list" id="candidateList">
+          <article class="candidate-card" data-level="high" data-new="true">
+            <div class="candidate-head">
+              <h2 class="keyword">わからせ</h2>
+              <button class="copy-btn" type="button" data-copy="わからせ">コピー</button>
+            </div>
+            <div class="badges" aria-label="分類">
+              <span class="badge high">高推奨</span>
+              <span class="badge category">性的・対象化</span>
+              <span class="badge new">NEW</span>
+            </div>
+            <button class="detail-toggle" type="button" aria-expanded="false">
+              <span class="chevron">›</span><span>詳細</span>
+            </button>
+            <div class="detail-panel">判定詳細の表示領域です。該当数・誤判定率など、実データ接続時の評価指標をここに表示できます。</div>
+          </article>
+
+          <article class="candidate-card" data-level="high" data-new="false">
+            <div class="candidate-head">
+              <h2 class="keyword">ちょっと待ってほしい</h2>
+              <button class="copy-btn" type="button" data-copy="ちょっと待ってほしい">コピー</button>
+            </div>
+            <div class="badges" aria-label="分類">
+              <span class="badge high">高推奨</span>
+              <span class="badge category">コピペ・長文スパム</span>
+            </div>
+            <button class="detail-toggle" type="button" aria-expanded="false">
+              <span class="chevron">›</span><span>詳細</span>
+            </button>
+            <div class="detail-panel">判定詳細の表示領域です。該当数・誤判定率など、実データ接続時の評価指標をここに表示できます。</div>
+          </article>
+
+          <article class="candidate-card" data-level="high" data-new="false">
+            <div class="candidate-head">
+              <h2 class="keyword">唐揚げだけは</h2>
+              <button class="copy-btn" type="button" data-copy="唐揚げだけは">コピー</button>
+            </div>
+            <div class="badges" aria-label="分類">
+              <span class="badge high">高推奨</span>
+              <span class="badge category">コピペ・長文スパム</span>
+            </div>
+            <button class="detail-toggle" type="button" aria-expanded="false">
+              <span class="chevron">›</span><span>詳細</span>
+            </button>
+            <div class="detail-panel">判定詳細の表示領域です。該当数・誤判定率など、実データ接続時の評価指標をここに表示できます。</div>
+          </article>
+
+          <article class="candidate-card" data-level="high" data-new="false">
+            <div class="candidate-head">
+              <h2 class="keyword">かわいいなー俺もこういう子と付き合いたかったな</h2>
+              <button class="copy-btn" type="button" data-copy="かわいいなー俺もこういう子と付き合いたかったな">コピー</button>
+            </div>
+            <div class="badges" aria-label="分類">
+              <span class="badge high">高推奨</span>
+              <span class="badge category">コピペ・長文スパム</span>
+            </div>
+            <button class="detail-toggle" type="button" aria-expanded="false">
+              <span class="chevron">›</span><span>詳細</span>
+            </button>
+            <div class="detail-panel">判定詳細の表示領域です。該当数・誤判定率など、実データ接続時の評価指標をここに表示できます。</div>
+          </article>
+        </div>
+
+        <div class="empty" id="emptyState">条件に一致する候補はありません。</div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">コピーしました</div>
+
+<script>
+(() => {
+  const cards = [...document.querySelectorAll('.candidate-card')];
+  const filterButtons = [...document.querySelectorAll('[data-filter]')];
+  const newOnly = document.getElementById('newOnly');
+  const emptyState = document.getElementById('emptyState');
+  const toast = document.getElementById('toast');
+  let activeFilter = 'all';
+  let toastTimer;
+
+  const showToast = (message) => {
+    toast.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 1600);
+  };
+
+  const applyFilters = () => {
+    let visible = 0;
+    cards.forEach(card => {
+      const matchesLevel = activeFilter === 'all' || card.dataset.level === activeFilter;
+      const matchesNew = !newOnly.checked || card.dataset.new === 'true';
+      const show = matchesLevel && matchesNew;
+      card.hidden = !show;
+      if (show) visible += 1;
+    });
+    emptyState.style.display = visible ? 'none' : 'block';
+  };
+
+  filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      activeFilter = button.dataset.filter;
+      filterButtons.forEach(b => {
+        const active = b === button;
+        b.classList.toggle('active', active);
+        b.setAttribute('aria-pressed', String(active));
+      });
+      applyFilters();
+    });
+  });
+
+  newOnly.addEventListener('change', applyFilters);
+
+  document.querySelectorAll('.detail-toggle').forEach(button => {
+    button.addEventListener('click', () => {
+      const panel = button.nextElementSibling;
+      const next = button.getAttribute('aria-expanded') !== 'true';
+      button.setAttribute('aria-expanded', String(next));
+      panel.classList.toggle('open', next);
+    });
+  });
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (_) {
+      const area = document.createElement('textarea');
+      area.value = text;
+      area.style.position = 'fixed';
+      area.style.opacity = '0';
+      document.body.appendChild(area);
+      area.select();
+      document.execCommand('copy');
+      area.remove();
+    }
+  }
+
+  document.querySelectorAll('.copy-btn').forEach(button => {
+    button.addEventListener('click', async () => {
+      await copyText(button.dataset.copy);
+      const original = button.textContent;
+      button.textContent = 'コピー済み';
+      button.classList.add('copied');
+      showToast(`「${button.dataset.copy}」をコピーしました`);
+      setTimeout(() => {
+        button.textContent = original;
+        button.classList.remove('copied');
+      }, 1300);
+    });
+  });
+
+  const topTabs = document.querySelector('[data-top-tabs]');
+  topTabs.addEventListener('click', (event) => {
+    const button = event.target.closest('.top-tab');
+    if (!button) return;
+    topTabs.querySelectorAll('.top-tab').forEach(tab => {
+      tab.classList.remove('active');
+      tab.setAttribute('aria-selected', 'false');
+      tab.removeAttribute('aria-current');
+    });
+    button.classList.add('active');
+    button.setAttribute('aria-selected', 'true');
+    button.setAttribute('aria-current', 'page');
+    if (button.textContent.trim() !== 'フィルターキーワード') {
+      showToast(`${button.textContent.trim()} は画面遷移デモです`);
+    }
+  });
+})();
+</script>
+</body>
+</html>

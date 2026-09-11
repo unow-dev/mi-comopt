@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>アカウントブロック候補</title>
+<style>
+  :root{
+    --navy:#1E2A56;
+    --blue:#4FC3F7;
+    --blue-strong:#29A9E8;
+    --cyan:#00C3D6;
+    --pink-soft:#FF8FB3;
+    --pink:#FF6B98;
+    --yellow:#FFC845;
+    --paper:#F8FAFF;
+    --mist:#EAF1F8;
+    --line:#D8E3F0;
+    --text:#20325E;
+    --muted:#7483A0;
+    --success:#2DBE89;
+    --danger:#F05A7E;
+    --shadow:0 14px 34px rgba(63,104,151,.16),0 2px 8px rgba(63,104,151,.10);
+    --shadow-soft:0 8px 20px rgba(63,104,151,.14);
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    min-height:100vh;
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",sans-serif;
+    background:
+      radial-gradient(circle at 8% 1%,rgba(255,255,255,.94) 0 3%,transparent 13%),
+      linear-gradient(180deg,#55b9f1 0,#b9eaff 30%,#edf8ff 100%);
+  }
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:.24;
+    background-image:radial-gradient(circle,white 0 1.1px,transparent 1.2px);
+    background-size:26px 26px;
+    mask-image:linear-gradient(to bottom,#000,transparent 64%);
+  }
+  button,a{font:inherit}
+  button{cursor:pointer}
+
+  .app-shell{
+    width:min(920px,calc(100% - 28px));
+    margin:20px auto 48px;
+    position:relative;
+    z-index:1;
+  }
+
+  /* UI kit: segmented Tabs */
+  .top-tabs{
+    display:flex;
+    overflow:hidden;
+    margin:0 0 14px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:16px;
+    box-shadow:var(--shadow-soft);
+  }
+  .top-tab{
+    flex:1 1 0;
+    min-width:0;
+    min-height:48px;
+    border:0;
+    border-right:1px solid #e7eef6;
+    padding:0 18px;
+    background:transparent;
+    color:var(--text);
+    font-size:14px;
+    font-weight:900;
+    letter-spacing:.01em;
+    text-decoration:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    transition:.18s ease;
+  }
+  .top-tab:last-child{border-right:0}
+  .top-tab:hover{background:#eef8ff;color:#25a8e6}
+  .top-tab:focus-visible{outline:3px solid rgba(79,195,247,.28);outline-offset:-3px}
+  .top-tab.active{
+    color:#fff;
+    background:linear-gradient(180deg,#56c3f7,#29a9e8);
+  }
+
+  .page-card{
+    overflow:hidden;
+    border:1px solid rgba(216,227,240,.95);
+    border-radius:28px;
+    background:rgba(248,252,255,.95);
+    backdrop-filter:blur(14px);
+    box-shadow:var(--shadow);
+  }
+
+  .hero{
+    padding:30px 34px 28px;
+    color:white;
+    background:
+      radial-gradient(circle at 95% 4%,rgba(255,255,255,.34),transparent 26%),
+      linear-gradient(135deg,#56c3f7 0,#29a9e8 72%,#16a4df 100%);
+  }
+  .eyebrow{
+    margin:0 0 10px;
+    font-size:12px;
+    font-weight:900;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    opacity:.92;
+  }
+  h1{
+    margin:0;
+    font-size:clamp(30px,5.3vw,50px);
+    line-height:1.16;
+    letter-spacing:-.035em;
+    font-weight:900;
+    text-wrap:balance;
+  }
+
+  .intro{
+    padding:24px 34px;
+    background:#fff;
+    border-bottom:1px solid #e8eff6;
+  }
+  .intro p{
+    margin:0;
+    color:#566884;
+    font-size:15px;
+    line-height:1.9;
+  }
+
+  .content{padding:26px 28px 32px}
+
+  .account-list{display:grid;gap:14px}
+  .account-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:18px;
+    box-shadow:var(--shadow-soft);
+    padding:18px;
+    transition:.18s ease;
+  }
+  .account-card:hover{
+    transform:translateY(-1px);
+    box-shadow:0 12px 26px rgba(63,104,151,.17);
+  }
+  .account-head{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:14px;
+    align-items:start;
+  }
+  .account-name{
+    margin:0;
+    color:var(--navy);
+    font-size:clamp(19px,3vw,25px);
+    line-height:1.35;
+    font-weight:900;
+    overflow-wrap:anywhere;
+  }
+  .account-meta{
+    margin:6px 0 0;
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.6;
+  }
+  .count{
+    color:#405b86;
+    font-weight:900;
+  }
+
+  .copy-btn{
+    min-height:40px;
+    border:2px solid #ff78a0;
+    border-radius:999px;
+    padding:0 18px;
+    background:#fff;
+    color:var(--pink);
+    font-size:13px;
+    font-weight:900;
+    transition:.16s ease;
+  }
+  .copy-btn:hover{background:#fff6f9;transform:translateY(-1px)}
+  .copy-btn.copied{border-color:#75cdb0;color:#1d8b68;background:#effbf7}
+
+  .detail-toggle{
+    width:100%;
+    min-height:46px;
+    margin-top:14px;
+    padding:0 14px;
+    border:1px solid #d6e1ec;
+    border-radius:12px;
+    background:#fff;
+    color:#405b86;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    text-align:left;
+    font-size:13px;
+    font-weight:900;
+    transition:.16s ease;
+  }
+  .detail-toggle:hover{background:#eef8ff;border-color:#b9dbed;color:#25a8e6}
+  .detail-toggle:focus-visible{outline:3px solid rgba(79,195,247,.22);outline-offset:2px}
+  .chevron{font-size:20px;line-height:1;transition:.18s ease}
+  .detail-toggle[aria-expanded="true"] .chevron{transform:rotate(90deg)}
+
+  .detail-panel{
+    display:none;
+    margin-top:10px;
+    padding:14px;
+    border:1px solid #dceaf4;
+    border-radius:12px;
+    background:linear-gradient(135deg,#eff9ff,#fff6f9);
+    color:#607391;
+    font-size:12px;
+    line-height:1.75;
+  }
+  .detail-panel.open{display:block}
+  .detail-row{
+    display:flex;
+    justify-content:space-between;
+    gap:16px;
+    padding:6px 0;
+    border-bottom:1px solid rgba(216,227,240,.82);
+  }
+  .detail-row:last-child{border-bottom:0}
+  .detail-row span:first-child{color:#7a89a1}
+  .detail-row b{color:#2c477b;text-align:right}
+
+  .toast{
+    position:fixed;
+    right:20px;
+    bottom:20px;
+    z-index:20;
+    transform:translateY(130%);
+    opacity:0;
+    padding:13px 17px;
+    border-radius:12px;
+    background:#617ea2;
+    color:#fff;
+    box-shadow:var(--shadow);
+    font-size:13px;
+    font-weight:800;
+    transition:.24s ease;
+  }
+  .toast.show{transform:none;opacity:1}
+
+  @media (max-width:640px){
+    .app-shell{width:min(100% - 16px,620px);margin:8px auto 28px}
+    .top-tabs{overflow-x:auto;scrollbar-width:none}
+    .top-tabs::-webkit-scrollbar{display:none}
+    .top-tab{flex:0 0 auto;min-width:148px;min-height:44px;padding:0 17px;font-size:13px}
+    .page-card{border-radius:22px}
+    .hero{padding:24px 22px 22px}
+    .eyebrow{font-size:10px;margin-bottom:8px}
+    .intro{padding:20px 22px}
+    .intro p{font-size:14px;line-height:1.85}
+    .content{padding:20px 16px 24px}
+    .account-card{padding:16px 15px;border-radius:16px}
+    .account-head{gap:10px}
+    .copy-btn{min-height:38px;padding:0 15px;font-size:12px}
+    .detail-toggle{min-height:44px}
+  }
+
+  @media (max-width:390px){
+    .account-head{grid-template-columns:1fr}
+    .copy-btn{justify-self:start}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{scroll-behavior:auto!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+  <main class="app-shell">
+    <nav class="top-tabs" aria-label="管理メニュー" role="tablist">
+      <a class="top-tab" href="filter_keyword_ui_kit_applied.html" role="tab" aria-selected="false">フィルターキーワード</a>
+      <a class="top-tab active" href="#" role="tab" aria-selected="true" aria-current="page">ブロックアカウント</a>
+      <a class="top-tab" href="#comment-label-summary" role="tab" aria-selected="false">コメントラベル集計</a>
+    </nav>
+
+    <section class="page-card" aria-labelledby="page-title">
+      <header class="hero">
+        <p class="eyebrow">ACCOUNT BLOCK CANDIDATES</p>
+        <h1 id="page-title">アカウントブロック候補</h1>
+      </header>
+
+      <div class="intro">
+        <p>ブロック候補のアカウントです。同じアカウントから迷惑コメントが2件以上ある場合に候補としています。詳細から根拠を確認できます。</p>
+      </div>
+
+      <div class="content">
+        <div class="account-list">
+          <article class="account-card">
+            <div class="account-head">
+              <div>
+                <h2 class="account-name">madoloid</h2>
+                <p class="account-meta">direct_nuisance <span class="count">31件</span></p>
+              </div>
+              <button class="copy-btn" type="button" data-copy="madoloid">コピー</button>
+            </div>
+            <button class="detail-toggle" type="button" aria-expanded="false"><span class="chevron">›</span><span>根拠を確認</span></button>
+            <div class="detail-panel">
+              <div class="detail-row"><span>判定ラベル</span><b>direct_nuisance</b></div>
+              <div class="detail-row"><span>該当コメント数</span><b>31件</b></div>
+              <div class="detail-row"><span>候補条件</span><b>2件以上</b></div>
+            </div>
+          </article>
+
+          <article class="account-card">
+            <div class="account-head">
+              <div>
+                <h2 class="account-name">masayume0619</h2>
+                <p class="account-meta">direct_nuisance <span class="count">12件</span></p>
+              </div>
+              <button class="copy-btn" type="button" data-copy="masayume0619">コピー</button>
+            </div>
+            <button class="detail-toggle" type="button" aria-expanded="false"><span class="chevron">›</span><span>根拠を確認</span></button>
+            <div class="detail-panel">
+              <div class="detail-row"><span>判定ラベル</span><b>direct_nuisance</b></div>
+              <div class="detail-row"><span>該当コメント数</span><b>12件</b></div>
+              <div class="detail-row"><span>候補条件</span><b>2件以上</b></div>
+            </div>
+          </article>
+
+          <article class="account-card">
+            <div class="account-head">
+              <div>
+                <h2 class="account-name">user57010900204392</h2>
+                <p class="account-meta">direct_nuisance <span class="count">9件</span></p>
+              </div>
+              <button class="copy-btn" type="button" data-copy="user57010900204392">コピー</button>
+            </div>
+            <button class="detail-toggle" type="button" aria-expanded="false"><span class="chevron">›</span><span>根拠を確認</span></button>
+            <div class="detail-panel">
+              <div class="detail-row"><span>判定ラベル</span><b>direct_nuisance</b></div>
+              <div class="detail-row"><span>該当コメント数</span><b>9件</b></div>
+              <div class="detail-row"><span>候補条件</span><b>2件以上</b></div>
+            </div>
+          </article>
+
+          <article class="account-card">
+            <div class="account-head">
+              <div>
+                <h2 class="account-name">user8811361111815</h2>
+                <p class="account-meta">direct_nuisance <span class="count">8件</span></p>
+              </div>
+              <button class="copy-btn" type="button" data-copy="user8811361111815">コピー</button>
+            </div>
+            <button class="detail-toggle" type="button" aria-expanded="false"><span class="chevron">›</span><span>根拠を確認</span></button>
+            <div class="detail-panel">
+              <div class="detail-row"><span>判定ラベル</span><b>direct_nuisance</b></div>
+              <div class="detail-row"><span>該当コメント数</span><b>8件</b></div>
+              <div class="detail-row"><span>候補条件</span><b>2件以上</b></div>
+            </div>
+          </article>
+
+          <article class="account-card">
+            <div class="account-head">
+              <div>
+                <h2 class="account-name">user3466237973467</h2>
+                <p class="account-meta">direct_nuisance <span class="count">6件</span></p>
+              </div>
+              <button class="copy-btn" type="button" data-copy="user3466237973467">コピー</button>
+            </div>
+            <button class="detail-toggle" type="button" aria-expanded="false"><span class="chevron">›</span><span>根拠を確認</span></button>
+            <div class="detail-panel">
+              <div class="detail-row"><span>判定ラベル</span><b>direct_nuisance</b></div>
+              <div class="detail-row"><span>該当コメント数</span><b>6件</b></div>
+              <div class="detail-row"><span>候補条件</span><b>2件以上</b></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">コピーしました</div>
+
+<script>
+(() => {
+  const toast = document.getElementById('toast');
+  let timer;
+
+  const showToast = (message) => {
+    toast.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(timer);
+    timer = setTimeout(() => toast.classList.remove('show'), 1600);
+  };
+
+  document.querySelectorAll('.detail-toggle').forEach(button => {
+    button.addEventListener('click', () => {
+      const panel = button.nextElementSibling;
+      const next = button.getAttribute('aria-expanded') !== 'true';
+      button.setAttribute('aria-expanded', String(next));
+      panel.classList.toggle('open', next);
+    });
+  });
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (_) {
+      const area = document.createElement('textarea');
+      area.value = text;
+      area.style.position = 'fixed';
+      area.style.opacity = '0';
+      document.body.appendChild(area);
+      area.select();
+      document.execCommand('copy');
+      area.remove();
+    }
+  }
+
+  document.querySelectorAll('[data-copy]').forEach(button => {
+    button.addEventListener('click', async () => {
+      const text = button.dataset.copy;
+      await copyText(text);
+      const original = button.textContent;
+      button.textContent = 'コピー済み';
+      button.classList.add('copied');
+      showToast(`${text} をコピーしました`);
+      setTimeout(() => {
+        button.textContent = original;
+        button.classList.remove('copied');
+      }, 1400);
+    });
+  });
+})();
+</script>
+</body>
+</html>
