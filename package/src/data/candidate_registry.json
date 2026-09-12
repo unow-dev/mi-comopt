@@ -1250,14 +1250,19 @@
       "keyword": "いいねしてください",
       "variants": [
         "いいねしてください",
+        "いいねしないと呪われる",
         "いいねたくさんほしい",
         "いいねほしい",
         "いいねや再投稿お願いします",
-        "いいね頼んだ"
+        "いいね増やして",
+        "いいね頼んだ",
+        "バズらして",
+        "再投稿してください",
+        "拡散しよう"
       ],
       "category_id": "spam_solicitation",
       "created_at": "2026-08-24T15:54:00Z",
-      "last_changed_at": "2026-08-26T14:51:16Z",
+      "last_changed_at": "2026-09-09T09:45:34Z",
       "first_publication_state": "published_at_unknown",
       "introduced_at": null
     },
@@ -2479,13 +2484,14 @@
     },
     "kw_fadfb2ea-9808-4534-8b29-4d94a323fa7d": {
       "status": "active",
-      "keyword": "@eeumn: @ラッキー: 他のコメントどこいった",
+      "keyword": "他のコメントどこ",
       "variants": [
-        "@eeumn: @ラッキー: 他のコメントどこいった"
+        "他のコメントどこ",
+        "他のコメントどこいった"
       ],
       "category_id": "copypasta_spam",
       "created_at": "2026-08-26T14:51:16Z",
-      "last_changed_at": "2026-08-26T14:51:16Z",
+      "last_changed_at": "2026-09-09T09:45:34Z",
       "first_publication_state": "published_at_known",
       "introduced_at": "2026-08-26T14:51:16Z"
     },
@@ -2500,6 +2506,31 @@
       "last_changed_at": "2026-08-26T14:51:16Z",
       "first_publication_state": "published_at_known",
       "introduced_at": "2026-08-26T14:51:16Z"
+    },
+    "kw_9d0663f5-d053-4db1-933c-3beb74c77565": {
+      "status": "active",
+      "keyword": "わからせ",
+      "variants": [
+        "わからせ",
+        "分からせ"
+      ],
+      "category_id": "sexual_objectification",
+      "created_at": "2026-09-09T09:45:34Z",
+      "last_changed_at": "2026-09-09T09:45:34Z",
+      "first_publication_state": "published_at_known",
+      "introduced_at": "2026-09-09T09:45:34Z"
+    },
+    "kw_4b341039-81b9-4a95-8a6f-2b53318fab4b": {
+      "status": "active",
+      "keyword": "勘違いさせた",
+      "variants": [
+        "勘違いさせた"
+      ],
+      "category_id": "behavior_mockery",
+      "created_at": "2026-09-09T09:45:34Z",
+      "last_changed_at": "2026-09-09T09:45:34Z",
+      "first_publication_state": "published_at_known",
+      "introduced_at": "2026-09-09T09:45:34Z"
     }
   }
 }

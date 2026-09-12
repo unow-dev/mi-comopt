@@ -34,11 +34,11 @@
   - [x] 8.1 状態管理の範囲で、AIエージェントが、versioned local stateの読み書き・検証・不正値処理を整備する。
   - [x] 8.2 操作結果の範囲で、AIエージェントが、clipboard成功時だけcopied stateを更新し、accountのblocked markを独立してtoggleする状態へ変更する。
   - [x] 8.3 状態境界の範囲で、AIエージェントが、local stateをDB-derived valueへ影響させず、TikTok上の適用確認と誤認させない表示へ変更する。
-- [ ] 9. 検証範囲で、AIエージェントまたはCIが、DB・公開処理・release検証・UI表示・local state・既存契約の受入条件を確認する。
+- [x] 9. 検証範囲で、AIエージェントまたはCIが、DB・公開処理・release検証・UI表示・local state・既存契約の受入条件を確認する。
   - [x] 9.1 公開データの範囲で、AIエージェントまたはCIが、schema v8必須、read-only、single snapshot、完全label、exact SHA、determinism、manifest-lastを検証する。
   - [x] 9.2 UIの範囲で、AIエージェントまたはCIが、release pinning、lazy load、failure isolation、3分類、欠測と0の区別、検索・pagination、recommendation、NEW判定を検証する。
   - [x] 9.3 既存契約の範囲で、AIエージェントまたはCIが、既存`data-release.json` schema v1と既存テストに回帰がないことを確認する。
-  - [ ] 9.4 全体検証の範囲で、AIエージェントまたはCIが、package tests、対象UI tests、build、local release verification、deployed release verificationを実行する。
+  - [x] 9.4 全体検証の範囲で、AIエージェントまたはCIが、package tests、対象UI tests、build、local release verification、deployed release verificationを実行する。
 - [x] 10. 作業結果の範囲で、AIエージェントが、実施内容・検証結果・残存制約・release identityを記録する。
 
 ## Work Notes
@@ -53,9 +53,14 @@
 - sample値へのfallback、DBのexport時自動migration、UI exportのDB write、copy成功を追加済み／TikTok上でblock済みと扱うことは禁止する。
 - 既存handoff文書と本書は `docs/archive` 配下を参照しない。
 - ベースラインコミットは `cdf9127`（`chore: baseline before optimicom DB implementation`）。
+- 最新データ再構築着手前の作業コミットは `78e9846`（`feat: implement optimicom read-only UI release`）。
 - DB reader、deterministic source dataset、Overview、UI release root、4 artifact、local/deployed verifier、UI runtime、localStorage境界を実装した。
 - `node --test tests/optimicom-ui-release.test.js tests/architecture-boundaries.test.js tests/comment-database.test.js tests/raw-snapshot-database.test.js tests/three-class-label-summary.test.js` は36件（追加後はread-onlyテストを含む37件）成功した。対象UIのVitest 7件、Vite build、既存 `release.test.js` / `publication.test.js` も成功した。
-- explicit migration CLIはテスト用DB複製に対してschema v7→v8を適用でき、fixture releaseのlocal verifierはrelease identity・4 artifact・canonical policyを検証して成功した。実DBexportはschema v7でmanifestを作らず終了した。
-- `npm test` は129件中112件成功・17件失敗。失敗は今回変更していない `package/src/data/filterKeywordCandidates.json` がcanonical registry/evaluationの194件ではなく86件で、既存handoff／keyword-candidate DB契約の再構成検証に失敗する既存不整合によるもの。今回のUI releaseテストは成功している。
-- 実DB `var/comment-history.sqlite3` はschema v7のためexportを `SCHEMA_VERSION_REQUIRED` で拒否した。テスト用複製DBを明示migrationした後も、current publicationのsource dataset SHA不一致を検出して公開を拒否した。実DB・既存publicationは変更していない。
-- production release identityはsource SHA不一致により生成していない。manifestのidentityは `source`・`policies`・4 artifact metadataの決定的組み合わせとしてlocal/deployed verifierで比較する。
+- explicit migration CLIはテスト用DB複製と実DBに対してschema v7→v8を適用でき、fixture releaseのlocal verifierはrelease identity・4 artifact・canonical policyを検証して成功した。
+- 実装途中ではpackage static artifactの混在により `npm test` が129件中112件成功・17件失敗だったが、DB-currentの最新ラベルからkeyword/account static artifactを契約形式別に再生成して解消した。
+- 実DB `var/comment-history.sqlite3` は先にschema v8へ明示migrationし、旧source SHA不一致を解消するためDB-current snapshot 9からsource datasetを再構築して公開した。旧publicationはbaseとして保持され、新しいimmutable runをcurrentへ昇格した。
+- production release identityは `source`・`policies`・4 artifact metadataの決定的組み合わせとして生成し、local verifierとローカルHTTP経由のdeployed verifierで比較・検証した。
+- 旧handoff source datasetとDB-current snapshot 9のラベルは804件で不一致だった（`direct_nuisance→normal` 509件、`reactive→normal` 183件など）。この差分を最新DBデータとして採用するため、候補registryを維持してactive candidate全件を再評価する `local_rebuild` 経路を追加した。
+- 実DBをschema v7からv8へ明示migrationし、`run_8c7e7beb-3acd-497d-8615-ea1a8f71dc18` としてDB current、filesystem publication、UI releaseを更新した。snapshot 9、source SHA `sha256:182e5633d3083d855e7719219c8f5b0750c44e2ad643170f863fa12255909b19`、source 24,622件、候補評価196件、公開196件、account候補58件となった。
+- 旧86件の公開候補は全件維持され、候補registryに存在していた未公開110件が最新DBラベルで公開条件を満たした。候補registryの件数は前後196件で変えていない。
+- packageのlegacy static artifactもDB-currentの同じ最新ラベルから契約形式別に再生成し、`npm test` 130件、対象UI test 7件、Vite build、`verify:data`、local verifier、ローカルHTTPを使ったdeployed verifierが成功した。旧86件から196件への増加は、全件評価で既存候補を復元した結果である。

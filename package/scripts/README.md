@@ -121,3 +121,16 @@ npm run verify:deployed-optimicom-ui-release -- \
   --url https://example.test/ \
   --expected ./docs/active/temp/optimicom-react-tailwind/public/optimicom-ui-release.json
 ```
+
+## DB-current keyword publicationの再構築
+
+既存候補の意味を維持したまま、DB-current publicationが指すsnapshotの最新3分類ラベルをsource datasetとして、候補評価と公開候補を再計算します。ChatGPT handoffを再実行せず、候補registryの追加・削除は行いません。
+
+```bash
+npm run comment-db -- migrate --db ./var/comment-history.sqlite3
+npm run rebuild:keyword-candidate-publication -- \
+  --db ./var/comment-history.sqlite3 \
+  --publication-root ./work/20260826/candidate-publication-final
+```
+
+この処理はschema v8、単一current publication、完全な3分類ラベル、filesystemとDBのcurrent run一致を確認してから、filesystemの新runとDBのcurrent rowを更新します。評価結果はactive candidate全件を対象にし、source dataset上の最新データに基づいて公開判定を行います。

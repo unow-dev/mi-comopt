@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-12T20:12:48.990Z",
+  "source": {
+    "db_schema_version": 8,
+    "snapshot_ref": {
+      "payload_sha256": "98b1a2d6ca08fe61b8b821d4498e8bab8683d4cf0c4ac0843cb5b89f7a014c7c",
+      "snapshot_index": 0
+    },
+    "source_dataset_artifact_sha256": "sha256:182e5633d3083d855e7719219c8f5b0750c44e2ad643170f863fa12255909b19",
+    "keyword_publication": {
+      "run_id": "run_8c7e7beb-3acd-497d-8615-ea1a8f71dc18",
+      "published_at": "2026-09-12T20:12:45Z",
+      "applied_at": "2026-09-12T20:12:46.287Z",
+      "candidates_content_sha256": "sha256:f9f6fddad531d33aa740c701e77508015fdbf7ca39d7bef144914b531436e40f"
+    }
+  },
+  "policies": {
+    "keyword": {
+      "version": "1.0.0",
+      "content_sha256": "sha256:edfd0c0ea09f60ea505999bd3985fc6e1a44a1f706486cf7c2a52a941d049dba"
+    },
+    "account": {
+      "version": "1.0.0",
+      "content_sha256": "sha256:072e32f0bdff77124ca7568a9e58eb90c742dc415551454e98bf2f4cfbc56cb4"
+    }
+  },
+  "artifacts": {
+    "comments": {
+      "path": "artifacts/source-dataset.182e5633d3083d855e7719219c8f5b0750c44e2ad643170f863fa12255909b19.json",
+      "artifact_sha256": "sha256:182e5633d3083d855e7719219c8f5b0750c44e2ad643170f863fa12255909b19",
+      "record_count": 24622
+    },
+    "overview": {
+      "path": "artifacts/overview.d2aa8830518b3e4545b15d0e725eb84cca58514fdf9c9323c01740d3cb60e1ec.json",
+      "artifact_sha256": "sha256:d2aa8830518b3e4545b15d0e725eb84cca58514fdf9c9323c01740d3cb60e1ec",
+      "record_count": 30
+    },
+    "keywords": {
+      "path": "artifacts/filter-keyword-candidates.99a9173011e03e60b35b13014503dbb3acfd3529e5ba86a56cd6ada05b95449e.json",
+      "artifact_sha256": "sha256:99a9173011e03e60b35b13014503dbb3acfd3529e5ba86a56cd6ada05b95449e",
+      "record_count": 196
+    },
+    "accounts": {
+      "path": "artifacts/account-block-candidates.7d7948363bf986d5d07635a9eb0209219e2e403a9316a59d72fe99f798bcdc2a.json",
+      "artifact_sha256": "sha256:7d7948363bf986d5d07635a9eb0209219e2e403a9316a59d72fe99f798bcdc2a",
+      "record_count": 58
+    }
+  }
+}

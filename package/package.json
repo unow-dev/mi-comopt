@@ -19,7 +19,8 @@
     "verify:deployed-release": "node scripts/verify-deployed-release.mjs",
     "export:optimicom-ui": "node scripts/export-optimicom-ui-release.mjs",
     "verify:optimicom-ui-release": "node scripts/verify-optimicom-ui-release.mjs",
-    "verify:deployed-optimicom-ui-release": "node scripts/verify-deployed-optimicom-ui-release.mjs"
+    "verify:deployed-optimicom-ui-release": "node scripts/verify-deployed-optimicom-ui-release.mjs",
+    "rebuild:keyword-candidate-publication": "node scripts/rebuild-keyword-candidate-publication.mjs"
   },
   "dependencies": {
     "ajv": "^8.20.0",
