@@ -7,6 +7,7 @@ const paths = {
   bell: <><path d="M6 9a6 6 0 0 1 12 0c0 7 3 7 3 9H3c0-2 3-2 3-9Z"/><path d="M10 21h4"/></>,
   back: <><path d="m15 5-7 7 7 7"/><path d="M8 12h12"/></>,
   spark: <path d="m12 2 1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7Z"/>,
+  user: <><circle cx="12" cy="8" r="3.5"/><path d="M5 21c.7-4 3-6 7-6s6.3 2 7 6"/></>,
 }
 
 export default function Icon({ name, className = 'h-[18px] w-[18px]', strokeWidth = 1.8 }) {

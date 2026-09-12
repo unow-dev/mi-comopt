@@ -100,3 +100,24 @@ npm run publish:joint-data -- \
 ```
 
 `create:data-release`は実raw・Stage 13・reference・three-classとstaging 8 artifactからrelease recordだけを生成し、`verify:release`はrepositoryの公開8 artifactとcanonical runtime contractをfail-closed検証します。`data-release.json`がない状態で架空の値を作らず、bootstrap入力が揃うまで公開を停止します。
+
+## Optimicom UI release
+
+対象UI専用のread-only releaseは、schema v8へ明示migrationしたDBから生成します。export commandはDBを自動migrationせず、current keyword publicationが指す単一snapshotの整合性とsource SHAを検証します。
+
+```bash
+npm run comment-db -- migrate --db ./var/comment-history.sqlite3
+npm run export:optimicom-ui -- \
+  --db ./var/comment-history.sqlite3 \
+  --output-root ./docs/active/temp/optimicom-react-tailwind/public
+npm run verify:optimicom-ui-release -- \
+  --release ./docs/active/temp/optimicom-react-tailwind/public/optimicom-ui-release.json
+```
+
+`optimicom-ui-release.json`は最後にatomic replaceされ、4つのdata artifactはcontent-addressed pathへ先に公開されます。deployment後は次で全artifactを取得して検証します。
+
+```bash
+npm run verify:deployed-optimicom-ui-release -- \
+  --url https://example.test/ \
+  --expected ./docs/active/temp/optimicom-react-tailwind/public/optimicom-ui-release.json
+```

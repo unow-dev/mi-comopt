@@ -180,6 +180,10 @@ function readUserVersion(db) {
   return Number(row.user_version);
 }
 
+export function readCommentDatabaseSchemaVersion(db) {
+  return readUserVersion(db);
+}
+
 function ensureForeignKeys(db) {
   db.exec("PRAGMA foreign_keys = ON");
   const row = db.prepare("PRAGMA foreign_keys").get();
@@ -395,6 +399,64 @@ export async function openCommentDatabase(dbPath = undefined, options = {}) {
     }
     if (error instanceof CommentDatabaseError) throw error;
     throw new CommentDatabaseError("DATABASE_OPEN_FAILED", `${resolvedPath}: ${error.message}`);
+  }
+}
+
+/**
+ * Open an existing Comment DB without creating directories or applying migrations.
+ * This is the only database opening path allowed for read-model publication.
+ */
+export async function openCommentDatabaseReadOnly(dbPath = undefined) {
+  const resolvedPath = resolveDatabasePath(dbPath);
+  let db;
+  try {
+    db = new DatabaseSync(resolvedPath, { readOnly: true });
+    ensureForeignKeys(db);
+    db.exec("PRAGMA query_only = ON");
+    const queryOnly = db.prepare("PRAGMA query_only").get();
+    if (Number(queryOnly.query_only) !== 1) {
+      throw new CommentDatabaseError("SQLITE_QUERY_ONLY_DISABLED", "read-only database connection could not enable query_only");
+    }
+    const version = readUserVersion(db);
+    if (version !== APPLICATION_SCHEMA_VERSION) {
+      throw new CommentDatabaseError(
+        "SCHEMA_VERSION_REQUIRED",
+        `database user_version ${version} does not equal required version ${APPLICATION_SCHEMA_VERSION}`,
+      );
+    }
+    return db;
+  } catch (error) {
+    try {
+      db?.close();
+    } catch {
+      // Preserve the original database error.
+    }
+    if (error instanceof CommentDatabaseError) throw error;
+    throw new CommentDatabaseError("DATABASE_READ_ONLY_OPEN_FAILED", `${resolvedPath}: ${error.message}`, { cause: error });
+  }
+}
+
+export async function migrateCommentDatabase(dbPath = undefined, options = {}) {
+  const resolvedPath = resolveDatabasePath(dbPath);
+  let previousVersion = 0;
+  if (resolvedPath !== ":memory:" && existsSync(resolvedPath)) {
+    let existing;
+    try {
+      existing = new DatabaseSync(resolvedPath, { readOnly: true });
+      previousVersion = readUserVersion(existing);
+    } finally {
+      existing?.close();
+    }
+  }
+  const db = await openCommentDatabase(resolvedPath, options);
+  try {
+    return {
+      status: previousVersion >= APPLICATION_SCHEMA_VERSION ? "already-migrated" : "migrated",
+      schemaVersion: readUserVersion(db),
+      dbPath: resolvedPath,
+    };
+  } finally {
+    db.close();
   }
 }
 

@@ -16,7 +16,10 @@
     "create:data-release": "node scripts/create-data-release.mjs",
     "verify:release": "node scripts/verify-release.mjs",
     "publish:joint-data": "node scripts/publish-joint-data.mjs",
-    "verify:deployed-release": "node scripts/verify-deployed-release.mjs"
+    "verify:deployed-release": "node scripts/verify-deployed-release.mjs",
+    "export:optimicom-ui": "node scripts/export-optimicom-ui-release.mjs",
+    "verify:optimicom-ui-release": "node scripts/verify-optimicom-ui-release.mjs",
+    "verify:deployed-optimicom-ui-release": "node scripts/verify-deployed-optimicom-ui-release.mjs"
   },
   "dependencies": {
     "ajv": "^8.20.0",

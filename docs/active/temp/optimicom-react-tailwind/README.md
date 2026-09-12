@@ -1,19 +1,18 @@
 # Optimicom React + Tailwind
 
-元の単一HTML版を React + Tailwind CSS + Vite に移植したものです。
+Comment DBから公開されたrelease artifactを読む、React + Tailwind CSS + Vite製のread-only UIです。
 
 ## 構成
 
 - React 18
 - Tailwind CSS 3
 - Vite
-- DOM直操作をReact stateへ置換
-- レスポンシブUI対応
-- コメント分類切替・検索
-- キーワード候補検索 / リスク絞り込み / new絞り込み
-- コピー + 追加済み / ブロック済みマーク
-- アカウント履歴モーダル
-- 集計期間トースト
+- release rootをpage lifetimeで固定
+- 画面別artifactのlazy loadとmemory cache
+- 3分類の集計・コメント検索・50件pagination
+- キーワード推奨度・NEW・構造化根拠
+- copy事実とbrowser-local markの分離
+- アカウント候補判定の根拠モーダル
 
 ## 起動
 
@@ -31,7 +30,13 @@ npm run build
 ## 主なファイル
 
 - `src/App.jsx` UI・状態管理
-- `src/data.js` サンプルデータ
+- `src/release-client.js` release rootとartifact loader
+- `src/local-state.js` versioned browser-local state
+- `src/data-model.js` 3分類・検索・pagination・NEWのpure logic
 - `src/components/Icon.jsx` SVGアイコン
 - `src/index.css` Tailwindエントリと最小限のグローバルCSS
+
+## 公開データ
+
+デプロイ先の同一originに `optimicom-ui-release.json` と、manifestが指す `artifacts/` 配下の4 artifactを配置します。DBからの生成・検証はrepository rootのpackageで行います。
 - `tailwind.config.js` 色・フォント・シャドウ定義

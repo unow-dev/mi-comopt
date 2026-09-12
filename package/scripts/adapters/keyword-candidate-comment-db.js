@@ -29,6 +29,10 @@ import {
   validateProposal,
 } from "../../src/processing/keyword-candidates/candidate-workflow.js";
 import {
+  buildDbKeywordCandidateDataset,
+  serializeDbKeywordCandidateDataset,
+} from "../../src/processing/optimicom-ui-release/source-dataset.js";
+import {
   HANDOFF_FILES,
   prepareHandoffBundle,
   verifyHandoffBundle,
@@ -271,54 +275,7 @@ function validateSnapshotRef(snapshotRef) {
   }
 }
 
-function validateLabelCompleteness(selectedSnapshots, labelRows) {
-  if (!Array.isArray(selectedSnapshots) || selectedSnapshots.length !== 1) {
-    throw codedError("THREE_CLASS_LABELS_INCOMPLETE", "exactly one snapshot is required");
-  }
-  const bundle = selectedSnapshots[0];
-  const observations = bundle.observations;
-  const loadedCount = Number(bundle.snapshot.loadedCount);
-  if (!Array.isArray(observations) || observations.length !== loadedCount || labelRows.length !== loadedCount) {
-    throw codedError("THREE_CLASS_LABELS_INCOMPLETE", "snapshot observations and three-class labels are incomplete");
-  }
-  for (let index = 0; index < loadedCount; index += 1) {
-    const observation = observations[index];
-    const labelRow = labelRows[index];
-    if (
-      observation?.sourceIndex !== index
-      || labelRow?.sourceIndex !== index
-      || !ALLOWED_LABELS.includes(labelRow?.label)
-    ) {
-      throw codedError("THREE_CLASS_LABELS_INCOMPLETE", `source_index ${index} is missing, misaligned, or invalid`);
-    }
-  }
-}
-
-export function buildDbKeywordCandidateDataset(selectedSnapshots, labelRows) {
-  validateLabelCompleteness(selectedSnapshots, labelRows);
-  const bundle = selectedSnapshots[0];
-  return {
-    schema_version: 1,
-    labeling_status: "published",
-    snapshot_ref: {
-      payload_sha256: bundle.snapshot.payloadSha256,
-      snapshot_index: bundle.snapshot.snapshotIndex,
-    },
-    records: bundle.observations.map((observation, index) => ({
-      source_index: index,
-      username: observation.username,
-      handle: observation.handle,
-      comment: observation.commentText,
-      postedAt: observation.postedAt,
-      postedDate: observation.postedDate,
-      label: labelRows[index].label,
-    })),
-  };
-}
-
-export function serializeDbKeywordCandidateDataset(dataset) {
-  return Buffer.from(prettyJson(dataset), "utf8");
-}
+export { buildDbKeywordCandidateDataset, serializeDbKeywordCandidateDataset } from "../../src/processing/optimicom-ui-release/source-dataset.js";
 
 function readRuntimeContractBytes() {
   return Object.fromEntries(RUNTIME_CONTRACT_FILES.map((name) => [

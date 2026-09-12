@@ -7,6 +7,7 @@ import {
   backfillRawInputs,
   importNormalizedPayloadFile,
   importRawSnapshotFile,
+  migrateCommentDatabase,
   openCommentDatabase,
 } from "../src/database/comment-database.js";
 import { importNewCommentsWrapperFile } from "./adapters/new-comments-wrapper.js";
@@ -36,6 +37,9 @@ const SHA256_PATTERN = /^[0-9a-f]{64}$/;
 const SNAPSHOT_REF_PATTERN = /^([0-9a-f]{64}):([0-9]+)$/;
 
 function usageFor(command = undefined) {
+  if (command === "migrate") {
+    return "Usage: npm run comment-db -- migrate [--db path.sqlite3]";
+  }
   if (command === "import") {
     return "Usage: npm run comment-db -- import --input path/to/normalized-comments.json [--db path.sqlite3]";
   }
@@ -83,6 +87,7 @@ function usageFor(command = undefined) {
   }
   return [
     "Usage:",
+    "  npm run comment-db -- migrate [--db path.sqlite3]",
     "  npm run comment-db -- import --input path/to/normalized-comments.json [--db path.sqlite3]",
     "  npm run comment-db -- import-raw-snapshot --input path/to/rich-raw-snapshot.json [--db path.sqlite3]",
     "  npm run comment-db -- import-new-comments --input path/to/new-comments.json [--db path.sqlite3]",
@@ -148,6 +153,7 @@ function parseArguments(argv) {
 
   const command = argv[0];
   const supportedCommands = new Set([
+    "migrate",
     "import",
     "import-raw-snapshot",
     "import-new-comments",
@@ -173,6 +179,7 @@ function parseArguments(argv) {
   }
 
   const allowedOptions = {
+    migrate: new Set(["--db"]),
     import: new Set(["--input", "--db"]),
     "import-raw-snapshot": new Set(["--input", "--db"]),
     "import-new-comments": new Set(["--input", "--db"]),
@@ -231,6 +238,7 @@ function parseArguments(argv) {
   if (command === "import" || command === "import-raw-snapshot" || command === "import-new-comments" || command === "import-new-comments-wrapper" || command === "import-comment-batch") {
     if (args.input === undefined) throw new CliArgumentError("--input is required");
   }
+  if (command === "migrate" && args.db === "") throw new CliArgumentError("--db requires a value");
   if (command === "backfill-raw-inputs") {
     if (args.db === undefined) throw new CliArgumentError("--db is required");
     if (args.rawRoot === undefined) throw new CliArgumentError("--raw-root is required");
@@ -376,6 +384,9 @@ try {
   const args = parseArguments(process.argv.slice(2));
   if (args.help) {
     console.log(usageFor(args.command));
+  } else if (args.command === "migrate") {
+    const result = await migrateCommentDatabase(args.db === undefined ? undefined : resolveInvocationPath(args.db));
+    console.log(result.status + " schema=" + result.schemaVersion + " db=" + result.dbPath);
   } else if (args.command === "import") {
     const result = await importNormalizedPayloadFile(resolveInvocationPath(args.input), {
       dbPath: args.db === undefined ? undefined : resolveInvocationPath(args.db),
