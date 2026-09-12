@@ -15,6 +15,10 @@
 
 When describing work for agents, prefer a work task sequence instead of a traditional issue-style description.
 
+作業タスク列はIssue本文（通常は `ISSUE_BODY.md`）とは切り離し、Issueディレクトリ内の `WORK_TASK_SEQUENCE.md` として文書化すること。`WORK_TASK_SEQUENCE.md` には Purpose、Task Sequence、Work Notes のみを含め、Issue本文には作業タスク列を記載しないこと。
+
+作業タスク列に沿って作業する際は、完了したタスクのチェックボックスを `[x]` に更新し、未完了のタスクは `[ ]` のままにして、進捗を管理しながら進めること。
+
 A work task sequence should contain only:
 
 * Purpose

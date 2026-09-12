@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #17335F;
+  background: #F6FBFF;
+  font-family: ui-rounded, "SF Pro Rounded", "Hiragino Maru Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(78,200,247,.16), transparent 24%),
+    radial-gradient(circle at 100% 8%, rgba(255,95,152,.10), transparent 22%),
+    linear-gradient(180deg,#FBFEFF 0,#F4FAFF 100%);
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+button:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 3px solid rgba(78,200,247,.26);
+  outline-offset: 2px;
+}
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+@keyframes fadeUp {
+  from { opacity: .5; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-screen { animation: fadeUp .18s ease; }
