@@ -1,0 +1,6 @@
+-- State Control Plane migration contract.
+-- The application applies this additive migration through src/state/schema.js when
+-- stateControlPlane is explicitly enabled. Keeping it opt-in preserves the v8
+-- read-model/publication contract while the domain streams are cut over one by one.
+-- The executable CREATE TABLE definitions live in the state schema module so an
+-- existing DatabaseSync connection and a newly opened connection share one path.

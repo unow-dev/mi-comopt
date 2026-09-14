@@ -9,6 +9,7 @@ import {
   parseAndValidateRawSnapshotBytes,
   rawSnapshotRelativePath,
 } from "../raw-snapshot/raw-snapshot-contract.js";
+import { ensureStateControlPlane } from "../state/schema.js";
 
 const moduleDirectory = path.dirname(fileURLToPath(import.meta.url));
 
@@ -390,6 +391,7 @@ export async function openCommentDatabase(dbPath = undefined, options = {}) {
     if (currentVersion < APPLICATION_SCHEMA_VERSION) {
       await applyMigrations(db, currentVersion, options.migrationContext ?? {});
     }
+    if (options.stateControlPlane === true) ensureStateControlPlane(db);
     return db;
   } catch (error) {
     try {

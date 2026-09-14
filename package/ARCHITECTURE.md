@@ -8,6 +8,10 @@
 - Databaseはgeneric `{ payloadBytes, inputFormat, snapshots }` の保存、migration、transaction、およびComment DB APIを担当する。保存戦略はcollectorの`inputFormat`ではなく、各snapshotの`materializationKind`（`rich-snapshot`または`comment-batch`）で決まる。
 - Processingは候補の検証・評価・artifact生成などの意味処理を担当する。具体的なDatabase、UI、filesystem、CLI、React、`node:sqlite`へ依存しない。
 - UIは`release-client.js`でrelease rootを起点に公開artifactを検証付きで遅延読み込みし、同一page lifetimeのreleaseを固定して表示する。`App.jsx`は検証済みartifactをread-onlyで表示し、成功したartifactはmemory cacheを再利用する。
+- Comment DBの業務正本は`src/state/`と`src/application/`で管理する。`StateControlPlane`はState Stream、immutable Version、Head、Dependency、Proposal、Decision、Transitionおよびapplication operation receiptを所有し、typed domain payloadは各Application Serviceのdomain handlerから保存する。既存v8接続へは`stateControlPlane: true`または`openCommentStateDatabase()`で明示的に追加する。
+- `src/workflow/`は`comment-data-update`と`deploy-promoted-release`のWorkDefinition、session input pinning、routing outcomeおよび公開`work-orchestrator` APIとの互換境界だけを持つ。workflow execution stateをComment DBへ複製せず、外部ライブラリが不在または意味を表現できない場合は登録をfail closedする。
+- `src/application/release-services.js`はexact versionだけでRelease Bundleを構成し、`src/release/artifact-store.js`のrelease-owned artifact storeへmaterializeする。`src/application/deployment-services.js`はPromotion（desired）とDeployment（verified actual）を別streamとして扱う。
+- `src/domain/account-candidates.js`のAccount CandidateはCorpus・Classification・Policyから都度再計算する派生値であり、独立したState Streamを持たない。
 - `candidate-data.js`と`candidate-data-adapter.js`は既存packageテストおよびlegacy static dataとの互換性のために残る旧境界であり、新UIのruntime entrypointからは参照しない。
 
 `scripts/adapters/` は第5レイヤーではない。CLIやcomposition rootからfilesystemなどの外部境界へ接続するための実装置き場であり、keyword publicationのatomicityはここで扱う。
