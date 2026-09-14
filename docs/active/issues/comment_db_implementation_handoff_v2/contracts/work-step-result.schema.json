@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "work-step-result.schema.json",
+  "title": "WorkStepResult",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "stateResult",
+    "refs",
+    "inputFingerprint"
+  ],
+  "properties": {
+    "stateResult": {
+      "type": "string",
+      "enum": [
+        "succeeded",
+        "committed",
+        "unchanged",
+        "created",
+        "reused",
+        "materialized",
+        "already_materialized",
+        "review_required",
+        "rejected",
+        "conflict",
+        "blocked",
+        "triggered",
+        "already_deployed",
+        "verified",
+        "not_verified"
+      ]
+    },
+    "refs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assessmentId": {
+          "type": "string"
+        },
+        "proposalId": {
+          "type": "string"
+        },
+        "decisionId": {
+          "type": "string"
+        },
+        "corpusVersionId": {
+          "type": "string"
+        },
+        "classificationVersionId": {
+          "type": "string"
+        },
+        "keywordSelectionVersionId": {
+          "type": "string"
+        },
+        "releaseId": {
+          "type": "string"
+        },
+        "promotionVersionId": {
+          "type": "string"
+        },
+        "deploymentVersionId": {
+          "type": "string"
+        },
+        "deploymentRequestId": {
+          "type": "string"
+        },
+        "verificationRef": {
+          "type": "string"
+        }
+      }
+    },
+    "inputFingerprint": {
+      "type": "string",
+      "minLength": 1
+    },
+    "outputFingerprint": {
+      "type": "string"
+    },
+    "details": {
+      "type": "object"
+    }
+  }
+}

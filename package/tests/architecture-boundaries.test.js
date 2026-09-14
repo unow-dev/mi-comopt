@@ -70,9 +70,10 @@ test("database and processing do not import collector-specific modules", () => {
   }
 });
 
-test("candidate-data.js is the only UI module that imports generated JSON", () => {
+test("release-client.js is the runtime UI data boundary", () => {
   const uiRoot = path.join(srcRoot, "ui");
   const appSource = fs.readFileSync(path.join(uiRoot, "App.jsx"), "utf8");
+  const releaseClientSource = fs.readFileSync(path.join(uiRoot, "release-client.js"), "utf8");
   for (const sourceFile of filesUnder(uiRoot)) {
     const source = fs.readFileSync(sourceFile, "utf8");
     for (const specifier of importedSpecifiers(source)) {
@@ -83,5 +84,8 @@ test("candidate-data.js is the only UI module that imports generated JSON", () =
     }
   }
   assert.doesNotMatch(appSource, /from\s+["'][^"']*src\/data\//);
-  assert.doesNotMatch(appSource, /\bitem\.(?:candidate_id|introduced_at|direct_nuisance_hits|reactive_hits|normal_hits|precision_excluding_reactive|match_type|direct_nuisance_count|evidence_sample)\b/);
+  assert.match(appSource, /from\s+["']\.\/release-client\.js["']/);
+  assert.match(appSource, /loadReleaseSession/);
+  assert.match(releaseClientSource, /export function validateReleaseManifest/);
+  assert.match(releaseClientSource, /export function validateArtifactShape/);
 });

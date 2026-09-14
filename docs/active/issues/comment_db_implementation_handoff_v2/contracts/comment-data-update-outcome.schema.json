@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "comment-data-update-outcome.schema.json",
+  "title": "CommentDataUpdateOutcome",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "releaseId",
+        "changed"
+      ],
+      "properties": {
+        "status": {
+          "const": "deployed"
+        },
+        "releaseId": {
+          "type": "string"
+        },
+        "changed": {
+          "type": "boolean"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "stage"
+      ],
+      "properties": {
+        "status": {
+          "const": "change_rejected"
+        },
+        "stage": {
+          "enum": [
+            "classification",
+            "keyword-selection"
+          ]
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "releaseId"
+      ],
+      "properties": {
+        "status": {
+          "const": "not_promoted"
+        },
+        "releaseId": {
+          "type": "string"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "conflictAt"
+      ],
+      "properties": {
+        "status": {
+          "const": "superseded"
+        },
+        "conflictAt": {
+          "enum": [
+            "corpus",
+            "classification",
+            "keyword-selection",
+            "promotion",
+            "deployment"
+          ]
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "releaseId"
+      ],
+      "properties": {
+        "status": {
+          "const": "deployment_failed"
+        },
+        "releaseId": {
+          "type": "string"
+        },
+        "deploymentRequestId": {
+          "type": "string"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "const": "cancelled"
+        }
+      }
+    }
+  ]
+}

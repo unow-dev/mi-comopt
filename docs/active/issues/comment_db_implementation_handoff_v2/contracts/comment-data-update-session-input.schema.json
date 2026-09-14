@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "comment-data-update-session-input.schema.json",
+  "title": "CommentDataUpdateSessionInput",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "updateRequestId",
+    "evidenceSource",
+    "pinned",
+    "target"
+  ],
+  "properties": {
+    "updateRequestId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidenceSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "sourceRef"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceRef": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "pinned": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classificationPolicyVersionId",
+        "keywordPolicyVersionId",
+        "accountPolicyVersionId",
+        "projectionDefinitionVersionId"
+      ],
+      "properties": {
+        "initialCorpusVersionId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "classificationVersionId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "keywordSelectionVersionId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "classificationPolicyVersionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "keywordPolicyVersionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "accountPolicyVersionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "projectionDefinitionVersionId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "promotionStream",
+        "deploymentTarget"
+      ],
+      "properties": {
+        "promotionStream": {
+          "const": "production"
+        },
+        "deploymentTarget": {
+          "const": "production"
+        }
+      }
+    }
+  }
+}

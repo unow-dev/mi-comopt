@@ -30,6 +30,7 @@
   - [x] 7.3 Commentsの範囲で、AIエージェントが、3分類filter・検索・50件pagination・決定的順序・空状態を仕様どおり表示する。
   - [x] 7.4 Keywords・Accountsの範囲で、AIエージェントが、既存recommendation・構造化根拠・候補判定の根拠を仕様どおり表示する。
   - [x] 7.5 表示制約の範囲で、AIエージェントが、6分類・Score・GOOD・AI総評・risk・Priority・unsupported history・sample fallbackを本番UIから除去する。
+  - [x] 7.6 package配布の範囲で、AIエージェントが、新UIのentrypoint・style・runtime release loadingを反映する。
 - [x] 8. ブラウザローカル状態の範囲で、AIエージェントが、copy事実とaccountのmanual markを外部適用状態と分離して保持する変更を行う。
   - [x] 8.1 状態管理の範囲で、AIエージェントが、versioned local stateの読み書き・検証・不正値処理を整備する。
   - [x] 8.2 操作結果の範囲で、AIエージェントが、clipboard成功時だけcopied stateを更新し、accountのblocked markを独立してtoggleする状態へ変更する。
@@ -64,3 +65,5 @@
 - 実DBをschema v7からv8へ明示migrationし、`run_8c7e7beb-3acd-497d-8615-ea1a8f71dc18` としてDB current、filesystem publication、UI releaseを更新した。snapshot 9、source SHA `sha256:182e5633d3083d855e7719219c8f5b0750c44e2ad643170f863fa12255909b19`、source 24,622件、候補評価196件、公開196件、account候補58件となった。
 - 旧86件の公開候補は全件維持され、候補registryに存在していた未公開110件が最新DBラベルで公開条件を満たした。候補registryの件数は前後196件で変えていない。
 - packageのlegacy static artifactもDB-currentの同じ最新ラベルから契約形式別に再生成し、`npm test` 130件、対象UI test 7件、Vite build、`verify:data`、local verifier、ローカルHTTPを使ったdeployed verifierが成功した。旧86件から196件への増加は、全件評価で既存候補を復元した結果である。
+- packageの`src/ui`へ新UIのApp・Tailwind style・runtime release client・local state・画面別data modelを反映し、Viteのpublic rootを現行UI releaseへ接続した。packageおよびリポジトリ直下の`npm run dev`で新UIを起動でき、dev配信確認でrelease schema v1、keyword 196件、account 58件を確認した。
+- packageの全テストは130件成功し、Vite production buildも成功した。旧static UIのarchitecture assertionはruntime release boundaryの検査へ更新した。
