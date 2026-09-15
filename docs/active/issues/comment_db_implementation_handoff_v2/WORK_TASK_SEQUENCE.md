@@ -75,3 +75,4 @@
 - 親タスク4.2と13系は上記の定義登録・受入検証を根拠に完了とした。Classification/Keyword Selectionおよび全streamの本番cutover・Retiredは人間判断が必要なため未完了のまま残している。
 - 移行ライフサイクルに `Backfilled -> Verified -> Cutover -> Legacy Read Compatibility -> Retired` の順序と、cutover gate（意味同値性、Commit経路の排他、legacy writer停止、projection再生成、current marker非権威化、rollback時の二重正本防止）を実装した。
 - Classificationのlegacy label writerとKeyword Selectionのlegacy publication writer/current marker readerは、対応streamがcutover以降になるとfail closedする境界を追加した。実際の全stream cutoverとlegacy-shaped output利用者の切替は、12.1/12.2の未完了範囲として残している。
+- 実DB `var/comment-history.sqlite3` はread-only確認時点でState Control Plane未導入、legacy keyword publicationは2件（current 1件）、legacy classification labelは24,622件だった。実DBへのschema追加・Genesis backfill・cutoverは未実施であり、運用判断と検証計画の確定後に行う。
