@@ -4,6 +4,10 @@
  * to the adapter layer.
  */
 
+import { assertLegacyWriterAllowed } from "../migration/legacy-boundary.js";
+
+const CLASSIFICATION_STREAM = { domain: "classification", streamKey: "comments" };
+
 export function worksetExists(db, worksetId) {
   const row = db.prepare(
     "SELECT 1 AS present FROM three_class_worksets WHERE workset_id = ?",
@@ -143,6 +147,7 @@ export function readSnapshotThreeClassLabelTargets(db, snapshotId) {
 }
 
 export function insertObservationLabel(db, { observationId, label }) {
+  assertLegacyWriterAllowed(db, CLASSIFICATION_STREAM);
   return db.prepare(
     `INSERT INTO snapshot_comment_three_class_labels
        (observation_id, label)
@@ -151,6 +156,7 @@ export function insertObservationLabel(db, { observationId, label }) {
 }
 
 export function updateObservationLabel(db, { observationId, label }) {
+  assertLegacyWriterAllowed(db, CLASSIFICATION_STREAM);
   return db.prepare(
     `UPDATE snapshot_comment_three_class_labels
      SET label = ?

@@ -23,7 +23,20 @@ const PUBLICATION_COLUMNS = [
 
 const PUBLICATION_SELECT = PUBLICATION_COLUMNS.join(", ");
 
+import { assertLegacyCurrentMarkerReaderAllowed, assertLegacyWriterAllowed } from "../migration/legacy-boundary.js";
+
+const KEYWORD_SELECTION_STREAM = { domain: "keyword-selection", streamKey: "filter-keywords" };
+
+export function assertLegacyKeywordPublicationWriterAllowed(db) {
+  return assertLegacyWriterAllowed(db, KEYWORD_SELECTION_STREAM);
+}
+
+export function assertLegacyKeywordPublicationReaderAllowed(db) {
+  return assertLegacyCurrentMarkerReaderAllowed(db, KEYWORD_SELECTION_STREAM);
+}
+
 export function readCurrentKeywordCandidatePublication(db) {
+  assertLegacyKeywordPublicationReaderAllowed(db);
   return db.prepare(
     `SELECT ${PUBLICATION_SELECT}
      FROM keyword_candidate_publications
@@ -40,6 +53,7 @@ export function readKeywordCandidatePublication(db, runId) {
 }
 
 export function insertKeywordCandidatePublication(db, record) {
+  assertLegacyKeywordPublicationWriterAllowed(db);
   return db.prepare(
     `INSERT INTO keyword_candidate_publications
       (${PUBLICATION_COLUMNS.join(", ")})
@@ -48,6 +62,7 @@ export function insertKeywordCandidatePublication(db, record) {
 }
 
 export function clearCurrentKeywordCandidatePublication(db) {
+  assertLegacyKeywordPublicationWriterAllowed(db);
   return db.prepare(
     `UPDATE keyword_candidate_publications
      SET is_current = 0

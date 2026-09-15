@@ -13,6 +13,7 @@ import {
 } from "../src/database/comment-database.js";
 import {
   clearCurrentKeywordCandidatePublication,
+  assertLegacyKeywordPublicationWriterAllowed,
   insertKeywordCandidatePublication,
   readCurrentKeywordCandidatePublication,
 } from "../src/database/keyword-candidate-publication-repository.js";
@@ -254,6 +255,7 @@ function persistDbPublication({ dbPath, rebuild, parentPublication }) {
     db.exec("BEGIN IMMEDIATE");
     let committed = false;
     try {
+      assertLegacyKeywordPublicationWriterAllowed(db);
       const current = readCurrentKeywordCandidatePublication(db);
       if (!current || current.run_id !== parentPublication.run_id || Number(current.snapshot_id) !== rebuild.snapshotId) {
         throw codedError("STALE_PARENT", "DB current publication changed during local rebuild");

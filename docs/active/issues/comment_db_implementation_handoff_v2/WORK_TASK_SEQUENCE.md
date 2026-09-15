@@ -70,6 +70,8 @@
 - Consumer と Provider の互換性ギャップを、相互依存を保つ1件の子Issueへ統合し、`ISSUE_BODY.md` と `WORK_TASK_SEQUENCE.md` を作成した。
 - 互換実装前の導入後も `npm test` は138件全件成功し、`npm run build` は成功した。
 - 子Issueの互換実装をConsumer `318f800`、Provider `5f3d836` としてコミットし、公開Provider rootから両定義を実登録できることを確認した。
-- 定義hashは `comment-data-update@2=77c9696d045666987a39717462c49632c2551aca284f85191428cbb0f5e3c8b1`、`deploy-promoted-release@2=aff658401996e2682d444c2d0da645b4bc0e8a3b8d778c8efcdfb8b2ab27485c`。Provider 27件、Consumer 139件のテスト、双方のbuildが成功した。
+- 定義hashは `comment-data-update@2=77c9696d045666987a39717462c49632c2551aca284f85191428cbb0f5e3c8b1`、`deploy-promoted-release@2=aff658401996e2682d444c2d0da645b4bc0e8a3b8d778c8efcdfb8b2ab27485c`。Provider 27件、Consumer 141件のテスト、双方のbuildが成功した。
 - 公開Provider `WorkOrchestrator` とComment DB `ApplicationServiceAgentAdapter` の実統合で、human Promotion accept、Deployment callback/outbox配信、最終Session `deployed` およびDeployment State commitを確認した。
 - 親タスク4.2と13系は上記の定義登録・受入検証を根拠に完了とした。Classification/Keyword Selectionおよび全streamの本番cutover・Retiredは人間判断が必要なため未完了のまま残している。
+- 移行ライフサイクルに `Backfilled -> Verified -> Cutover -> Legacy Read Compatibility -> Retired` の順序と、cutover gate（意味同値性、Commit経路の排他、legacy writer停止、projection再生成、current marker非権威化、rollback時の二重正本防止）を実装した。
+- Classificationのlegacy label writerとKeyword Selectionのlegacy publication writer/current marker readerは、対応streamがcutover以降になるとfail closedする境界を追加した。実際の全stream cutoverとlegacy-shaped output利用者の切替は、12.1/12.2の未完了範囲として残している。

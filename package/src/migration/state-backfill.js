@@ -4,6 +4,45 @@ import { STREAM_KEYS, normalizeLabels, normalizeKeywordEntries } from "../applic
 
 function stream(controlPlane, key) { return controlPlane.ensureStream(STREAM_KEYS[key]); }
 
+export const MIGRATION_STATUSES = Object.freeze(["backfilled", "verified", "cutover", "legacy_read_compatibility", "retired"]);
+
+const MIGRATION_STATUS_INDEX = new Map(MIGRATION_STATUSES.map((status, index) => [status, index]));
+const CUTOVER_GATE_KEYS = Object.freeze([
+  "semanticEquivalenceVerified",
+  "commitPathExclusive",
+  "legacyWriterDisabled",
+  "legacyOutputRegenerable",
+  "legacyCurrentMarkerNotAuthoritative",
+  "rollbackNoDualAuthority",
+]);
+
+function readCutoverRow(controlPlane, streamId) {
+  const row = controlPlane.db.prepare("SELECT * FROM state_cutovers WHERE stream_id = ?").get(streamId);
+  if (!row) return null;
+  let notes;
+  try { notes = JSON.parse(row.notes_json); } catch (error) { throw stateError("DATABASE_INTEGRITY_ERROR", `cutover notes for ${streamId} are invalid JSON: ${error.message}`); }
+  return { streamId: row.stream_id, status: row.status, legacyWriterEnabled: Boolean(row.legacy_writer_enabled), recordedAt: row.recorded_at, notes };
+}
+
+function assertMigrationStatus(status) {
+  if (!MIGRATION_STATUS_INDEX.has(status)) throw stateError("MIGRATION_STATUS_INVALID", `unsupported migration status: ${status}`);
+}
+
+function assertCutoverGates({ status, legacyWriterEnabled, notes }) {
+  if (status === "backfilled") return;
+  if (status === "verified" && notes?.semanticEquivalenceVerified !== true) throw stateError("MIGRATION_GATE_FAILED", "verified requires semanticEquivalenceVerified=true");
+  if (status !== "cutover") {
+    if (status === "legacy_read_compatibility" || status === "retired") {
+      if (legacyWriterEnabled) throw stateError("MIGRATION_GATE_FAILED", `${status} requires legacyWriterEnabled=false`);
+    }
+    return;
+  }
+  if (legacyWriterEnabled) throw stateError("MIGRATION_GATE_FAILED", "cutover requires legacyWriterEnabled=false");
+  const gates = notes?.gates ?? notes;
+  const missing = CUTOVER_GATE_KEYS.filter((key) => gates?.[key] !== true);
+  if (missing.length > 0) throw stateError("MIGRATION_GATE_FAILED", `cutover gates are incomplete: ${missing.join(", ")}`);
+}
+
 function persistClassification({ db, versionId, payload }) {
   const state = normalizeLabels(payload);
   db.prepare("INSERT INTO classification_states (version_id, state_json) VALUES (?, ?)").run(versionId, canonicalJson(state));
@@ -54,12 +93,27 @@ export function verifyGenesisSemanticEquivalence(controlPlane, versionId, expect
 }
 
 export function assertLegacyWriterAllowed(controlPlane, streamId) {
-  const row = controlPlane.db.prepare("SELECT * FROM state_cutovers WHERE stream_id = ?").get(streamId);
-  if (row && Number(row.legacy_writer_enabled) === 0 && ["cutover", "legacy_read_compatibility", "retired"].includes(row.status)) throw stateError("LEGACY_WRITER_RETIRED", `legacy authoritative writer is disabled for ${streamId}`);
+  const row = readCutoverRow(controlPlane, streamId);
+  if (row && !row.legacyWriterEnabled && ["cutover", "legacy_read_compatibility", "retired"].includes(row.status)) throw stateError("LEGACY_WRITER_RETIRED", `legacy authoritative writer is disabled for ${streamId}`);
   return true;
 }
 
+export function readCutover(controlPlane, streamId) {
+  return readCutoverRow(controlPlane, streamId);
+}
+
 export function recordCutover(controlPlane, { streamId, status, legacyWriterEnabled = false, notes = {}, operationId = deterministicId("cutover", `${streamId}:${status}`) }) {
+  assertMigrationStatus(status);
+  const streamRecord = controlPlane.getStream(streamId);
+  if (!streamRecord) throw stateError("STREAM_NOT_FOUND", `stream ${streamId} does not exist`);
+  const previous = readCutoverRow(controlPlane, streamId);
+  const previousIndex = previous ? MIGRATION_STATUS_INDEX.get(previous.status) : -1;
+  const nextIndex = MIGRATION_STATUS_INDEX.get(status);
+  if ((!previous && nextIndex !== 0) || (previous && nextIndex !== previousIndex + 1 && nextIndex !== previousIndex)) {
+    throw stateError("MIGRATION_STATUS_ORDER", `migration status cannot advance from ${previous?.status ?? "not_started"} to ${status}`);
+  }
+  if (status === "backfilled" && !controlPlane.resolveHead(streamId)) throw stateError("MIGRATION_BACKFILL_REQUIRED", `stream ${streamId} must have a Genesis or committed head before backfilled`);
+  assertCutoverGates({ status, legacyWriterEnabled, notes });
   return controlPlane.recordCutover({ streamId, status, legacyWriterEnabled, notes, operationId });
 }
 

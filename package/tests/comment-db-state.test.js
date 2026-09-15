@@ -27,8 +27,16 @@ import {
   validateAndHashDefinition,
   createWorkOrchestratorCompatibility,
   assertLegacyWriterAllowed,
+  backfillKeywordSelectionGenesis,
+  MIGRATION_STATUSES,
+  readCutover,
   projectLegacyClassification,
 } from "../src/comment-db-state.js";
+import {
+  clearCurrentKeywordCandidatePublication,
+  readCurrentKeywordCandidatePublication,
+} from "../src/database/keyword-candidate-publication-repository.js";
+import { insertObservationLabel } from "../src/database/three-class-label-repository.js";
 
 function context(operationId, actor = { actorId: "system", actorType: "system" }) {
   return createDefaultOperationContext({ operationId, workflowSessionId: "acceptance-session", actor, permissions: [...PERMISSIONS] });
@@ -181,8 +189,18 @@ test("A29/A30/A31/A32: cutover、legacy projection、派生候補、receipt復�
   assert.equal(derived.derived, true);
   assert.equal(derived.candidates[0].handle, "@same");
   const stream = data.controlPlane.ensureStream(STREAM_KEYS.classification);
-  recordCutover(data.controlPlane, { streamId: stream.stream_id, status: "cutover", legacyWriterEnabled: false, operationId: "cutover-classification" });
+  recordCutover(data.controlPlane, { streamId: stream.stream_id, status: "backfilled", legacyWriterEnabled: true, operationId: "backfill-classification" });
+  recordCutover(data.controlPlane, { streamId: stream.stream_id, status: "verified", legacyWriterEnabled: true, notes: { semanticEquivalenceVerified: true }, operationId: "verify-classification" });
+  recordCutover(data.controlPlane, { streamId: stream.stream_id, status: "cutover", legacyWriterEnabled: false, notes: { gates: {
+    semanticEquivalenceVerified: true,
+    commitPathExclusive: true,
+    legacyWriterDisabled: true,
+    legacyOutputRegenerable: true,
+    legacyCurrentMarkerNotAuthoritative: true,
+    rollbackNoDualAuthority: true,
+  } }, operationId: "cutover-classification" });
   assert.throws(() => assertLegacyWriterAllowed(data.controlPlane, stream.stream_id), (error) => error.code === "LEGACY_WRITER_RETIRED");
+  assert.equal(readCutover(data.controlPlane, stream.stream_id).status, "cutover");
   assert.deepEqual(projectLegacyClassification(data.controlPlane, classification.refs.classificationVersionId), [{ observation_id: "1", label: "direct_nuisance" }, { observation_id: "2", label: "direct_nuisance" }]);
   const receipt = data.controlPlane.readReceipt("cutover-classification");
   assert.equal(receipt.operationId, "cutover-classification");
@@ -190,6 +208,48 @@ test("A29/A30/A31/A32: cutover、legacy projection、派生候補、receipt復�
   const later = new CorpusApplicationService(data.controlPlane).update(context("later-corpus"), { initialCorpusVersionId: corpus.refs.corpusVersionId, state: { schema_version: 1, records: [] } });
   assert.notEqual(later.refs.corpusVersionId, pinned.pinned.initialCorpusVersionId);
   assert.equal(pinned.pinned.initialCorpusVersionId, corpus.refs.corpusVersionId);
+});
+
+test("移行cutoverは状態順序と全gateを強制し、Keyword legacy markerをcutover後に拒否する", async () => {
+  const data = await fixture();
+  assert.deepEqual(MIGRATION_STATUSES, ["backfilled", "verified", "cutover", "legacy_read_compatibility", "retired"]);
+  const genesis = backfillKeywordSelectionGenesis(data.controlPlane, { entries: [], legacyRef: "legacy-keyword-publication" });
+  const stream = data.controlPlane.ensureStream(STREAM_KEYS.keywordSelection);
+  assert.throws(() => recordCutover(data.controlPlane, { streamId: stream.stream_id, status: "cutover", legacyWriterEnabled: false, operationId: "invalid-cutover" }), (error) => error.code === "MIGRATION_STATUS_ORDER");
+  recordCutover(data.controlPlane, { streamId: stream.stream_id, status: "backfilled", legacyWriterEnabled: true, notes: { genesisVersionId: genesis.versionId }, operationId: "keyword-backfilled" });
+  assert.throws(() => recordCutover(data.controlPlane, { streamId: stream.stream_id, status: "verified", legacyWriterEnabled: true, operationId: "invalid-verify" }), (error) => error.code === "MIGRATION_GATE_FAILED");
+  recordCutover(data.controlPlane, { streamId: stream.stream_id, status: "verified", legacyWriterEnabled: true, notes: { semanticEquivalenceVerified: true }, operationId: "keyword-verified" });
+  assert.throws(() => recordCutover(data.controlPlane, { streamId: stream.stream_id, status: "cutover", legacyWriterEnabled: false, notes: { semanticEquivalenceVerified: true }, operationId: "incomplete-cutover" }), (error) => error.code === "MIGRATION_GATE_FAILED");
+  recordCutover(data.controlPlane, { streamId: stream.stream_id, status: "cutover", legacyWriterEnabled: false, notes: { gates: {
+    semanticEquivalenceVerified: true,
+    commitPathExclusive: true,
+    legacyWriterDisabled: true,
+    legacyOutputRegenerable: true,
+    legacyCurrentMarkerNotAuthoritative: true,
+    rollbackNoDualAuthority: true,
+  } }, operationId: "keyword-cutover" });
+  assert.throws(() => readCurrentKeywordCandidatePublication(data.db), (error) => error.code === "LEGACY_READER_RETIRED");
+  assert.throws(() => clearCurrentKeywordCandidatePublication(data.db), (error) => error.code === "LEGACY_WRITER_RETIRED");
+  assert.equal(readCutover(data.controlPlane, stream.stream_id).legacyWriterEnabled, false);
+});
+
+test("Classification cutover後はlegacy label writerを拒否する", async () => {
+  const data = await fixture();
+  const corpus = await new CorpusApplicationService(data.controlPlane).update(context("classification-cutover-corpus"), { initialCorpusVersionId: null, state: { schema_version: 1, records: [] } });
+  const classification = await new ClassificationApplicationService(data.controlPlane).assess(context("classification-cutover-state"), { classificationVersionId: null, corpusVersionId: corpus.refs.corpusVersionId, classificationPolicyVersionId: data.policyIds.classification, proposedState: { schema_version: 1, labels: [] }, autoCommit: true });
+  const stream = data.controlPlane.ensureStream(STREAM_KEYS.classification);
+  recordCutover(data.controlPlane, { streamId: stream.stream_id, status: "backfilled", legacyWriterEnabled: true, operationId: "classification-writer-backfilled" });
+  recordCutover(data.controlPlane, { streamId: stream.stream_id, status: "verified", legacyWriterEnabled: true, notes: { semanticEquivalenceVerified: true }, operationId: "classification-writer-verified" });
+  recordCutover(data.controlPlane, { streamId: stream.stream_id, status: "cutover", legacyWriterEnabled: false, notes: { gates: {
+    semanticEquivalenceVerified: true,
+    commitPathExclusive: true,
+    legacyWriterDisabled: true,
+    legacyOutputRegenerable: true,
+    legacyCurrentMarkerNotAuthoritative: true,
+    rollbackNoDualAuthority: true,
+  } }, operationId: "classification-writer-cutover" });
+  assert.ok(classification.refs.classificationVersionId);
+  assert.throws(() => insertObservationLabel(data.db, { observationId: 1, label: "normal" }), (error) => error.code === "LEGACY_WRITER_RETIRED");
 });
 
 test("State schemaは既存Comment DBへ明示的にだけ追加される", async () => {

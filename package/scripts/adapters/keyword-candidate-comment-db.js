@@ -16,6 +16,7 @@ import {
 } from "../../src/database/three-class-label-repository.js";
 import {
   clearCurrentKeywordCandidatePublication,
+  assertLegacyKeywordPublicationWriterAllowed,
   insertKeywordCandidatePublication,
   readCurrentKeywordCandidatePublication,
   readKeywordCandidatePublication,
@@ -774,6 +775,7 @@ export async function applyKeywordCandidatePublication({ dbPath, handoffManifest
     });
 
     return withImmediateTransaction(db, () => {
+      assertLegacyKeywordPublicationWriterAllowed(db);
       assertKeywordPublicationTableIntegrity(db);
       const existing = readKeywordCandidatePublication(db, incomingRecord.run_id);
       if (existing !== null) {
