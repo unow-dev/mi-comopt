@@ -8,10 +8,22 @@ export const STREAM_KEYS = Object.freeze({
   keywordSelection: { domain: "keyword-selection", streamKey: "filter-keywords" },
   promotion: { domain: "promotion", streamKey: "production" },
   deployment: { domain: "deployment", streamKey: "production" },
+  corpusPolicy: { domain: "policy", streamKey: "corpus" },
   classificationPolicy: { domain: "policy", streamKey: "classification" },
   keywordPolicy: { domain: "policy", streamKey: "keyword-selection" },
   accountPolicy: { domain: "policy", streamKey: "account-candidate" },
+  promotionPolicy: { domain: "policy", streamKey: "promotion-production" },
+  deploymentPolicy: { domain: "policy", streamKey: "deployment-production" },
   projectionDefinition: { domain: "projection-definition", streamKey: "release" },
+});
+
+const POLICY_STREAMS = Object.freeze({
+  corpus: STREAM_KEYS.corpusPolicy,
+  classification: STREAM_KEYS.classificationPolicy,
+  "keyword-selection": STREAM_KEYS.keywordPolicy,
+  "account-candidate": STREAM_KEYS.accountPolicy,
+  "promotion-production": STREAM_KEYS.promotionPolicy,
+  "deployment-production": STREAM_KEYS.deploymentPolicy,
 });
 
 export const PERMISSIONS = Object.freeze([
@@ -47,9 +59,58 @@ function asState(value, field) {
   return state;
 }
 
-function policyPayload(controlPlane, versionId) {
-  if (!versionId) return {};
-  try { return controlPlane.readVersion(versionId)?.payload ?? {}; } catch { return {}; }
+export function isV2Context(context) {
+  return Number(context?.workDefinitionRevision ?? 1) >= 2;
+}
+
+function policyKindAlias(policyKind) {
+  return ({ keyword: "keyword-selection", keywordSelection: "keyword-selection", classificationPolicy: "classification", keywordPolicy: "keyword-selection", accountPolicy: "account-candidate", corpusPolicy: "corpus", promotion: "promotion-production", deployment: "deployment-production" })[policyKind] ?? policyKind;
+}
+
+export function policyStream(policyKind) {
+  const kind = policyKindAlias(policyKind);
+  const stream = POLICY_STREAMS[kind];
+  if (!stream) throw stateError("POLICY_KIND_INVALID", `unsupported policy kind: ${policyKind}`);
+  return stream;
+}
+
+export function readExactPolicyVersion(controlPlane, versionId, policyKind) {
+  if (typeof versionId !== "string" || versionId.length === 0) throw stateError("EXPLICIT_VERSION_REQUIRED", `${policyKind} policy version ID is required`);
+  const version = controlPlane.readVersion(versionId);
+  if (!version) throw stateError("VERSION_NOT_FOUND", `policy version ${versionId} does not exist`);
+  const expected = policyStream(policyKind);
+  if (version.domain !== expected.domain || version.streamKey !== expected.streamKey) throw stateError("POLICY_VERSION_STREAM_MISMATCH", `${versionId} is not a ${policyKind} policy version`);
+  return version;
+}
+
+function policyPayload(controlPlane, versionId, policyKind = undefined) {
+  if (typeof versionId !== "string" || versionId.length === 0) throw stateError("EXPLICIT_VERSION_REQUIRED", `${policyKind ?? "policy"} policy version ID is required`);
+  const version = policyKind ? readExactPolicyVersion(controlPlane, versionId, policyKind) : controlPlane.readVersion(versionId);
+  if (!version) throw stateError("VERSION_NOT_FOUND", `policy version ${versionId} does not exist`);
+  return cloneJson(version.payload?.state ?? version.payload ?? {});
+}
+
+export function ensurePolicyVersion(controlPlane, context, { policyKind, versionId = undefined } = {}) {
+  const kind = policyKindAlias(policyKind);
+  if (versionId !== undefined && versionId !== null) return readExactPolicyVersion(controlPlane, versionId, kind).versionId;
+  const stream = getStream(controlPlane, policyStream(kind));
+  const current = controlPlane.resolveHead(stream.stream_id);
+  if (current) return current.versionId;
+  if (isV2Context(context)) throw stateError("EXPLICIT_VERSION_REQUIRED", `${kind} policy version ID is required for work-definition revision 2`);
+  const payload = { schema_version: 1, policy_kind: kind, legacy_compatibility: true, auto_commit: true };
+  const legacyId = deterministicId("policy", `legacy:${kind}`);
+  return controlPlane.createGenesis({
+    streamId: stream.stream_id, versionId: legacyId, payload, operationId: `${context.operationId}/legacy-policy/${kind}`,
+    domainHandler: { persist: ({ db, versionId: id }) => db.prepare("INSERT INTO policy_states (version_id, policy_kind, state_json) VALUES (?, ?, ?)").run(id, kind, canonicalJson(payload)) },
+  }).versionId;
+}
+
+export function currentPolicyVersion(controlPlane, context, policyKind) {
+  const kind = policyKindAlias(policyKind);
+  const stream = getStream(controlPlane, policyStream(kind));
+  const current = controlPlane.resolveHead(stream.stream_id);
+  if (current) return current.versionId;
+  return ensurePolicyVersion(controlPlane, context, { policyKind: kind });
 }
 
 function policyAllowsAutoCommit(policy, request) {
@@ -102,20 +163,24 @@ function normalizeKeywordEntries(state) {
   return { ...state, entries };
 }
 
-function assertDependencyRoles(db, proposal, allowedRoles) {
+function assertDependencyRoles(db, proposal, allowedRoles, expectedPolicyKind = undefined) {
   for (const dependency of proposal.dependencies) {
     if (!allowedRoles.includes(dependency.role)) throw stateError("DEPENDENCY_ROLE_INVALID", `${proposal.streamId} does not allow dependency role ${dependency.role}`);
-    const row = db.prepare("SELECT s.domain FROM state_versions AS v JOIN state_streams AS s ON s.stream_id = v.stream_id WHERE v.version_id = ?").get(dependency.versionId);
+    const row = db.prepare("SELECT s.domain, s.stream_key FROM state_versions AS v JOIN state_streams AS s ON s.stream_id = v.stream_id WHERE v.version_id = ?").get(dependency.versionId);
     if (!row) throw stateError("DEPENDENCY_NOT_FOUND", `dependency ${dependency.versionId} does not exist`);
-    if (dependency.role === "corpus" && row.domain !== "corpus") throw stateError("DEPENDENCY_ROLE_INVALID", "corpus dependency must reference a Corpus version");
-    if (dependency.role === "classification" && row.domain !== "classification") throw stateError("DEPENDENCY_ROLE_INVALID", "classification dependency must reference a Classification version");
+    if (dependency.role === "corpus" && (row.domain !== STREAM_KEYS.corpus.domain || row.stream_key !== STREAM_KEYS.corpus.streamKey)) throw stateError("DEPENDENCY_ROLE_INVALID", "corpus dependency must reference the corpus/comments stream");
+    if (dependency.role === "classification" && (row.domain !== STREAM_KEYS.classification.domain || row.stream_key !== STREAM_KEYS.classification.streamKey)) throw stateError("DEPENDENCY_ROLE_INVALID", "classification dependency must reference the classification/comments stream");
     if (dependency.role === "policy" && row.domain !== "policy") throw stateError("DEPENDENCY_ROLE_INVALID", "policy dependency must reference a Policy version");
+    if (dependency.role === "policy" && expectedPolicyKind) {
+      const expected = policyStream(expectedPolicyKind);
+      if (row.domain !== expected.domain || row.stream_key !== expected.streamKey) throw stateError("DEPENDENCY_ROLE_INVALID", `policy dependency must reference the ${expectedPolicyKind} policy stream`);
+    }
   }
 }
 
 function typedClassificationHandler() {
   return {
-    validate({ db, proposal }) { const state = normalizeLabels(proposal.payload.state); if (semanticSha256(state) !== proposal.proposedSemanticSha256) throw stateError("SEMANTIC_FINGERPRINT_MISMATCH", "classification semantic fingerprint is invalid"); assertDependencyRoles(db, proposal, ["corpus", "policy"]); },
+    validate({ db, proposal }) { const state = normalizeLabels(proposal.payload.state); if (semanticSha256(state) !== proposal.proposedSemanticSha256) throw stateError("SEMANTIC_FINGERPRINT_MISMATCH", "classification semantic fingerprint is invalid"); assertDependencyRoles(db, proposal, ["corpus", "policy"], "classification"); },
     persist({ db, versionId, proposal }) {
       const state = normalizeLabels(proposal.payload.state);
       db.prepare("INSERT INTO classification_states (version_id, state_json) VALUES (?, ?)").run(versionId, canonicalJson(state));
@@ -127,7 +192,7 @@ function typedClassificationHandler() {
 
 function typedKeywordHandler() {
   return {
-    validate({ db, proposal }) { const state = normalizeKeywordEntries(proposal.payload.state); if (semanticSha256(state) !== proposal.proposedSemanticSha256) throw stateError("SEMANTIC_FINGERPRINT_MISMATCH", "keyword selection semantic fingerprint is invalid"); assertDependencyRoles(db, proposal, ["corpus", "classification", "policy"]); },
+    validate({ db, proposal }) { const state = normalizeKeywordEntries(proposal.payload.state); if (semanticSha256(state) !== proposal.proposedSemanticSha256) throw stateError("SEMANTIC_FINGERPRINT_MISMATCH", "keyword selection semantic fingerprint is invalid"); assertDependencyRoles(db, proposal, ["corpus", "classification", "policy"], "keyword-selection"); },
     persist({ db, versionId, proposal }) {
       const state = normalizeKeywordEntries(proposal.payload.state);
       db.prepare("INSERT INTO keyword_selection_states (version_id, state_json) VALUES (?, ?)").run(versionId, canonicalJson(state));
@@ -148,6 +213,13 @@ function typedCorpusHandler() {
   };
 }
 
+function readVersionInStream(controlPlane, versionId, stream, role) {
+  if (versionId === null || versionId === undefined) return null;
+  const version = controlPlane.readVersion(versionId);
+  if (!version || version.domain !== stream.domain || version.streamKey !== stream.streamKey) throw stateError("VERSION_STREAM_MISMATCH", `${role} must reference ${stream.domain}/${stream.streamKey}`);
+  return version;
+}
+
 function typedPolicyHandler(policyKind) {
   return {
     validate({ proposal }) {
@@ -165,7 +237,7 @@ export class PolicyApplicationService {
 
   register(ctx, { policyKind, policy, versionId = undefined }) {
     requireContext(ctx, ["state:commit"]);
-    const stream = STREAM_KEYS[`${policyKind}Policy`] ?? (policyKind === "projection-definition" ? STREAM_KEYS.projectionDefinition : { domain: "policy", streamKey: policyKind });
+    const stream = policyKind === "projection-definition" ? STREAM_KEYS.projectionDefinition : policyStream(policyKind);
     const streamRecord = getStream(this.controlPlane, stream);
     const payload = asState(policy, "policy");
     const semanticHash = semanticSha256(payload);
@@ -213,21 +285,23 @@ export class CorpusApplicationService {
   update(ctx, request = {}) {
     requireContext(ctx, ["state:read", "state:propose", "state:auto-decide", "state:commit"]);
     const stream = getStream(this.controlPlane, STREAM_KEYS.corpus);
+    const corpusPolicyVersionId = ensurePolicyVersion(this.controlPlane, ctx, { policyKind: "corpus", versionId: request.corpusPolicyVersionId ?? request.policyVersionId });
     const baseVersionId = request.initialCorpusVersionId ?? request.corpusVersionId ?? null;
     const state = asState(request.state ?? { snapshot_refs: request.snapshotRefs ?? [], evidence_ids: request.evidenceIds ?? [] }, "corpus state");
     const semanticHash = semanticSha256(state);
-    const base = baseVersionId ? this.controlPlane.readVersion(baseVersionId) : null;
+    const base = readVersionInStream(this.controlPlane, baseVersionId, STREAM_KEYS.corpus, "initialCorpusVersionId");
     if (base && base.semanticSha256 === semanticHash) return stepResult("unchanged", { corpusVersionId: base.versionId }, request, semanticHash, { outcome: "continue" });
     const proposalId = deterministicId("proposal", `${ctx.operationId}:corpus`);
     try {
       this.controlPlane.createProposal({
         proposalId, streamId: stream.stream_id, expectedHeadVersionId: baseVersionId,
         proposedSemanticSha256: semanticHash, payload: { schema_version: 1, state },
+        dependencies: [{ role: "policy", versionId: corpusPolicyVersionId }],
         assessmentRefs: { evidenceIds: request.evidenceIds ?? [] }, operationId: `${ctx.operationId}/proposal`,
       });
       const decision = this.controlPlane.createDecision({
         decisionId: deterministicId("decision", `${ctx.operationId}:corpus`), proposalId, outcome: "accepted",
-        authorityKind: "system_policy", authorityRef: "corpus-auto", transitionPolicyVersionId: request.policyVersionId ?? "corpus-auto-policy",
+        authorityKind: "system_policy", authorityRef: "corpus-policy", transitionPolicyVersionId: corpusPolicyVersionId,
         operationId: `${ctx.operationId}/decision`,
       });
       const commit = this.controlPlane.commitProposal({ proposalId, decisionId: decision.decisionId, operationId: ctx.operationId, domainHandler: typedCorpusHandler() });
@@ -254,8 +328,11 @@ class ReviewableStateService {
     requireContext(ctx, ["state:read", "state:propose"]);
     const stream = getStream(this.controlPlane, this.stream);
     const priorVersionId = request[`${this.resultRef}VersionId`] ?? request.baseVersionId ?? null;
-    const policyVersionId = request.policyVersionId ?? request[`${this.policyKey}PolicyVersionId`];
-    const policy = policyPayload(this.controlPlane, policyVersionId);
+    readVersionInStream(this.controlPlane, priorVersionId, this.stream, `${this.resultRef}VersionId`);
+    const suppliedPolicyVersionId = request.policyVersionId ?? request[`${this.policyKey}PolicyVersionId`];
+    const policyKind = this.policyKey === "keyword" ? "keyword-selection" : this.policyKey;
+    const policyVersionId = ensurePolicyVersion(this.controlPlane, ctx, { policyKind, versionId: suppliedPolicyVersionId });
+    const policy = policyPayload(this.controlPlane, policyVersionId, policyKind);
     const input = { ...request, priorVersionId, policyVersionId };
     let assessment = request.assessment ?? {};
     if (typeof request.assessor === "function") assessment = await request.assessor({ request: cloneJson(request), priorVersionId, policyVersionId });
@@ -287,7 +364,7 @@ class ReviewableStateService {
     requireContext(ctx, ["state:auto-decide", "state:commit"]);
     const decision = this.controlPlane.createDecision({
       decisionId: deterministicId("decision", `${ctx.operationId}:${this.domain}`), proposalId, outcome: "accepted",
-      authorityKind: "system_policy", authorityRef: `${this.domain}-auto`, transitionPolicyVersionId: policyVersionId ?? `${this.domain}-auto-policy`, operationId: `${ctx.operationId}/decision`,
+      authorityKind: "system_policy", authorityRef: `${this.domain}-policy`, transitionPolicyVersionId: policyVersionId, operationId: `${ctx.operationId}/decision`,
     });
     const commit = this.controlPlane.commitProposal({ proposalId, decisionId: decision.decisionId, operationId: ctx.operationId, domainHandler: this.handler() });
     return stepResult(commit.stateResult, { assessmentId, proposalId, decisionId: commit.decisionId, [this.resultRef + "VersionId"]: commit.versionId }, input, commit.semanticSha256, { outcome: "continue" });
@@ -297,12 +374,17 @@ class ReviewableStateService {
     requireContext(ctx, ["state:read", "state:commit"]);
     const proposal = this.controlPlane.readProposal(request.proposalId);
     if (!proposal || proposal.streamId !== getStream(this.controlPlane, this.stream).stream_id) throw stateError("PROPOSAL_NOT_FOUND", `proposal ${request.proposalId} is not a ${this.domain} proposal`);
-    const policy = policyPayload(this.controlPlane, request.transitionPolicyVersionId ?? request.policyVersionId ?? proposal.dependencies.find((item) => item.role === "policy")?.versionId);
+    const policyKind = this.policyKey === "keyword" ? "keyword-selection" : this.policyKey;
+    const proposalPolicyVersionId = proposal.dependencies.find((item) => item.role === "policy")?.versionId;
+    const requestedPolicyVersionId = request.transitionPolicyVersionId ?? request.policyVersionId;
+    if (proposalPolicyVersionId && requestedPolicyVersionId && proposalPolicyVersionId !== requestedPolicyVersionId) throw stateError("POLICY_VERSION_MISMATCH", `${this.domain} finalization must use the policy pinned by its proposal`);
+    const policyVersionId = ensurePolicyVersion(this.controlPlane, ctx, { policyKind, versionId: proposalPolicyVersionId ?? requestedPolicyVersionId });
+    const policy = policyPayload(this.controlPlane, policyVersionId, policyKind);
     validateReview(request.review, policy);
     const decisionId = deterministicId("decision", `${ctx.operationId}:${proposal.proposalId}`);
     const decision = this.controlPlane.createDecision({
       decisionId, proposalId: proposal.proposalId, outcome: request.review.outcome === "accept" ? "accepted" : "rejected",
-      authorityKind: "human", authorityRef: request.review.actor.actorId, transitionPolicyVersionId: request.transitionPolicyVersionId ?? request.policyVersionId ?? "human-review-policy",
+      authorityKind: "human", authorityRef: request.review.actor.actorId, transitionPolicyVersionId: policyVersionId,
       rationale: request.review.rationale ?? null, operationId: `${ctx.operationId}/decision`,
     });
     if (decision.outcome === "rejected") return stepResult("rejected", { proposalId: proposal.proposalId, decisionId }, request, undefined, { outcome: "rejected", domain: this.domain });
@@ -333,4 +415,4 @@ export function createDefaultOperationContext(overrides = {}) {
   };
 }
 
-export { requireContext, stepResult, normalizeLabels, normalizeKeywordEntries, typedClassificationHandler, typedKeywordHandler, typedCorpusHandler };
+export { requireContext, stepResult, normalizeLabels, normalizeKeywordEntries, typedClassificationHandler, typedKeywordHandler, typedCorpusHandler, policyPayload, policyKindAlias };

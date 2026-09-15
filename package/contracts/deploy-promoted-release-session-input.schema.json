@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "deploy-promoted-release-session-input.schema.json",
+  "title": "DeployPromotedReleaseSessionInput",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["promotionVersionId", "releaseId", "target"],
+  "properties": {
+    "promotionVersionId": { "type": "string", "minLength": 1 },
+    "releaseId": { "type": "string", "minLength": 1 },
+    "target": { "type": "object", "additionalProperties": false, "required": ["deploymentTarget"], "properties": { "deploymentTarget": { "const": "production" } } }
+  }
+}

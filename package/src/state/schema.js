@@ -209,10 +209,12 @@ CREATE TABLE IF NOT EXISTS release_artifacts (
 
 CREATE TABLE IF NOT EXISTS deployment_requests (
   deployment_request_id TEXT PRIMARY KEY,
+  workflow_session_id TEXT NOT NULL DEFAULT '',
+  promotion_version_id TEXT NOT NULL DEFAULT '',
   release_id TEXT NOT NULL,
   target TEXT NOT NULL,
   external_run_ref TEXT,
-  status TEXT NOT NULL CHECK (status IN ('requested', 'succeeded', 'failed', 'cancelled')),
+  status TEXT NOT NULL CHECK (status IN ('prepared', 'requested', 'succeeded', 'failed', 'cancelled')),
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
@@ -222,6 +224,18 @@ CREATE TABLE IF NOT EXISTS deployment_completed_events (
   deployment_request_id TEXT NOT NULL,
   event_json TEXT NOT NULL,
   received_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS deployment_event_outbox (
+  event_fingerprint TEXT PRIMARY KEY,
+  deployment_request_id TEXT NOT NULL,
+  workflow_session_id TEXT NOT NULL,
+  event_json TEXT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('pending', 'delivered')),
+  attempts INTEGER NOT NULL DEFAULT 0,
+  last_error TEXT,
+  created_at TEXT NOT NULL,
+  delivered_at TEXT
 );
 
 CREATE TABLE IF NOT EXISTS state_cutovers (
@@ -245,6 +259,29 @@ export function ensureStateControlPlane(db) {
   }
   db.exec("PRAGMA foreign_keys = ON");
   db.exec(STATE_CONTROL_PLANE_SQL);
+  const deploymentTable = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'deployment_requests'").get();
+  if (deploymentTable?.sql && !deploymentTable.sql.includes("'prepared'")) {
+    db.exec("ALTER TABLE deployment_requests RENAME TO deployment_requests_legacy");
+    db.exec(`CREATE TABLE deployment_requests (
+      deployment_request_id TEXT PRIMARY KEY,
+      workflow_session_id TEXT NOT NULL DEFAULT '',
+      promotion_version_id TEXT NOT NULL DEFAULT '',
+      release_id TEXT NOT NULL,
+      target TEXT NOT NULL,
+      external_run_ref TEXT,
+      status TEXT NOT NULL CHECK (status IN ('prepared', 'requested', 'succeeded', 'failed', 'cancelled')),
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    )`);
+    db.exec(`INSERT INTO deployment_requests (deployment_request_id, workflow_session_id, promotion_version_id, release_id, target, external_run_ref, status, created_at, updated_at)
+      SELECT deployment_request_id, '', '', release_id, target, external_run_ref, status, created_at, updated_at FROM deployment_requests_legacy`);
+    db.exec("DROP TABLE deployment_requests_legacy");
+  }
+  const columns = (table) => new Set(db.prepare(`PRAGMA table_info(${table})`).all().map((row) => row.name));
+  const ensureColumn = (table, name, definition) => { if (!columns(table).has(name)) db.exec(`ALTER TABLE ${table} ADD COLUMN ${name} ${definition}`); };
+  ensureColumn("deployment_requests", "workflow_session_id", "TEXT NOT NULL DEFAULT ''");
+  ensureColumn("deployment_requests", "promotion_version_id", "TEXT NOT NULL DEFAULT ''");
+  ensureColumn("deployment_event_outbox", "attempts", "INTEGER NOT NULL DEFAULT 0");
   const existing = db.prepare("SELECT schema_version FROM state_schema LIMIT 1").get();
   if (existing === undefined) db.prepare("INSERT INTO state_schema (schema_version) VALUES (?)").run(STATE_SCHEMA_VERSION);
   else if (Number(existing.schema_version) !== STATE_SCHEMA_VERSION) throw new Error(`unsupported state schema version: ${existing.schema_version}`);

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "work-step-result.schema.json",
+  "title": "WorkStepResult",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["stateResult", "refs", "inputFingerprint"],
+  "properties": {
+    "stateResult": { "type": "string", "minLength": 1, "enum": ["succeeded", "committed", "unchanged", "created", "reused", "materialized", "already_materialized", "review_required", "rejected", "conflict", "blocked", "triggered", "already_deployed", "verified", "not_verified", "deployment_failed"] },
+    "refs": { "type": "object", "additionalProperties": false, "properties": {
+      "evidenceIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+      "assessmentId": { "type": "string", "minLength": 1 }, "proposalId": { "type": "string", "minLength": 1 }, "decisionId": { "type": "string", "minLength": 1 },
+      "corpusVersionId": { "type": "string", "minLength": 1 }, "classificationVersionId": { "type": "string", "minLength": 1 }, "keywordSelectionVersionId": { "type": "string", "minLength": 1 },
+      "releaseId": { "type": "string", "minLength": 1 }, "promotionVersionId": { "type": "string", "minLength": 1 }, "deploymentVersionId": { "type": "string", "minLength": 1 }, "deploymentRequestId": { "type": "string", "minLength": 1 }, "verificationRef": { "type": "string", "minLength": 1 }
+    } },
+    "inputFingerprint": { "type": "string", "minLength": 1 }, "outputFingerprint": { "type": "string", "minLength": 1 }, "details": { "type": "object", "additionalProperties": true }
+  }
+}

@@ -175,9 +175,6 @@ export class StateControlPlane {
       nonEmptyString(streamId, "streamId");
       const stream = this.getStream(streamId);
       if (!stream) throw stateError("STREAM_NOT_FOUND", `stream ${streamId} does not exist`);
-      const actual = this.resolveHead(streamId)?.versionId ?? null;
-      if (actual !== expectedHeadVersionId) throw stateError("HEAD_CONFLICT", `proposal expected head ${expectedHeadVersionId ?? "null"} but actual head is ${actual ?? "null"}`);
-      if (expectedHeadVersionId !== null && this.readVersion(expectedHeadVersionId)?.streamId !== streamId) throw stateError("VALIDATION_ERROR", "expected head belongs to another stream");
       const normalizedPayload = normalizePayload(payload);
       const normalizedDependencies = normalizeDependencies(dependencies);
       for (const dependency of normalizedDependencies) if (!this.readVersion(dependency.versionId)) throw stateError("DEPENDENCY_NOT_FOUND", `dependency ${dependency.versionId} does not exist`);
@@ -189,6 +186,9 @@ export class StateControlPlane {
         if (existing.proposalSha256 !== proposalSha256) throw stateError("IMMUTABLE_VIOLATION", `proposal ${proposalId} already exists with different content`);
         return existing;
       }
+      const actual = this.resolveHead(streamId)?.versionId ?? null;
+      if (actual !== expectedHeadVersionId) throw stateError("HEAD_CONFLICT", `proposal expected head ${expectedHeadVersionId ?? "null"} but actual head is ${actual ?? "null"}`);
+      if (expectedHeadVersionId !== null && this.readVersion(expectedHeadVersionId)?.streamId !== streamId) throw stateError("VALIDATION_ERROR", "expected head belongs to another stream");
       db.prepare(
         `INSERT INTO state_proposals
           (proposal_id, stream_id, expected_head_version_id, proposed_semantic_sha256,

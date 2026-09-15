@@ -1,14 +1,15 @@
 import { canonicalJson, deterministicId, prefixedSha256, semanticSha256 } from "../state/canonical.js";
 import { StateControlPlaneError, stateError } from "../state/errors.js";
-import { PERMISSIONS, STREAM_KEYS, requireContext, stepResult, typedCorpusHandler } from "./services.js";
+import { STREAM_KEYS, currentPolicyVersion, ensurePolicyVersion, readExactPolicyVersion, requireContext, stepResult, typedCorpusHandler } from "./services.js";
 import { normalizeArtifactBytes, MemoryReleaseArtifactStore } from "../release/artifact-store.js";
 
 const RELEASE_MEMBER_ROLES = ["corpus", "classification", "keyword_selection", "projection_definition"];
 
-function readRequiredVersion(controlPlane, versionId, role) {
+function readRequiredVersion(controlPlane, versionId, role, expectedStream = undefined) {
   if (typeof versionId !== "string" || versionId.length === 0) throw stateError("EXPLICIT_VERSION_REQUIRED", `${role} version ID is required`);
   const version = controlPlane.readVersion(versionId);
   if (!version) throw stateError("VERSION_NOT_FOUND", `${role} version ${versionId} does not exist`);
+  if (expectedStream && (version.domain !== expectedStream.domain || version.streamKey !== expectedStream.streamKey)) throw stateError("VERSION_STREAM_MISMATCH", `${role} must reference ${expectedStream.domain}/${expectedStream.streamKey}`);
   return version;
 }
 
@@ -31,17 +32,21 @@ export class ReleaseApplicationService {
   build(ctx, request = {}) {
     requireContext(ctx, ["state:read", "release:build"]);
     const versions = {
-      corpus: assertVersionDomain(readRequiredVersion(this.controlPlane, request.corpusVersionId, "corpus"), "corpus", "corpus"),
-      classification: assertVersionDomain(readRequiredVersion(this.controlPlane, request.classificationVersionId, "classification"), "classification", "classification"),
-      keyword_selection: assertVersionDomain(readRequiredVersion(this.controlPlane, request.keywordSelectionVersionId, "keyword-selection"), "keyword-selection", "keyword-selection"),
-      projection_definition: assertVersionDomain(readRequiredVersion(this.controlPlane, request.projectionDefinitionVersionId, "projection-definition"), "projection-definition", "projection-definition"),
+      corpus: assertVersionDomain(readRequiredVersion(this.controlPlane, request.corpusVersionId, "corpus", STREAM_KEYS.corpus), "corpus", "corpus"),
+      classification: assertVersionDomain(readRequiredVersion(this.controlPlane, request.classificationVersionId, "classification", STREAM_KEYS.classification), "classification", "classification"),
+      keyword_selection: assertVersionDomain(readRequiredVersion(this.controlPlane, request.keywordSelectionVersionId, "keyword-selection", STREAM_KEYS.keywordSelection), "keyword-selection", "keyword-selection"),
+      projection_definition: assertVersionDomain(readRequiredVersion(this.controlPlane, request.projectionDefinitionVersionId, "projection-definition", STREAM_KEYS.projectionDefinition), "projection-definition", "projection-definition"),
     };
-    const policies = request.policyVersionIds ?? {
+    const suppliedPolicies = request.policyVersionIds ?? {
       classification: request.classificationPolicyVersionId,
       keyword_selection: request.keywordPolicyVersionId,
       account_candidate: request.accountPolicyVersionId,
     };
-    const policyMembers = Object.entries(policies).filter(([, id]) => id !== undefined && id !== null).map(([role, versionId]) => ({ role: `policy:${role}`, versionId: assertVersionDomain(readRequiredVersion(this.controlPlane, versionId, `policy:${role}`), "policy", `policy:${role}`).versionId }));
+    const policyKinds = { classification: "classification", keyword_selection: "keyword-selection", account_candidate: "account-candidate" };
+    const policyMembers = Object.entries(policyKinds).map(([role, policyKind]) => {
+      const versionId = ensurePolicyVersion(this.controlPlane, ctx, { policyKind, versionId: suppliedPolicies[role] });
+      return { role: `policy:${role}`, versionId: readExactPolicyVersion(this.controlPlane, versionId, policyKind).versionId };
+    });
     const members = [...RELEASE_MEMBER_ROLES.map((role) => ({ role, versionId: versions[role].versionId })), ...policyMembers].sort((left, right) => left.role.localeCompare(right.role));
     const bundle = {
       schema_version: 1,
@@ -113,35 +118,49 @@ export class ReleaseApplicationService {
 export class PromotionApplicationService {
   constructor(controlPlane) { this.controlPlane = controlPlane; }
 
-  propose(ctx, { releaseId, expectedHeadVersionId = null, target = "production" } = {}) {
+  propose(ctx, { releaseId, expectedHeadVersionId = undefined, target = "production" } = {}) {
     requireContext(ctx, ["state:read", "state:propose"]);
     if (target !== "production") throw stateError("VALIDATION_ERROR", "only production promotion is supported");
     const release = releaseRow(this.controlPlane, releaseId);
     if (!release || !release.materialized_at) throw stateError("RELEASE_NOT_MATERIALIZED", `release ${releaseId} is not materialized`);
-    const stream = this.controlPlane.ensureStream(STREAM_KEYS.promotion);
-    const payload = { schema_version: 1, state: { target, releaseId } };
     const proposalId = deterministicId("proposal", `${ctx.operationId}:promotion:${releaseId}`);
-    this.controlPlane.createProposal({ proposalId, streamId: stream.stream_id, expectedHeadVersionId, proposedSemanticSha256: semanticSha256(payload.state), payload, assessmentRefs: { releaseId }, operationId: `${ctx.operationId}/proposal` });
-    return stepResult("created", { proposalId, releaseId }, { releaseId, expectedHeadVersionId, target }, semanticSha256(payload.state));
+    const existing = this.controlPlane.readProposal(proposalId);
+    if (existing) {
+      if (existing.payload?.state?.releaseId !== releaseId || existing.payload?.state?.target !== target || (expectedHeadVersionId !== undefined && existing.expectedHeadVersionId !== expectedHeadVersionId)) throw stateError("IDEMPOTENCY_CONFLICT", `promotion proposal ${proposalId} already exists with a different request`);
+      return stepResult("created", { proposalId, releaseId }, { releaseId, expectedHeadVersionId: existing.expectedHeadVersionId, target }, existing.proposedSemanticSha256);
+    }
+    const stream = this.controlPlane.ensureStream(STREAM_KEYS.promotion);
+    const resolvedExpectedHeadVersionId = expectedHeadVersionId === undefined ? this.controlPlane.resolveHead(stream.stream_id)?.versionId ?? null : expectedHeadVersionId;
+    const promotionPolicyVersionId = ensurePolicyVersion(this.controlPlane, ctx, { policyKind: "promotion-production" });
+    const payload = { schema_version: 1, state: { target, releaseId } };
+    this.controlPlane.createProposal({ proposalId, streamId: stream.stream_id, expectedHeadVersionId: resolvedExpectedHeadVersionId, proposedSemanticSha256: semanticSha256(payload.state), payload, dependencies: [{ role: "policy", versionId: promotionPolicyVersionId }], assessmentRefs: { releaseId }, operationId: `${ctx.operationId}/proposal` });
+    return stepResult("created", { proposalId, releaseId }, { releaseId, expectedHeadVersionId: resolvedExpectedHeadVersionId, target }, semanticSha256(payload.state));
   }
 
   finalize(ctx, request = {}) {
     requireContext(ctx, ["state:read", "state:commit"]);
     const proposal = this.controlPlane.readProposal(request.proposalId);
     if (!proposal) throw stateError("PROPOSAL_NOT_FOUND", `proposal ${request.proposalId} does not exist`);
+    const stream = this.controlPlane.ensureStream(STREAM_KEYS.promotion);
+    if (proposal.streamId !== stream.stream_id) throw stateError("PROPOSAL_NOT_FOUND", `proposal ${request.proposalId} is not a production promotion proposal`);
     const releaseId = proposal.payload.state?.releaseId;
     const target = proposal.payload.state?.target;
     if (target !== "production" || releaseId !== request.releaseId) throw stateError("PROMOTION_PROPOSAL_MISMATCH", "promotion proposal and request do not match");
     const actor = request.review?.actor;
     if (!actor || actor.actorType !== "human") throw stateError("UNAUTHORIZED_ACTOR", "production promotion requires an authorized human");
     if (!request.review || !["accept", "reject"].includes(request.review.outcome)) throw stateError("INVALID_REVIEW_OUTCOME", "promotion review outcome must be accept or reject");
-    const policy = request.transitionPolicyVersionId ? this.controlPlane.readVersion(request.transitionPolicyVersionId)?.payload ?? {} : {};
+    const requestedPolicyVersionId = request.transitionPolicyVersionId ?? request.promotionPolicyVersionId;
+    const proposalPolicyVersionId = proposal.dependencies.find((item) => item.role === "policy")?.versionId;
+    if (proposalPolicyVersionId && requestedPolicyVersionId && proposalPolicyVersionId !== requestedPolicyVersionId) throw stateError("POLICY_VERSION_MISMATCH", "promotion finalization must use the policy pinned by its proposal");
+    const effectivePolicyVersionId = proposalPolicyVersionId ?? (requestedPolicyVersionId ? readExactPolicyVersion(this.controlPlane, requestedPolicyVersionId, "promotion-production").versionId : currentPolicyVersion(this.controlPlane, ctx, "promotion-production"));
+    const policyVersion = this.controlPlane.readVersion(effectivePolicyVersionId);
+    const policy = policyVersion?.payload?.state ?? policyVersion?.payload ?? {};
     const authorization = policy.authorization ?? policy.review_authorization ?? {};
     if (Array.isArray(authorization.allowed_actor_ids) && !authorization.allowed_actor_ids.includes(actor.actorId)) throw stateError("UNAUTHORIZED_ACTOR", "the promotion actor is not authorized by the Transition Policy");
-    const decision = this.controlPlane.createDecision({ decisionId: deterministicId("decision", `${ctx.operationId}:promotion`), proposalId: proposal.proposalId, outcome: request.review.outcome === "accept" ? "accepted" : "rejected", authorityKind: "human", authorityRef: actor.actorId, transitionPolicyVersionId: request.transitionPolicyVersionId ?? "production-promotion-policy", rationale: request.review.rationale ?? null, operationId: `${ctx.operationId}/decision` });
-    if (decision.outcome === "rejected") return stepResult("rejected", { proposalId: proposal.proposalId, decisionId: decision.decisionId, releaseId }, request, undefined, { outcome: "not_promoted" });
-    const stream = this.controlPlane.ensureStream(STREAM_KEYS.promotion);
     const current = this.controlPlane.resolveHead(stream.stream_id);
+    if (request.review.outcome === "accept" && (current?.versionId ?? null) !== (proposal.expectedHeadVersionId ?? null)) return stepResult("conflict", { proposalId: proposal.proposalId, releaseId }, request, undefined, { outcome: "superseded", conflictAt: "promotion" });
+    const decision = this.controlPlane.createDecision({ decisionId: deterministicId("decision", `${ctx.operationId}:promotion`), proposalId: proposal.proposalId, outcome: request.review.outcome === "accept" ? "accepted" : "rejected", authorityKind: "human", authorityRef: actor.actorId, transitionPolicyVersionId: effectivePolicyVersionId, rationale: request.review.rationale ?? null, operationId: `${ctx.operationId}/decision` });
+    if (decision.outcome === "rejected") return stepResult("rejected", { proposalId: proposal.proposalId, decisionId: decision.decisionId, releaseId }, request, undefined, { outcome: "not_promoted" });
     if (current?.payload?.state?.releaseId === releaseId) return stepResult("unchanged", { proposalId: proposal.proposalId, decisionId: decision.decisionId, promotionVersionId: current.versionId, releaseId }, request, current.semanticSha256, { outcome: "continue" });
     const payload = { schema_version: 1, state: { target, releaseId } };
     try {

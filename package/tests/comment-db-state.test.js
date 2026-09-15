@@ -22,6 +22,8 @@ import {
   openCommentStateDatabase,
   recordCutover,
   resolvePinnedSessionInput,
+  resolveDeployPromotedReleaseSessionInput,
+  projectCompletedSessionOutcome,
   validateAndHashDefinition,
   createWorkOrchestratorCompatibility,
   assertLegacyWriterAllowed,
@@ -159,15 +161,13 @@ test("A23/A24/A25/A26: Recovery定義、pinned input、revision immutable、互�
   assert.throws(() => createWorkOrchestratorCompatibility(), (error) => error.code === "WORK_ORCHESTRATOR_UNAVAILABLE");
 });
 
-test("work-orchestrator local package is loaded through its public root and incompatible definitions fail closed", async () => {
+test("work-orchestrator local package is loaded through its public root and v2 definitions fail closed on hash drift", async () => {
   const publicApi = await import("work-orchestrator");
   assert.equal(typeof publicApi.WorkOrchestrator, "function");
   assert.equal(typeof publicApi.validateAndHashDefinition, "function");
-  assert.throws(() => createWorkOrchestratorCompatibility({ publicApi }).validate(buildWorkDefinitions()[0]), (error) => {
-    assert.equal(error.code, "WORK_ORCHESTRATOR_INCOMPATIBLE");
-    assert.equal(error.details.publicCode, "DEFINITION_INVALID");
-    return true;
-  });
+  assert.ok(createWorkOrchestratorCompatibility({ publicApi }).validate(buildWorkDefinitions()[0]).definitionHash);
+  const changed = { ...buildWorkDefinitions()[0], root: { ...buildWorkDefinitions()[0].root, id: "changed-root" } };
+  assert.throws(() => createWorkOrchestratorCompatibility({ publicApi }).validate(changed), (error) => error.code === "DEFINITION_SNAPSHOT_MISMATCH");
 });
 
 test("A29/A30/A31/A32: cutover、legacy projection、派生候補、receipt復旧境界", async () => {
@@ -197,4 +197,40 @@ test("State schemaは既存Comment DBへ明示的にだけ追加される", asyn
   ensureStateControlPlane(db);
   assert.equal(db.prepare("SELECT schema_version FROM state_schema").get().schema_version, 1);
   assert.ok(db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='state_transitions'").get());
+});
+
+test("v2のPolicy pin、recovery starter、Deployment ledger/outbox、Outcome projectorを検証する", async () => {
+  const data = await materializedFixture();
+  const policyService = new PolicyApplicationService(data.controlPlane);
+  policyService.register(context("v2-promotion-policy"), { policyKind: "promotion-production", policy: { schema_version: 1, authorization: { allowed_actor_types: ["human"] } } });
+  policyService.register(context("v2-deployment-policy"), { policyKind: "deployment-production", policy: { schema_version: 1, auto_commit: true } });
+  const pinned = resolvePinnedSessionInput(data.controlPlane, { updateRequestId: "v2-update", evidenceSource: { kind: "raw", sourceRef: "v2-ref" }, pinned: { classificationPolicyVersionId: data.policyIds.classification, keywordPolicyVersionId: data.policyIds["keyword-selection"], accountPolicyVersionId: data.policyIds["account-candidate"], projectionDefinitionVersionId: data.policyIds["projection-definition"] } });
+  assert.ok(pinned.pinned.corpusPolicyVersionId);
+  assert.throws(() => resolvePinnedSessionInput(data.controlPlane, { updateRequestId: "v2-update-wrong", evidenceSource: { kind: "raw", sourceRef: "v2-ref" }, pinned: { corpusPolicyVersionId: data.policyIds.classification, classificationPolicyVersionId: data.policyIds.classification, keywordPolicyVersionId: data.policyIds["keyword-selection"], accountPolicyVersionId: data.policyIds["account-candidate"], projectionDefinitionVersionId: data.policyIds["projection-definition"] } }), (error) => error.code === "POLICY_VERSION_STREAM_MISMATCH");
+  const promotionService = new PromotionApplicationService(data.controlPlane);
+  const proposal = promotionService.propose(context("v2-promotion-propose"), { releaseId: data.release.refs.releaseId });
+  const promotion = promotionService.finalize(context("v2-promotion-finalize", { actorId: "reviewer", actorType: "human", workDefinitionRevision: 2 }), { proposalId: proposal.refs.proposalId, releaseId: data.release.refs.releaseId, review: { outcome: "accept", actor: { actorId: "reviewer", actorType: "human" } } });
+  const promotionHead = data.controlPlane.resolveHead(STREAM_KEYS.promotion);
+  assert.equal(promotion.refs.promotionVersionId, promotionHead.versionId);
+  const recovery = resolveDeployPromotedReleaseSessionInput(data.controlPlane);
+  assert.deepEqual(recovery, { promotionVersionId: promotionHead.versionId, releaseId: data.release.refs.releaseId, target: { deploymentTarget: "production" } });
+
+  let observedLedgerStatus;
+  let adapter;
+  adapter = new MemoryDeploymentAdapter({ onEnsure: async (record) => { observedLedgerStatus = data.controlPlane.db.prepare("SELECT status FROM deployment_requests WHERE deployment_request_id = ?").get(record.deploymentRequestId).status; } });
+  const deployment = new DeploymentApplicationService(data.controlPlane, { adapter });
+  const trigger = await deployment.trigger(createDefaultOperationContext({ operationId: "v2-trigger", workflowSessionId: "v2-session", workDefinitionRevision: 2, permissions: [...PERMISSIONS] }), { promotionVersionId: promotionHead.versionId, releaseId: data.release.refs.releaseId });
+  assert.equal(observedLedgerStatus, "prepared");
+  assert.equal(trigger.stateResult, "triggered");
+  const row = data.controlPlane.db.prepare("SELECT workflow_session_id, promotion_version_id, status FROM deployment_requests WHERE deployment_request_id = ?").get(trigger.refs.deploymentRequestId);
+  assert.equal(row.workflow_session_id, "v2-session");
+  assert.equal(row.promotion_version_id, promotionHead.versionId);
+  assert.equal(row.status, "requested");
+  const external = adapter.complete(trigger.refs.deploymentRequestId);
+  deployment.receiveCompletedEvent({ eventType: "deployment.completed", correlationKey: trigger.refs.deploymentRequestId, payload: { deploymentRequestId: trigger.refs.deploymentRequestId, target: "production", releaseId: data.release.refs.releaseId, status: "succeeded", externalRunRef: external.externalRunRef, completedAt: new Date().toISOString() } });
+  let delivered;
+  assert.equal((await deployment.deliverPendingEvents(async (_sessionId, event) => { delivered = event; })).pending, 0);
+  assert.equal(delivered.eventId.length > 0, true);
+
+  assert.deepEqual(projectCompletedSessionOutcome({ session: { state: "completed" }, resultsByStepId: { "20-record-deployment-state": { stateResult: "committed", refs: { releaseId: data.release.refs.releaseId } }, "deployment-record-completed": { terminalStatus: "deployed" } } }), { status: "deployed", releaseId: data.release.refs.releaseId, changed: true });
 });
