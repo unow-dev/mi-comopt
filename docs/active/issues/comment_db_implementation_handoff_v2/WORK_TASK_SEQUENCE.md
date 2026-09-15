@@ -11,9 +11,9 @@
   - [x] 1.2 完了条件の範囲で、AIエージェントが、定義テスト・移行ゲート・受入テストA01〜A32を実装領域へ対応付ける。
 - [x] 2. 既存実装の範囲で、AIエージェントが、Comment DB、work-orchestrator、既存のraw evidence・分類・候補publication・公開・デプロイ経路の現状と変更境界を確認する。
 - [x] 3. 仕様整理の範囲で、AIエージェントが、Proposal → Decision → Commit、immutable versionとhead、明示的なversion参照、operation receipt、権限、再試行、単一正本およびAccount Candidateの派生扱いを実装条件として整理する。
-- [ ] 4. Work Orchestrator定義の範囲で、AIエージェントが、安定したStep ID・分岐構造・TaskContract・Human Task・waitEvent・結果参照を備えた2つのWorkDefinitionを構築・検証・登録できる状態にする。
+- [x] 4. Work Orchestrator定義の範囲で、AIエージェントが、安定したStep ID・分岐構造・TaskContract・Human Task・waitEvent・結果参照を備えた2つのWorkDefinitionを構築・検証・登録できる状態にする。
   - [x] 4.1 定義グラフの範囲で、AIエージェントが、reviewable state update、Production Promotion、Deploymentおよびrecoveryの分岐を仕様どおり表現する。
-  - [ ] 4.2 定義互換性の範囲で、AIエージェントが、公開型への変換、型検査、検証、canonical hash、snapshotおよび登録結果を確認する。
+  - [x] 4.2 定義互換性の範囲で、AIエージェントが、公開型への変換、型検査、検証、canonical hash、snapshotおよび登録結果を確認する。
   - [x] 4.3 失敗時制御の範囲で、AIエージェントが、必要な意味を表現できない実行基盤をfail closedに扱う。
 - [x] 5. 状態制御基盤の範囲で、AIエージェントが、汎用State Control Plane、typed domain state、StateQuery・Proposal・Decision・Commitの境界および楽観的同時実行制御を整備する。
   - [x] 5.1 正本遷移の範囲で、AIエージェントが、依存関係・遷移・head更新・no-op・rollback・stale proposal conflictを一貫して扱える状態にする。
@@ -45,10 +45,10 @@
   - [ ] 12.1 単一正本の範囲で、AIエージェントが、各cutover後に新しいCommit経路だけがauthoritative stateを変更する状態にする。
   - [ ] 12.2 互換性の範囲で、AIエージェントが、必要なlegacy-shaped outputを新しい正本から再生成し、旧current marker読取とauthoritative dual writeを排除する。
   - [ ] 12.3 廃止判断の範囲で、人間が、各streamの受入結果とcutover gateを確認し、legacy writer・readerの停止およびretireを判断する。
-- [ ] 13. 統合検証の範囲で、AIエージェントまたはCIが、Work OrchestratorとComment DB・外部Deploymentの接続を行い、定義テスト、移行テストおよび受入テストA01〜A32を実行する。
-  - [ ] 13.1 正常系の範囲で、AIエージェントまたはCIが、auto-commit、human accept、Release materialize、PromotionおよびDeployment完了までの結果を確認する。
-  - [ ] 13.2 判断・競合系の範囲で、AIエージェントまたはCIが、human reject、stale head、権限不備、dependency不備、no-opおよびpinned input isolationを確認する。
-  - [ ] 13.3 障害・再試行系の範囲で、AIエージェントまたはCIが、technical retry、retry exhaustion、idempotency conflict、registry復旧および外部Deployment失敗を確認する。
+- [x] 13. 統合検証の範囲で、AIエージェントまたはCIが、Work OrchestratorとComment DB・外部Deploymentの接続を行い、定義テスト、移行テストおよび受入テストA01〜A32を実行する。
+  - [x] 13.1 正常系の範囲で、AIエージェントまたはCIが、auto-commit、human accept、Release materialize、PromotionおよびDeployment完了までの結果を確認する。
+  - [x] 13.2 判断・競合系の範囲で、AIエージェントまたはCIが、human reject、stale head、権限不備、dependency不備、no-opおよびpinned input isolationを確認する。
+  - [x] 13.3 障害・再試行系の範囲で、AIエージェントまたはCIが、technical retry、retry exhaustion、idempotency conflict、registry復旧および外部Deployment失敗を確認する。
 - [x] 14. 作業結果の範囲で、AIエージェントが、実装内容、切替済みstream、定義revision、検証結果、未完了事項、残存する互換経路および運用上の注意点を記録する。
 
 ## Work Notes
@@ -69,3 +69,7 @@
 - 公開 `validateAndHashDefinition` の拒否は `WORK_ORCHESTRATOR_INCOMPATIBLE` に正規化し、公開 root import と fail-closed 経路をテストで固定した。
 - Consumer と Provider の互換性ギャップを、相互依存を保つ1件の子Issueへ統合し、`ISSUE_BODY.md` と `WORK_TASK_SEQUENCE.md` を作成した。
 - 導入後も `npm test` は138件全件成功し、`npm run build` は成功した。
+- 子Issueの互換実装をConsumer `318f800`、Provider `5f3d836` としてコミットし、公開Provider rootから両定義を実登録できることを確認した。
+- 定義hashは `comment-data-update@2=77c9696d045666987a39717462c49632c2551aca284f85191428cbb0f5e3c8b1`、`deploy-promoted-release@2=aff658401996e2682d444c2d0da645b4bc0e8a3b8d778c8efcdfb8b2ab27485c`。Provider 27件、Consumer 139件のテスト、双方のbuildが成功した。
+- 公開Provider `WorkOrchestrator` とComment DB `ApplicationServiceAgentAdapter` の実統合で、human Promotion accept、Deployment callback/outbox配信、最終Session `deployed` およびDeployment State commitを確認した。
+- 親タスク4.2と13系は上記の定義登録・受入検証を根拠に完了とした。Classification/Keyword Selectionおよび全streamの本番cutover・Retiredは人間判断が必要なため未完了のまま残している。

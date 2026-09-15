@@ -45,4 +45,4 @@
 - Consumer は実在Policy stream、exact-stream pin、Proposal provenance、Promotion/Deployment lifecycle、prepared ledger、callback audit/outbox、recovery入力、v2定義およびOutcome projectionを実装した。
 - 定義hashは `comment-data-update@2=77c9696d045666987a39717462c49632c2551aca284f85191428cbb0f5e3c8b1`、`deploy-promoted-release@2=aff658401996e2682d444c2d0da645b4bc0e8a3b8d778c8efcdfb8b2ab27485c`。revision 1 hashは変更していない。
 - Provider `npm test` 27件、Provider `npm run build`、Consumer `npm test` 139件、Consumer `npm run build`、v2 end-to-end smokeおよびProvider公開validatorによる両定義検証が成功した。
-- `git diff --check` は成功し、既知の未完了事項はない。外部Providerリポジトリの実装変更は未コミットで、ベースラインコミットはConsumer側に作成済み。
+- `git diff --check` は成功し、子Issueの既知の未完了事項はない。Consumer実装は `318f800`、外部Provider実装は `5f3d836` としてそれぞれコミット済みで、両リポジトリの作業ツリーはcleanである。
