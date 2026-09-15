@@ -2,12 +2,28 @@ import { cloneJson } from "../state/canonical.js";
 import { stateError } from "../state/errors.js";
 import { assertDefinitionSnapshot, buildWorkDefinitions } from "./definitions.js";
 
+function publicValidationError(definition, error) {
+  const publicCode = typeof error?.code === "string" ? error.code : error?.name;
+  const publicMessage = error instanceof Error ? error.message : String(error);
+  const summary = publicMessage.split("; ").slice(0, 3).join("; ");
+  return stateError(
+    "WORK_ORCHESTRATOR_INCOMPATIBLE",
+    `work-orchestrator rejected ${definition.workDefinitionId}@${definition.revision}: ${summary}`,
+    { details: { workDefinitionId: definition.workDefinitionId, revision: definition.revision, publicCode, publicMessage } },
+  );
+}
+
 export function createWorkOrchestratorCompatibility({ publicApi } = {}) {
   if (!publicApi || typeof publicApi.validateAndHashDefinition !== "function") throw stateError("WORK_ORCHESTRATOR_UNAVAILABLE", "public work-orchestrator validateAndHashDefinition is required");
   return {
     validate(definition) {
       const local = assertDefinitionSnapshot(definition);
-      const external = publicApi.validateAndHashDefinition(cloneJson(local));
+      let external;
+      try {
+        external = publicApi.validateAndHashDefinition(cloneJson(local));
+      } catch (error) {
+        throw publicValidationError(local, error);
+      }
       if (!external || external.definitionHash !== local.definitionHash) throw stateError("DEFINITION_HASH_MISMATCH", `public Work Orchestrator changed the canonical definition hash for ${local.workDefinitionId}`);
       return external;
     },

@@ -159,6 +159,17 @@ test("A23/A24/A25/A26: Recovery定義、pinned input、revision immutable、互�
   assert.throws(() => createWorkOrchestratorCompatibility(), (error) => error.code === "WORK_ORCHESTRATOR_UNAVAILABLE");
 });
 
+test("work-orchestrator local package is loaded through its public root and incompatible definitions fail closed", async () => {
+  const publicApi = await import("work-orchestrator");
+  assert.equal(typeof publicApi.WorkOrchestrator, "function");
+  assert.equal(typeof publicApi.validateAndHashDefinition, "function");
+  assert.throws(() => createWorkOrchestratorCompatibility({ publicApi }).validate(buildWorkDefinitions()[0]), (error) => {
+    assert.equal(error.code, "WORK_ORCHESTRATOR_INCOMPATIBLE");
+    assert.equal(error.details.publicCode, "DEFINITION_INVALID");
+    return true;
+  });
+});
+
 test("A29/A30/A31/A32: cutover、legacy projection、派生候補、receipt復旧境界", async () => {
   const data = await fixture();
   const corpus = new CorpusApplicationService(data.controlPlane).update(context("derived-corpus"), { initialCorpusVersionId: null, state: { schema_version: 1, records: [

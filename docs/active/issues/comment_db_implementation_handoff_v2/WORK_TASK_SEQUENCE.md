@@ -11,9 +11,9 @@
   - [x] 1.2 完了条件の範囲で、AIエージェントが、定義テスト・移行ゲート・受入テストA01〜A32を実装領域へ対応付ける。
 - [x] 2. 既存実装の範囲で、AIエージェントが、Comment DB、work-orchestrator、既存のraw evidence・分類・候補publication・公開・デプロイ経路の現状と変更境界を確認する。
 - [x] 3. 仕様整理の範囲で、AIエージェントが、Proposal → Decision → Commit、immutable versionとhead、明示的なversion参照、operation receipt、権限、再試行、単一正本およびAccount Candidateの派生扱いを実装条件として整理する。
-- [x] 4. Work Orchestrator定義の範囲で、AIエージェントが、安定したStep ID・分岐構造・TaskContract・Human Task・waitEvent・結果参照を備えた2つのWorkDefinitionを構築・検証・登録できる状態にする。
+- [ ] 4. Work Orchestrator定義の範囲で、AIエージェントが、安定したStep ID・分岐構造・TaskContract・Human Task・waitEvent・結果参照を備えた2つのWorkDefinitionを構築・検証・登録できる状態にする。
   - [x] 4.1 定義グラフの範囲で、AIエージェントが、reviewable state update、Production Promotion、Deploymentおよびrecoveryの分岐を仕様どおり表現する。
-  - [x] 4.2 定義互換性の範囲で、AIエージェントが、公開型への変換、型検査、検証、canonical hash、snapshotおよび登録結果を確認する。
+  - [ ] 4.2 定義互換性の範囲で、AIエージェントが、公開型への変換、型検査、検証、canonical hash、snapshotおよび登録結果を確認する。
   - [x] 4.3 失敗時制御の範囲で、AIエージェントが、必要な意味を表現できない実行基盤をfail closedに扱う。
 - [x] 5. 状態制御基盤の範囲で、AIエージェントが、汎用State Control Plane、typed domain state、StateQuery・Proposal・Decision・Commitの境界および楽観的同時実行制御を整備する。
   - [x] 5.1 正本遷移の範囲で、AIエージェントが、依存関係・遷移・head更新・no-op・rollback・stale proposal conflictを一貫して扱える状態にする。
@@ -64,4 +64,8 @@
 - State Control Planeは既存v8 read-model接続との互換性のため明示有効化方式で追加し、状態変更はStateControlPlane/Application Service経由に集約した。
 - `comment-db-state.test.js`でA01〜A32の主要シナリオをグループ化して検証し、定義hash、human review、stale head、idempotency、release dedupe、deployment event/verify、pinned input、cutover projectionおよび派生候補を確認した。
 - Classification/Keyword Selectionの人間によるcutover判断、全streamの本番Retired判断は未実施であり、該当する人間タスクと移行ゲートは未完了のまま残している。
-- このワークスペースには`work-orchestrator`実パッケージがないため、Temporal/Registryへの実登録と本番A01〜A32の完走は未完了。公開APIを注入するcompatibility adapterは不在・hash変更時にfail closedする。
+- `/home/uya/Workspace/work-orchestrator/package` を `work-orchestrator` のローカル runtime dependency として `--install-links` 付きで導入し、公開 root import を確認した。
+- 実パッケージによる本番定義の登録は、Choice の decision Task 必須・空 terminal sequence 不可・deploymentRequestId の動的 correlationKey 不可という公開契約差分を検出して fail closed した。仕様を静的値へ近似せず、本番A01〜A32の完走と実登録は未完了のまま残している。
+- 公開 `validateAndHashDefinition` の拒否は `WORK_ORCHESTRATOR_INCOMPATIBLE` に正規化し、公開 root import と fail-closed 経路をテストで固定した。
+- Consumer と Provider の互換性ギャップを、相互依存を保つ1件の子Issueへ統合し、`ISSUE_BODY.md` と `WORK_TASK_SEQUENCE.md` を作成した。
+- 導入後も `npm test` は138件全件成功し、`npm run build` は成功した。

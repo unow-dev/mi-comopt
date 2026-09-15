@@ -26,10 +26,11 @@
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "clsx": "^2.1.1",
+    "radix-ui": "^1.1.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "radix-ui": "^1.1.2",
-    "tailwind-merge": "^2.6.0"
+    "tailwind-merge": "^2.6.0",
+    "work-orchestrator": "file:../../work-orchestrator/package"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",

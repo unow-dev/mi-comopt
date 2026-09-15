@@ -1,0 +1,97 @@
+[
+  {
+    "path": "01_FINAL_SPEC.md",
+    "bytes": 9703,
+    "sha256": "cb6c69477f03ac1b0112da3e7a6e2e1833e202979953d22dd294cb46dc7cabbb"
+  },
+  {
+    "path": "02_PROVIDER_IMPLEMENTATION.md",
+    "bytes": 7278,
+    "sha256": "360a47a2adc44856021d5545976e2c2a53edb0d0dd92958d55a012fa4d802067"
+  },
+  {
+    "path": "03_CONSUMER_IMPLEMENTATION.md",
+    "bytes": 8161,
+    "sha256": "ab0ed85431b4066319c329c7bde30bc3ab0f24146bd92a16d5da62a6c75b64e7"
+  },
+  {
+    "path": "04_DEPLOYMENT_INGRESS_AND_LEDGER.md",
+    "bytes": 6922,
+    "sha256": "09106eccfb4d5fa1d22941a96852b7a031c4df5ea7677fd367f7701e3bad7e15"
+  },
+  {
+    "path": "05_DEFINITION_V2_BLUEPRINT.md",
+    "bytes": 7455,
+    "sha256": "45d0085ab1aef6ea16bcebb1b038b0216c1a95702ca611cad2ecce79deb62315"
+  },
+  {
+    "path": "06_ACCEPTANCE_AND_REGRESSION.md",
+    "bytes": 6024,
+    "sha256": "58dec0c3807b0b3e3bde77f6af77cfce5dd68c629b5f8b56b9280b26970dbe10"
+  },
+  {
+    "path": "07_IMPLEMENTATION_SEQUENCE.md",
+    "bytes": 3656,
+    "sha256": "a8fbd4e453beb6e73ea83f586c626fe2f698eb82b515e24b15d9ee3b9dc4fab6"
+  },
+  {
+    "path": "08_FILE_CHANGE_MAP.md",
+    "bytes": 6122,
+    "sha256": "b0e89f1ee7b12a15068b15ec7345b3169cd8beb5a6512f79e65e6d01837285bd"
+  },
+  {
+    "path": "09_DECISION_DELTA.md",
+    "bytes": 5362,
+    "sha256": "b1da767bd043772f97523eb266af9fe607df2c8d319bc3e922f5b365fc8c8404"
+  },
+  {
+    "path": "10_IMPLEMENTER_CHECKLIST.md",
+    "bytes": 2760,
+    "sha256": "cff232da94182d9a0954f9221a14729f2c4606ff371a937397fc926e960aa209"
+  },
+  {
+    "path": "README.md",
+    "bytes": 2623,
+    "sha256": "5f836bd5de00dc5cfad5ab85f7a2c7578f4a2492a5b9408e7e7b04c56a5efbdb"
+  },
+  {
+    "path": "handoff_manifest.json",
+    "bytes": 876,
+    "sha256": "67e6bf6ab6698634e7ca6d2c579195d0d776d56412124077da6d556a2b3b11e2"
+  },
+  {
+    "path": "source_context/01_NORMATIVE_IMPLEMENTATION_SPEC_V2.md",
+    "bytes": 13813,
+    "sha256": "8d1202feafb2efb032e9c23426ac2ac257fac864f32bc92125f863ae283adb68"
+  },
+  {
+    "path": "source_context/02_WORK_ORCHESTRATOR_FLOW.md",
+    "bytes": 8050,
+    "sha256": "ee8d82290cb208873397c459cda15dcb811b2b65321fc482dc7b3bf777db71c6"
+  },
+  {
+    "path": "source_context/03_APPLICATION_SERVICE_CONTRACTS.md",
+    "bytes": 6204,
+    "sha256": "a7c780932e489c9aaeb49ab591b60cc1542f747a098a1b7e94bde61802b5f23a"
+  },
+  {
+    "path": "source_context/05_ACCEPTANCE_TESTS.md",
+    "bytes": 4691,
+    "sha256": "36625ea080ee6fa6914b8643bbd1aabc7896277ad94aeba13def96bdf6da5fdc"
+  },
+  {
+    "path": "source_context/08_TASK_IO_AND_PERMISSION_MATRIX.md",
+    "bytes": 5265,
+    "sha256": "bfc81a383b057540bdc79ed18987c1077c0f8646e135c099f92239a0c7f68eb7"
+  },
+  {
+    "path": "source_context/ISSUE_BODY_ORIGINAL.md",
+    "bytes": 3696,
+    "sha256": "f3797dce6b6a82fe4f6161b6660c1a33d14a75bde95c48493f65f9236d6488c9"
+  },
+  {
+    "path": "source_context/WORK_ORCHESTRATOR_COMPATIBILITY_GAP.md",
+    "bytes": 8480,
+    "sha256": "de4e40bbaed90f69d56241af1d4c0db912373436bcddbe557f35dec84e9c7978"
+  }
+]

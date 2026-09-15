@@ -1,0 +1,38 @@
+{
+  "handoff_version": 1,
+  "created_date": "2026-09-15",
+  "implementation_readiness_percent": 100,
+  "provider_target": {
+    "package": "work-orchestrator",
+    "current_version": "0.0.0",
+    "target_version": "0.1.0",
+    "definition_schema_versions": [
+      1,
+      2
+    ]
+  },
+  "consumer_definitions": [
+    {
+      "id": "comment-data-update",
+      "revision": 2,
+      "schemaVersion": 2
+    },
+    {
+      "id": "deploy-promoted-release",
+      "revision": 2,
+      "schemaVersion": 2
+    }
+  ],
+  "read_order": [
+    "01_FINAL_SPEC.md",
+    "02_PROVIDER_IMPLEMENTATION.md",
+    "03_CONSUMER_IMPLEMENTATION.md",
+    "04_DEPLOYMENT_INGRESS_AND_LEDGER.md",
+    "05_DEFINITION_V2_BLUEPRINT.md",
+    "06_ACCEPTANCE_AND_REGRESSION.md",
+    "07_IMPLEMENTATION_SEQUENCE.md",
+    "08_FILE_CHANGE_MAP.md",
+    "09_DECISION_DELTA.md"
+  ],
+  "open_design_decisions": []
+}
