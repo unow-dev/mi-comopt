@@ -65,10 +65,10 @@
 - `comment-db-state.test.js`でA01〜A32の主要シナリオをグループ化して検証し、定義hash、human review、stale head、idempotency、release dedupe、deployment event/verify、pinned input、cutover projectionおよび派生候補を確認した。
 - Classification/Keyword Selectionの人間によるcutover判断、全streamの本番Retired判断は未実施であり、該当する人間タスクと移行ゲートは未完了のまま残している。
 - `/home/uya/Workspace/work-orchestrator/package` を `work-orchestrator` のローカル runtime dependency として `--install-links` 付きで導入し、公開 root import を確認した。
-- 実パッケージによる本番定義の登録は、Choice の decision Task 必須・空 terminal sequence 不可・deploymentRequestId の動的 correlationKey 不可という公開契約差分を検出して fail closed した。仕様を静的値へ近似せず、本番A01〜A32の完走と実登録は未完了のまま残している。
+- 互換実装前の実パッケージ登録では、Choice の decision Task 必須・空 terminal sequence 不可・deploymentRequestId の動的 correlationKey 不可という公開契約差分を検出して fail closed した。その後、Provider/Consumerの互換実装により公開契約へ適合させ、両定義の実登録まで完了した。
 - 公開 `validateAndHashDefinition` の拒否は `WORK_ORCHESTRATOR_INCOMPATIBLE` に正規化し、公開 root import と fail-closed 経路をテストで固定した。
 - Consumer と Provider の互換性ギャップを、相互依存を保つ1件の子Issueへ統合し、`ISSUE_BODY.md` と `WORK_TASK_SEQUENCE.md` を作成した。
-- 導入後も `npm test` は138件全件成功し、`npm run build` は成功した。
+- 互換実装前の導入後も `npm test` は138件全件成功し、`npm run build` は成功した。
 - 子Issueの互換実装をConsumer `318f800`、Provider `5f3d836` としてコミットし、公開Provider rootから両定義を実登録できることを確認した。
 - 定義hashは `comment-data-update@2=77c9696d045666987a39717462c49632c2551aca284f85191428cbb0f5e3c8b1`、`deploy-promoted-release@2=aff658401996e2682d444c2d0da645b4bc0e8a3b8d778c8efcdfb8b2ab27485c`。Provider 27件、Consumer 139件のテスト、双方のbuildが成功した。
 - 公開Provider `WorkOrchestrator` とComment DB `ApplicationServiceAgentAdapter` の実統合で、human Promotion accept、Deployment callback/outbox配信、最終Session `deployed` およびDeployment State commitを確認した。
