@@ -84,3 +84,7 @@
 - `package/scripts/run-comment-data-update-demo.mjs` と `demo:comment-data-update` npm scriptを追加した。公開Work Orchestratorへ定義revision 2を登録し、Evidence → Corpus → Classification → Keyword Selection → Release → Promotion → Deploymentを実行し、Deployment completed eventをComment DB outbox経由でWork Orchestratorへ返す。
 - demo実行結果はsession `demo-comment-data-update-1789547200952`、最終status `deployed`、release `release_cb1a1fb881dbbdbbc61b85eb45ab7aac`、deployment request `deployment-request_6ce16a408be62613a58b4d5bcd16f631`。demo DBのintegrityは`ok`、Release 1件、Promotion 1件、Deployment State 1件、outbox pending 0件だった。demo DBとartifactは`/tmp/tiktok-filter-keywords-demo-ftHlwq/`に出力された。
 - demoは元の実DBをread-onlyでコピー元にするだけで、実DBのSHA-256とcurrent publicationは変更されていない。実DBのCutoverおよびhuman task 7.3・8.3・12.3は未完了のまま維持する。
+- `demo/` を独立した実行単位として構築し、`package.json`、lockfile、README、実行スクリプトおよびdemo専用出力領域を追加した。通常実行は合成fixtureを使い、`--source-db` 指定時は実DBをread-only検査・コピーして同じ業務フローを再生する。
+- `cd demo && npm install && npm run demo` で、合成fixtureからSession `completed`、業務結果 `deployed`、Deployment Request `succeeded`、outbox `pending: 0`を確認した。出力先は `demo/var/run-Jdb8SD/` だった。
+- `cd demo && npm run demo -- --source-db ../var/comment-history.sqlite3` で、移行済み実DBのコピーを入力に同じ結果を確認した。出力先は `demo/var/run-gXhCP9/`、実DBの実行前後SHA-256は `619af8d32e46fb102ac57c1ef390fa290b70f3232c3b1ef6bcfaa77c855fbc7d` で不変だった。
+- demoは本番Cutoverを実行せず、PromotionのHuman Taskだけをdemo用actor `demo-reviewer`が承認する。実運用の7.3・8.3・12.3の人間判断を完了扱いにはしない。

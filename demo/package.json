@@ -1,0 +1,20 @@
+{
+  "name": "tiktok-filter-keywords-demo",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "demo": "node scripts/run-comment-data-update-demo.mjs",
+    "start": "node scripts/run-comment-data-update-demo.mjs",
+    "help": "node scripts/run-comment-data-update-demo.mjs --help"
+  },
+  "dependencies": {
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "tiktok-filter-keywords": "file:../package",
+    "work-orchestrator": "file:../../work-orchestrator/package"
+  }
+}
