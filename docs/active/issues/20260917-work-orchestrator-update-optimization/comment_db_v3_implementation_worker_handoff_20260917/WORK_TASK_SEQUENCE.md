@@ -31,6 +31,6 @@ Comment DB / Work Orchestrator v3を、正本の契約、v2互換性、依存関
 - 本番切替ではlegacy authority writerとv3 authorityを同時に有効化しない。smokeまたは切替後検証が失敗した場合、revision 2への業務復帰やlegacy authorityの再有効化は行わず、fix-forwardする。
 - ベースラインコミットは consumer 側 `3a9fea5`（`chore: establish comment db v3 implementation baseline`）。
 - provider 実体は `/home/uya/Workspace/work-orchestrator`、着手時の基準 commit は `976aa2f4b8ac68b0f72aeb4b1e35c96a71900bcb`、互換性実装 commit は `567c34e32634ebe1f0916d36e3a5662fbd6b638e`。provider の互換性変更は consumer の業務意味論と分離して実装した。
-- consumer/provider の v3 定義 hash は revision 3 / `fc91e79126f5055c64b01194586955242fc2846efae97133c6b068de388bbb48` で一致した。v2 の凍結 hash は `implementation-evidence-v3.json` と integrity test で再確認する。
-- consumer の実装コミットは `6247cf7a6116f9c649faad17cbadefd0b54aae84`。
-- PR4 相当の deployment/runtime full E2E と 79 verification ID の閉鎖、ならびに人間承認を要する PR5 cutover は未実施のため、タスク 9〜13 は未完了のまま維持する。
+- consumer/provider の v3 定義 hash は revision 3 / `9598f503ba9a8e8753e0b1d9d1e4af2f1a80a4d10b718aba5ab250840438a726` で一致した。v2 の凍結 hash は `implementation-evidence-v3.json` と integrity test で再確認する。
+- consumer の基盤実装コミットは `6247cf7a6116f9c649faad17cbadefd0b54aae84`、deployment/runtime統合コミットは `e4b4724dd40fcba44af96af6112522938f927bd0`。
+- local V3 E2E、deployment queueのsingle-flight/receipt-first、Temporal runtime開始ファサードを実装・検証した。Temporal上のfull E2E、E2E02〜04、79 verification IDの閉鎖、ならびに人間承認を要するPR5 cutoverは未実施のため、タスク9〜13は未完了のまま維持する。

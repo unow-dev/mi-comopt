@@ -10,7 +10,7 @@
     "startingCommit": "3a9fea5",
     "baselineCommitMessage": "chore: establish comment db v3 implementation baseline"
   },
-  "implementationCommit": "6247cf7a6116f9c649faad17cbadefd0b54aae84",
+  "implementationCommit": "e4b4724dd40fcba44af96af6112522938f927bd0",
   "providerBaseline": {
     "repository": "local:/home/uya/Workspace/work-orchestrator",
     "commit": "976aa2f4b8ac68b0f72aeb4b1e35c96a71900bcb",
@@ -20,7 +20,7 @@
   },
   "targetRevision": {
     "resolvedRevision": 3,
-    "canonicalDefinitionHash": "fc91e79126f5055c64b01194586955242fc2846efae97133c6b068de388bbb48",
+    "canonicalDefinitionHash": "9598f503ba9a8e8753e0b1d9d1e4af2f1a80a4d10b718aba5ab250840438a726",
     "registryEvidence": "consumer v3 definition and provider validateAndHashDefinition agree; v2 registry slots remain unchanged"
   },
   "allowedStatuses": [
