@@ -224,12 +224,12 @@ export class StateControlPlane {
     return operationId ? this.runIdempotent({ operationId, operationKind: "state.decision.create", request }, mutate) : this._transaction(mutate);
   }
 
-  commitProposal({ proposalId, decisionId = undefined, versionId = undefined, transitionId = undefined, operationId, domainHandler = undefined, committedAt = this.now() } = {}) {
+  commitProposal({ proposalId, decisionId = undefined, versionId = undefined, transitionId = undefined, operationId, domainHandler = undefined, committedAt = this.now(), noOpPolicy = "semantic" } = {}) {
     const proposal = this.readProposal(proposalId);
     const decision = this.readDecision(proposalId);
     const effectiveVersionId = versionId ?? deterministicId("version", operationId);
     const effectiveTransitionId = transitionId ?? deterministicId("transition", operationId);
-    const request = { proposalId, decisionId: decisionId ?? decision?.decisionId, versionId: effectiveVersionId, transitionId: effectiveTransitionId };
+    const request = { proposalId, decisionId: decisionId ?? decision?.decisionId, versionId: effectiveVersionId, transitionId: effectiveTransitionId, ...(noOpPolicy === "semantic" ? {} : { noOpPolicy }) };
     return this.runIdempotent({ operationId, operationKind: "state.commit", request }, (db) => {
       const currentProposal = this.readProposal(proposalId);
       const currentDecision = this.readDecision(proposalId);
@@ -240,7 +240,13 @@ export class StateControlPlane {
       const actualHead = this.resolveHead(stream.stream_id);
       const actualHeadId = actualHead?.versionId ?? null;
       if (actualHeadId !== currentProposal.expectedHeadVersionId) throw stateError("HEAD_CONFLICT", `proposal expected head ${currentProposal.expectedHeadVersionId ?? "null"} but actual head is ${actualHeadId ?? "null"}`);
-      if (actualHead && actualHead.semanticSha256 === currentProposal.proposedSemanticSha256) return { stateResult: "unchanged", versionId: actualHead.versionId, semanticSha256: actualHead.semanticSha256, transitionId: null, decisionId: currentDecision.decisionId, proposalId };
+      if (actualHead && actualHead.semanticSha256 === currentProposal.proposedSemanticSha256) {
+        if (noOpPolicy === "semantic") return { stateResult: "unchanged", versionId: actualHead.versionId, semanticSha256: actualHead.semanticSha256, transitionId: null, decisionId: currentDecision.decisionId, proposalId };
+        if (noOpPolicy !== "semantic-and-dependencies") throw stateError("VALIDATION_ERROR", `unsupported no-op policy ${noOpPolicy}`);
+        const actualDependencies = this.readDependencies(actualHead.versionId);
+        const sameDependencies = canonicalJson(actualDependencies) === canonicalJson(currentProposal.dependencies);
+        if (sameDependencies) return { stateResult: "unchanged", versionId: actualHead.versionId, semanticSha256: actualHead.semanticSha256, transitionId: null, decisionId: currentDecision.decisionId, proposalId };
+      }
       if (!ORIGIN_KINDS.has("commit")) throw stateError("VALIDATION_ERROR", "commit origin is invalid");
       const dependencies = currentProposal.dependencies;
       this._assertDependenciesInTransaction(dependencies, effectiveVersionId);

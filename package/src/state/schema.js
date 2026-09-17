@@ -1,5 +1,76 @@
 export const STATE_SCHEMA_VERSION = 1;
 
+/**
+ * Comment DB / Work Orchestrator v3 uses separate tables for release and
+ * deployment queue concerns.  The state streams remain the authority for
+ * business state; these tables only add v3 identity, materialization and
+ * delivery bookkeeping.  Every statement is additive and idempotent.
+ */
+export const COMMENT_DB_V3_SQL = `
+CREATE TABLE IF NOT EXISTS v3_release_bundles (
+  release_id TEXT PRIMARY KEY,
+  release_key TEXT NOT NULL UNIQUE,
+  pins_json TEXT NOT NULL,
+  projection_definition_version_id TEXT NOT NULL,
+  bundle_sha256 TEXT NOT NULL,
+  bundle_json TEXT NOT NULL,
+  materialization_json TEXT,
+  created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS v3_release_artifacts (
+  release_id TEXT NOT NULL,
+  logical_path TEXT NOT NULL,
+  blob_hash TEXT NOT NULL,
+  byte_length INTEGER NOT NULL CHECK (byte_length >= 0),
+  artifact_json TEXT NOT NULL,
+  PRIMARY KEY (release_id, logical_path),
+  FOREIGN KEY (release_id) REFERENCES v3_release_bundles(release_id)
+);
+
+CREATE TABLE IF NOT EXISTS v3_deployment_target_sequences (
+  target TEXT PRIMARY KEY,
+  next_sequence INTEGER NOT NULL CHECK (next_sequence >= 1)
+);
+
+CREATE TABLE IF NOT EXISTS v3_deployment_requests (
+  deployment_request_id TEXT PRIMARY KEY,
+  workflow_session_id TEXT NOT NULL DEFAULT '',
+  accepted_promotion_decision_id TEXT NOT NULL,
+  promotion_version_id TEXT NOT NULL,
+  release_id TEXT NOT NULL,
+  target TEXT NOT NULL,
+  deployment_sequence INTEGER NOT NULL CHECK (deployment_sequence >= 1),
+  status TEXT NOT NULL CHECK (status IN ('queued', 'active', 'succeeded', 'failed', 'cancelled', 'superseded')),
+  external_run_ref TEXT,
+  event_json TEXT,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  UNIQUE (accepted_promotion_decision_id, target),
+  UNIQUE (target, deployment_sequence)
+);
+
+CREATE TABLE IF NOT EXISTS v3_deployment_event_outbox (
+  event_id TEXT PRIMARY KEY,
+  deployment_request_id TEXT NOT NULL,
+  workflow_session_id TEXT NOT NULL,
+  command_id TEXT NOT NULL UNIQUE,
+  request_sha256 TEXT NOT NULL,
+  event_json TEXT NOT NULL,
+  disposition TEXT NOT NULL CHECK (disposition IN ('pending', 'delivered', 'dead_lettered')),
+  attempts INTEGER NOT NULL DEFAULT 0 CHECK (attempts >= 0),
+  last_error TEXT,
+  created_at TEXT NOT NULL,
+  delivered_at TEXT,
+  dead_lettered_at TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_v3_deployment_fifo
+  ON v3_deployment_requests(target, deployment_sequence, status);
+CREATE INDEX IF NOT EXISTS idx_v3_deployment_events_pending
+  ON v3_deployment_event_outbox(disposition, created_at, event_id);
+`;
+
 export const STATE_CONTROL_PLANE_SQL = `
 CREATE TABLE IF NOT EXISTS state_schema (
   schema_version INTEGER NOT NULL
@@ -259,6 +330,9 @@ export function ensureStateControlPlane(db) {
   }
   db.exec("PRAGMA foreign_keys = ON");
   db.exec(STATE_CONTROL_PLANE_SQL);
+  db.exec(COMMENT_DB_V3_SQL);
+  const v3Columns = (table) => new Set(db.prepare(`PRAGMA table_info(${table})`).all().map((row) => row.name));
+  if (!v3Columns("v3_deployment_requests").has("workflow_session_id")) db.exec("ALTER TABLE v3_deployment_requests ADD COLUMN workflow_session_id TEXT NOT NULL DEFAULT ''");
   const deploymentTable = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'deployment_requests'").get();
   if (deploymentTable?.sql && !deploymentTable.sql.includes("'prepared'")) {
     db.exec("ALTER TABLE deployment_requests RENAME TO deployment_requests_legacy");

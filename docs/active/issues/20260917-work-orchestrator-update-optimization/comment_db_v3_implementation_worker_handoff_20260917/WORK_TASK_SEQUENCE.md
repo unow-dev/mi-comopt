@@ -6,14 +6,14 @@ Comment DB / Work Orchestrator v3を、正本の契約、v2互換性、依存関
 
 ## Task Sequence
 
-- [ ] 1. 要求整理の範囲で、AIエージェントが、normative package、受入条件、対象外事項、PR0〜PR5の依存順およびv2/v3の変更境界を確認する。
-- [ ] 2. 実装前提の範囲で、AIエージェントが、normative packageとmanifestの整合性、consumer baseline、実際のprovider commit、`TARGET_REVISION`の候補および凍結済みv2 Definition hashを確認・記録する。
-- [ ] 3. 証跡基盤の範囲で、AIエージェントが、implementation evidence ledger、requirement・verification traceabilityおよびsupporting-document lintを整備し、実装進捗を正本の外で追跡できる状態にする。
-- [ ] 4. provider互換性の範囲で、AIエージェントが、logicalPath、optional binding、receipt lookupおよびexternal-event parityの追加要件をconsumerの業務意味論と分離して整備する。
-- [ ] 5. v3基盤契約の範囲で、AIエージェントが、WorkStepResult、Session、terminal outcome、DefinitionおよびHuman artifact completionの契約・検証・side-by-side登録を整備する。
-- [ ] 6. state authorityの範囲で、AIエージェントが、operation id、JCS business DTO hash、transactionと外部呼出しの境界、application idempotencyおよびdependency-aware no-opを整備する。
-- [ ] 7. domain workflowの範囲で、AIエージェントが、ClassificationとKeyword Selectionのhandoff、Human review、finalize、agent adapterおよびcapability wiringを、指定された入力・依存・routing・result rulesに従って整備する。
-- [ ] 8. Release・Promotionの範囲で、AIエージェントが、八つのpinによる決定的なRelease identityとmaterialization、Human Decision、expected-head guardおよびPromotion CAS finalizationを整備する。
+- [x] 1. 要求整理の範囲で、AIエージェントが、normative package、受入条件、対象外事項、PR0〜PR5の依存順およびv2/v3の変更境界を確認する。
+- [x] 2. 実装前提の範囲で、AIエージェントが、normative packageとmanifestの整合性、consumer baseline、実際のprovider commit、`TARGET_REVISION`の候補および凍結済みv2 Definition hashを確認・記録する。
+- [x] 3. 証跡基盤の範囲で、AIエージェントが、implementation evidence ledger、requirement・verification traceabilityおよびsupporting-document lintを整備し、実装進捗を正本の外で追跡できる状態にする。
+- [x] 4. provider互換性の範囲で、AIエージェントが、logicalPath、optional binding、receipt lookupおよびexternal-event parityの追加要件をconsumerの業務意味論と分離して整備する。
+- [x] 5. v3基盤契約の範囲で、AIエージェントが、WorkStepResult、Session、terminal outcome、DefinitionおよびHuman artifact completionの契約・検証・side-by-side登録を整備する。
+- [x] 6. state authorityの範囲で、AIエージェントが、operation id、JCS business DTO hash、transactionと外部呼出しの境界、application idempotencyおよびdependency-aware no-opを整備する。
+- [x] 7. domain workflowの範囲で、AIエージェントが、ClassificationとKeyword Selectionのhandoff、Human review、finalize、agent adapterおよびcapability wiringを、指定された入力・依存・routing・result rulesに従って整備する。
+- [x] 8. Release・Promotionの範囲で、AIエージェントが、八つのpinによる決定的なRelease identityとmaterialization、Human Decision、expected-head guardおよびPromotion CAS finalizationを整備する。
 - [ ] 9. Deployment・runtime統合の範囲で、AIエージェントが、加算的なDB migration、target-local sequence、FIFO single-flight、receipt-first outbox、provider event reconciliation、local/Temporal runtimeおよびfull E2Eを整備する。
 - [ ] 10. 検証と証跡閉鎖の範囲で、AIエージェントまたはCIが、79件の必須verification ID、全85要件のcoverage、v2回帰・hash、local/Temporal parityおよび4件のfull E2Eに合格する証跡を候補commitへ記録する。
 - [ ] 11. 本番切替判断の範囲で、人間が、全検証結果、provider互換性、v2 hash凍結、切替手順および失敗時のfix-forward方針を確認し、cutover実施を承認する。
@@ -29,3 +29,7 @@ Comment DB / Work Orchestrator v3を、正本の契約、v2互換性、依存関
 - PR1-AとPR2-AはPR0-B後に並行可能。PR3-CとPR3-Dは前提完了後に並行可能。それ以外は `01_EXECUTION_PLAN.md` の依存順に従う。
 - `implementation-evidence-v3.json`は実装進捗の台帳とし、normative配下のtraceabilityやmanifestへ進捗を書き込まない。各PRは担当verification合格、必要なv2回帰、要件のimplementation refsおよびmain安全性を満たして完了とする。
 - 本番切替ではlegacy authority writerとv3 authorityを同時に有効化しない。smokeまたは切替後検証が失敗した場合、revision 2への業務復帰やlegacy authorityの再有効化は行わず、fix-forwardする。
+- ベースラインコミットは consumer 側 `3a9fea5`（`chore: establish comment db v3 implementation baseline`）。
+- provider 実体は `/home/uya/Workspace/work-orchestrator`、着手時の基準 commit は `976aa2f4b8ac68b0f72aeb4b1e35c96a71900bcb`、互換性実装 commit は `567c34e32634ebe1f0916d36e3a5662fbd6b638e`。provider の互換性変更は consumer の業務意味論と分離して実装した。
+- consumer/provider の v3 定義 hash は revision 3 / `fc91e79126f5055c64b01194586955242fc2846efae97133c6b068de388bbb48` で一致した。v2 の凍結 hash は `implementation-evidence-v3.json` と integrity test で再確認する。
+- PR4 相当の deployment/runtime full E2E と 79 verification ID の閉鎖、ならびに人間承認を要する PR5 cutover は未実施のため、タスク 9〜13 は未完了のまま維持する。
