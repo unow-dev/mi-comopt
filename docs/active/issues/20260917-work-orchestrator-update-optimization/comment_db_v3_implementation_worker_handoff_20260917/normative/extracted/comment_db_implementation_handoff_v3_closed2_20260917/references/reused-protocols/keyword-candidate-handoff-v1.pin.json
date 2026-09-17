@@ -1,0 +1,7 @@
+{
+  "repository": "unow-dev/mi-comopt",
+  "commit": "398a904069af3e5e1386e412811f9a8275af1d7a",
+  "entryPath": "package/src/processing/keyword-candidates/handoff-workflow.js",
+  "entryBlobSha": "eda0f2471973816dc58b62553f49777b284a66cc",
+  "normativeRequirement": "V3-REQ-KEY-003"
+}

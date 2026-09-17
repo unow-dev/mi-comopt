@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-09-17",
+  "consumerRepo": "unow-dev/mi-comopt",
+  "consumerMainCommit": "398a904069af3e5e1386e412811f9a8275af1d7a",
+  "consumerMainCommitMessage": "feat: add state control plane migration runner",
+  "criticalFiles": {
+    "package/package.json": "bc5d19bc8d3ce98dcbbcd4780619ed2fa914e25e",
+    "package/src/workflow/definitions.js": "97fd26ade483cd81f58117daf0c64ad8c1087ea2",
+    "package/src/workflow/session-input.js": "1672a8d3532175c7cfa8cec7ac426838e275e427",
+    "package/src/workflow/outcomes.js": "6bd87d3684e7b3f4935894958d3d3529160049cb",
+    "package/src/integration/task-handlers.js": "702de7b90af7d526bda5b2354fc3885e8c4af4e4",
+    "package/src/application/services.js": "715b539d222b2aaf5a170da3a6fbeccc9399b43e",
+    "package/src/application/release-services.js": "3d946c674cb07e58854d2df34807b56bbc6127e0",
+    "package/src/application/deployment-services.js": "00790a434a171d670b1489a816190efb1d0c1b8b",
+    "package/src/state/control-plane.js": "26f4b2bf5f707f53fd7a25db6a309c146a0b3c86",
+    "package/src/state/schema.js": "640595361de88df74dcb372f9d76a3d020346f5d",
+    "package/src/release/artifact-store.js": "98847f025c4c43cb1539f09ca16dba08650050e6"
+  },
+  "provider": {
+    "dependencyDeclaration": "work-orchestrator: file:../../work-orchestrator/package",
+    "repository": "UNRESOLVED_FROM_CONNECTED_GITHUB",
+    "requiredPrePR1Action": "Record provider repository/path commit SHA in implementation evidence before PR1-A is marked implemented."
+  },
+  "normativePackage": {
+    "file": "comment_db_implementation_handoff_v3_closed2_20260917.zip",
+    "sha256": "0f7ff879a7233dda01da2016a315dc5e35e1a0d0535eee6a5cdc5e023ceabfcb",
+    "requirements": 85,
+    "mandatoryVerificationIds": 79
+  }
+}

@@ -1,0 +1,784 @@
+{
+  "schemaVersion": 1,
+  "requirements": [
+    {
+      "requirementId": "V3-REQ-AUTH-001",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-AU01",
+        "V3-E2E01",
+        "V3-E2E02"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-AUTH-002",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-AU01",
+        "V3-E2E01",
+        "V3-E2E02"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-AUTH-003",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-AU02"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-AUTH-004",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-AU03"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-AUTH-005",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-AU02"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-SVC-001",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-SV01"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-SVC-002",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-SV02"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-RESULT-001",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-RS01"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-RESULT-002",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-RS02"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-SESSION-001",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-S01"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-SESSION-002",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-S01"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-SESSION-003",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-S02"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-SESSION-004",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-S03",
+        "V3-E2E03"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-SESSION-005",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-S04"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-SESSION-006",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-S05"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-SESSION-007",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-S06"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-ART-001",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-HF01"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-ART-002",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-HF01"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-ART-003",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-HF02"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-ART-004",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-HF03"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-ART-005",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-HF04"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-ART-006",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-HF05"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-ART-007",
+      "ownerPr": "PR1",
+      "verificationIds": [
+        "V3-HF06"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-ART-008",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-HF07"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-ART-009",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-HF08"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-ART-010",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-HF09"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-ART-011",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-HF10"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-CLASS-001",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-CL01"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-CLASS-002",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-CL02"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-CLASS-003",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-CL02"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-CLASS-004",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-CL03"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-CLASS-005",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-CL03"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-CLASS-006",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-CL04"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-CLASS-007",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-CL05",
+        "V3-E2E02"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-KEY-001",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-KW01"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-KEY-002",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-KW01"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-KEY-003",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-KW02"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-KEY-004",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-KW02"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-KEY-005",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-KW03"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-KEY-006",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-KW04"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-KEY-007",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-KW05",
+        "V3-E2E02"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-DEP-001",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-DEP01"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-DEP-002",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-DEP01"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-DEP-003",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-DEP02"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-DEP-004",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-DEP03"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-DEP-005",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-DEP04"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-DEP-006",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-DEP05"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-DEP-007",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-DEP06"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-DEP-008",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-DEP07",
+        "V3-E2E03"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-DEP-009",
+      "ownerPr": "PR3",
+      "verificationIds": [
+        "V3-DEP08"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-REL-001",
+      "ownerPr": "PR4",
+      "verificationIds": [
+        "V3-RL01"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-REL-002",
+      "ownerPr": "PR4",
+      "verificationIds": [
+        "V3-RL01"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-REL-003",
+      "ownerPr": "PR4",
+      "verificationIds": [
+        "V3-RL02"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-REL-004",
+      "ownerPr": "PR4",
+      "verificationIds": [
+        "V3-RL03"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-REL-005",
+      "ownerPr": "PR4",
+      "verificationIds": [
+        "V3-RL04"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-REL-006",
+      "ownerPr": "PR4",
+      "verificationIds": [
+        "V3-RL05",
+        "V3-E2E02"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-REL-007",
+      "ownerPr": "PR4",
+      "verificationIds": [
+        "V3-RL06"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-REL-008",
+      "ownerPr": "PR4",
+      "verificationIds": [
+        "V3-RL07"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-REL-009",
+      "ownerPr": "PR4",
+      "verificationIds": [
+        "V3-RL08",
+        "V3-E2E03"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-001",
+      "ownerPr": "PR4",
+      "verificationIds": [
+        "V3-DE01"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-002",
+      "ownerPr": "PR1",
+      "verificationIds": [
+        "V3-DE02"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-003",
+      "ownerPr": "PR4",
+      "verificationIds": [
+        "V3-DE03"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-004",
+      "ownerPr": "PR4",
+      "verificationIds": [
+        "V3-DE04"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-005",
+      "ownerPr": "PR4",
+      "verificationIds": [
+        "V3-DE05"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-006",
+      "ownerPr": "PR4",
+      "verificationIds": [
+        "V3-DE06"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-007",
+      "ownerPr": "PR4",
+      "verificationIds": [
+        "V3-DE07"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-008",
+      "ownerPr": "PR4",
+      "verificationIds": [
+        "V3-DE08"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-009",
+      "ownerPr": "PR4",
+      "verificationIds": [
+        "V3-DE09",
+        "V3-E2E04"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-010",
+      "ownerPr": "PR4",
+      "verificationIds": [
+        "V3-DE10",
+        "V3-E2E04"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-011",
+      "ownerPr": "PR4",
+      "verificationIds": [
+        "V3-DE11",
+        "V3-E2E04"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-012",
+      "ownerPr": "PR4",
+      "verificationIds": [
+        "V3-DE12",
+        "V3-E2E04"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-REV-001",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-RV01"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-REV-002",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-RV02"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-REV-003",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-RV03"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-REV-004",
+      "ownerPr": "PR2",
+      "verificationIds": [
+        "V3-RV04"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-REV-005",
+      "ownerPr": "PR0",
+      "verificationIds": [
+        "V3-RV05"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-REV-006",
+      "ownerPr": "PR1",
+      "verificationIds": [
+        "V3-RV06"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-REV-007",
+      "ownerPr": "PR0",
+      "verificationIds": [
+        "V3-RV07"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-CUT-001",
+      "ownerPr": "PR5",
+      "verificationIds": [
+        "V3-CUT01"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-CUT-002",
+      "ownerPr": "PR5",
+      "verificationIds": [
+        "V3-CUT02"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-CUT-003",
+      "ownerPr": "PR5",
+      "verificationIds": [
+        "V3-CUT03"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-CUT-004",
+      "ownerPr": "PR5",
+      "verificationIds": [
+        "V3-CUT04"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-CUT-005",
+      "ownerPr": "PR5",
+      "verificationIds": [
+        "V3-CUT05"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-CUT-006",
+      "ownerPr": "PR5",
+      "verificationIds": [
+        "V3-CUT06"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    },
+    {
+      "requirementId": "V3-REQ-CUT-007",
+      "ownerPr": "PR5",
+      "verificationIds": [
+        "V3-CUT07"
+      ],
+      "implementationSurfaces": [],
+      "status": "specified"
+    }
+  ]
+}

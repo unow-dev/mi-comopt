@@ -1,0 +1,608 @@
+{
+  "schemaVersion": 2,
+  "contract": "work-step-result-v3-rules",
+  "validatorInput": [
+    "stepId",
+    "routingOutcome",
+    "result"
+  ],
+  "notes": [
+    "This file validates minimum WorkStepResult semantics. Domain invariants that depend on Human review history are validated by the corresponding Application Service and acceptance tests.",
+    "details is diagnostic only and is never an authoritative binding source."
+  ],
+  "steps": [
+    {
+      "stepId": "01-ingest-evidence",
+      "cases": [
+        {
+          "routingOutcome": "continue",
+          "stateResults": [
+            "succeeded"
+          ],
+          "refSets": [
+            [
+              "evidenceIds",
+              "snapshotRef"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "stepId": "02-update-corpus",
+      "cases": [
+        {
+          "routingOutcome": "continue",
+          "stateResults": [
+            "committed"
+          ],
+          "refSets": [
+            [
+              "corpusVersionId",
+              "proposalId",
+              "decisionId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "continue",
+          "stateResults": [
+            "unchanged"
+          ],
+          "refSets": [
+            [
+              "corpusVersionId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "superseded",
+          "stateResults": [
+            "conflict"
+          ],
+          "refSets": [
+            []
+          ]
+        }
+      ]
+    },
+    {
+      "stepId": "03a-prepare-classification-handoff",
+      "cases": [
+        {
+          "routingOutcome": "reuse",
+          "stateResults": [
+            "reused"
+          ],
+          "refSets": [
+            [
+              "classificationVersionId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "ready_without_handoff",
+          "stateResults": [
+            "succeeded"
+          ],
+          "refSets": [
+            []
+          ]
+        },
+        {
+          "routingOutcome": "handoff_required",
+          "stateResults": [
+            "created"
+          ],
+          "refSets": [
+            [
+              "worksetId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "superseded",
+          "stateResults": [
+            "conflict"
+          ],
+          "refSets": [
+            []
+          ]
+        }
+      ]
+    },
+    {
+      "stepId": "03-update-classification",
+      "cases": [
+        {
+          "routingOutcome": "continue",
+          "stateResults": [
+            "unchanged"
+          ],
+          "refSets": [
+            [
+              "assessmentId",
+              "classificationVersionId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "continue",
+          "stateResults": [
+            "committed"
+          ],
+          "refSets": [
+            [
+              "assessmentId",
+              "proposalId",
+              "decisionId",
+              "classificationVersionId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "review_required",
+          "stateResults": [
+            "review_required"
+          ],
+          "refSets": [
+            [
+              "assessmentId",
+              "proposalId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "superseded",
+          "stateResults": [
+            "conflict"
+          ],
+          "refSets": [
+            []
+          ]
+        }
+      ]
+    },
+    {
+      "stepId": "06-finalize-classification",
+      "cases": [
+        {
+          "routingOutcome": "continue",
+          "stateResults": [
+            "reused"
+          ],
+          "refSets": [
+            [
+              "classificationVersionId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "continue",
+          "stateResults": [
+            "committed"
+          ],
+          "refSets": [
+            [
+              "classificationVersionId",
+              "proposalId",
+              "decisionId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "rejected",
+          "stateResults": [
+            "rejected"
+          ],
+          "refSets": [
+            [
+              "proposalId",
+              "decisionId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "superseded",
+          "stateResults": [
+            "conflict"
+          ],
+          "refSets": [
+            [],
+            [
+              "proposalId",
+              "decisionId"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "stepId": "07a-prepare-keyword-handoff",
+      "cases": [
+        {
+          "routingOutcome": "reuse",
+          "stateResults": [
+            "reused"
+          ],
+          "refSets": [
+            [
+              "keywordSelectionVersionId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "handoff_required",
+          "stateResults": [
+            "created"
+          ],
+          "refSets": [
+            [
+              "candidateRequestId",
+              "candidateInputFingerprint"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "superseded",
+          "stateResults": [
+            "conflict"
+          ],
+          "refSets": [
+            []
+          ]
+        }
+      ]
+    },
+    {
+      "stepId": "07-update-keyword-selection",
+      "cases": [
+        {
+          "routingOutcome": "continue",
+          "stateResults": [
+            "unchanged"
+          ],
+          "refSets": [
+            [
+              "assessmentId",
+              "keywordSelectionVersionId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "continue",
+          "stateResults": [
+            "committed"
+          ],
+          "refSets": [
+            [
+              "assessmentId",
+              "proposalId",
+              "decisionId",
+              "keywordSelectionVersionId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "review_required",
+          "stateResults": [
+            "review_required"
+          ],
+          "refSets": [
+            [
+              "assessmentId",
+              "proposalId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "superseded",
+          "stateResults": [
+            "conflict"
+          ],
+          "refSets": [
+            []
+          ]
+        }
+      ]
+    },
+    {
+      "stepId": "10-finalize-keyword-selection",
+      "cases": [
+        {
+          "routingOutcome": "continue",
+          "stateResults": [
+            "reused"
+          ],
+          "refSets": [
+            [
+              "keywordSelectionVersionId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "continue",
+          "stateResults": [
+            "committed"
+          ],
+          "refSets": [
+            [
+              "keywordSelectionVersionId",
+              "proposalId",
+              "decisionId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "rejected",
+          "stateResults": [
+            "rejected"
+          ],
+          "refSets": [
+            [
+              "proposalId",
+              "decisionId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "superseded",
+          "stateResults": [
+            "conflict"
+          ],
+          "refSets": [
+            [],
+            [
+              "proposalId",
+              "decisionId"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "stepId": "11-build-release-bundle",
+      "cases": [
+        {
+          "routingOutcome": "continue",
+          "stateResults": [
+            "created",
+            "reused"
+          ],
+          "refSets": [
+            [
+              "releaseId"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "stepId": "12-materialize-release",
+      "cases": [
+        {
+          "routingOutcome": "continue",
+          "stateResults": [
+            "materialized",
+            "already_materialized"
+          ],
+          "refSets": [
+            [
+              "releaseId"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "stepId": "13-propose-production-promotion",
+      "cases": [
+        {
+          "routingOutcome": "continue",
+          "stateResults": [
+            "created"
+          ],
+          "refSets": [
+            [
+              "proposalId",
+              "releaseId"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "stepId": "14-finalize-production-promotion",
+      "cases": [
+        {
+          "routingOutcome": "continue",
+          "stateResults": [
+            "committed",
+            "reused"
+          ],
+          "refSets": [
+            [
+              "proposalId",
+              "decisionId",
+              "promotionVersionId",
+              "releaseId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "rejected",
+          "stateResults": [
+            "rejected"
+          ],
+          "refSets": [
+            [
+              "proposalId",
+              "decisionId",
+              "releaseId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "superseded",
+          "stateResults": [
+            "conflict"
+          ],
+          "refSets": [
+            [
+              "proposalId",
+              "decisionId",
+              "releaseId"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "stepId": "16-trigger-deployment",
+      "cases": [
+        {
+          "routingOutcome": "wait",
+          "stateResults": [
+            "triggered"
+          ],
+          "refSets": [
+            [
+              "deploymentRequestId",
+              "releaseId",
+              "promotionVersionId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "verify",
+          "stateResults": [
+            "already_deployed"
+          ],
+          "refSets": [
+            [
+              "deploymentRequestId",
+              "releaseId",
+              "promotionVersionId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "superseded",
+          "stateResults": [
+            "conflict"
+          ],
+          "refSets": [
+            [
+              "releaseId",
+              "promotionVersionId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "deployment_failed",
+          "stateResults": [
+            "deployment_failed"
+          ],
+          "refSets": [
+            [
+              "deploymentRequestId",
+              "releaseId",
+              "promotionVersionId"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "stepId": "19-verify-deployment",
+      "cases": [
+        {
+          "routingOutcome": "continue",
+          "stateResults": [
+            "verified"
+          ],
+          "refSets": [
+            [
+              "verificationRef",
+              "deploymentRequestId",
+              "releaseId",
+              "promotionVersionId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "superseded",
+          "stateResults": [
+            "conflict"
+          ],
+          "refSets": [
+            [
+              "deploymentRequestId",
+              "releaseId",
+              "promotionVersionId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "deployment_failed",
+          "stateResults": [
+            "not_verified"
+          ],
+          "refSets": [
+            [
+              "verificationRef",
+              "deploymentRequestId",
+              "releaseId",
+              "promotionVersionId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "deployment_failed",
+          "stateResults": [
+            "deployment_failed"
+          ],
+          "refSets": [
+            [
+              "deploymentRequestId",
+              "releaseId",
+              "promotionVersionId"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "stepId": "20-record-deployment-state",
+      "cases": [
+        {
+          "routingOutcome": "continue",
+          "stateResults": [
+            "committed",
+            "reused"
+          ],
+          "refSets": [
+            [
+              "deploymentVersionId",
+              "deploymentRequestId",
+              "releaseId"
+            ]
+          ]
+        },
+        {
+          "routingOutcome": "superseded",
+          "stateResults": [
+            "conflict"
+          ],
+          "refSets": [
+            [
+              "deploymentRequestId",
+              "releaseId"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "refSemantics": "exact-key-set"
+}

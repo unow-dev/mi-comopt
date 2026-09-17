@@ -1,0 +1,679 @@
+{
+  "schemaVersion": 1,
+  "tickets": [
+    {
+      "id": "PR0-A",
+      "title": "Freeze normative handoff and revision preflight",
+      "gate": "PR0",
+      "depends": [],
+      "req": [
+        "V3-REQ-REV-005"
+      ],
+      "add": [
+        "docs/active/issues/comment_db_implementation_v3/handoff/"
+      ],
+      "modify": [],
+      "goal": "Store the immutable normative package/hash and distinguish schemaVersion from TARGET_REVISION.",
+      "verificationIds": [
+        "V3-RV05"
+      ],
+      "localVerificationIds": [
+        "V3-RV05"
+      ],
+      "crossCuttingVerificationIds": []
+    },
+    {
+      "id": "PR0-B",
+      "title": "Implementation evidence ledger and normative lint",
+      "gate": "PR0",
+      "depends": [
+        "PR0-A"
+      ],
+      "req": [
+        "V3-REQ-REV-007"
+      ],
+      "add": [
+        "docs/active/issues/comment_db_implementation_v3/implementation-evidence-v3.json",
+        "package/tests/v3-handoff-integrity.test.js"
+      ],
+      "modify": [],
+      "goal": "Track implementation evidence outside the normative package and enforce requirement/verification coverage.",
+      "verificationIds": [
+        "V3-RV07"
+      ],
+      "localVerificationIds": [
+        "V3-RV07"
+      ],
+      "crossCuttingVerificationIds": []
+    },
+    {
+      "id": "PR1-A",
+      "title": "Provider additive compatibility prerequisites",
+      "gate": "PR1",
+      "depends": [
+        "PR0-B"
+      ],
+      "req": [
+        "V3-REQ-ART-007",
+        "V3-REQ-DEPLOY-002",
+        "V3-REQ-REV-006"
+      ],
+      "add": [],
+      "modify": [
+        "../../work-orchestrator/package (provider workspace; exact files determined there)"
+      ],
+      "goal": "Add logicalPath, optional bindings, receipt lookup and external-event parity without consumer business semantics.",
+      "verificationIds": [
+        "V3-HF06",
+        "V3-DE02",
+        "V3-RV06"
+      ],
+      "localVerificationIds": [
+        "V3-HF06",
+        "V3-DE02",
+        "V3-RV06"
+      ],
+      "crossCuttingVerificationIds": []
+    },
+    {
+      "id": "PR2-A",
+      "title": "V3 machine contracts and result validator",
+      "gate": "PR2",
+      "depends": [
+        "PR0-B"
+      ],
+      "req": [
+        "V3-REQ-RESULT-001",
+        "V3-REQ-RESULT-002",
+        "V3-REQ-ART-011"
+      ],
+      "add": [
+        "package/src/workflow/v3/contracts.js",
+        "package/src/workflow/v3/result-rules.js",
+        "package/tests/workflow-v3-contracts.test.js"
+      ],
+      "modify": [
+        "package/src/workflow/index.js (additive export only)"
+      ],
+      "goal": "Compile normative JSON schemas/rules into runtime validation; reject forbidden stale refs before task completion.",
+      "verificationIds": [
+        "V3-RS01",
+        "V3-RS02",
+        "V3-HF10"
+      ],
+      "localVerificationIds": [
+        "V3-RS01",
+        "V3-RS02",
+        "V3-HF10"
+      ],
+      "crossCuttingVerificationIds": []
+    },
+    {
+      "id": "PR2-B",
+      "title": "V3 Definition, Session and terminal outcome",
+      "gate": "PR2",
+      "depends": [
+        "PR2-A"
+      ],
+      "req": [
+        "V3-REQ-SESSION-001",
+        "V3-REQ-SESSION-002",
+        "V3-REQ-SESSION-003",
+        "V3-REQ-SESSION-004",
+        "V3-REQ-SESSION-005",
+        "V3-REQ-SESSION-006",
+        "V3-REQ-SESSION-007",
+        "V3-REQ-REV-001",
+        "V3-REQ-REV-002",
+        "V3-REQ-REV-003",
+        "V3-REQ-REV-004"
+      ],
+      "add": [
+        "package/src/workflow/v3/definitions.js",
+        "package/src/workflow/v3/session-input.js",
+        "package/src/workflow/v3/outcomes.js",
+        "package/src/workflow/v3/index.js",
+        "package/tests/workflow-v3-definition.test.js"
+      ],
+      "modify": [
+        "package/src/workflow/index.js (additive export only)"
+      ],
+      "goal": "Build comment-data-update@TARGET_REVISION side-by-side; keep deploy-promoted-release@2 and all v2 hashes frozen.",
+      "verificationIds": [
+        "V3-S01",
+        "V3-S02",
+        "V3-S03",
+        "V3-E2E03",
+        "V3-S04",
+        "V3-S05",
+        "V3-S06",
+        "V3-RV01",
+        "V3-RV02",
+        "V3-RV03",
+        "V3-RV04"
+      ],
+      "localVerificationIds": [
+        "V3-S01",
+        "V3-S02",
+        "V3-S03",
+        "V3-S04",
+        "V3-S05",
+        "V3-S06",
+        "V3-RV01",
+        "V3-RV02",
+        "V3-RV03",
+        "V3-RV04"
+      ],
+      "crossCuttingVerificationIds": [
+        "V3-E2E03"
+      ]
+    },
+    {
+      "id": "PR2-C",
+      "title": "Validated Human artifact completion",
+      "gate": "PR2",
+      "depends": [
+        "PR1-A",
+        "PR2-A"
+      ],
+      "req": [
+        "V3-REQ-ART-001",
+        "V3-REQ-ART-002",
+        "V3-REQ-ART-003",
+        "V3-REQ-ART-004",
+        "V3-REQ-ART-005",
+        "V3-REQ-ART-006",
+        "V3-REQ-ART-008",
+        "V3-REQ-ART-009",
+        "V3-REQ-ART-010"
+      ],
+      "add": [
+        "package/src/integration/human-artifact-completion-v3.js",
+        "package/tests/human-artifact-v3.test.js"
+      ],
+      "modify": [],
+      "goal": "Validate bytes/name/cardinality/protocol, snapshot exact bytes, and complete Human Task with exact ArtifactVersion.",
+      "verificationIds": [
+        "V3-HF01",
+        "V3-HF02",
+        "V3-HF03",
+        "V3-HF04",
+        "V3-HF05",
+        "V3-HF07",
+        "V3-HF08",
+        "V3-HF09"
+      ],
+      "localVerificationIds": [
+        "V3-HF01",
+        "V3-HF02",
+        "V3-HF03",
+        "V3-HF04",
+        "V3-HF05",
+        "V3-HF07",
+        "V3-HF08",
+        "V3-HF09"
+      ],
+      "crossCuttingVerificationIds": []
+    },
+    {
+      "id": "PR3-A",
+      "title": "V3 authority and application idempotency base",
+      "gate": "PR3",
+      "depends": [
+        "PR2-A",
+        "PR2-B"
+      ],
+      "req": [
+        "V3-REQ-AUTH-001",
+        "V3-REQ-AUTH-002",
+        "V3-REQ-AUTH-003",
+        "V3-REQ-AUTH-004",
+        "V3-REQ-AUTH-005",
+        "V3-REQ-SVC-001",
+        "V3-REQ-SVC-002"
+      ],
+      "add": [
+        "package/src/application/v3/result.js",
+        "package/src/application/v3/context.js",
+        "package/src/application/v3/index.js",
+        "package/tests/application-v3-authority.test.js"
+      ],
+      "modify": [],
+      "goal": "Use operationId=sessionId/stepId, stable JCS business DTO hashes, and enforce transaction/external-call boundary.",
+      "verificationIds": [
+        "V3-AU01",
+        "V3-E2E01",
+        "V3-E2E02",
+        "V3-AU02",
+        "V3-AU03",
+        "V3-SV01",
+        "V3-SV02"
+      ],
+      "localVerificationIds": [
+        "V3-AU01",
+        "V3-AU02",
+        "V3-AU03",
+        "V3-SV01",
+        "V3-SV02"
+      ],
+      "crossCuttingVerificationIds": [
+        "V3-E2E01",
+        "V3-E2E02"
+      ]
+    },
+    {
+      "id": "PR3-B",
+      "title": "Dependency-aware commit mode",
+      "gate": "PR3",
+      "depends": [
+        "PR3-A"
+      ],
+      "req": [
+        "V3-REQ-DEP-001",
+        "V3-REQ-DEP-002",
+        "V3-REQ-DEP-003",
+        "V3-REQ-DEP-004",
+        "V3-REQ-DEP-005",
+        "V3-REQ-DEP-006",
+        "V3-REQ-DEP-007",
+        "V3-REQ-DEP-008",
+        "V3-REQ-DEP-009"
+      ],
+      "add": [
+        "package/tests/application-v3-dependencies.test.js"
+      ],
+      "modify": [
+        "package/src/state/control-plane.js"
+      ],
+      "goal": "Add semantic_and_dependencies no-op mode while preserving semantic-only default for v2.",
+      "verificationIds": [
+        "V3-DEP01",
+        "V3-DEP02",
+        "V3-DEP03",
+        "V3-DEP04",
+        "V3-DEP05",
+        "V3-DEP06",
+        "V3-DEP07",
+        "V3-E2E03",
+        "V3-DEP08"
+      ],
+      "localVerificationIds": [
+        "V3-DEP01",
+        "V3-DEP02",
+        "V3-DEP03",
+        "V3-DEP04",
+        "V3-DEP05",
+        "V3-DEP06",
+        "V3-DEP07",
+        "V3-DEP08"
+      ],
+      "crossCuttingVerificationIds": [
+        "V3-E2E03"
+      ]
+    },
+    {
+      "id": "PR3-C",
+      "title": "Classification v3 workflow services",
+      "gate": "PR3",
+      "depends": [
+        "PR2-C",
+        "PR3-A",
+        "PR3-B"
+      ],
+      "req": [
+        "V3-REQ-CLASS-001",
+        "V3-REQ-CLASS-002",
+        "V3-REQ-CLASS-003",
+        "V3-REQ-CLASS-004",
+        "V3-REQ-CLASS-005",
+        "V3-REQ-CLASS-006",
+        "V3-REQ-CLASS-007"
+      ],
+      "add": [
+        "package/src/application/v3/classification-service.js",
+        "package/src/application/v3/classification-handoff.js",
+        "package/tests/classification-v3.test.js"
+      ],
+      "modify": [],
+      "goal": "Implement prepare/reuse/workset/assess/Human-finalize semantics with exact pinned dependencies.",
+      "verificationIds": [
+        "V3-CL01",
+        "V3-CL02",
+        "V3-CL03",
+        "V3-CL04",
+        "V3-CL05",
+        "V3-E2E02"
+      ],
+      "localVerificationIds": [
+        "V3-CL01",
+        "V3-CL02",
+        "V3-CL03",
+        "V3-CL04",
+        "V3-CL05"
+      ],
+      "crossCuttingVerificationIds": [
+        "V3-E2E02"
+      ]
+    },
+    {
+      "id": "PR3-D",
+      "title": "Keyword Selection v3 workflow services",
+      "gate": "PR3",
+      "depends": [
+        "PR2-C",
+        "PR3-A",
+        "PR3-B"
+      ],
+      "req": [
+        "V3-REQ-KEY-001",
+        "V3-REQ-KEY-002",
+        "V3-REQ-KEY-003",
+        "V3-REQ-KEY-004",
+        "V3-REQ-KEY-005",
+        "V3-REQ-KEY-006",
+        "V3-REQ-KEY-007"
+      ],
+      "add": [
+        "package/src/application/v3/keyword-service.js",
+        "package/src/application/v3/keyword-handoff.js",
+        "package/tests/keyword-v3.test.js"
+      ],
+      "modify": [],
+      "goal": "Reuse pinned candidate-handoff v1 protocol and implement exact-input handoff/review/finalize semantics.",
+      "verificationIds": [
+        "V3-KW01",
+        "V3-KW02",
+        "V3-KW03",
+        "V3-KW04",
+        "V3-KW05",
+        "V3-E2E02"
+      ],
+      "localVerificationIds": [
+        "V3-KW01",
+        "V3-KW02",
+        "V3-KW03",
+        "V3-KW04",
+        "V3-KW05"
+      ],
+      "crossCuttingVerificationIds": [
+        "V3-E2E02"
+      ]
+    },
+    {
+      "id": "PR3-E",
+      "title": "V3 agent adapter and capability wiring",
+      "gate": "PR3",
+      "depends": [
+        "PR3-C",
+        "PR3-D"
+      ],
+      "req": [],
+      "add": [
+        "package/src/integration/task-handlers-v3.js",
+        "package/tests/task-handlers-v3.test.js"
+      ],
+      "modify": [
+        "package/src/integration/index.js (additive export only)"
+      ],
+      "goal": "Bind v3 capabilities with one top-level side-effect command per Agent step; no businessAttempt or blocked routing.",
+      "verificationIds": [],
+      "localVerificationIds": [],
+      "crossCuttingVerificationIds": []
+    },
+    {
+      "id": "PR4-A",
+      "title": "Deterministic Release v3 identity/materialization",
+      "gate": "PR4",
+      "depends": [
+        "PR3-E"
+      ],
+      "req": [
+        "V3-REQ-REL-001",
+        "V3-REQ-REL-002",
+        "V3-REQ-REL-003",
+        "V3-REQ-REL-004",
+        "V3-REQ-REL-005",
+        "V3-REQ-REL-006",
+        "V3-REQ-REL-007",
+        "V3-REQ-REL-008"
+      ],
+      "add": [
+        "package/src/application/v3/release-service.js",
+        "package/db/comment-database/010-comment-db-v3.sql",
+        "package/tests/release-v3.test.js"
+      ],
+      "modify": [
+        "package/src/state/schema.js (additive tables only)"
+      ],
+      "goal": "Create eight-pin JCS releaseKey identity mapping and immutable deterministic materialization using existing artifact store.",
+      "verificationIds": [
+        "V3-RL01",
+        "V3-RL02",
+        "V3-RL03",
+        "V3-RL04",
+        "V3-RL05",
+        "V3-E2E02",
+        "V3-RL06",
+        "V3-RL07"
+      ],
+      "localVerificationIds": [
+        "V3-RL01",
+        "V3-RL02",
+        "V3-RL03",
+        "V3-RL04",
+        "V3-RL05",
+        "V3-RL06",
+        "V3-RL07"
+      ],
+      "crossCuttingVerificationIds": [
+        "V3-E2E02"
+      ]
+    },
+    {
+      "id": "PR4-B",
+      "title": "Promotion v3 Decision/CAS finalization",
+      "gate": "PR4",
+      "depends": [
+        "PR4-A"
+      ],
+      "req": [
+        "V3-REQ-REL-009"
+      ],
+      "add": [
+        "package/src/application/v3/promotion-service.js",
+        "package/tests/promotion-v3.test.js"
+      ],
+      "modify": [],
+      "goal": "Persist Human Decision before guarded Commit; retain accepted Decision on head conflict; reuse current Promotion Version for same Release.",
+      "verificationIds": [
+        "V3-RL08",
+        "V3-E2E03"
+      ],
+      "localVerificationIds": [
+        "V3-RL08"
+      ],
+      "crossCuttingVerificationIds": [
+        "V3-E2E03"
+      ]
+    },
+    {
+      "id": "PR4-C",
+      "title": "Deployment v3 ledger, FIFO and outbox",
+      "gate": "PR4",
+      "depends": [
+        "PR4-B",
+        "PR1-A"
+      ],
+      "req": [
+        "V3-REQ-DEPLOY-001",
+        "V3-REQ-DEPLOY-003",
+        "V3-REQ-DEPLOY-004",
+        "V3-REQ-DEPLOY-005",
+        "V3-REQ-DEPLOY-006",
+        "V3-REQ-DEPLOY-007",
+        "V3-REQ-DEPLOY-008",
+        "V3-REQ-DEPLOY-009",
+        "V3-REQ-DEPLOY-010",
+        "V3-REQ-DEPLOY-011",
+        "V3-REQ-DEPLOY-012"
+      ],
+      "add": [
+        "package/src/application/v3/deployment-service.js",
+        "package/src/deployment/ledger-v3.js",
+        "package/src/deployment/outbox-v3.js",
+        "package/tests/deployment-v3.test.js"
+      ],
+      "modify": [
+        "package/db/comment-database/010-comment-db-v3.sql",
+        "package/src/state/schema.js (additive tables only)"
+      ],
+      "goal": "Use accepted Promotion Decision x target identity, target-local monotonic sequence, durable FIFO single-flight, receipt-first delivery and verify/record guards.",
+      "verificationIds": [
+        "V3-DE01",
+        "V3-DE03",
+        "V3-DE04",
+        "V3-DE05",
+        "V3-DE06",
+        "V3-DE07",
+        "V3-DE08",
+        "V3-DE09",
+        "V3-E2E04",
+        "V3-DE10",
+        "V3-DE11",
+        "V3-DE12"
+      ],
+      "localVerificationIds": [
+        "V3-DE01",
+        "V3-DE03",
+        "V3-DE04",
+        "V3-DE05",
+        "V3-DE06",
+        "V3-DE07",
+        "V3-DE08",
+        "V3-DE09",
+        "V3-DE10",
+        "V3-DE11",
+        "V3-DE12"
+      ],
+      "crossCuttingVerificationIds": [
+        "V3-E2E04"
+      ]
+    },
+    {
+      "id": "PR4-D",
+      "title": "V3 runtime and full E2E integration",
+      "gate": "PR4",
+      "depends": [
+        "PR4-C",
+        "PR3-E"
+      ],
+      "req": [],
+      "add": [
+        "package/tests/comment-db-v3-e2e.test.js"
+      ],
+      "modify": [
+        "package/src/integration/index.js (additive export only)",
+        "runtime registration/start facade (v3 remains production-unreachable)"
+      ],
+      "goal": "Wire local/Temporal execution, conditional Human steps and event flow; run all V3-E2E01..04 while production default remains v2.",
+      "verificationIds": [
+        "V3-E2E01",
+        "V3-E2E02",
+        "V3-E2E03",
+        "V3-E2E04"
+      ],
+      "localVerificationIds": [
+        "V3-E2E01",
+        "V3-E2E02",
+        "V3-E2E03",
+        "V3-E2E04"
+      ],
+      "crossCuttingVerificationIds": []
+    },
+    {
+      "id": "PR5-A",
+      "title": "Freeze v2 starts and drain",
+      "gate": "PR5",
+      "depends": [
+        "PR4-D"
+      ],
+      "req": [
+        "V3-REQ-CUT-001",
+        "V3-REQ-CUT-002"
+      ],
+      "add": [
+        "package/scripts/comment-db-v3-cutover.mjs",
+        "package/tests/cutover-v3.test.js"
+      ],
+      "modify": [
+        "production start policy/config"
+      ],
+      "goal": "Freeze new comment-data-update@2 starts and prove nonterminal v2 sessions drain to zero.",
+      "verificationIds": [
+        "V3-CUT01",
+        "V3-CUT02"
+      ],
+      "localVerificationIds": [
+        "V3-CUT01",
+        "V3-CUT02"
+      ],
+      "crossCuttingVerificationIds": []
+    },
+    {
+      "id": "PR5-B",
+      "title": "Authority cutover and v3 start enable",
+      "gate": "PR5",
+      "depends": [
+        "PR5-A"
+      ],
+      "req": [
+        "V3-REQ-CUT-003",
+        "V3-REQ-CUT-004"
+      ],
+      "add": [],
+      "modify": [
+        "production start policy/config",
+        "legacy authority writer gates"
+      ],
+      "goal": "Disable legacy authority before enabling comment-data-update@TARGET_REVISION; prove no dual-authority window.",
+      "verificationIds": [
+        "V3-CUT03",
+        "V3-CUT04"
+      ],
+      "localVerificationIds": [
+        "V3-CUT03",
+        "V3-CUT04"
+      ],
+      "crossCuttingVerificationIds": []
+    },
+    {
+      "id": "PR5-C",
+      "title": "Production smoke and fix-forward controls",
+      "gate": "PR5",
+      "depends": [
+        "PR5-B"
+      ],
+      "req": [
+        "V3-REQ-CUT-005",
+        "V3-REQ-CUT-006",
+        "V3-REQ-CUT-007"
+      ],
+      "add": [],
+      "modify": [
+        "cutover/smoke runbook tooling"
+      ],
+      "goal": "Run smoke; on failure freeze new starts and fix-forward only; never mutate a registered Definition or restore legacy authority.",
+      "verificationIds": [
+        "V3-CUT05",
+        "V3-CUT06",
+        "V3-CUT07"
+      ],
+      "localVerificationIds": [
+        "V3-CUT05",
+        "V3-CUT06",
+        "V3-CUT07"
+      ],
+      "crossCuttingVerificationIds": []
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "work-step-result-v3.schema.json",
+  "title": "WorkStepResultV3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "stateResult",
+    "refs"
+  ],
+  "properties": {
+    "stateResult": {
+      "type": "string",
+      "enum": [
+        "succeeded",
+        "committed",
+        "unchanged",
+        "created",
+        "reused",
+        "materialized",
+        "already_materialized",
+        "review_required",
+        "rejected",
+        "conflict",
+        "blocked",
+        "triggered",
+        "already_deployed",
+        "verified",
+        "not_verified",
+        "deployment_failed"
+      ]
+    },
+    "refs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "snapshotRef": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "payloadSha256",
+            "snapshotIndex"
+          ],
+          "properties": {
+            "payloadSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "snapshotIndex": {
+              "type": [
+                "integer",
+                "string"
+              ]
+            }
+          }
+        },
+        "assessmentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "proposalId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "decisionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "corpusVersionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "classificationVersionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "keywordSelectionVersionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "worksetId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "candidateRequestId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "candidateInputFingerprint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "releaseId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "promotionVersionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "deploymentVersionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "deploymentRequestId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verificationRef": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "details": {
+      "type": "object"
+    }
+  }
+}

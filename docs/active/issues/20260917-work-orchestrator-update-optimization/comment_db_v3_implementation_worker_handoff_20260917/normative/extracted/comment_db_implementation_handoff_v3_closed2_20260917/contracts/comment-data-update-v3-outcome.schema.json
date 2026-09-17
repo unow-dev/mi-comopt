@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "comment-data-update-v3-outcome.schema.json",
+  "title": "CommentDataUpdateV3Outcome",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "terminalStatus"
+      ],
+      "properties": {
+        "terminalStatus": {
+          "const": "deployed"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "terminalStatus",
+        "stage"
+      ],
+      "properties": {
+        "terminalStatus": {
+          "const": "change_rejected"
+        },
+        "stage": {
+          "enum": [
+            "classification",
+            "keyword-selection"
+          ]
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "terminalStatus"
+      ],
+      "properties": {
+        "terminalStatus": {
+          "const": "not_promoted"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "terminalStatus",
+        "conflictAt"
+      ],
+      "properties": {
+        "terminalStatus": {
+          "const": "superseded"
+        },
+        "conflictAt": {
+          "enum": [
+            "corpus",
+            "classification",
+            "keyword-selection",
+            "promotion",
+            "deployment"
+          ]
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "terminalStatus"
+      ],
+      "properties": {
+        "terminalStatus": {
+          "const": "deployment_failed"
+        }
+      }
+    }
+  ]
+}

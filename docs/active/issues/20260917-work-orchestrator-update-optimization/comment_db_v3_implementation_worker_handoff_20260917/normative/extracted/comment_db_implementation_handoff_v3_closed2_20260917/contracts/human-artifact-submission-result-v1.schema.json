@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "human-artifact-submission-result-v1.schema.json",
+  "title": "HumanArtifactSubmissionResultV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "executionId",
+    "artifact"
+  ],
+  "properties": {
+    "executionId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifactVersionId",
+        "blobHash",
+        "logicalPath",
+        "size"
+      ],
+      "properties": {
+        "artifactVersionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "blobHash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "logicalPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

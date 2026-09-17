@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "comment-data-update-v3-session-input.schema.json",
+  "title": "CommentDataUpdateV3SessionInput",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "updateRequestId",
+    "inputContract",
+    "pinned",
+    "target"
+  ],
+  "properties": {
+    "updateRequestId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "inputContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version"
+      ],
+      "properties": {
+        "id": {
+          "const": "tiktokCommentBatch"
+        },
+        "version": {
+          "const": "1.0.0"
+        }
+      }
+    },
+    "pinned": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "initialCorpusVersionId",
+        "classificationVersionId",
+        "keywordSelectionVersionId",
+        "corpusPolicyVersionId",
+        "classificationPolicyVersionId",
+        "keywordPolicyVersionId",
+        "accountPolicyVersionId",
+        "projectionDefinitionVersionId"
+      ],
+      "properties": {
+        "initialCorpusVersionId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "classificationVersionId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "keywordSelectionVersionId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "corpusPolicyVersionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "classificationPolicyVersionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "keywordPolicyVersionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "accountPolicyVersionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "projectionDefinitionVersionId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "promotionStream",
+        "deploymentTarget"
+      ],
+      "properties": {
+        "promotionStream": {
+          "const": "production"
+        },
+        "deploymentTarget": {
+          "const": "production"
+        }
+      }
+    }
+  }
+}

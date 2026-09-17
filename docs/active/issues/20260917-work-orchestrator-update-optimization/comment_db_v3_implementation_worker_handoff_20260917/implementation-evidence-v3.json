@@ -1,0 +1,1062 @@
+{
+  "schemaVersion": 1,
+  "normativeHandoff": {
+    "file": "comment_db_implementation_handoff_v3_closed2_20260917.zip",
+    "sha256": "0f7ff879a7233dda01da2016a315dc5e35e1a0d0535eee6a5cdc5e023ceabfcb"
+  },
+  "consumerBaseline": {
+    "repository": "unow-dev/mi-comopt",
+    "commit": "398a904069af3e5e1386e412811f9a8275af1d7a"
+  },
+  "providerBaseline": {
+    "repository": null,
+    "commit": null,
+    "status": "must_pin_before_PR1-A"
+  },
+  "targetRevision": {
+    "resolvedRevision": null,
+    "canonicalDefinitionHash": null,
+    "registryEvidence": null
+  },
+  "allowedStatuses": [
+    "not_started",
+    "implemented",
+    "verified"
+  ],
+  "requirements": [
+    {
+      "requirementId": "V3-REQ-AUTH-001",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-A",
+      "verificationIds": [
+        "V3-AU01",
+        "V3-E2E01",
+        "V3-E2E02"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-AUTH-002",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-A",
+      "verificationIds": [
+        "V3-AU01",
+        "V3-E2E01",
+        "V3-E2E02"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-AUTH-003",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-A",
+      "verificationIds": [
+        "V3-AU02"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-AUTH-004",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-A",
+      "verificationIds": [
+        "V3-AU03"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-AUTH-005",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-A",
+      "verificationIds": [
+        "V3-AU02"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-SVC-001",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-A",
+      "verificationIds": [
+        "V3-SV01"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-SVC-002",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-A",
+      "verificationIds": [
+        "V3-SV02"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-RESULT-001",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-A",
+      "verificationIds": [
+        "V3-RS01"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-RESULT-002",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-A",
+      "verificationIds": [
+        "V3-RS02"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-SESSION-001",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-B",
+      "verificationIds": [
+        "V3-S01"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-SESSION-002",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-B",
+      "verificationIds": [
+        "V3-S01"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-SESSION-003",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-B",
+      "verificationIds": [
+        "V3-S02"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-SESSION-004",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-B",
+      "verificationIds": [
+        "V3-S03",
+        "V3-E2E03"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-SESSION-005",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-B",
+      "verificationIds": [
+        "V3-S04"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-SESSION-006",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-B",
+      "verificationIds": [
+        "V3-S05"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-SESSION-007",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-B",
+      "verificationIds": [
+        "V3-S06"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-ART-001",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-C",
+      "verificationIds": [
+        "V3-HF01"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-ART-002",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-C",
+      "verificationIds": [
+        "V3-HF01"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-ART-003",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-C",
+      "verificationIds": [
+        "V3-HF02"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-ART-004",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-C",
+      "verificationIds": [
+        "V3-HF03"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-ART-005",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-C",
+      "verificationIds": [
+        "V3-HF04"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-ART-006",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-C",
+      "verificationIds": [
+        "V3-HF05"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-ART-007",
+      "ownerGate": "PR1",
+      "ticketId": "PR1-A",
+      "verificationIds": [
+        "V3-HF06"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-ART-008",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-C",
+      "verificationIds": [
+        "V3-HF07"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-ART-009",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-C",
+      "verificationIds": [
+        "V3-HF08"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-ART-010",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-C",
+      "verificationIds": [
+        "V3-HF09"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-ART-011",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-A",
+      "verificationIds": [
+        "V3-HF10"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-CLASS-001",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-C",
+      "verificationIds": [
+        "V3-CL01"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-CLASS-002",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-C",
+      "verificationIds": [
+        "V3-CL02"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-CLASS-003",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-C",
+      "verificationIds": [
+        "V3-CL02"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-CLASS-004",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-C",
+      "verificationIds": [
+        "V3-CL03"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-CLASS-005",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-C",
+      "verificationIds": [
+        "V3-CL03"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-CLASS-006",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-C",
+      "verificationIds": [
+        "V3-CL04"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-CLASS-007",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-C",
+      "verificationIds": [
+        "V3-CL05",
+        "V3-E2E02"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-KEY-001",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-D",
+      "verificationIds": [
+        "V3-KW01"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-KEY-002",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-D",
+      "verificationIds": [
+        "V3-KW01"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-KEY-003",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-D",
+      "verificationIds": [
+        "V3-KW02"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-KEY-004",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-D",
+      "verificationIds": [
+        "V3-KW02"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-KEY-005",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-D",
+      "verificationIds": [
+        "V3-KW03"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-KEY-006",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-D",
+      "verificationIds": [
+        "V3-KW04"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-KEY-007",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-D",
+      "verificationIds": [
+        "V3-KW05",
+        "V3-E2E02"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-DEP-001",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-B",
+      "verificationIds": [
+        "V3-DEP01"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-DEP-002",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-B",
+      "verificationIds": [
+        "V3-DEP01"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-DEP-003",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-B",
+      "verificationIds": [
+        "V3-DEP02"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-DEP-004",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-B",
+      "verificationIds": [
+        "V3-DEP03"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-DEP-005",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-B",
+      "verificationIds": [
+        "V3-DEP04"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-DEP-006",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-B",
+      "verificationIds": [
+        "V3-DEP05"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-DEP-007",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-B",
+      "verificationIds": [
+        "V3-DEP06"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-DEP-008",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-B",
+      "verificationIds": [
+        "V3-DEP07",
+        "V3-E2E03"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-DEP-009",
+      "ownerGate": "PR3",
+      "ticketId": "PR3-B",
+      "verificationIds": [
+        "V3-DEP08"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-REL-001",
+      "ownerGate": "PR4",
+      "ticketId": "PR4-A",
+      "verificationIds": [
+        "V3-RL01"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-REL-002",
+      "ownerGate": "PR4",
+      "ticketId": "PR4-A",
+      "verificationIds": [
+        "V3-RL01"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-REL-003",
+      "ownerGate": "PR4",
+      "ticketId": "PR4-A",
+      "verificationIds": [
+        "V3-RL02"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-REL-004",
+      "ownerGate": "PR4",
+      "ticketId": "PR4-A",
+      "verificationIds": [
+        "V3-RL03"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-REL-005",
+      "ownerGate": "PR4",
+      "ticketId": "PR4-A",
+      "verificationIds": [
+        "V3-RL04"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-REL-006",
+      "ownerGate": "PR4",
+      "ticketId": "PR4-A",
+      "verificationIds": [
+        "V3-RL05",
+        "V3-E2E02"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-REL-007",
+      "ownerGate": "PR4",
+      "ticketId": "PR4-A",
+      "verificationIds": [
+        "V3-RL06"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-REL-008",
+      "ownerGate": "PR4",
+      "ticketId": "PR4-A",
+      "verificationIds": [
+        "V3-RL07"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-REL-009",
+      "ownerGate": "PR4",
+      "ticketId": "PR4-B",
+      "verificationIds": [
+        "V3-RL08",
+        "V3-E2E03"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-001",
+      "ownerGate": "PR4",
+      "ticketId": "PR4-C",
+      "verificationIds": [
+        "V3-DE01"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-002",
+      "ownerGate": "PR1",
+      "ticketId": "PR1-A",
+      "verificationIds": [
+        "V3-DE02"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-003",
+      "ownerGate": "PR4",
+      "ticketId": "PR4-C",
+      "verificationIds": [
+        "V3-DE03"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-004",
+      "ownerGate": "PR4",
+      "ticketId": "PR4-C",
+      "verificationIds": [
+        "V3-DE04"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-005",
+      "ownerGate": "PR4",
+      "ticketId": "PR4-C",
+      "verificationIds": [
+        "V3-DE05"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-006",
+      "ownerGate": "PR4",
+      "ticketId": "PR4-C",
+      "verificationIds": [
+        "V3-DE06"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-007",
+      "ownerGate": "PR4",
+      "ticketId": "PR4-C",
+      "verificationIds": [
+        "V3-DE07"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-008",
+      "ownerGate": "PR4",
+      "ticketId": "PR4-C",
+      "verificationIds": [
+        "V3-DE08"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-009",
+      "ownerGate": "PR4",
+      "ticketId": "PR4-C",
+      "verificationIds": [
+        "V3-DE09",
+        "V3-E2E04"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-010",
+      "ownerGate": "PR4",
+      "ticketId": "PR4-C",
+      "verificationIds": [
+        "V3-DE10",
+        "V3-E2E04"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-011",
+      "ownerGate": "PR4",
+      "ticketId": "PR4-C",
+      "verificationIds": [
+        "V3-DE11",
+        "V3-E2E04"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-DEPLOY-012",
+      "ownerGate": "PR4",
+      "ticketId": "PR4-C",
+      "verificationIds": [
+        "V3-DE12",
+        "V3-E2E04"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-REV-001",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-B",
+      "verificationIds": [
+        "V3-RV01"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-REV-002",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-B",
+      "verificationIds": [
+        "V3-RV02"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-REV-003",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-B",
+      "verificationIds": [
+        "V3-RV03"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-REV-004",
+      "ownerGate": "PR2",
+      "ticketId": "PR2-B",
+      "verificationIds": [
+        "V3-RV04"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-REV-005",
+      "ownerGate": "PR0",
+      "ticketId": "PR0-A",
+      "verificationIds": [
+        "V3-RV05"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-REV-006",
+      "ownerGate": "PR1",
+      "ticketId": "PR1-A",
+      "verificationIds": [
+        "V3-RV06"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-REV-007",
+      "ownerGate": "PR0",
+      "ticketId": "PR0-B",
+      "verificationIds": [
+        "V3-RV07"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-CUT-001",
+      "ownerGate": "PR5",
+      "ticketId": "PR5-A",
+      "verificationIds": [
+        "V3-CUT01"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-CUT-002",
+      "ownerGate": "PR5",
+      "ticketId": "PR5-A",
+      "verificationIds": [
+        "V3-CUT02"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-CUT-003",
+      "ownerGate": "PR5",
+      "ticketId": "PR5-B",
+      "verificationIds": [
+        "V3-CUT03"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-CUT-004",
+      "ownerGate": "PR5",
+      "ticketId": "PR5-B",
+      "verificationIds": [
+        "V3-CUT04"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-CUT-005",
+      "ownerGate": "PR5",
+      "ticketId": "PR5-C",
+      "verificationIds": [
+        "V3-CUT05"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-CUT-006",
+      "ownerGate": "PR5",
+      "ticketId": "PR5-C",
+      "verificationIds": [
+        "V3-CUT06"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    },
+    {
+      "requirementId": "V3-REQ-CUT-007",
+      "ownerGate": "PR5",
+      "ticketId": "PR5-C",
+      "verificationIds": [
+        "V3-CUT07"
+      ],
+      "status": "not_started",
+      "implementationRefs": [],
+      "verificationEvidence": [],
+      "notes": null
+    }
+  ]
+}
