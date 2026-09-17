@@ -28,7 +28,7 @@ test("v3 definition is side-by-side and provider canonical hash matches", () => 
   const provider = validateAndHashDefinition(local);
   assert.equal(local.revision, 3);
   assert.equal(provider.definitionHash, local.definitionHash);
-  assert.equal(local.definitionHash, "fc91e79126f5055c64b01194586955242fc2846efae97133c6b068de388bbb48");
+  assert.equal(local.definitionHash, "9598f503ba9a8e8753e0b1d9d1e4af2f1a80a4d10b718aba5ab250840438a726");
 });
 
 test("v3 WorkStepResult and terminal outcomes reject authoritative extras", () => {

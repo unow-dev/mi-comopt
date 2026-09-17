@@ -1,3 +1,8 @@
+import { randomUUID } from "node:crypto";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { deflateRawSync } from "node:zlib";
 import { canonicalJson, cloneJson, deterministicId, semanticSha256 } from "../../state/canonical.js";
 import { StateControlPlaneError, stateError } from "../../state/errors.js";
 import {
@@ -10,6 +15,7 @@ import {
   typedKeywordHandler,
   typedCorpusHandler,
 } from "../services.js";
+import { buildResponseSchema as buildThreeClassResponseSchema, PROTOCOL_VERSION } from "../../three-class-workset/protocol.js";
 import { v3StepResult } from "./result.js";
 import { runV3Idempotent } from "./context.js";
 
@@ -62,6 +68,85 @@ function artifactWrite(artifactStore, { artifactId, logicalPath, content, metada
 }
 
 function routeConflict(stepId, conflictAt, refs = {}) { return v3StepResult({ stepId, routingOutcome: "superseded", stateResult: "conflict", refs, details: { conflictAt } }); }
+
+const PACKAGE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
+const THREE_CLASS_TEMPLATES = Object.freeze({
+  "PROMPT.md": path.join(PACKAGE_ROOT, "templates", "three-class-workset", "PROMPT.md"),
+  "RULES.md": path.join(PACKAGE_ROOT, "templates", "three-class-workset", "RULES.md"),
+});
+
+function crc32(bytes) {
+  let value = 0xffffffff;
+  for (const byte of bytes) {
+    value ^= byte;
+    for (let bit = 0; bit < 8; bit += 1) value = (value >>> 1) ^ (value & 1 ? 0xedb88320 : 0);
+  }
+  return (value ^ 0xffffffff) >>> 0;
+}
+
+function minimalThreeClassWorksetZip(worksetId) {
+  const values = {
+    "PROMPT.md": readFileSync(THREE_CLASS_TEMPLATES["PROMPT.md"]),
+    "RULES.md": readFileSync(THREE_CLASS_TEMPLATES["RULES.md"]),
+    "HISTORY.json": Buffer.from(canonicalJson({ protocol_version: PROTOCOL_VERSION, items: [] })),
+    "ITEMS.json": Buffer.from(canonicalJson({ protocol_version: PROTOCOL_VERSION, workset_id: worksetId, items: [] })),
+    "response.schema.json": Buffer.from(canonicalJson(buildThreeClassResponseSchema(worksetId))),
+  };
+  const local = [];
+  const central = [];
+  let offset = 0;
+  for (const name of ["PROMPT.md", "RULES.md", "HISTORY.json", "ITEMS.json", "response.schema.json"]) {
+    const filename = Buffer.from(name);
+    const content = values[name];
+    const compressed = deflateRawSync(content, { level: 9 });
+    const checksum = crc32(content);
+    const header = Buffer.alloc(30 + filename.length);
+    header.writeUInt32LE(0x04034b50, 0);
+    header.writeUInt16LE(20, 4);
+    header.writeUInt16LE(0, 6);
+    header.writeUInt16LE(8, 8);
+    header.writeUInt16LE(0, 10);
+    header.writeUInt16LE(33, 12);
+    header.writeUInt32LE(checksum, 14);
+    header.writeUInt32LE(compressed.length, 18);
+    header.writeUInt32LE(content.length, 22);
+    header.writeUInt16LE(filename.length, 26);
+    filename.copy(header, 30);
+    local.push(Buffer.concat([header, compressed]));
+
+    const directory = Buffer.alloc(46 + filename.length);
+    directory.writeUInt32LE(0x02014b50, 0);
+    directory.writeUInt16LE(20, 4);
+    directory.writeUInt16LE(20, 6);
+    directory.writeUInt16LE(0, 8);
+    directory.writeUInt16LE(8, 10);
+    directory.writeUInt16LE(0, 12);
+    directory.writeUInt16LE(33, 14);
+    directory.writeUInt32LE(checksum, 16);
+    directory.writeUInt32LE(compressed.length, 20);
+    directory.writeUInt32LE(content.length, 24);
+    directory.writeUInt16LE(filename.length, 28);
+    directory.writeUInt16LE(0, 30);
+    directory.writeUInt16LE(0, 32);
+    directory.writeUInt16LE(0, 34);
+    directory.writeUInt16LE(0, 36);
+    directory.writeUInt32LE(0, 38);
+    directory.writeUInt32LE(offset, 42);
+    filename.copy(directory, 46);
+    central.push(directory);
+    offset += header.length + compressed.length;
+  }
+  const centralBytes = Buffer.concat(central);
+  const end = Buffer.alloc(22);
+  end.writeUInt32LE(0x06054b50, 0);
+  end.writeUInt16LE(0, 8);
+  end.writeUInt16LE(0, 10);
+  end.writeUInt16LE(central.length, 8);
+  end.writeUInt16LE(central.length, 10);
+  end.writeUInt32LE(centralBytes.length, 12);
+  end.writeUInt32LE(offset, 16);
+  return Buffer.concat([...local, centralBytes, end]);
+}
 
 export class EvidenceApplicationServiceV3 {
   constructor(controlPlane) { this.controlPlane = controlPlane; }
@@ -119,18 +204,29 @@ class HandoffBase {
 }
 
 export class ClassificationHandoffService extends HandoffBase {
+  constructor(controlPlane, artifactStore, { worksetBuilder = undefined } = {}) {
+    super(controlPlane, artifactStore);
+    this.worksetBuilder = worksetBuilder ?? (({ worksetId }) => minimalThreeClassWorksetZip(worksetId));
+  }
+
   prepare(ctx, request = {}) {
     requireContext(ctx, ["state:read", "artifact:write"]);
     const run = () => {
-      versionInStream(this.controlPlane, request.corpusVersionId, STREAM_KEYS.corpus, "corpusVersionId", { nullable: false });
+      const corpus = versionInStream(this.controlPlane, request.corpusVersionId, STREAM_KEYS.corpus, "corpusVersionId", { nullable: false });
       const policy = readExactPolicyVersion(this.controlPlane, request.classificationPolicyVersionId, "classification");
       const prior = versionInStream(this.controlPlane, request.classificationVersionId, STREAM_KEYS.classification, "classificationVersionId");
-      const unresolved = Number(request.unresolvedTargetCount ?? request.unresolvedTargets?.length ?? prior?.payload?.state?.unresolved_target_count ?? 0);
+      const unresolved = Number(
+        request.unresolvedTargetCount
+        ?? request.unresolvedTargets?.length
+        ?? prior?.payload?.state?.unresolved_target_count
+        ?? corpus?.payload?.state?.unresolved_target_count
+        ?? 0,
+      );
       const contextFingerprint = semanticSha256({ corpusVersionId: request.corpusVersionId, classificationVersionId: request.classificationVersionId ?? null, classificationPolicyVersionId: policy.versionId });
       if (prior && prior.payload?.handoffContextFingerprint === contextFingerprint) return v3StepResult({ stepId: ctx.stepId, routingOutcome: "reuse", stateResult: "reused", refs: { classificationVersionId: prior.versionId } });
       if (unresolved === 0) return v3StepResult({ stepId: ctx.stepId, routingOutcome: "ready_without_handoff", stateResult: "succeeded", refs: {} });
-      const worksetId = request.worksetId ?? deterministicId("workset", `${ctx.operationId}:${contextFingerprint}`);
-      const bytes = request.worksetBytes ?? Buffer.from(canonicalJson({ protocol: "three-class-workset-v1", worksetId, corpusVersionId: request.corpusVersionId }), "utf8");
+      const worksetId = request.worksetId ?? randomUUID();
+      const bytes = request.worksetBytes ?? this.worksetBuilder({ worksetId, corpusVersionId: request.corpusVersionId, classificationVersionId: request.classificationVersionId, classificationPolicyVersionId: policy.versionId, contextFingerprint });
       const artifact = this.writeArtifact({ id: worksetId, logicalPath: "three-class-workset.zip", content: bytes, metadata: { worksetId } });
       return v3StepResult({ stepId: ctx.stepId, routingOutcome: "handoff_required", stateResult: "created", refs: { worksetId }, details: { artifact, contextFingerprint } });
     };

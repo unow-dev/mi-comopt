@@ -1,6 +1,6 @@
 import { canonicalJson, deterministicId, prefixedSha256, semanticSha256 } from "../../state/canonical.js";
 import { StateControlPlaneError, stateError } from "../../state/errors.js";
-import { STREAM_KEYS, readExactPolicyVersion, typedClassificationHandler } from "../services.js";
+import { STREAM_KEYS, currentPolicyVersion, readExactPolicyVersion, typedClassificationHandler } from "../services.js";
 import { normalizeArtifactBytes, MemoryReleaseArtifactStore } from "../../release/artifact-store.js";
 import { runV3Idempotent } from "./context.js";
 import { v3StepResult } from "./result.js";
@@ -104,6 +104,11 @@ export class ReleaseApplicationServiceV3 {
       this.controlPlane._transaction((db) => {
         const current = db.prepare("SELECT materialization_json FROM v3_release_bundles WHERE release_id = ?").get(request.releaseId);
         if (current?.materialization_json && current.materialization_json !== canonicalJson(manifest)) throw stateError("ARTIFACT_INTEGRITY_ERROR", "release materialization was concurrently changed");
+        for (const record of records) {
+          const existingArtifact = db.prepare("SELECT blob_hash, byte_length, artifact_json FROM v3_release_artifacts WHERE release_id = ? AND logical_path = ?").get(request.releaseId, record.logicalPath);
+          if (existingArtifact && (existingArtifact.blob_hash !== record.blobHash || Number(existingArtifact.byte_length) !== record.size || existingArtifact.artifact_json !== canonicalJson(record))) throw stateError("ARTIFACT_INTEGRITY_ERROR", `release artifact ${record.logicalPath} was concurrently changed`);
+          if (!existingArtifact) db.prepare("INSERT INTO v3_release_artifacts (release_id, logical_path, blob_hash, byte_length, artifact_json) VALUES (?, ?, ?, ?, ?)").run(request.releaseId, record.logicalPath, record.blobHash, record.size, canonicalJson(record));
+        }
         if (!current?.materialization_json) db.prepare("UPDATE v3_release_bundles SET materialization_json = ? WHERE release_id = ?").run(canonicalJson(manifest), request.releaseId);
       });
       return v3StepResult({ stepId: ctx.stepId, routingOutcome: "continue", stateResult: "materialized", refs: { releaseId: request.releaseId }, details: { manifest } });
@@ -141,7 +146,8 @@ export class PromotionApplicationServiceV3 {
       const review = request.review;
       if (!review || !["accept", "reject"].includes(review.outcome) || review.actor?.actorType !== "human") throw stateError("UNAUTHORIZED_ACTOR", "a human promotion review is required");
       const promotion = this.controlPlane.ensureStream(STREAM_KEYS.promotion);
-      const decision = this.controlPlane.createDecision({ decisionId: deterministicId("decision", `${ctx.operationId}:${proposal.proposalId}`), proposalId: proposal.proposalId, outcome: review.outcome === "accept" ? "accepted" : "rejected", authorityKind: "human", authorityRef: review.actor.actorId, transitionPolicyVersionId: request.transitionPolicyVersionId ?? "human-review", rationale: review.rationale ?? null, operationId: `${ctx.operationId}/decision` });
+      const transitionPolicyVersionId = request.transitionPolicyVersionId ?? currentPolicyVersion(this.controlPlane, ctx, "promotion-production");
+      const decision = this.controlPlane.createDecision({ decisionId: deterministicId("decision", `${ctx.operationId}:${proposal.proposalId}`), proposalId: proposal.proposalId, outcome: review.outcome === "accept" ? "accepted" : "rejected", authorityKind: "human", authorityRef: review.actor.actorId, transitionPolicyVersionId, rationale: review.rationale ?? null, operationId: `${ctx.operationId}/decision` });
       if (decision.outcome === "rejected") return v3StepResult({ stepId: ctx.stepId, routingOutcome: "rejected", stateResult: "rejected", refs: { proposalId: proposal.proposalId, decisionId: decision.decisionId, releaseId } });
       const current = this.controlPlane.resolveHead(promotion.stream_id);
       if ((current?.versionId ?? null) !== (proposal.expectedHeadVersionId ?? null)) return v3StepResult({ stepId: ctx.stepId, routingOutcome: "superseded", stateResult: "conflict", refs: { proposalId: proposal.proposalId, decisionId: decision.decisionId, releaseId } });
@@ -158,4 +164,3 @@ export class PromotionApplicationServiceV3 {
     return runV3Idempotent(this.controlPlane, ctx, "comment-data-update.v3.promotion.finalize", request, run);
   }
 }
-
