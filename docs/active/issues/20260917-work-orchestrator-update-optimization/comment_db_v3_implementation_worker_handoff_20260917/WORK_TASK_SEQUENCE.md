@@ -32,4 +32,5 @@ Comment DB / Work Orchestrator v3を、正本の契約、v2互換性、依存関
 - ベースラインコミットは consumer 側 `3a9fea5`（`chore: establish comment db v3 implementation baseline`）。
 - provider 実体は `/home/uya/Workspace/work-orchestrator`、着手時の基準 commit は `976aa2f4b8ac68b0f72aeb4b1e35c96a71900bcb`、互換性実装 commit は `567c34e32634ebe1f0916d36e3a5662fbd6b638e`。provider の互換性変更は consumer の業務意味論と分離して実装した。
 - consumer/provider の v3 定義 hash は revision 3 / `fc91e79126f5055c64b01194586955242fc2846efae97133c6b068de388bbb48` で一致した。v2 の凍結 hash は `implementation-evidence-v3.json` と integrity test で再確認する。
+- consumer の実装コミットは `6247cf7a6116f9c649faad17cbadefd0b54aae84`。
 - PR4 相当の deployment/runtime full E2E と 79 verification ID の閉鎖、ならびに人間承認を要する PR5 cutover は未実施のため、タスク 9〜13 は未完了のまま維持する。
