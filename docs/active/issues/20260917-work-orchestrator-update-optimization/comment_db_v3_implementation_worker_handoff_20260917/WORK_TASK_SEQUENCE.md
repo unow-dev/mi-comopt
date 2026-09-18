@@ -14,7 +14,7 @@ Comment DB / Work Orchestrator v3を、正本の契約、v2互換性、依存関
 - [x] 6. state authorityの範囲で、AIエージェントが、operation id、JCS business DTO hash、transactionと外部呼出しの境界、application idempotencyおよびdependency-aware no-opを整備する。
 - [x] 7. domain workflowの範囲で、AIエージェントが、ClassificationとKeyword Selectionのhandoff、Human review、finalize、agent adapterおよびcapability wiringを、指定された入力・依存・routing・result rulesに従って整備する。
 - [x] 8. Release・Promotionの範囲で、AIエージェントが、八つのpinによる決定的なRelease identityとmaterialization、Human Decision、expected-head guardおよびPromotion CAS finalizationを整備する。
-- [ ] 9. Deployment・runtime統合の範囲で、AIエージェントが、加算的なDB migration、target-local sequence、FIFO single-flight、receipt-first outbox、provider event reconciliation、local/Temporal runtimeおよびfull E2Eを整備する。
+- [x] 9. Deployment・runtime統合の範囲で、AIエージェントが、加算的なDB migration、target-local sequence、FIFO single-flight、receipt-first outbox、provider event reconciliation、local/Temporal runtimeおよびfull E2Eを整備する。
 - [ ] 10. 検証と証跡閉鎖の範囲で、AIエージェントまたはCIが、79件の必須verification ID、全85要件のcoverage、v2回帰・hash、local/Temporal parityおよび4件のfull E2Eに合格する証跡を候補commitへ記録する。
 - [ ] 11. 本番切替判断の範囲で、人間が、全検証結果、provider互換性、v2 hash凍結、切替手順および失敗時のfix-forward方針を確認し、cutover実施を承認する。
 - [ ] 12. 本番cutoverの範囲で、AIエージェントが、v2新規開始の凍結、非終端v2 sessionのdrain、legacy authorityの無効化、v3開始の有効化およびcontrolled smokeを順序どおり実行し、失敗時は新規v3開始を凍結してfix-forwardする。
@@ -32,6 +32,8 @@ Comment DB / Work Orchestrator v3を、正本の契約、v2互換性、依存関
 - ベースラインコミットは consumer 側 `3a9fea5`（`chore: establish comment db v3 implementation baseline`）。
 - provider 実体は `/home/uya/Workspace/work-orchestrator`、着手時の基準 commit は `976aa2f4b8ac68b0f72aeb4b1e35c96a71900bcb`、互換性実装 commit は `567c34e32634ebe1f0916d36e3a5662fbd6b638e`。provider の互換性変更は consumer の業務意味論と分離して実装した。
 - consumer/provider の v3 定義 hash は revision 3 / `9598f503ba9a8e8753e0b1d9d1e4af2f1a80a4d10b718aba5ab250840438a726` で一致した。v2 の凍結 hash は `implementation-evidence-v3.json` と integrity test で再確認する。
-- consumer の基盤実装コミットは `6247cf7a6116f9c649faad17cbadefd0b54aae84`、deployment/runtime統合コミットは `e4b4724dd40fcba44af96af6112522938f927bd0`、Temporal/race検証コミットは `04f6b01cc613f2318b735c09baee6b8e7e37e592`。
-- local V3 E2E、Temporal上のE2E01、Human reject境界、Promotion stale-head、deployment queueのsingle-flight/FIFO/receipt-firstおよびE2E04相当を実装・検証した。Temporal上のE2E02〜04、79 verification IDの閉鎖、ならびに人間承認を要するPR5 cutoverは未実施のため、タスク9〜13は未完了のまま維持する。
+- consumer の基盤実装コミットは `6247cf7a6116f9c649faad17cbadefd0b54aae84`、deployment/runtime統合コミットは `e4b4724dd40fcba44af96af6112522938f927bd0`、Temporal/race検証コミットは `04f6b01cc613f2318b735c09baee6b8e7e37e592`、guarded cutover control実装コミットは `cc6e42f6719455c19af68a78c35ebbcfbfcc808e`、cutover verification labelingコミットは `21f17b5384d01d5473cc47d1fb936c3646d3f59f`。
+- local V3 E2E、Temporal上のE2E01〜04、Human reject境界、Promotion stale-head、deployment queueのsingle-flight/FIFO/receipt-firstおよびE2E04相当を実装した。Temporal E2E01〜04は個別テストで合格しているが、TestWorkflowEnvironmentの複数再起動時にWorker終了待ちが長くなるため、全件実行の安定性はタスク10で閉鎖する。
+- `v3_cutover_control` と `v3_cutover_events` を加算し、`comment-db-v3-cutover.mjs` で v2 freeze/drain、legacy disable、v3 enable、controlled smoke、failure freeze を順序・証跡付きで制御する。V3-CUT01〜07は `21f17b5` 上で合格証跡を記録したが、残り72件のmandatory verification IDと全85要件のcoverageは未閉鎖である。
+- ユーザーからcutover承認を受領した。ただし `06_CUTOVER_RUNBOOK.md` の全79件合格、provider互換性、候補commit上のv2 hash再確認および対象production authority/session inventoryが未達のため、本番既定値の切替は実行せず、制御面実装とpreflight検証までを進めた。
 - Temporal Test Environmentと既存テストの干渉を避けるため、consumerのtest scriptは `--test-concurrency=1` で実行する。

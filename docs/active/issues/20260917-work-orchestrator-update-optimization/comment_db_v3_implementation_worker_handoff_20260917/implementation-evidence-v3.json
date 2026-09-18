@@ -10,7 +10,7 @@
     "startingCommit": "3a9fea5",
     "baselineCommitMessage": "chore: establish comment db v3 implementation baseline"
   },
-  "implementationCommit": "04f6b01cc613f2318b735c09baee6b8e7e37e592",
+  "implementationCommit": "21f17b5384d01d5473cc47d1fb936c3646d3f59f",
   "providerBaseline": {
     "repository": "local:/home/uya/Workspace/work-orchestrator",
     "commit": "976aa2f4b8ac68b0f72aeb4b1e35c96a71900bcb",
@@ -986,9 +986,9 @@
       "verificationIds": [
         "V3-CUT01"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/migration/v3-cutover.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": ["package/src/migration/v3-cutover.js", "package/src/state/schema.js", "package/scripts/comment-db-v3-cutover.mjs", "package/tests/v3-cutover.test.js"],
+      "verificationEvidence": [{"commit": "21f17b5384d01d5473cc47d1fb936c3646d3f59f", "testId": "V3-CUT01", "result": "pass", "command": "node --test --test-concurrency=1 tests/v3-cutover.test.js tests/v3-workflow.test.js"}],
       "notes": null
     },
     {
@@ -998,9 +998,9 @@
       "verificationIds": [
         "V3-CUT02"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/migration/v3-cutover.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": ["package/src/migration/v3-cutover.js", "package/src/state/schema.js", "package/scripts/comment-db-v3-cutover.mjs", "package/tests/v3-cutover.test.js"],
+      "verificationEvidence": [{"commit": "21f17b5384d01d5473cc47d1fb936c3646d3f59f", "testId": "V3-CUT02", "result": "pass", "command": "node --test --test-concurrency=1 tests/v3-cutover.test.js tests/v3-workflow.test.js"}],
       "notes": null
     },
     {
@@ -1010,9 +1010,9 @@
       "verificationIds": [
         "V3-CUT03"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/migration/v3-cutover.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": ["package/src/migration/v3-cutover.js", "package/src/state/schema.js", "package/scripts/comment-db-v3-cutover.mjs", "package/tests/v3-cutover.test.js"],
+      "verificationEvidence": [{"commit": "21f17b5384d01d5473cc47d1fb936c3646d3f59f", "testId": "V3-CUT03", "result": "pass", "command": "node --test --test-concurrency=1 tests/v3-cutover.test.js tests/v3-workflow.test.js"}],
       "notes": null
     },
     {
@@ -1022,9 +1022,9 @@
       "verificationIds": [
         "V3-CUT04"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/migration/v3-cutover.js", "package/src/migration/legacy-boundary.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": ["package/src/migration/v3-cutover.js", "package/src/migration/legacy-boundary.js", "package/src/state/schema.js", "package/scripts/comment-db-v3-cutover.mjs", "package/tests/v3-cutover.test.js"],
+      "verificationEvidence": [{"commit": "21f17b5384d01d5473cc47d1fb936c3646d3f59f", "testId": "V3-CUT04", "result": "pass", "command": "node --test --test-concurrency=1 tests/v3-cutover.test.js tests/v3-workflow.test.js"}],
       "notes": null
     },
     {
@@ -1034,9 +1034,9 @@
       "verificationIds": [
         "V3-CUT05"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/migration/v3-cutover.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": ["package/src/migration/v3-cutover.js", "package/scripts/comment-db-v3-cutover.mjs", "package/scripts/README.md", "package/tests/v3-cutover.test.js"],
+      "verificationEvidence": [{"commit": "21f17b5384d01d5473cc47d1fb936c3646d3f59f", "testId": "V3-CUT05", "result": "pass", "command": "node --test --test-concurrency=1 tests/v3-cutover.test.js tests/v3-workflow.test.js"}],
       "notes": null
     },
     {
@@ -1046,9 +1046,9 @@
       "verificationIds": [
         "V3-CUT06"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/migration/v3-cutover.js", "package/src/workflow/v3/definitions.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": ["package/src/migration/v3-cutover.js", "package/src/workflow/v3/definitions.js", "package/tests/v3-workflow.test.js"],
+      "verificationEvidence": [{"commit": "21f17b5384d01d5473cc47d1fb936c3646d3f59f", "testId": "V3-CUT06", "result": "pass", "command": "node --test --test-concurrency=1 tests/v3-cutover.test.js tests/v3-workflow.test.js"}],
       "notes": null
     },
     {
@@ -1058,9 +1058,9 @@
       "verificationIds": [
         "V3-CUT07"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/migration/v3-cutover.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": ["package/src/migration/v3-cutover.js", "package/scripts/comment-db-v3-cutover.mjs", "package/tests/v3-cutover.test.js"],
+      "verificationEvidence": [{"commit": "21f17b5384d01d5473cc47d1fb936c3646d3f59f", "testId": "V3-CUT07", "result": "pass", "command": "node --test --test-concurrency=1 tests/v3-cutover.test.js tests/v3-workflow.test.js"}],
       "notes": null
     }
   ]
