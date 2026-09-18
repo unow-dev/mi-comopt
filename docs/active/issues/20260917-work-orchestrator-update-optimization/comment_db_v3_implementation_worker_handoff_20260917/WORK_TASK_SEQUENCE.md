@@ -38,4 +38,5 @@ Comment DB / Work Orchestrator v3を、正本の契約、v2互換性、依存関
 - ユーザーからcutover承認を受領し、全79件の受入ID、provider互換性および候補commit上のv2 hash再確認を完了した。一方、対象production authority/session inventoryはこのworkspaceから確認できないため、本番既定値の切替は実行せず、制御面実装とpreflight検証までを進めた。
 - 受入coverage閉鎖後も、対象production authority/session inventoryはこのworkspaceから確認できないため、cutover CLIのmutating commandは実行していない。実施時はrunbookのpreflightを対象DBで再確認し、同じ順序でfix-forwardする。
 - 2026-09-19のread-only preflightでは、対象DBに `v3_cutover_control` と `v3_cutover_events` が存在せず、`workflow_start_policies` とproduction session inventoryも確認できなかった。既存の `state_cutovers` 3系統は検証済みだが、いずれも `legacy_writer_enabled=1` のため、このDBをproduction cutover対象としてmutateしていない。
+- 2026-09-19に一時staging control plane（`/tmp/comment-db-v3-staging.nOd9Ez`）を作成し、Comment DB、Work Orchestrator registry、start policyを分離して構成した。registry上の `comment-data-update@2` / `@3` hashは凍結値・候補値と一致し、非終端v2 Sessionは0件だった。stagingでは `v2_open -> v2_frozen -> v2_drained -> legacy_disabled -> v3_enabled` までの証跡を確認したが、実production smokeは実行していないため、本番cutover完了とは扱わない。
 - Temporal Test Environmentと既存テストの干渉を避けるため、consumerのtest scriptは `--test-concurrency=1` で実行する。
