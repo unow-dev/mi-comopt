@@ -10,7 +10,7 @@
     "startingCommit": "3a9fea5",
     "baselineCommitMessage": "chore: establish comment db v3 implementation baseline"
   },
-  "implementationCommit": "21f17b5384d01d5473cc47d1fb936c3646d3f59f",
+  "implementationCommit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
   "providerBaseline": {
     "repository": "local:/home/uya/Workspace/work-orchestrator",
     "commit": "976aa2f4b8ac68b0f72aeb4b1e35c96a71900bcb",
@@ -38,9 +38,31 @@
         "V3-E2E01",
         "V3-E2E02"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/context.js",
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-AU01",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        },
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-E2E01",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-temporal-e2e.test.js"
+        },
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-E2E02",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-temporal-e2e.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -52,9 +74,31 @@
         "V3-E2E01",
         "V3-E2E02"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/context.js",
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-AU01",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        },
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-E2E01",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-temporal-e2e.test.js"
+        },
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-E2E02",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-temporal-e2e.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -64,9 +108,19 @@
       "verificationIds": [
         "V3-AU02"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/context.js",
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-AU02",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -76,9 +130,19 @@
       "verificationIds": [
         "V3-AU03"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/context.js",
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-AU03",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -88,9 +152,19 @@
       "verificationIds": [
         "V3-AU02"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/context.js",
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-AU02",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -100,9 +174,20 @@
       "verificationIds": [
         "V3-SV01"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/context.js", "package/src/application/v3/domain-services.js", "package/tests/v3-workflow.test.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/context.js",
+        "package/src/application/v3/domain-services.js",
+        "package/tests/v3-workflow.test.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-SV01",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -112,9 +197,19 @@
       "verificationIds": [
         "V3-SV02"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/domain-services.js", "package/src/application/v3/release-services.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/domain-services.js",
+        "package/src/application/v3/release-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-SV02",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -124,9 +219,20 @@
       "verificationIds": [
         "V3-RS01"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/workflow/v3/contracts.js", "package/src/workflow/v3/result-rules.js", "package/tests/v3-workflow.test.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/workflow/v3/contracts.js",
+        "package/src/workflow/v3/result-rules.js",
+        "package/tests/v3-workflow.test.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-RS01",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -136,9 +242,20 @@
       "verificationIds": [
         "V3-RS02"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/workflow/v3/contracts.js", "package/src/workflow/v3/outcomes.js", "package/tests/v3-workflow.test.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/workflow/v3/contracts.js",
+        "package/src/workflow/v3/outcomes.js",
+        "package/tests/v3-workflow.test.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-RS02",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -148,9 +265,19 @@
       "verificationIds": [
         "V3-S01"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/workflow/v3/definitions.js", "package/src/workflow/v3/session-input.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/workflow/v3/definitions.js",
+        "package/src/workflow/v3/session-input.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-S01",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -160,9 +287,19 @@
       "verificationIds": [
         "V3-S01"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/workflow/v3/contracts.js", "package/src/workflow/v3/session-input.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/workflow/v3/contracts.js",
+        "package/src/workflow/v3/session-input.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-S01",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -172,9 +309,18 @@
       "verificationIds": [
         "V3-S02"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/workflow/v3/session-input.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/workflow/v3/session-input.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-S02",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -185,9 +331,25 @@
         "V3-S03",
         "V3-E2E03"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/workflow/v3/session-input.js", "package/src/application/v3/context.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/workflow/v3/session-input.js",
+        "package/src/application/v3/context.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-S03",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        },
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-E2E03",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-temporal-e2e.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -197,9 +359,18 @@
       "verificationIds": [
         "V3-S04"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/workflow/v3/session-input.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/workflow/v3/session-input.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-S04",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -209,9 +380,19 @@
       "verificationIds": [
         "V3-S05"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/workflow/v3/contracts.js", "package/src/workflow/v3/session-input.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/workflow/v3/contracts.js",
+        "package/src/workflow/v3/session-input.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-S05",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -221,9 +402,19 @@
       "verificationIds": [
         "V3-S06"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/context.js", "package/src/integration/task-handlers-v3.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/context.js",
+        "package/src/integration/task-handlers-v3.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-S06",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -233,9 +424,19 @@
       "verificationIds": [
         "V3-HF01"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/workflow/v3/definitions.js", "package/src/integration/human-artifact-completion-v3.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/workflow/v3/definitions.js",
+        "package/src/integration/human-artifact-completion-v3.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-HF01",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -245,9 +446,19 @@
       "verificationIds": [
         "V3-HF01"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/workflow/v3/definitions.js", "package/src/integration/human-artifact-completion-v3.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/workflow/v3/definitions.js",
+        "package/src/integration/human-artifact-completion-v3.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-HF01",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -257,9 +468,18 @@
       "verificationIds": [
         "V3-HF02"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/integration/human-artifact-completion-v3.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/integration/human-artifact-completion-v3.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-HF02",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -269,9 +489,18 @@
       "verificationIds": [
         "V3-HF03"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/integration/human-artifact-completion-v3.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/integration/human-artifact-completion-v3.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-HF03",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -281,9 +510,18 @@
       "verificationIds": [
         "V3-HF04"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/integration/human-artifact-completion-v3.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/integration/human-artifact-completion-v3.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-HF04",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -293,9 +531,19 @@
       "verificationIds": [
         "V3-HF05"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/integration/human-artifact-completion-v3.js", "package/src/workflow/v3/contracts.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/integration/human-artifact-completion-v3.js",
+        "package/src/workflow/v3/contracts.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-HF05",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -305,9 +553,20 @@
       "verificationIds": [
         "V3-HF06"
       ],
-      "status": "implemented",
-      "implementationRefs": ["/home/uya/Workspace/work-orchestrator/package/src/contracts.ts", "/home/uya/Workspace/work-orchestrator/package/src/runtime.ts", "/home/uya/Workspace/work-orchestrator/package/src/temporal-activities.ts"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "/home/uya/Workspace/work-orchestrator/package/src/contracts.ts",
+        "/home/uya/Workspace/work-orchestrator/package/src/runtime.ts",
+        "/home/uya/Workspace/work-orchestrator/package/src/temporal-activities.ts"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-HF06",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -317,9 +576,18 @@
       "verificationIds": [
         "V3-HF07"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/integration/human-artifact-completion-v3.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/integration/human-artifact-completion-v3.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-HF07",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -329,9 +597,18 @@
       "verificationIds": [
         "V3-HF08"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/integration/human-artifact-completion-v3.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/integration/human-artifact-completion-v3.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-HF08",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -341,9 +618,18 @@
       "verificationIds": [
         "V3-HF09"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/integration/human-artifact-completion-v3.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/integration/human-artifact-completion-v3.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-HF09",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -353,9 +639,19 @@
       "verificationIds": [
         "V3-HF10"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/workflow/v3/contracts.js", "package/src/workflow/v3/definitions.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/workflow/v3/contracts.js",
+        "package/src/workflow/v3/definitions.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-HF10",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -365,9 +661,18 @@
       "verificationIds": [
         "V3-CL01"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-CL01",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -377,9 +682,18 @@
       "verificationIds": [
         "V3-CL02"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-CL02",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -389,9 +703,18 @@
       "verificationIds": [
         "V3-CL02"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-CL02",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -401,9 +724,18 @@
       "verificationIds": [
         "V3-CL03"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-CL03",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -413,9 +745,18 @@
       "verificationIds": [
         "V3-CL03"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-CL03",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -425,9 +766,18 @@
       "verificationIds": [
         "V3-CL04"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-CL04",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -438,9 +788,24 @@
         "V3-CL05",
         "V3-E2E02"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-CL05",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        },
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-E2E02",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-temporal-e2e.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -450,9 +815,18 @@
       "verificationIds": [
         "V3-KW01"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-KW01",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -462,9 +836,18 @@
       "verificationIds": [
         "V3-KW01"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-KW01",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -474,9 +857,18 @@
       "verificationIds": [
         "V3-KW02"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-KW02",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -486,9 +878,18 @@
       "verificationIds": [
         "V3-KW02"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-KW02",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -498,9 +899,18 @@
       "verificationIds": [
         "V3-KW03"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-KW03",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -510,9 +920,18 @@
       "verificationIds": [
         "V3-KW04"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-KW04",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -523,9 +942,24 @@
         "V3-KW05",
         "V3-E2E02"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-KW05",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        },
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-E2E02",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-temporal-e2e.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -535,9 +969,19 @@
       "verificationIds": [
         "V3-DEP01"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/state/control-plane.js",
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-DEP01",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -547,9 +991,19 @@
       "verificationIds": [
         "V3-DEP01"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/state/control-plane.js",
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-DEP01",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -559,9 +1013,19 @@
       "verificationIds": [
         "V3-DEP02"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/state/control-plane.js",
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-DEP02",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -571,9 +1035,19 @@
       "verificationIds": [
         "V3-DEP03"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/state/control-plane.js",
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-DEP03",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -583,9 +1057,19 @@
       "verificationIds": [
         "V3-DEP04"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/state/control-plane.js",
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-DEP04",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -595,9 +1079,19 @@
       "verificationIds": [
         "V3-DEP05"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/state/control-plane.js",
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-DEP05",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -607,9 +1101,19 @@
       "verificationIds": [
         "V3-DEP06"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/state/control-plane.js",
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-DEP06",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -620,9 +1124,25 @@
         "V3-DEP07",
         "V3-E2E03"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/state/control-plane.js",
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-DEP07",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        },
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-E2E03",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-temporal-e2e.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -632,9 +1152,19 @@
       "verificationIds": [
         "V3-DEP08"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/state/control-plane.js",
+        "package/src/application/v3/domain-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-DEP08",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -644,9 +1174,18 @@
       "verificationIds": [
         "V3-RL01"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/release-services.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/release-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-RL01",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -656,9 +1195,18 @@
       "verificationIds": [
         "V3-RL01"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/release-services.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/release-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-RL01",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -668,9 +1216,18 @@
       "verificationIds": [
         "V3-RL02"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/release-services.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/release-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-RL02",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -680,9 +1237,18 @@
       "verificationIds": [
         "V3-RL03"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/release-services.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/release-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-RL03",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -692,9 +1258,18 @@
       "verificationIds": [
         "V3-RL04"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/release-services.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/release-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-RL04",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -705,9 +1280,24 @@
         "V3-RL05",
         "V3-E2E02"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/release-services.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/release-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-RL05",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        },
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-E2E02",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-temporal-e2e.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -717,9 +1307,19 @@
       "verificationIds": [
         "V3-RL06"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/release-services.js", "package/db/comment-database/010-comment-db-v3.sql"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/release-services.js",
+        "package/db/comment-database/010-comment-db-v3.sql"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-RL06",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -729,9 +1329,18 @@
       "verificationIds": [
         "V3-RL07"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/release-services.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/release-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-RL07",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -742,9 +1351,24 @@
         "V3-RL08",
         "V3-E2E03"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/release-services.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/release-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-RL08",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        },
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-E2E03",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-temporal-e2e.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -754,9 +1378,19 @@
       "verificationIds": [
         "V3-DE01"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/deployment-services.js", "package/db/comment-database/010-comment-db-v3.sql"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/deployment-services.js",
+        "package/db/comment-database/010-comment-db-v3.sql"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-DE01",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -766,9 +1400,19 @@
       "verificationIds": [
         "V3-DE02"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/deployment-services.js", "/home/uya/Workspace/work-orchestrator/package/src/external-event.ts"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/deployment-services.js",
+        "/home/uya/Workspace/work-orchestrator/package/src/external-event.ts"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-DE02",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -778,9 +1422,18 @@
       "verificationIds": [
         "V3-DE03"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/deployment-services.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/deployment-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-DE03",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -790,9 +1443,18 @@
       "verificationIds": [
         "V3-DE04"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/deployment-services.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/deployment-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-DE04",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -802,9 +1464,18 @@
       "verificationIds": [
         "V3-DE05"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/deployment-services.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/deployment-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-DE05",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -814,9 +1485,18 @@
       "verificationIds": [
         "V3-DE06"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/deployment-services.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/deployment-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-DE06",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -826,9 +1506,19 @@
       "verificationIds": [
         "V3-DE07"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/deployment-services.js", "package/src/integration/v3-runtime.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/deployment-services.js",
+        "package/src/integration/v3-runtime.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-DE07",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -838,9 +1528,19 @@
       "verificationIds": [
         "V3-DE08"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/integration/v3-runtime.js", "/home/uya/Workspace/work-orchestrator/package/src/temporal-workflow.ts"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/integration/v3-runtime.js",
+        "/home/uya/Workspace/work-orchestrator/package/src/temporal-workflow.ts"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-DE08",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -851,9 +1551,25 @@
         "V3-DE09",
         "V3-E2E04"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/deployment-services.js", "package/db/comment-database/010-comment-db-v3.sql"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/deployment-services.js",
+        "package/db/comment-database/010-comment-db-v3.sql"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-DE09",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        },
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-E2E04",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-temporal-e2e.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -864,9 +1580,24 @@
         "V3-DE10",
         "V3-E2E04"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/deployment-services.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/deployment-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-DE10",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        },
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-E2E04",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-temporal-e2e.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -877,9 +1608,24 @@
         "V3-DE11",
         "V3-E2E04"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/deployment-services.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/deployment-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-DE11",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        },
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-E2E04",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-temporal-e2e.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -890,9 +1636,24 @@
         "V3-DE12",
         "V3-E2E04"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/application/v3/deployment-services.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/application/v3/deployment-services.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-DE12",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        },
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-E2E04",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-temporal-e2e.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -902,9 +1663,19 @@
       "verificationIds": [
         "V3-RV01"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/workflow/v3/definitions.js", "package/tests/v3-handoff-integrity.test.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/workflow/v3/definitions.js",
+        "package/tests/v3-handoff-integrity.test.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-RV01",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -914,9 +1685,19 @@
       "verificationIds": [
         "V3-RV02"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/workflow/definitions.js", "package/tests/v3-handoff-integrity.test.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/workflow/definitions.js",
+        "package/tests/v3-handoff-integrity.test.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-RV02",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -926,9 +1707,19 @@
       "verificationIds": [
         "V3-RV03"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/workflow/definitions.js", "package/tests/v3-handoff-integrity.test.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/workflow/definitions.js",
+        "package/tests/v3-handoff-integrity.test.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-RV03",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -938,9 +1729,19 @@
       "verificationIds": [
         "V3-RV04"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/workflow/v3/definitions.js", "package/src/workflow/definitions.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/workflow/v3/definitions.js",
+        "package/src/workflow/definitions.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-RV04",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -950,9 +1751,19 @@
       "verificationIds": [
         "V3-RV05"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/src/workflow/v3/definitions.js", "package/src/workflow/v3/contracts.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/src/workflow/v3/definitions.js",
+        "package/src/workflow/v3/contracts.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-RV05",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -962,9 +1773,20 @@
       "verificationIds": [
         "V3-RV06"
       ],
-      "status": "implemented",
-      "implementationRefs": ["/home/uya/Workspace/work-orchestrator/package/src/contracts.ts", "/home/uya/Workspace/work-orchestrator/package/src/domain.ts", "package/src/workflow/v3/definitions.js"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "/home/uya/Workspace/work-orchestrator/package/src/contracts.ts",
+        "/home/uya/Workspace/work-orchestrator/package/src/domain.ts",
+        "package/src/workflow/v3/definitions.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-RV06",
+          "result": "pass",
+          "command": "npm test (work-orchestrator/package)"
+        }
+      ],
       "notes": null
     },
     {
@@ -974,9 +1796,19 @@
       "verificationIds": [
         "V3-RV07"
       ],
-      "status": "implemented",
-      "implementationRefs": ["package/tests/v3-handoff-integrity.test.js", "docs/active/issues/20260917-work-orchestrator-update-optimization/comment_db_v3_implementation_worker_handoff_20260917/implementation-evidence-v3.json"],
-      "verificationEvidence": [],
+      "status": "verified",
+      "implementationRefs": [
+        "package/tests/v3-handoff-integrity.test.js",
+        "docs/active/issues/20260917-work-orchestrator-update-optimization/comment_db_v3_implementation_worker_handoff_20260917/implementation-evidence-v3.json"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-RV07",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -987,8 +1819,20 @@
         "V3-CUT01"
       ],
       "status": "verified",
-      "implementationRefs": ["package/src/migration/v3-cutover.js", "package/src/state/schema.js", "package/scripts/comment-db-v3-cutover.mjs", "package/tests/v3-cutover.test.js"],
-      "verificationEvidence": [{"commit": "21f17b5384d01d5473cc47d1fb936c3646d3f59f", "testId": "V3-CUT01", "result": "pass", "command": "node --test --test-concurrency=1 tests/v3-cutover.test.js tests/v3-workflow.test.js"}],
+      "implementationRefs": [
+        "package/src/migration/v3-cutover.js",
+        "package/src/state/schema.js",
+        "package/scripts/comment-db-v3-cutover.mjs",
+        "package/tests/v3-cutover.test.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-CUT01",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -999,8 +1843,20 @@
         "V3-CUT02"
       ],
       "status": "verified",
-      "implementationRefs": ["package/src/migration/v3-cutover.js", "package/src/state/schema.js", "package/scripts/comment-db-v3-cutover.mjs", "package/tests/v3-cutover.test.js"],
-      "verificationEvidence": [{"commit": "21f17b5384d01d5473cc47d1fb936c3646d3f59f", "testId": "V3-CUT02", "result": "pass", "command": "node --test --test-concurrency=1 tests/v3-cutover.test.js tests/v3-workflow.test.js"}],
+      "implementationRefs": [
+        "package/src/migration/v3-cutover.js",
+        "package/src/state/schema.js",
+        "package/scripts/comment-db-v3-cutover.mjs",
+        "package/tests/v3-cutover.test.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-CUT02",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -1011,8 +1867,20 @@
         "V3-CUT03"
       ],
       "status": "verified",
-      "implementationRefs": ["package/src/migration/v3-cutover.js", "package/src/state/schema.js", "package/scripts/comment-db-v3-cutover.mjs", "package/tests/v3-cutover.test.js"],
-      "verificationEvidence": [{"commit": "21f17b5384d01d5473cc47d1fb936c3646d3f59f", "testId": "V3-CUT03", "result": "pass", "command": "node --test --test-concurrency=1 tests/v3-cutover.test.js tests/v3-workflow.test.js"}],
+      "implementationRefs": [
+        "package/src/migration/v3-cutover.js",
+        "package/src/state/schema.js",
+        "package/scripts/comment-db-v3-cutover.mjs",
+        "package/tests/v3-cutover.test.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-CUT03",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -1023,8 +1891,21 @@
         "V3-CUT04"
       ],
       "status": "verified",
-      "implementationRefs": ["package/src/migration/v3-cutover.js", "package/src/migration/legacy-boundary.js", "package/src/state/schema.js", "package/scripts/comment-db-v3-cutover.mjs", "package/tests/v3-cutover.test.js"],
-      "verificationEvidence": [{"commit": "21f17b5384d01d5473cc47d1fb936c3646d3f59f", "testId": "V3-CUT04", "result": "pass", "command": "node --test --test-concurrency=1 tests/v3-cutover.test.js tests/v3-workflow.test.js"}],
+      "implementationRefs": [
+        "package/src/migration/v3-cutover.js",
+        "package/src/migration/legacy-boundary.js",
+        "package/src/state/schema.js",
+        "package/scripts/comment-db-v3-cutover.mjs",
+        "package/tests/v3-cutover.test.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-CUT04",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -1035,8 +1916,20 @@
         "V3-CUT05"
       ],
       "status": "verified",
-      "implementationRefs": ["package/src/migration/v3-cutover.js", "package/scripts/comment-db-v3-cutover.mjs", "package/scripts/README.md", "package/tests/v3-cutover.test.js"],
-      "verificationEvidence": [{"commit": "21f17b5384d01d5473cc47d1fb936c3646d3f59f", "testId": "V3-CUT05", "result": "pass", "command": "node --test --test-concurrency=1 tests/v3-cutover.test.js tests/v3-workflow.test.js"}],
+      "implementationRefs": [
+        "package/src/migration/v3-cutover.js",
+        "package/scripts/comment-db-v3-cutover.mjs",
+        "package/scripts/README.md",
+        "package/tests/v3-cutover.test.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-CUT05",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -1047,8 +1940,19 @@
         "V3-CUT06"
       ],
       "status": "verified",
-      "implementationRefs": ["package/src/migration/v3-cutover.js", "package/src/workflow/v3/definitions.js", "package/tests/v3-workflow.test.js"],
-      "verificationEvidence": [{"commit": "21f17b5384d01d5473cc47d1fb936c3646d3f59f", "testId": "V3-CUT06", "result": "pass", "command": "node --test --test-concurrency=1 tests/v3-cutover.test.js tests/v3-workflow.test.js"}],
+      "implementationRefs": [
+        "package/src/migration/v3-cutover.js",
+        "package/src/workflow/v3/definitions.js",
+        "package/tests/v3-workflow.test.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-CUT06",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     },
     {
@@ -1059,8 +1963,19 @@
         "V3-CUT07"
       ],
       "status": "verified",
-      "implementationRefs": ["package/src/migration/v3-cutover.js", "package/scripts/comment-db-v3-cutover.mjs", "package/tests/v3-cutover.test.js"],
-      "verificationEvidence": [{"commit": "21f17b5384d01d5473cc47d1fb936c3646d3f59f", "testId": "V3-CUT07", "result": "pass", "command": "node --test --test-concurrency=1 tests/v3-cutover.test.js tests/v3-workflow.test.js"}],
+      "implementationRefs": [
+        "package/src/migration/v3-cutover.js",
+        "package/scripts/comment-db-v3-cutover.mjs",
+        "package/tests/v3-cutover.test.js"
+      ],
+      "verificationEvidence": [
+        {
+          "commit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+          "testId": "V3-CUT07",
+          "result": "pass",
+          "command": "node --test --test-concurrency=1 tests/v3-acceptance-services.test.js tests/v3-workflow.test.js tests/v3-runtime.test.js tests/v3-cutover.test.js tests/v3-handoff-integrity.test.js"
+        }
+      ],
       "notes": null
     }
   ]
