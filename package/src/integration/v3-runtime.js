@@ -17,6 +17,7 @@ import { MemoryDeploymentAdapter } from "../deployment/adapter.js";
 import { MemoryReleaseArtifactStore } from "../release/artifact-store.js";
 import { stateError } from "../state/errors.js";
 import { canonicalJson } from "../state/canonical.js";
+import { assertV3StartAllowed } from "../migration/v3-cutover.js";
 
 /** Bridge the provider content-addressed store to the consumer's artifact
  * version writer used by v3 handoff services. Business Release artifacts do
@@ -111,6 +112,7 @@ export async function startCommentDataUpdateV3({ runtime, controlPlane, sessionI
   if (!runtime || !controlPlane || typeof sessionId !== "string" || sessionId.length === 0) throw stateError("CONFIGURATION_ERROR", "runtime, controlPlane and sessionId are required");
   const sessionInput = validateCommentDataUpdateSessionInputV3(input);
   const targetRevision = revision ?? resolveTargetRevision({ registry: runtime.registry, publicApi: { validateAndHashDefinition } });
+  assertV3StartAllowed(controlPlane, targetRevision);
   const startInput = {
     sessionId,
     workDefinitionId: "comment-data-update",

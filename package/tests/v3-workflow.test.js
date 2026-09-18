@@ -48,7 +48,7 @@ test("v3 operation identity/hash omit retry and transport metadata", () => {
 test("v3 state bootstrap is additive and application idempotency uses session/step", async () => {
   const { db, controlPlane } = await makeControlPlane();
   const tables = db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name LIKE 'v3_%' ORDER BY name").all().map((row) => row.name);
-  assert.deepEqual(tables, ["v3_deployment_event_outbox", "v3_deployment_requests", "v3_deployment_target_sequences", "v3_release_artifacts", "v3_release_bundles"]);
+  assert.deepEqual(tables, ["v3_cutover_control", "v3_cutover_events", "v3_deployment_event_outbox", "v3_deployment_requests", "v3_deployment_target_sequences", "v3_release_artifacts", "v3_release_bundles"]);
   const ctx = createV3OperationContext({ sessionId: "session", stepId: "01-ingest-evidence" });
   let calls = 0;
   assert.deepEqual(runV3Idempotent(controlPlane, ctx, "test.v3", { value: 1, executionId: "ephemeral" }, () => { calls += 1; return { stateResult: "succeeded", refs: {} }; }), { stateResult: "succeeded", refs: {} });

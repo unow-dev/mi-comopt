@@ -1,5 +1,15 @@
 # Candidate workflow scripts
 
+## Comment DB v3 cutover
+
+`comment-db-v3-cutover.mjs` is an auditable, fail-closed cutover controller. `status` is read-only; every state-changing command requires an exact `--db` path and `--apply`. The controller enforces the order `v2_open -> v2_frozen -> v2_drained -> legacy_disabled -> v3_enabled -> smoke_verified` and records immutable transition evidence. A failed smoke moves to `v3_frozen`; it does not re-enable v2 or the legacy writer.
+
+```bash
+npm run cutover:v3 -- status --db ./var/comment-history.sqlite3
+```
+
+Do not run a state-changing command against production until the 79 mandatory verification IDs, provider compatibility, target revision/hash, and frozen v2 hashes are recorded and reviewed. The CLI requires explicit precondition flags at initialization and explicit external confirmation that legacy writers are disabled.
+
 `candidate-workflow.mjs` は、handoff の契約に従うローカル決定処理を提供します。
 
 ```bash

@@ -5,6 +5,7 @@ export * from "./application/deployment-services.js";
 export * from "./deployment/adapter.js";
 export * from "./domain/account-candidates.js";
 export * from "./migration/state-backfill.js";
+export * from "./migration/v3-cutover.js";
 export * from "./workflow/index.js";
 export * from "./integration/index.js";
 export * from "./workflow/outcomes.js";

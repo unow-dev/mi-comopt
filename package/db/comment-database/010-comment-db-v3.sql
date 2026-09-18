@@ -64,3 +64,34 @@ CREATE INDEX IF NOT EXISTS idx_v3_deployment_fifo
   ON v3_deployment_requests(target, deployment_sequence, status);
 CREATE INDEX IF NOT EXISTS idx_v3_deployment_events_pending
   ON v3_deployment_event_outbox(disposition, created_at, event_id);
+
+CREATE TABLE IF NOT EXISTS v3_cutover_control (
+  control_id TEXT PRIMARY KEY CHECK (control_id = 'comment-data-update'),
+  state TEXT NOT NULL CHECK (state IN ('v2_open', 'v2_frozen', 'v2_drained', 'legacy_disabled', 'v3_enabled', 'smoke_verified', 'v3_frozen')),
+  target_revision INTEGER NOT NULL CHECK (target_revision >= 3),
+  target_definition_hash TEXT NOT NULL,
+  provider_compatible INTEGER NOT NULL CHECK (provider_compatible IN (0, 1)),
+  mandatory_verification_passed INTEGER NOT NULL CHECK (mandatory_verification_passed IN (0, 1)),
+  v2_hashes_unchanged INTEGER NOT NULL CHECK (v2_hashes_unchanged IN (0, 1)),
+  v2_hashes_json TEXT NOT NULL,
+  legacy_writer_enabled INTEGER NOT NULL CHECK (legacy_writer_enabled IN (0, 1)),
+  v2_starts_enabled INTEGER NOT NULL CHECK (v2_starts_enabled IN (0, 1)),
+  v3_starts_enabled INTEGER NOT NULL CHECK (v3_starts_enabled IN (0, 1)),
+  evidence_json TEXT NOT NULL,
+  last_event_id TEXT,
+  updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS v3_cutover_events (
+  event_id TEXT PRIMARY KEY,
+  control_id TEXT NOT NULL,
+  from_state TEXT NOT NULL,
+  to_state TEXT NOT NULL,
+  event_name TEXT NOT NULL,
+  evidence_json TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (control_id) REFERENCES v3_cutover_control(control_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_v3_cutover_events_created
+  ON v3_cutover_events(control_id, created_at, event_id);

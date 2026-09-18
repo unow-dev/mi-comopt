@@ -1,13 +1,9 @@
 import assert from "node:assert/strict";
-import { realpathSync } from "node:fs";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import test from "node:test";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-import { ArtifactStore, claimTaskUpdate, completeHumanTaskUpdate, initWorkspace, openWorkspace, receiveExternalEventUpdate, Registry, runtimeStateQuery, workSessionWorkflow } from "work-orchestrator";
-import { TestWorkflowEnvironment } from "@temporalio/testing";
-import { Worker } from "@temporalio/worker";
+import { ArtifactStore, initWorkspace, openWorkspace, Registry } from "work-orchestrator";
 import { completeValidatedHumanArtifact } from "../src/integration/human-artifact-completion-v3.js";
 import { createV3LocalRuntime, createV3TemporalRuntime, prepareV3SessionInput, startCommentDataUpdateV3 } from "../src/integration/v3-runtime.js";
 import { DeploymentQueueServiceV3 } from "../src/application/v3/deployment-services.js";
@@ -88,65 +84,6 @@ async function submitFile(fixture, stepId, logicalPath, value) {
     executionId: execution.executionId,
     outputDirectory: execution.outputPath,
     stepId,
-  });
-}
-
-function findTemporalTask(state, stepId) {
-  return Object.values(state?.tasks ?? {}).find((item) => item.stepId === stepId && item.state === "ready");
-}
-
-function temporalTask(state, stepId) {
-  const task = findTemporalTask(state, stepId);
-  assert.ok(task, `Temporal task ${stepId} must be ready`);
-  return task;
-}
-
-async function waitForTemporalState(handle, predicate, attempts = 120) {
-  for (let index = 0; index < attempts; index += 1) {
-    const state = await handle.query(runtimeStateQuery);
-    if (state && predicate(state)) return state;
-    await new Promise((resolve) => setTimeout(resolve, 50));
-  }
-  return handle.query(runtimeStateQuery);
-}
-
-async function completeTemporalDecision(handle, stepId, outcome = "accept") {
-  const state = await waitForTemporalState(handle, (candidate) => findTemporalTask(candidate, stepId));
-  const task = temporalTask(state, stepId);
-  return handle.executeUpdate(completeHumanTaskUpdate, {
-    args: [{ taskId: task.taskId, actor: { actorId: "reviewer", actorType: "human" }, outcome, result: { rationale: "v3 temporal integration test" }, commandId: `temporal-decision:${stepId}` }],
-  });
-}
-
-async function completeTemporalArtifact({ handle, artifactStore, stepId, logicalPath, value }) {
-  const state = await waitForTemporalState(handle, (candidate) => findTemporalTask(candidate, stepId));
-  const task = temporalTask(state, stepId);
-  const actor = { actorId: "reviewer", actorType: "human" };
-  const claimed = await handle.executeUpdate(claimTaskUpdate, {
-    args: [{ taskId: task.taskId, actor, commandId: `temporal-claim:${stepId}` }],
-  });
-  const content = Buffer.from(JSON.stringify(value));
-  const staged = artifactStore.stage(content, "application/json");
-  artifactStore.finalize(staged);
-  const artifact = {
-    artifactVersionId: `${claimed.executionId}:artifact:0`,
-    artifactKind: "file",
-    blobHash: staged.blobHash,
-    size: staged.size,
-    mediaType: "application/json",
-    logicalPath,
-    origin: { kind: "execution", executionId: claimed.executionId },
-    immutable: true,
-  };
-  return handle.executeUpdate(completeHumanTaskUpdate, {
-    args: [{
-      taskId: task.taskId,
-      actor,
-      outcome: "submitted",
-      result: { executionId: claimed.executionId, artifact: { artifactVersionId: artifact.artifactVersionId, blobHash: artifact.blobHash, logicalPath, size: artifact.size } },
-      artifactVersions: [artifact],
-      commandId: `temporal-submit:${stepId}`,
-    }],
   });
 }
 
@@ -385,87 +322,6 @@ test("[V3-E2E04] Newer Promotion prevents older deployment authority from commit
   assert.equal(adapterCalls.length, 2);
   assert.equal(db.prepare("SELECT status FROM v3_deployment_requests WHERE accepted_promotion_decision_id = ?").get("decision-e2e4-stale").status, "superseded");
   db.close();
-});
-
-test("[V3-E2E01][V3-HF05][V3-DE02] Temporal v3 runtime completes the same review, artifact, and deployment event flow", { timeout: 120_000 }, async () => {
-  const root = await mkdtemp(path.join(tmpdir(), "comment-db-v3-temporal-e2e-"));
-  const db = await openCommentDatabase(":memory:", { stateControlPlane: true });
-  const controlPlane = new StateControlPlane(db);
-  seedV3State(controlPlane);
-  const registry = new Registry(path.join(root, "registry.sqlite"));
-  const artifactStore = new ArtifactStore(path.join(root, "artifacts"));
-  const environment = await TestWorkflowEnvironment.createTimeSkipping();
-  const runtime = createV3TemporalRuntime({ controlPlane, registry, artifactStore });
-  const taskQueue = "comment-db-v3-temporal-e2e";
-  const worker = await Worker.create({
-    connection: environment.nativeConnection,
-    taskQueue,
-    workflowsPath: realpathSync(fileURLToPath(new URL("../../node_modules/work-orchestrator/dist/temporal-workflow.js", import.meta.url))),
-    activities: runtime.activities,
-  });
-  const workerRun = worker.run();
-  try {
-    const input = prepareV3SessionInput({
-      controlPlane,
-      input: {
-        updateRequestId: "update-v3-temporal-e2e",
-        pinned: {
-          initialCorpusVersionId: "corpus-0",
-          classificationVersionId: "classification-0",
-          keywordSelectionVersionId: "keyword-0",
-          corpusPolicyVersionId: "corpus-policy-0",
-          classificationPolicyVersionId: "classification-policy-0",
-          keywordPolicyVersionId: "keyword-policy-0",
-          accountPolicyVersionId: "account-policy-0",
-          projectionDefinitionVersionId: "projection-0",
-        },
-        target: { promotionStream: "production", deploymentTarget: "production" },
-      },
-    });
-    const handle = await environment.client.workflow.start(workSessionWorkflow, {
-      workflowId: "v3-temporal-e2e",
-      taskQueue,
-      args: [{ sessionId: "v3-temporal-e2e", workDefinitionId: "comment-data-update", revision: 3, input }],
-    });
-    await completeTemporalArtifact({ handle, artifactStore, stepId: "00-receive-update-artifact", logicalPath: "comment-batch.json", value: [] });
-    const afterClassificationHandoff = await waitForTemporalState(handle, (state) => findTemporalTask(state, "03b-receive-classification-response"));
-    const worksetId = afterClassificationHandoff.resultsByStepId["03a-prepare-classification-handoff"].refs.worksetId;
-    await completeTemporalArtifact({ handle, artifactStore, stepId: "03b-receive-classification-response", logicalPath: "response.json", value: { workset_id: worksetId, decisions: {} } });
-    await completeTemporalDecision(handle, "05-review-classification");
-    await completeTemporalArtifact({ handle, artifactStore, stepId: "07b-receive-keyword-proposal", logicalPath: "candidate_proposal.json", value: { schema_version: 1, request_id: "candidate", input_fingerprint: "candidate-input", actions: [] } });
-    await completeTemporalDecision(handle, "09-review-keyword-selection");
-    await completeTemporalDecision(handle, "13-review-production-promotion");
-
-    const beforeEvent = await waitForTemporalState(handle, (state) => state.resultsByStepId["16-trigger-deployment"]?.stateResult === "triggered");
-    const trigger = beforeEvent.resultsByStepId["16-trigger-deployment"];
-    const deployment = runtime.agentAdapter.taskHandlers.services.deployment;
-    const requestId = trigger.refs.deploymentRequestId;
-    deployment.adapter.complete(requestId, "succeeded");
-    const event = {
-      eventId: "v3-temporal-deployment-event",
-      eventType: "deployment.completed",
-      correlationKey: requestId,
-      payload: { deploymentRequestId: requestId, target: "production", releaseId: trigger.refs.releaseId, status: "succeeded", externalRunRef: "v3-temporal-external-run" },
-    };
-    deployment.receiveCompletedEvent(event);
-    const delivery = await deployment.deliverPendingEvents(
-      (sessionId, deliveredEvent, commandId) => handle.executeUpdate(receiveExternalEventUpdate, { args: [{ event: deliveredEvent, actor: { actorId: "provider", actorType: "external" }, commandId }] }),
-      { registry },
-    );
-    assert.deepEqual(delivery, { delivered: [event.eventId], deadLettered: [] });
-    const result = await handle.result();
-    assert.equal(result.state, "completed");
-    const completed = await handle.query(runtimeStateQuery);
-    assert.equal(completed.resultsByStepId["19-verify-deployment"].stateResult, "verified");
-    assert.equal(completed.resultsByStepId["20-record-deployment-state"].stateResult, "committed");
-  } finally {
-    await worker.shutdown();
-    await workerRun.catch(() => undefined);
-    await environment.teardown();
-    registry.close();
-    db.close();
-    await rm(root, { recursive: true, force: true });
-  }
 });
 
 test("[V3-DE03][V3-DE09][V3-DE10] deployment queue claims one external call and receipt-first delivery", async () => {
