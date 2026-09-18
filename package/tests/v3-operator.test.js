@@ -101,6 +101,11 @@ test("v3 operator persists Session start, Human artifact open, and validated com
     const afterClassification = getV3Session(operator, started.sessionId);
     const keywordRefs = afterClassification.resultsByStepId["07a-prepare-keyword-handoff"]?.refs;
     assert.ok(keywordRefs?.candidateRequestId);
+    const keywordTask = listV3HumanTasks(operator, started.sessionId).find((task) => task.stepId === "07b-receive-keyword-proposal");
+    assert.deepEqual(keywordTask?.artifactContext, {
+      requestId: keywordRefs.candidateRequestId,
+      inputFingerprint: keywordRefs.candidateInputFingerprint,
+    });
     await submitArtifact(operator, started.sessionId, "07b-receive-keyword-proposal", {
       schema_version: 1,
       request_id: keywordRefs.candidateRequestId,

@@ -31,7 +31,7 @@ function resolveTask(state, { taskId = undefined, stepId = undefined } = {}) {
   return matches[0];
 }
 
-function taskSummary(task) {
+function taskSummary(task, state = undefined) {
   const summary = {
     taskId: task.taskId,
     stepId: task.stepId,
@@ -44,6 +44,22 @@ function taskSummary(task) {
   if (task.currentExecutionId) summary.executionId = task.currentExecutionId;
   const expectedFile = EXPECTED_FILES[task.stepId];
   if (expectedFile) summary.expectedFile = expectedFile;
+  if (task.stepId === "03b-receive-classification-response") {
+    const worksetId = state?.resultsByStepId?.["03a-prepare-classification-handoff"]?.refs?.worksetId;
+    if (worksetId) summary.artifactContext = { worksetId };
+  }
+  if (task.stepId === "07b-receive-keyword-proposal") {
+    const refs = state?.resultsByStepId?.["07a-prepare-keyword-handoff"]?.refs;
+    if (refs?.candidateRequestId && refs?.candidateInputFingerprint) {
+      summary.artifactContext = {
+        requestId: refs.candidateRequestId,
+        inputFingerprint: refs.candidateInputFingerprint,
+      };
+    }
+  }
+  if (["05-review-classification", "09-review-keyword-selection", "13-review-production-promotion"].includes(task.stepId) && task.inputs && typeof task.inputs === "object") {
+    summary.reviewContext = task.inputs;
+  }
   return summary;
 }
 
@@ -104,7 +120,7 @@ export function listV3Sessions(operator) {
         revision: Number(session.definition_revision),
         state: state?.session?.state ?? session.state,
         runtimeRevision: state?.revision ?? Number(session.revision),
-        actionableHumanTasks: tasks.filter((task) => task.workerKind === "human" && ["ready", "active"].includes(task.state)).map(taskSummary),
+        actionableHumanTasks: tasks.filter((task) => task.workerKind === "human" && ["ready", "active"].includes(task.state)).map((task) => taskSummary(task, state)),
       };
     });
 }
@@ -122,7 +138,7 @@ export function listV3HumanTasks(operator, sessionId) {
   const state = getV3Session(operator, sessionId);
   return Object.values(state.tasks)
     .filter((task) => task.workerKind === "human")
-    .map(taskSummary);
+    .map((task) => taskSummary(task, state));
 }
 
 export async function startV3Session(operator, { sessionId, updateRequestId, actorId, pinned = {} } = {}) {
@@ -154,7 +170,7 @@ export async function openV3HumanTask(operator, { sessionId, taskId, stepId, act
   const workspace = await operator.runtime.openHumanTaskWorkspace(sessionId, task.taskId, actor);
   return {
     sessionId,
-    task: taskSummary(operator.runtime.state(sessionId).tasks[task.taskId]),
+    task: taskSummary(operator.runtime.state(sessionId).tasks[task.taskId], operator.runtime.state(sessionId)),
     executionId: workspace.executionId,
     outputPath: workspace.outputPath,
     expectedFile: EXPECTED_FILES[task.stepId] ?? null,

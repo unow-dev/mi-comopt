@@ -22,6 +22,7 @@ Comment DB / Work Orchestrator v3を、正本の契約、v2互換性、依存関
 - [x] 14. 本番運用操作の範囲で、AIエージェントが、v3 Session開始とHuman Task操作をv3 application-service adapter経由で実行する専用entrypointを整備する。
 - [x] 15. 専用entrypoint検証の範囲で、AIエージェントまたはCIが、永続Workspaceを跨ぐSession開始、Human artifact検証、Human review完了およびactor境界を確認する。
 - [x] 16. 専用entrypoint作業結果の範囲で、AIエージェントが、利用コマンド、制約および検証結果を記録する。
+- [x] 17. Human artifact運用情報の範囲で、AIエージェントが、前段結果に由来するworkset/request identityを専用entrypointのTask表示へ提示する。
 
 ## Work Notes
 
@@ -51,3 +52,4 @@ Comment DB / Work Orchestrator v3を、正本の契約、v2互換性、依存関
 - operatorは指定されたproduction authority DBが存在しない場合にfail closedし、Session inputは開始時にpolicy/state pinを解決してv3 cutover guardへ渡す。artifact completionは既存のbytes、logical filename、cardinality、execution identityおよびArtifactVersion identity検証を再利用する。
 - 専用operatorの永続Workspace跨ぎテストでartifact、Classification review、Keyword review、Promotion reviewおよびactor境界を確認した。consumer全体は173 tests passed、operator focused testsは2 tests passed、buildと`git diff --check`も成功した。
 - operator CLIはlocal persistent runtime向けであり、外部production deployment adapterを自動構成しない。deployment境界を通すには実adapterと`deployment.completed` event配送・verificationを別途構成する。
+- `tasks`のartifact Human Task表示に、Classificationの`worksetId`またはKeyword proposalの`requestId`・`inputFingerprint`を前段結果から提示するよう補強した。operatorがDBのruntime snapshotを直接参照せず、提示されたidentityでartifactを作成できる。

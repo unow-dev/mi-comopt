@@ -39,7 +39,7 @@ npm run comment-data-update:v3 -- human-task complete \
   --step-id 00-receive-update-artifact --actor "$ACTOR"
 ```
 
-Decision型Human Taskは、`open`後に`--outcome accept|reject --rationale "..."`を付けて完了します。Classification responseとkeyword proposalのartifactも同じ`open`/ファイル配置/`complete`経路で、専用validatorがファイル名、件数、bytes、実行IDおよびArtifactVersion identityを検証します。`sessions`で既存Sessionを一覧し、`human-task release`で同じactorのclaimを解放できます。
+Decision型Human Taskは、`open`後に`--outcome accept|reject --rationale "..."`を付けて完了します。Classification responseとkeyword proposalのartifactも同じ`open`/ファイル配置/`complete`経路で、専用validatorがファイル名、件数、bytes、実行IDおよびArtifactVersion identityを検証します。`tasks`のartifact taskには、`response.json`の`workset_id`、または`candidate_proposal.json`の`request_id`・`input_fingerprint`に使う前段identityも表示されます。`sessions`で既存Sessionを一覧し、`human-task release`で同じactorのclaimを解放できます。
 
 このentrypointはtargetをproductionに固定します。外部production deployment adapterはこのworkspaceに接続されていないため、deployment境界を実運用で通す場合は別途そのadapterとdeployment.completed event配送を構成してください。
 
