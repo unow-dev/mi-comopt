@@ -18,6 +18,7 @@
     "publish:joint-data": "node scripts/publish-joint-data.mjs",
     "migrate:state-control-plane": "node scripts/migrate-state-control-plane.mjs",
     "cutover:v3": "node scripts/comment-db-v3-cutover.mjs",
+    "comment-data-update:v3": "node scripts/comment-data-update-v3-operator.mjs",
     "demo:comment-data-update": "node scripts/run-comment-data-update-demo.mjs",
     "verify:deployed-release": "node scripts/verify-deployed-release.mjs",
     "export:optimicom-ui": "node scripts/export-optimicom-ui-release.mjs",

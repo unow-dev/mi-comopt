@@ -19,6 +19,9 @@ Comment DB / Work Orchestrator v3を、正本の契約、v2互換性、依存関
 - [x] 11. 本番切替判断の範囲で、人間が、全検証結果、provider互換性、v2 hash凍結、切替手順および失敗時のfix-forward方針を確認し、cutover実施を承認する。
 - [x] 12. 本番cutoverの範囲で、AIエージェントが、v2新規開始の凍結、非終端v2 sessionのdrain、legacy authorityの無効化、v3開始の有効化およびcontrolled smokeを順序どおり実行し、失敗時は新規v3開始を凍結してfix-forwardする。
 - [x] 13. 作業結果の範囲で、AIエージェントが、実施内容、検証結果、implementation evidence、切替結果、残存する運用上の注意点および必要なimmutable revision更新を記録する。
+- [x] 14. 本番運用操作の範囲で、AIエージェントが、v3 Session開始とHuman Task操作をv3 application-service adapter経由で実行する専用entrypointを整備する。
+- [x] 15. 専用entrypoint検証の範囲で、AIエージェントまたはCIが、永続Workspaceを跨ぐSession開始、Human artifact検証、Human review完了およびactor境界を確認する。
+- [x] 16. 専用entrypoint作業結果の範囲で、AIエージェントが、利用コマンド、制約および検証結果を記録する。
 
 ## Work Notes
 
@@ -44,3 +47,7 @@ Comment DB / Work Orchestrator v3を、正本の契約、v2互換性、依存関
 - productionでは `v2_open -> v2_frozen -> v2_drained -> legacy_disabled -> v3_enabled` を実行し、最初のcontrolled smokeで `INVALID_REVIEW_OUTCOME` を検出したため、runbookどおり `v3_frozen`、新規v3開始停止、legacy再有効化なしで固定した。Domainの自動確定結果再利用修正をconsumer commit `d1fc7da`、optional input binding修正をprovider commit `3a6359f` として実装し、Definition revision 3のimmutable hashは変更していない。
 - fix-forward後のproduction controlled smoke `production-v3-controlled-smoke-20260919-fix-forward-final` はcompleted、outcomeはdeployed、releaseは `release-v3_d8425ff73a1135c15e0deefc6d2a0e74`、deployment requestはsucceeded、external event outboxはdelivered、deployment recordはcommittedとなった。cutover controlは `smoke_verified`、legacy writer無効、v2新規開始無効、v3新規開始有効、非終端v2 session 0件である。
 - controlled smokeのdeployment境界はこのworkspaceで利用可能な `MemoryDeploymentAdapter` であり、実外部production deployment adapterの接続確認ではない。実運用では同じreceipt/event/verification契約を満たすproduction adapterと、作成済みstart policyの配布・監視を引き継ぐ。
+- v3 production operatorとして `comment-data-update:v3` entrypointを追加し、既存authority DBとWork Orchestrator Workspaceを明示的に開いて、Session開始、Session/Human Task一覧、Human Task claim/open、artifact completion、decision completionおよびclaim releaseを提供した。targetはproduction固定で、v3 application-service adapterを使用し、汎用provider CLIの`new`経路は使用しない。
+- operatorは指定されたproduction authority DBが存在しない場合にfail closedし、Session inputは開始時にpolicy/state pinを解決してv3 cutover guardへ渡す。artifact completionは既存のbytes、logical filename、cardinality、execution identityおよびArtifactVersion identity検証を再利用する。
+- 専用operatorの永続Workspace跨ぎテストでartifact、Classification review、Keyword review、Promotion reviewおよびactor境界を確認した。consumer全体は173 tests passed、operator focused testsは2 tests passed、buildと`git diff --check`も成功した。
+- operator CLIはlocal persistent runtime向けであり、外部production deployment adapterを自動構成しない。deployment境界を通すには実adapterと`deployment.completed` event配送・verificationを別途構成する。

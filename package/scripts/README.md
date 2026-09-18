@@ -10,6 +10,39 @@ npm run cutover:v3 -- status --db ./var/comment-history.sqlite3
 
 Do not run a state-changing command against production until the 79 mandatory verification IDs, provider compatibility, target revision/hash, and frozen v2 hashes are recorded and reviewed. The CLI requires explicit precondition flags at initialization and explicit external confirmation that legacy writers are disabled.
 
+## Comment DB v3 production operator
+
+v3のproduction Session開始とHuman Task操作は、consumerのapplication-service adapterを使う専用entrypointで行います。汎用provider CLIの`new`はv3 Session inputとproduction cutover guardを通らないため使用しません。
+
+```bash
+DB=/home/uya/Workspace/tiktok-filter-keywords/var/comment-history.sqlite3
+WO=/home/uya/Workspace/tiktok-filter-keywords/var/work-orchestrator-production
+ACTOR=production-reviewer
+SESSION=production-comment-data-update-<unique-id>
+UPDATE_REQUEST=comment-data-update-<unique-id>
+
+npm run comment-data-update:v3 -- start \
+  --db "$DB" --workspace "$WO" \
+  --session-id "$SESSION" --update-request-id "$UPDATE_REQUEST" --actor "$ACTOR"
+npm run comment-data-update:v3 -- tasks \
+  --db "$DB" --workspace "$WO" --session-id "$SESSION"
+npm run comment-data-update:v3 -- human-task open \
+  --db "$DB" --workspace "$WO" --session-id "$SESSION" \
+  --step-id 00-receive-update-artifact --actor "$ACTOR"
+```
+
+`open`の`outputPath`に表示された`comment-batch.json`だけを置き、内容を確認して次を実行します。
+
+```bash
+npm run comment-data-update:v3 -- human-task complete \
+  --db "$DB" --workspace "$WO" --session-id "$SESSION" \
+  --step-id 00-receive-update-artifact --actor "$ACTOR"
+```
+
+Decision型Human Taskは、`open`後に`--outcome accept|reject --rationale "..."`を付けて完了します。Classification responseとkeyword proposalのartifactも同じ`open`/ファイル配置/`complete`経路で、専用validatorがファイル名、件数、bytes、実行IDおよびArtifactVersion identityを検証します。`sessions`で既存Sessionを一覧し、`human-task release`で同じactorのclaimを解放できます。
+
+このentrypointはtargetをproductionに固定します。外部production deployment adapterはこのworkspaceに接続されていないため、deployment境界を実運用で通す場合は別途そのadapterとdeployment.completed event配送を構成してください。
+
 `candidate-workflow.mjs` は、handoff の契約に従うローカル決定処理を提供します。
 
 ```bash

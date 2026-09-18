@@ -16,6 +16,7 @@
     "verify:deployed-release": "npm --workspace package run verify:deployed-release --",
     "account-candidate-workflow": "npm --workspace package run account-candidate-workflow --",
     "comment-db": "npm --workspace package run comment-db --",
+    "comment-data-update:v3": "npm --workspace package run comment-data-update:v3 --",
     "clean": "npm --workspace package run clean"
   },
   "devDependencies": {
