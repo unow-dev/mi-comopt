@@ -252,6 +252,12 @@ test("[V3-DEP01][V3-DEP02][V3-DEP03][V3-DEP04][V3-DEP08] Dependency-aware no-op 
     });
     assert.equal(first.stateResult, "committed");
     assert.deepEqual(controlPlane.readDependencies(first.refs.classificationVersionId).map((item) => item.role), ["corpus", "policy"]);
+    const autoFinalized = classification.finalize(context("dependency-finalize-auto", "06-finalize-classification"), {
+      proposalId: first.refs.proposalId,
+      assessed: first,
+    });
+    assert.equal(autoFinalized.stateResult, "reused");
+    assert.equal(autoFinalized.refs.classificationVersionId, first.refs.classificationVersionId);
     const unchanged = classification.assess(context("dependency-unchanged", "03-update-classification"), {
       classificationVersionId: first.refs.classificationVersionId,
       corpusVersionId: "corpus-0",

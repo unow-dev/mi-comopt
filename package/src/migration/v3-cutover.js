@@ -72,20 +72,26 @@ export function advanceV3Cutover(state, event, evidence = {}) {
     legacy_disabled: { enable_v3: "v3_enabled" },
     v3_enabled: { smoke_passed: "smoke_verified", smoke_failed: "v3_frozen" },
     smoke_verified: { smoke_failed: "v3_frozen" },
-    v3_frozen: {},
+    v3_frozen: { fix_forward_v3: "v3_enabled" },
   };
   const next = transitions[current][event];
   if (!next) throw stateError("CUTOVER_ORDER_INVALID", `${event} cannot advance cutover from ${current}`);
   if (event === "freeze_v2" && evidence.newV2Starts !== 0) throw stateError("CUTOVER_GATE_FAILED", "v2 starts must be frozen before drain");
   if (event === "drain_complete" && evidence.nonterminalV2Sessions !== 0) throw stateError("CUTOVER_GATE_FAILED", "nonterminal v2 sessions must be zero");
   if (event === "enable_v3" && evidence.legacyWriterEnabled === true) throw stateError("CUTOVER_DUAL_AUTHORITY", "legacy authority must be disabled before v3 enablement");
+  if (event === "fix_forward_v3" && (evidence.legacyWriterEnabled !== false || evidence.newV2Starts !== 0)) throw stateError("CUTOVER_DUAL_AUTHORITY", "fix-forward v3 requires disabled legacy authority and zero new v2 starts");
   if (event === "smoke_failed") return { state: next, newV3StartsFrozen: true, legacyWriterEnabled: false, fixForwardOnly: true };
+  if (event === "fix_forward_v3") return { state: next, newV3StartsFrozen: false, legacyWriterEnabled: false, fixForwardOnly: true };
   return { state: next, newV3StartsFrozen: next === "v2_frozen" || next === "v3_frozen", legacyWriterEnabled: next !== "legacy_disabled" && next !== "v3_enabled" && next !== "smoke_verified", fixForwardOnly: true };
 }
 
 function assertPersistentEventEvidence(event, evidence) {
   if (event === "legacy_disabled" && evidence.legacyWriterEnabled !== false) throw stateError("CUTOVER_GATE_FAILED", "legacy authority must be explicitly disabled before v3 enablement");
   if (event === "enable_v3" && (evidence.legacyWriterEnabled !== false || evidence.newV2Starts !== 0)) throw stateError("CUTOVER_DUAL_AUTHORITY", "v3 enablement requires disabled legacy authority and zero new v2 starts");
+  if (event === "fix_forward_v3") {
+    if (evidence.legacyWriterEnabled !== false || evidence.newV2Starts !== 0) throw stateError("CUTOVER_DUAL_AUTHORITY", "fix-forward v3 requires disabled legacy authority and zero new v2 starts");
+    requiredString(evidence.fixForwardRef, "fixForwardRef");
+  }
   if (event === "smoke_passed") {
     const missing = SMOKE_EVIDENCE_KEYS.filter((key) => evidence[key] !== true);
     if (missing.length > 0) throw stateError("CUTOVER_GATE_FAILED", `controlled smoke evidence is incomplete: ${missing.join(", ")}`);

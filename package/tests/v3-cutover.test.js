@@ -113,6 +113,11 @@ test("[V3-CUT05][V3-CUT07] smoke failure freezes v3 and remains fix-forward only
     assert.equal(frozen.v3StartsEnabled, false);
     assert.throws(() => resolveCommentDataUpdateRevision(controlPlane), /CUTOVER_START_FROZEN/);
     assert.throws(() => advancePersistedV3Cutover(controlPlane, "enable_v3", { legacyWriterEnabled: false, newV2Starts: 0 }), /CUTOVER_ORDER_INVALID/);
+    const resumed = advancePersistedV3Cutover(controlPlane, "fix_forward_v3", { legacyWriterEnabled: false, newV2Starts: 0, fixForwardRef: "fix://classification-finalize" });
+    assert.equal(resumed.state, "v3_enabled");
+    assert.equal(resumed.legacyWriterEnabled, false);
+    assert.equal(resumed.v2StartsEnabled, false);
+    assert.equal(resumed.v3StartsEnabled, true);
   } finally {
     db.close();
   }

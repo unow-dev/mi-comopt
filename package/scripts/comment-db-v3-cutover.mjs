@@ -10,7 +10,7 @@ import {
 import { openCommentDatabase, openCommentDatabaseReadOnly } from "../src/database/comment-database.js";
 import { StateControlPlane } from "../src/state/control-plane.js";
 
-const COMMANDS = new Set(["status", "init", "freeze-v2", "drain-v2", "disable-legacy", "enable-v3", "smoke-passed", "smoke-failed"]);
+const COMMANDS = new Set(["status", "init", "freeze-v2", "drain-v2", "disable-legacy", "enable-v3", "fix-forward-v3", "smoke-passed", "smoke-failed"]);
 
 function parseArgs(argv) {
   const [command = "status", ...rest] = argv;
@@ -31,6 +31,7 @@ function parseArgs(argv) {
     else if (arg === "--nonterminal-v2-sessions") args.nonterminalV2Sessions = Number(rest[++index]);
     else if (arg === "--legacy-writer-disabled") args.legacyWriterDisabled = true;
     else if (arg === "--smoke-session-id") args.smokeSessionId = rest[++index];
+    else if (arg === "--fix-forward-ref") args.fixForwardRef = rest[++index];
     else if (arg === "--authoritative-state-verified") args.authoritativeStateVerified = true;
     else if (arg === "--reviewed-release-verified") args.reviewedReleaseVerified = true;
     else if (arg === "--promotion-verified") args.promotionVerified = true;
@@ -53,6 +54,7 @@ function usage() {
   npm run cutover:v3 -- drain-v2 --apply --db PATH --nonterminal-v2-sessions 0
   npm run cutover:v3 -- disable-legacy --apply --db PATH --legacy-writer-disabled
   npm run cutover:v3 -- enable-v3 --apply --db PATH --legacy-writer-disabled --new-v2-starts 0
+  npm run cutover:v3 -- fix-forward-v3 --apply --db PATH --legacy-writer-disabled --new-v2-starts 0 --fix-forward-ref REF
   npm run cutover:v3 -- smoke-passed --apply --db PATH --smoke-session-id ID \\
     --authoritative-state-verified --reviewed-release-verified --promotion-verified \\
     --deployment-verified --evidence-ledger-written
@@ -122,6 +124,9 @@ async function main(argv) {
     } else if (args.command === "enable-v3") {
       if (args.legacyWriterDisabled !== true) throw new Error("enable-v3 requires --legacy-writer-disabled");
       result = advancePersistedV3Cutover(controlPlane, "enable_v3", { legacyWriterEnabled: false, newV2Starts: requireNumber(args.newV2Starts, "new-v2-starts") });
+    } else if (args.command === "fix-forward-v3") {
+      if (args.legacyWriterDisabled !== true) throw new Error("fix-forward-v3 requires --legacy-writer-disabled");
+      result = advancePersistedV3Cutover(controlPlane, "fix_forward_v3", { legacyWriterEnabled: false, newV2Starts: requireNumber(args.newV2Starts, "new-v2-starts"), fixForwardRef: args.fixForwardRef });
     } else if (args.command === "smoke-passed") {
       result = advancePersistedV3Cutover(controlPlane, "smoke_passed", {
         smokeSessionId: args.smokeSessionId,

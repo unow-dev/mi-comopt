@@ -326,7 +326,7 @@ class ReviewableV3Service {
   finalize(ctx, request = {}) {
     requireContext(ctx, ["state:read", "state:commit"]);
     const run = () => {
-      if (!request.proposalId && request.assessed?.refs?.[this.resultRef + "VersionId"]) return v3StepResult({ stepId: ctx.stepId, routingOutcome: "continue", stateResult: "reused", refs: { [this.resultRef + "VersionId"]: request.assessed.refs[this.resultRef + "VersionId"] } });
+      if (request.assessed?.refs?.[this.resultRef + "VersionId"] && (!request.proposalId || !request.review)) return v3StepResult({ stepId: ctx.stepId, routingOutcome: "continue", stateResult: "reused", refs: { [this.resultRef + "VersionId"]: request.assessed.refs[this.resultRef + "VersionId"] } });
       const proposal = this.controlPlane.readProposal(request.proposalId);
       if (!proposal) throw stateError("PROPOSAL_NOT_FOUND", `${this.domain} proposal is required`);
       const policyId = proposal.dependencies.find((item) => item.role === "policy")?.versionId;
