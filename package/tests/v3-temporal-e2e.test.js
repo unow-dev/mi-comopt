@@ -95,6 +95,18 @@ async function completeTemporalArtifact({ handle, artifactStore, stepId, logical
   });
 }
 
+async function completeTemporalKeywordProposal(fixture) {
+  const state = await waitForTemporalState(fixture.handle, (candidate) => findTemporalTask(candidate, "07b-receive-keyword-proposal"));
+  const refs = state.resultsByStepId["07a-prepare-keyword-handoff"].refs;
+  return completeTemporalArtifact({
+    handle: fixture.handle,
+    artifactStore: fixture.artifactStore,
+    stepId: "07b-receive-keyword-proposal",
+    logicalPath: "candidate_proposal.json",
+    value: { schema_version: 1, request_id: refs.candidateRequestId, input_fingerprint: refs.candidateInputFingerprint, actions: [] },
+  });
+}
+
 function temporalInput(controlPlane, updateRequestId) {
   return prepareV3SessionInput({
     controlPlane,
@@ -122,7 +134,7 @@ async function temporalHarness({ environment = undefined, taskQueue = "comment-d
   seedV3State(controlPlane);
   const registry = new Registry(path.join(root, "registry.sqlite"));
   const artifactStore = new ArtifactStore(path.join(root, "artifacts"));
-  const ownedEnvironment = environment ?? await TestWorkflowEnvironment.createTimeSkipping();
+  const ownedEnvironment = environment ?? await TestWorkflowEnvironment.createLocal();
   const runtime = createV3TemporalRuntime({ controlPlane, registry, artifactStore });
   const worker = await Worker.create({
     connection: ownedEnvironment.nativeConnection,
@@ -174,7 +186,7 @@ test("[V3-E2E01][V3-HF05][V3-DE02] Temporal v3 runtime completes artifact, revie
     const worksetId = afterClassificationHandoff.resultsByStepId["03a-prepare-classification-handoff"].refs.worksetId;
     await completeTemporalArtifact({ handle: fixture.handle, artifactStore: fixture.artifactStore, stepId: "03b-receive-classification-response", logicalPath: "response.json", value: { workset_id: worksetId, decisions: {} } });
     await completeTemporalDecision(fixture.handle, "05-review-classification");
-    await completeTemporalArtifact({ handle: fixture.handle, artifactStore: fixture.artifactStore, stepId: "07b-receive-keyword-proposal", logicalPath: "candidate_proposal.json", value: { schema_version: 1, request_id: "candidate", input_fingerprint: "candidate-input", actions: [] } });
+    await completeTemporalKeywordProposal(fixture);
     await completeTemporalDecision(fixture.handle, "09-review-keyword-selection");
     await completeTemporalDecision(fixture.handle, "13-review-production-promotion");
     const beforeEvent = await waitForTemporalState(fixture.handle, (state) => state.resultsByStepId["16-trigger-deployment"]?.stateResult === "triggered");
@@ -209,7 +221,7 @@ test("[V3-E2E02] Temporal Human reject at Classification, Keyword, and Promotion
       await completeTemporalArtifact({ handle: fixture.handle, artifactStore: fixture.artifactStore, stepId: "03b-receive-classification-response", logicalPath: "response.json", value: { workset_id: worksetId, decisions: {} } });
       if (item.suffix !== "classification") {
         await completeTemporalDecision(fixture.handle, "05-review-classification");
-        await completeTemporalArtifact({ handle: fixture.handle, artifactStore: fixture.artifactStore, stepId: "07b-receive-keyword-proposal", logicalPath: "candidate_proposal.json", value: { schema_version: 1, request_id: "candidate", input_fingerprint: "candidate-input", actions: [] } });
+        await completeTemporalKeywordProposal(fixture);
       }
       if (item.suffix === "promotion") await completeTemporalDecision(fixture.handle, "09-review-keyword-selection");
       await completeTemporalDecision(fixture.handle, item.rejectStep, "reject");
@@ -230,7 +242,7 @@ test("[V3-E2E03] Temporal accepted Promotion Decision is retained while a concur
     const worksetId = afterClassificationHandoff.resultsByStepId["03a-prepare-classification-handoff"].refs.worksetId;
     await completeTemporalArtifact({ handle: fixture.handle, artifactStore: fixture.artifactStore, stepId: "03b-receive-classification-response", logicalPath: "response.json", value: { workset_id: worksetId, decisions: {} } });
     await completeTemporalDecision(fixture.handle, "05-review-classification");
-    await completeTemporalArtifact({ handle: fixture.handle, artifactStore: fixture.artifactStore, stepId: "07b-receive-keyword-proposal", logicalPath: "candidate_proposal.json", value: { schema_version: 1, request_id: "candidate", input_fingerprint: "candidate-input", actions: [] } });
+    await completeTemporalKeywordProposal(fixture);
     await completeTemporalDecision(fixture.handle, "09-review-keyword-selection");
     const waiting = await waitForTemporalState(fixture.handle, (state) => findTemporalTask(state, "13-review-production-promotion"));
     const proposalId = waiting.resultsByStepId["13-propose-production-promotion"].refs.proposalId;
@@ -256,7 +268,7 @@ test("[V3-E2E04] Temporal same-target deployment race never lets an older result
     const worksetId = afterClassificationHandoff.resultsByStepId["03a-prepare-classification-handoff"].refs.worksetId;
     await completeTemporalArtifact({ handle: fixture.handle, artifactStore: fixture.artifactStore, stepId: "03b-receive-classification-response", logicalPath: "response.json", value: { workset_id: worksetId, decisions: {} } });
     await completeTemporalDecision(fixture.handle, "05-review-classification");
-    await completeTemporalArtifact({ handle: fixture.handle, artifactStore: fixture.artifactStore, stepId: "07b-receive-keyword-proposal", logicalPath: "candidate_proposal.json", value: { schema_version: 1, request_id: "candidate", input_fingerprint: "candidate-input", actions: [] } });
+    await completeTemporalKeywordProposal(fixture);
     await completeTemporalDecision(fixture.handle, "09-review-keyword-selection");
     await waitForTemporalState(fixture.handle, (state) => findTemporalTask(state, "13-review-production-promotion"));
     await completeTemporalDecision(fixture.handle, "13-review-production-promotion");

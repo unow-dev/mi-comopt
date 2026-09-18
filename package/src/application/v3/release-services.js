@@ -127,8 +127,16 @@ export class PromotionApplicationServiceV3 {
       const promotionStream = this.controlPlane.ensureStream(STREAM_KEYS.promotion);
       const expected = request.expectedPromotionHeadVersionId ?? this.controlPlane.resolveHead(promotionStream.stream_id)?.versionId ?? null;
       const proposalId = deterministicId("proposal-v3", `${ctx.operationId}:${request.releaseId}:${request.promotionStream ?? "production"}`);
+      const reviewedRelease = {
+        releaseId: release.release_id,
+        releaseKey: release.release_key,
+        pins: JSON.parse(release.pins_json),
+        bundleSha256: release.bundle_sha256,
+        materialization: JSON.parse(release.materialization_json),
+        target: "production",
+      };
       try {
-        this.controlPlane.createProposal({ proposalId, streamId: promotionStream.stream_id, expectedHeadVersionId: expected, proposedSemanticSha256: semanticSha256({ target: "production", releaseId: request.releaseId }), payload: { schema_version: 1, state: { target: "production", releaseId: request.releaseId } }, dependencies: [], assessmentRefs: { releaseId: request.releaseId, promotionStream: request.promotionStream ?? "production" }, operationId: `${ctx.operationId}/proposal` });
+        this.controlPlane.createProposal({ proposalId, streamId: promotionStream.stream_id, expectedHeadVersionId: expected, proposedSemanticSha256: semanticSha256({ target: "production", releaseId: request.releaseId }), payload: { schema_version: 1, state: { target: "production", releaseId: request.releaseId } }, dependencies: [], assessmentRefs: { releaseId: request.releaseId, promotionStream: request.promotionStream ?? "production", target: "production", reviewedRelease }, operationId: `${ctx.operationId}/proposal` });
       } catch (error) {
         if (!(error instanceof StateControlPlaneError && error.code === "IMMUTABLE_VIOLATION")) throw error;
       }

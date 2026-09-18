@@ -98,13 +98,24 @@ async function submitDecision(fixture, stepId, outcome = "accept") {
   );
 }
 
+async function submitKeywordProposal(fixture) {
+  const state = fixture.runtime.state(fixture.sessionId);
+  const refs = state.resultsByStepId["07a-prepare-keyword-handoff"].refs;
+  return submitFile(fixture, "07b-receive-keyword-proposal", "candidate_proposal.json", {
+    schema_version: 1,
+    request_id: refs.candidateRequestId,
+    input_fingerprint: refs.candidateInputFingerprint,
+    actions: [],
+  });
+}
+
 async function disposeLocalFixture(fixture) {
   fixture.workspace.registry.close();
   fixture.db.close();
   await rm(fixture.root, { recursive: true, force: true });
 }
 
-test("[V3-E2E01][V3-HF05] local v3 runtime completes review, deployment event, and record flow", async () => {
+test("[V3-E2E01][V3-HF05][V3-DE02][V3-DE05][V3-DE06][V3-DE07] local v3 runtime completes review, deployment event, and record flow", async () => {
   const fixture = await localFixture();
   try {
     await submitFile(fixture, "00-receive-update-artifact", "comment-batch.json", []);
@@ -112,7 +123,7 @@ test("[V3-E2E01][V3-HF05] local v3 runtime completes review, deployment event, a
     const worksetId = stateAfterEvidence.resultsByStepId["03a-prepare-classification-handoff"].refs.worksetId;
     await submitFile(fixture, "03b-receive-classification-response", "response.json", { workset_id: worksetId, decisions: {} });
     await submitDecision(fixture, "05-review-classification");
-    await submitFile(fixture, "07b-receive-keyword-proposal", "candidate_proposal.json", { schema_version: 1, request_id: "candidate", input_fingerprint: "candidate-input", actions: [] });
+    await submitKeywordProposal(fixture);
     await submitDecision(fixture, "09-review-keyword-selection");
     await submitDecision(fixture, "13-review-production-promotion");
 
@@ -148,7 +159,7 @@ test("[V3-E2E01][V3-HF05] local v3 runtime completes review, deployment event, a
   }
 });
 
-test("[V3-E2E02] Human reject at Classification, Keyword, and Promotion prevents downstream execution", async () => {
+test("[V3-E2E02][V3-AU01][V3-RL05] Human reject at Classification, Keyword, and Promotion prevents downstream execution", async () => {
   const classification = await localFixture("v3-e2e-reject-classification", "update-v3-reject-classification");
   try {
     await submitFile(classification, "00-receive-update-artifact", "comment-batch.json", []);
@@ -169,7 +180,7 @@ test("[V3-E2E02] Human reject at Classification, Keyword, and Promotion prevents
     const worksetId = keyword.runtime.state(keyword.sessionId).resultsByStepId["03a-prepare-classification-handoff"].refs.worksetId;
     await submitFile(keyword, "03b-receive-classification-response", "response.json", { workset_id: worksetId, decisions: {} });
     await submitDecision(keyword, "05-review-classification");
-    await submitFile(keyword, "07b-receive-keyword-proposal", "candidate_proposal.json", { schema_version: 1, request_id: "candidate", input_fingerprint: "candidate-input", actions: [] });
+    await submitKeywordProposal(keyword);
     await submitDecision(keyword, "09-review-keyword-selection", "reject");
     const state = keyword.runtime.state(keyword.sessionId);
     assert.equal(state.session.state, "completed");
@@ -185,7 +196,7 @@ test("[V3-E2E02] Human reject at Classification, Keyword, and Promotion prevents
     const worksetId = promotion.runtime.state(promotion.sessionId).resultsByStepId["03a-prepare-classification-handoff"].refs.worksetId;
     await submitFile(promotion, "03b-receive-classification-response", "response.json", { workset_id: worksetId, decisions: {} });
     await submitDecision(promotion, "05-review-classification");
-    await submitFile(promotion, "07b-receive-keyword-proposal", "candidate_proposal.json", { schema_version: 1, request_id: "candidate", input_fingerprint: "candidate-input", actions: [] });
+    await submitKeywordProposal(promotion);
     await submitDecision(promotion, "09-review-keyword-selection");
     await submitDecision(promotion, "13-review-production-promotion", "reject");
     const state = promotion.runtime.state(promotion.sessionId);
@@ -197,7 +208,7 @@ test("[V3-E2E02] Human reject at Classification, Keyword, and Promotion prevents
   }
 });
 
-test("[V3-E2E03] Accepted Promotion Decision is retained while a concurrent head advance supersedes the stale commit", async () => {
+test("[V3-E2E03][V3-DEP07][V3-RL08][V3-DE11] Accepted Promotion Decision is retained while a concurrent head advance supersedes the stale commit", async () => {
   const db = await openCommentDatabase(":memory:", { stateControlPlane: true });
   const controlPlane = new StateControlPlane(db);
   seedV3State(controlPlane);
@@ -248,7 +259,7 @@ test("[V3-E2E03] Accepted Promotion Decision is retained while a concurrent head
   db.close();
 });
 
-test("[V3-E2E04] Newer Promotion prevents older deployment authority from committing and stale queued requests make no external call", async () => {
+test("[V3-E2E04][V3-DE01][V3-DE10][V3-DE11][V3-DE12] Newer Promotion prevents older deployment authority from committing and stale queued requests make no external call", async () => {
   const db = await openCommentDatabase(":memory:", { stateControlPlane: true });
   const controlPlane = new StateControlPlane(db);
   seedV3State(controlPlane);
@@ -324,7 +335,7 @@ test("[V3-E2E04] Newer Promotion prevents older deployment authority from commit
   db.close();
 });
 
-test("[V3-DE03][V3-DE09][V3-DE10] deployment queue claims one external call and receipt-first delivery", async () => {
+test("[V3-SV02][V3-DE03][V3-DE04][V3-DE05][V3-DE08][V3-DE09][V3-DE10] deployment queue claims one external call and receipt-first delivery", async () => {
   const db = await openCommentDatabase(":memory:", { stateControlPlane: true });
   const controlPlane = new StateControlPlane(db);
   const promotion = seed(controlPlane, STREAM_KEYS.promotion, "promotion-1", { target: "production", releaseId: "release-1" });
@@ -333,6 +344,8 @@ test("[V3-DE03][V3-DE09][V3-DE10] deployment queue claims one external call and 
   let maxActive = 0;
   const adapter = {
     async ensureDeployment() {
+      controlPlane.db.exec("BEGIN IMMEDIATE");
+      controlPlane.db.exec("ROLLBACK");
       active += 1;
       maxActive = Math.max(maxActive, active);
       await new Promise((resolve) => setTimeout(resolve, 5));

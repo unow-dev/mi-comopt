@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import test from "node:test";
 import { openCommentDatabase } from "../src/database/comment-database.js";
 import { StateControlPlane } from "../src/state/control-plane.js";
@@ -10,7 +11,7 @@ import { validateAndHashDefinition } from "work-orchestrator";
 import { validateCommentDataUpdateOutcomeSchema, validateHumanArtifactSubmissionResultSchema } from "../src/workflow/v3/contracts.js";
 import { externalEventCommandId } from "../src/application/v3/deployment-services.js";
 import { assertV3CutoverPreconditions, advanceV3Cutover } from "../src/migration/v3-cutover.js";
-import { ReleaseApplicationServiceV3 } from "../src/application/v3/release-services.js";
+import { PromotionApplicationServiceV3, ReleaseApplicationServiceV3 } from "../src/application/v3/release-services.js";
 import { MemoryReleaseArtifactStore } from "../src/release/artifact-store.js";
 
 async function makeControlPlane() {
@@ -23,12 +24,14 @@ function genesis(controlPlane, stream, versionId, state) {
   return controlPlane.createGenesis({ streamId, versionId, payload: { schema_version: 1, state } });
 }
 
-test("v3 definition is side-by-side and provider canonical hash matches", () => {
+test("[V3-S01][V3-S05][V3-RV01][V3-RV04][V3-RV06] v3 definition is side-by-side and provider canonical hash matches", () => {
   const local = validateV3Definition(buildCommentDataUpdateDefinitionV3());
   const provider = validateAndHashDefinition(local);
   assert.equal(local.revision, 3);
   assert.equal(provider.definitionHash, local.definitionHash);
   assert.equal(local.definitionHash, "9598f503ba9a8e8753e0b1d9d1e4af2f1a80a4d10b718aba5ab250840438a726");
+  assert.match(JSON.stringify(local), /"optional":true/);
+  assert.match(JSON.stringify(local), /"source":"task"/);
 });
 
 test("[V3-CUT06] a conflicting immutable target revision is skipped and never overwritten", () => {
@@ -45,7 +48,7 @@ test("[V3-CUT06] a conflicting immutable target revision is skipped and never ov
   assert.deepEqual(registered, []);
 });
 
-test("v3 WorkStepResult and terminal outcomes reject authoritative extras", () => {
+test("[V3-RS01][V3-RS02][V3-HF10] v3 WorkStepResult and terminal outcomes reject authoritative extras", () => {
   assert.deepEqual(validateV3WorkStepResult({ stepId: "03-update-classification", routingOutcome: "review_required", result: { stateResult: "review_required", refs: { assessmentId: "a", proposalId: "p" } } }), { stateResult: "review_required", refs: { assessmentId: "a", proposalId: "p" } });
   assert.throws(() => validateV3WorkStepResult({ stepId: "03-update-classification", routingOutcome: "review_required", result: { stateResult: "review_required", refs: { assessmentId: "a", proposalId: "p", decisionId: "unexpected" } } }), /WORK_STEP_RESULT_INVALID/);
   assert.deepEqual(validateCommentDataUpdateOutcomeSchema({ terminalStatus: "superseded", conflictAt: "promotion" }), { terminalStatus: "superseded", conflictAt: "promotion" });
@@ -53,13 +56,13 @@ test("v3 WorkStepResult and terminal outcomes reject authoritative extras", () =
   assert.deepEqual(validateHumanArtifactSubmissionResultSchema({ executionId: "e", artifact: { artifactVersionId: "a", blobHash: "a".repeat(64), logicalPath: "response.json", size: 1 } }).executionId, "e");
 });
 
-test("v3 operation identity/hash omit retry and transport metadata", () => {
+test("[V3-SV01] v3 operation identity/hash omit retry and transport metadata", () => {
   const first = serviceRequestHashV3({ b: 2, a: 1, operationId: "ignored", executionId: "e1", runtime: { runId: "r1" } });
   const second = serviceRequestHashV3({ a: 1, b: 2, operationId: "other", executionId: "e2", runtime: { runId: "r2" } });
   assert.equal(first, second);
 });
 
-test("v3 state bootstrap is additive and application idempotency uses session/step", async () => {
+test("[V3-AU02][V3-SV02] v3 state bootstrap is additive and application idempotency uses session/step", async () => {
   const { db, controlPlane } = await makeControlPlane();
   const tables = db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name LIKE 'v3_%' ORDER BY name").all().map((row) => row.name);
   assert.deepEqual(tables, ["v3_cutover_control", "v3_cutover_events", "v3_deployment_event_outbox", "v3_deployment_requests", "v3_deployment_target_sequences", "v3_release_artifacts", "v3_release_bundles"]);
@@ -72,7 +75,7 @@ test("v3 state bootstrap is additive and application idempotency uses session/st
   db.close();
 });
 
-test("release identity uses exact pins and materialization is deterministic", async () => {
+test("[V3-AU03][V3-RL01][V3-RL02][V3-RL03][V3-RL04][V3-RL06][V3-RL07] release identity uses exact pins and materialization is deterministic", async () => {
   const { db, controlPlane } = await makeControlPlane();
   for (const [stream, id] of [[STREAM_KEYS.corpus, "corpus"], [STREAM_KEYS.classification, "classification"], [STREAM_KEYS.keywordSelection, "keyword"], [STREAM_KEYS.projectionDefinition, "projection"]]) genesis(controlPlane, stream, id, {});
   for (const [stream, id, kind] of [[STREAM_KEYS.corpusPolicy, "corpus-policy", "corpus"], [STREAM_KEYS.classificationPolicy, "classification-policy", "classification"], [STREAM_KEYS.keywordPolicy, "keyword-policy", "keyword-selection"], [STREAM_KEYS.accountPolicy, "account-policy", "account-candidate"]]) genesis(controlPlane, stream, id, { policy_kind: kind });
@@ -82,6 +85,14 @@ test("release identity uses exact pins and materialization is deterministic", as
   const materialized = service.materialize(createV3OperationContext({ sessionId: "release-session", stepId: "12-materialize-release", permissions: ["release:build", "artifact:write"] }), { releaseId: build.refs.releaseId });
   assert.equal(materialized.stateResult, "materialized");
   assert.equal(db.prepare("SELECT COUNT(*) AS count FROM v3_release_bundles").get().count, 1);
+  const promotionService = new PromotionApplicationServiceV3(controlPlane);
+  const promotionProposal = promotionService.propose(createV3OperationContext({ sessionId: "release-promotion", stepId: "13-propose-production-promotion" }), { releaseId: build.refs.releaseId, promotionStream: "production" });
+  const proposal = controlPlane.readProposal(promotionProposal.refs.proposalId);
+  assert.equal(proposal.assessmentRefs.target, "production");
+  assert.equal(proposal.assessmentRefs.reviewedRelease.releaseId, build.refs.releaseId);
+  assert.deepEqual(proposal.assessmentRefs.reviewedRelease.materialization.artifacts, [{ logicalPath: "release.json", blobHash: createHash("sha256").update("stable").digest("hex"), size: 6 }]);
+  const accepted = promotionService.finalize(createV3OperationContext({ sessionId: "release-promotion", stepId: "14-finalize-production-promotion" }), { proposalId: promotionProposal.refs.proposalId, releaseId: build.refs.releaseId, transitionPolicyVersionId: "promotion-policy", review: { outcome: "accept", actor: { actorId: "reviewer", actorType: "human" } } });
+  assert.equal(accepted.refs.releaseId, build.refs.releaseId);
   db.close();
 });
 

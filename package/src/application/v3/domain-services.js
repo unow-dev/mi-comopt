@@ -16,6 +16,7 @@ import {
   typedCorpusHandler,
 } from "../services.js";
 import { buildResponseSchema as buildThreeClassResponseSchema, PROTOCOL_VERSION } from "../../three-class-workset/protocol.js";
+import { contentSha256 } from "../../processing/keyword-candidates/candidate-workflow.js";
 import { v3StepResult } from "./result.js";
 import { runV3Idempotent } from "./context.js";
 
@@ -47,6 +48,34 @@ function assertExpectedHead(controlPlane, streamRecord, expectedHeadVersionId) {
 }
 
 function dependenciesEqual(left, right) { return canonicalJson(left ?? []) === canonicalJson(right ?? []); }
+
+function assertExactKeys(value, expected, label) {
+  if (!value || typeof value !== "object" || Array.isArray(value) || JSON.stringify(Object.keys(value).sort()) !== JSON.stringify(expected.slice().sort())) {
+    throw stateError("HANDOFF_IDENTITY_MISMATCH", `${label} has an invalid field set`);
+  }
+}
+
+function validateClassificationHandoffInput(request) {
+  const response = request.response;
+  if (response === undefined || response === null) return;
+  assertExactKeys(response, ["decisions", "workset_id"], "classification response");
+  if (typeof response.workset_id !== "string" || response.workset_id.length === 0) throw stateError("HANDOFF_IDENTITY_MISMATCH", "classification response workset_id is required");
+  const expected = request.handoffPreparation?.refs?.worksetId;
+  if (expected !== undefined && response.workset_id !== expected) throw stateError("HANDOFF_IDENTITY_MISMATCH", "classification response workset_id does not match the prepared workset");
+}
+
+function validateKeywordHandoffInput(request) {
+  const proposal = request.proposal;
+  if (proposal === undefined || proposal === null) return;
+  assertExactKeys(proposal, ["actions", "input_fingerprint", "request_id", "schema_version"], "keyword proposal");
+  if (proposal.schema_version !== 1 || typeof proposal.request_id !== "string" || proposal.request_id.length === 0 || !/^sha256:[0-9a-f]{64}$/.test(proposal.input_fingerprint)) {
+    throw stateError("HANDOFF_IDENTITY_MISMATCH", "keyword proposal identity fields are invalid");
+  }
+  if (!Array.isArray(proposal.actions)) throw stateError("HANDOFF_IDENTITY_MISMATCH", "keyword proposal actions must be an array");
+  const preparation = request.handoffPreparation?.refs;
+  if (preparation?.candidateRequestId !== undefined && proposal.request_id !== preparation.candidateRequestId) throw stateError("HANDOFF_IDENTITY_MISMATCH", "keyword proposal request_id does not match the prepared request");
+  if (preparation?.candidateInputFingerprint !== undefined && proposal.input_fingerprint !== preparation.candidateInputFingerprint) throw stateError("HANDOFF_IDENTITY_MISMATCH", "keyword proposal input_fingerprint does not match the prepared request");
+}
 
 function policyAllowsAutoCommit(policy, request) {
   if (request.autoCommit === false || request.requiresReview === true) return false;
@@ -248,6 +277,10 @@ class ReviewableV3Service {
     requireContext(ctx, ["state:read", "state:propose"]);
     const run = () => {
       const target = stream(this.controlPlane, this.streamKey);
+      versionInStream(this.controlPlane, request.corpusVersionId, STREAM_KEYS.corpus, "corpusVersionId", { nullable: false });
+      if (this.resultRef === "keywordSelection") versionInStream(this.controlPlane, request.classificationVersionId, STREAM_KEYS.classification, "classificationVersionId", { nullable: false });
+      if (this.resultRef === "classification") validateClassificationHandoffInput(request);
+      if (this.resultRef === "keywordSelection") validateKeywordHandoffInput(request);
       const priorId = request[`${this.resultRef}VersionId`] ?? request.priorVersionId ?? null;
       const prior = versionInStream(this.controlPlane, priorId, this.streamKey, `${this.resultRef}VersionId`);
       const policyField = this.policyKind === "keyword-selection" ? "keywordPolicyVersionId" : `${this.policyKind}PolicyVersionId`;
@@ -259,7 +292,7 @@ class ReviewableV3Service {
         { role: "corpus", versionId: request.corpusVersionId },
         ...(this.resultRef === "keywordSelection" ? [{ role: "classification", versionId: request.classificationVersionId }] : []),
         { role: "policy", versionId: policy.versionId },
-      ].filter((item) => item.versionId !== undefined && item.versionId !== null);
+      ];
       const inputFingerprint = semanticSha256({ corpusVersionId: request.corpusVersionId, classificationVersionId: request.classificationVersionId ?? null, policyVersionId: policy.versionId, priorVersionId: priorId, state });
       this.controlPlane.recordAssessment({ assessmentId, streamId: target.stream_id, inputFingerprint, payload: { schema_version: 1, state }, operationId: `${ctx.operationId}/assessment` });
       const semanticHash = semanticSha256(state);
@@ -268,7 +301,10 @@ class ReviewableV3Service {
       if (samePayload && sameDependencies) return v3StepResult({ stepId: ctx.stepId, routingOutcome: "continue", stateResult: "unchanged", refs: { assessmentId, [this.resultRef + "VersionId"]: prior.versionId } });
       const proposalId = deterministicId("proposal", `${ctx.operationId}:${this.domain}`);
       try {
-        this.controlPlane.createProposal({ proposalId, streamId: target.stream_id, expectedHeadVersionId: priorId, proposedSemanticSha256: semanticHash, payload: { schema_version: 1, state }, dependencies, assessmentRefs: { assessmentId }, operationId: `${ctx.operationId}/proposal` });
+        const metadata = this.resultRef === "classification"
+          ? (request.handoffPreparation?.details?.contextFingerprint ? { handoffContextFingerprint: request.handoffPreparation.details.contextFingerprint } : {})
+          : (request.handoffPreparation?.refs?.candidateInputFingerprint ? { candidateInputFingerprint: request.handoffPreparation.refs.candidateInputFingerprint } : {});
+        this.controlPlane.createProposal({ proposalId, streamId: target.stream_id, expectedHeadVersionId: priorId, proposedSemanticSha256: semanticHash, payload: { schema_version: 1, state, ...metadata }, dependencies, assessmentRefs: { assessmentId }, operationId: `${ctx.operationId}/proposal` });
       } catch (error) {
         if (error instanceof StateControlPlaneError && error.code === "HEAD_CONFLICT") return routeConflict(ctx.stepId, this.domain);
         throw error;
@@ -328,10 +364,10 @@ export class KeywordHandoffService extends HandoffBase {
       versionInStream(this.controlPlane, request.classificationVersionId, STREAM_KEYS.classification, "classificationVersionId", { nullable: false });
       const policy = readExactPolicyVersion(this.controlPlane, request.keywordPolicyVersionId, "keyword-selection");
       const prior = versionInStream(this.controlPlane, request.keywordSelectionVersionId, STREAM_KEYS.keywordSelection, "keywordSelectionVersionId");
-      const candidateInputFingerprint = semanticSha256({ corpusVersionId: request.corpusVersionId, classificationVersionId: request.classificationVersionId, keywordSelectionVersionId: request.keywordSelectionVersionId ?? null, keywordPolicyVersionId: policy.versionId, candidateInput: request.candidateInput ?? null });
+      const candidateInputFingerprint = contentSha256({ corpusVersionId: request.corpusVersionId, classificationVersionId: request.classificationVersionId, keywordSelectionVersionId: request.keywordSelectionVersionId ?? null, keywordPolicyVersionId: policy.versionId, candidateInput: request.candidateInput ?? null });
       if (prior && prior.payload?.candidateInputFingerprint === candidateInputFingerprint) return v3StepResult({ stepId: ctx.stepId, routingOutcome: "reuse", stateResult: "reused", refs: { keywordSelectionVersionId: prior.versionId } });
       const candidateRequestId = request.candidateRequestId ?? deterministicId("candidate-request", `${ctx.operationId}:${candidateInputFingerprint}`);
-      const bytes = request.handoffBytes ?? Buffer.from(canonicalJson({ requestId: candidateRequestId, inputFingerprint: candidateInputFingerprint }), "utf8");
+      const bytes = request.handoffBytes ?? Buffer.from(canonicalJson({ schema_version: 1, request_id: candidateRequestId, input_fingerprint: candidateInputFingerprint }), "utf8");
       const artifact = this.writeArtifact({ id: candidateRequestId, logicalPath: "keyword-candidate-handoff.zip", content: bytes, metadata: { candidateRequestId, candidateInputFingerprint } });
       return v3StepResult({ stepId: ctx.stepId, routingOutcome: "handoff_required", stateResult: "created", refs: { candidateRequestId, candidateInputFingerprint }, details: { artifact } });
     };

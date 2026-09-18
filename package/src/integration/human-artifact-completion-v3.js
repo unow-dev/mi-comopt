@@ -24,7 +24,8 @@ function validateClassificationResponse(value) {
 }
 
 function validateKeywordProposal(value) {
-  if (!value || typeof value !== "object" || Array.isArray(value) || !Array.isArray(value.actions)) throw stateError("ARTIFACT_INVALID", "candidate_proposal.json must contain an actions array");
+  if (!value || typeof value !== "object" || Array.isArray(value) || JSON.stringify(Object.keys(value).sort()) !== JSON.stringify(["actions", "input_fingerprint", "request_id", "schema_version"])) throw stateError("ARTIFACT_INVALID", "candidate_proposal.json must contain exactly schema_version, request_id, input_fingerprint, and actions");
+  if (value.schema_version !== 1 || typeof value.request_id !== "string" || value.request_id.length === 0 || typeof value.input_fingerprint !== "string" || !/^sha256:[0-9a-f]{64}$/.test(value.input_fingerprint) || !Array.isArray(value.actions)) throw stateError("ARTIFACT_INVALID", "candidate proposal identity fields are invalid");
   for (const action of value.actions) if (!action || typeof action !== "object" || typeof action.action !== "string") throw stateError("ARTIFACT_INVALID", "candidate proposal action is invalid");
   return value;
 }
@@ -70,4 +71,3 @@ export async function completeValidatedHumanArtifact({ runtime, registry, artifa
 }
 
 export { EXPECTED_FILES, validateClassificationResponse, validateKeywordProposal };
-
