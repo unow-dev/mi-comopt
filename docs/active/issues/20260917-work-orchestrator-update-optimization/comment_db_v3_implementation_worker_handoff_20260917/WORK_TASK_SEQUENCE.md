@@ -17,8 +17,8 @@ Comment DB / Work Orchestrator v3を、正本の契約、v2互換性、依存関
 - [x] 9. Deployment・runtime統合の範囲で、AIエージェントが、加算的なDB migration、target-local sequence、FIFO single-flight、receipt-first outbox、provider event reconciliation、local/Temporal runtimeおよびfull E2Eを整備する。
 - [x] 10. 検証と証跡閉鎖の範囲で、AIエージェントまたはCIが、79件の必須verification ID、全85要件のcoverage、v2回帰・hash、local/Temporal parityおよび4件のfull E2Eに合格する証跡を候補commitへ記録する。
 - [x] 11. 本番切替判断の範囲で、人間が、全検証結果、provider互換性、v2 hash凍結、切替手順および失敗時のfix-forward方針を確認し、cutover実施を承認する。
-- [ ] 12. 本番cutoverの範囲で、AIエージェントが、v2新規開始の凍結、非終端v2 sessionのdrain、legacy authorityの無効化、v3開始の有効化およびcontrolled smokeを順序どおり実行し、失敗時は新規v3開始を凍結してfix-forwardする。
-- [ ] 13. 作業結果の範囲で、AIエージェントが、実施内容、検証結果、implementation evidence、切替結果、残存する運用上の注意点および必要なimmutable revision更新を記録する。
+- [x] 12. 本番cutoverの範囲で、AIエージェントが、v2新規開始の凍結、非終端v2 sessionのdrain、legacy authorityの無効化、v3開始の有効化およびcontrolled smokeを順序どおり実行し、失敗時は新規v3開始を凍結してfix-forwardする。
+- [x] 13. 作業結果の範囲で、AIエージェントが、実施内容、検証結果、implementation evidence、切替結果、残存する運用上の注意点および必要なimmutable revision更新を記録する。
 
 ## Work Notes
 
@@ -40,3 +40,7 @@ Comment DB / Work Orchestrator v3を、正本の契約、v2互換性、依存関
 - 2026-09-19のread-only preflightでは、対象DBに `v3_cutover_control` と `v3_cutover_events` が存在せず、`workflow_start_policies` とproduction session inventoryも確認できなかった。既存の `state_cutovers` 3系統は検証済みだが、いずれも `legacy_writer_enabled=1` のため、このDBをproduction cutover対象としてmutateしていない。
 - 2026-09-19に一時staging control plane（`/tmp/comment-db-v3-staging.nOd9Ez`）を作成し、Comment DB、Work Orchestrator registry、start policyを分離して構成した。registry上の `comment-data-update@2` / `@3` hashは凍結値・候補値と一致し、非終端v2 Sessionは0件だった。stagingでは `v2_open -> v2_frozen -> v2_drained -> legacy_disabled -> v3_enabled -> smoke_verified` の証跡を確認し、controlled smoke session `staging-v3-controlled-smoke-20260919-retry` はcompleted、Deployment verificationはverified、recordはcommittedとなった。ただしstaging実行であり、本番cutover完了とは扱わない。
 - Temporal Test Environmentと既存テストの干渉を避けるため、consumerのtest scriptは `--test-concurrency=1` で実行する。
+- ユーザー指定のproduction authority DBを `/home/uya/Workspace/tiktok-filter-keywords/var/comment-history.sqlite3` と確定し、初回mutation前のSHA-256 `4589aa93f3001f9f19b6f18de11f8ace2d3a6eaef85cadc312bc66c41c802660` と、fix-forward前のバックアップSHA-256 `a146e7fbbc64b40d3b4ca7dab642f10d8a4c7083a0dfbbb1dab73e7fbdc1cd9d` を保存した。production registry/start policyは `var/work-orchestrator-production` に作成し、v2/v3 Definition hashを凍結値・候補値に一致させた。
+- productionでは `v2_open -> v2_frozen -> v2_drained -> legacy_disabled -> v3_enabled` を実行し、最初のcontrolled smokeで `INVALID_REVIEW_OUTCOME` を検出したため、runbookどおり `v3_frozen`、新規v3開始停止、legacy再有効化なしで固定した。Domainの自動確定結果再利用修正をconsumer commit `d1fc7da`、optional input binding修正をprovider commit `3a6359f` として実装し、Definition revision 3のimmutable hashは変更していない。
+- fix-forward後のproduction controlled smoke `production-v3-controlled-smoke-20260919-fix-forward-final` はcompleted、outcomeはdeployed、releaseは `release-v3_d8425ff73a1135c15e0deefc6d2a0e74`、deployment requestはsucceeded、external event outboxはdelivered、deployment recordはcommittedとなった。cutover controlは `smoke_verified`、legacy writer無効、v2新規開始無効、v3新規開始有効、非終端v2 session 0件である。
+- controlled smokeのdeployment境界はこのworkspaceで利用可能な `MemoryDeploymentAdapter` であり、実外部production deployment adapterの接続確認ではない。実運用では同じreceipt/event/verification契約を満たすproduction adapterと、作成済みstart policyの配布・監視を引き継ぐ。

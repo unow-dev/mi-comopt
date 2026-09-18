@@ -10,18 +10,38 @@
     "startingCommit": "3a9fea5",
     "baselineCommitMessage": "chore: establish comment db v3 implementation baseline"
   },
-  "implementationCommit": "dff344ab94a4be6e9fb2723040b90b9fde31f856",
+  "implementationCommit": "d1fc7da7cbc9f2dd286e17a8ca1cd7aed24932d1",
   "providerBaseline": {
     "repository": "local:/home/uya/Workspace/work-orchestrator",
     "commit": "976aa2f4b8ac68b0f72aeb4b1e35c96a71900bcb",
     "status": "pinned_before_PR1-A",
-    "implementationCommit": "567c34e32634ebe1f0916d36e3a5662fbd6b638e",
-    "workingTree": "clean after provider compatibility commit"
+    "implementationCommit": "3a6359fbdb44c3d2189ba63ce0215b07b4b2aadc",
+    "workingTree": "clean after optional input binding compatibility fix"
   },
   "targetRevision": {
     "resolvedRevision": 3,
     "canonicalDefinitionHash": "9598f503ba9a8e8753e0b1d9d1e4af2f1a80a4d10b718aba5ab250840438a726",
     "registryEvidence": "consumer v3 definition and provider validateAndHashDefinition agree; v2 registry slots remain unchanged"
+  },
+  "productionCutover": {
+    "authorityDatabase": "var/comment-history.sqlite3",
+    "workOrchestratorRegistry": "var/work-orchestrator-production/.work-orchestrator/registry.sqlite",
+    "finalState": "smoke_verified",
+    "legacyWriterEnabled": false,
+    "v2StartsEnabled": false,
+    "v3StartsEnabled": true,
+    "nonterminalV2Sessions": 0,
+    "smokeSessionId": "production-v3-controlled-smoke-20260919-fix-forward-final",
+    "releaseId": "release-v3_d8425ff73a1135c15e0deefc6d2a0e74",
+    "deploymentRequestId": "deployment-request-v3_617e2b924753dc7f75249906f530969f",
+    "deploymentStatus": "succeeded",
+    "deploymentEventDisposition": "delivered",
+    "deploymentAdapter": "MemoryDeploymentAdapter controlled local smoke boundary",
+    "failureAndFixForward": {
+      "failureRef": "production-v3-controlled-smoke-20260919:INVALID_REVIEW_OUTCOME",
+      "fixForwardRef": "production-v3-fix-20260919:classification-finalize-optional-review",
+      "definitionRevisionChanged": false
+    }
   },
   "allowedStatuses": [
     "not_started",
