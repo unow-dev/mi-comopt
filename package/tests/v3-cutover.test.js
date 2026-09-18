@@ -44,7 +44,7 @@ function smokeEvidence() {
   };
 }
 
-test("persistent cutover control enforces the ordered no-overlap sequence and pins normal starts", async () => {
+test("[V3-CUT01][V3-CUT02][V3-CUT03][V3-CUT04] persistent cutover control enforces the ordered no-overlap sequence and pins normal starts", async () => {
   const { db, controlPlane } = await fixture();
   try {
     assert.equal(resolveCommentDataUpdateRevision(controlPlane), 2);
@@ -100,7 +100,7 @@ test("cutover initialization fails closed when mandatory evidence is not complet
   }
 });
 
-test("smoke failure freezes v3 and remains fix-forward only", async () => {
+test("[V3-CUT05][V3-CUT07] smoke failure freezes v3 and remains fix-forward only", async () => {
   const { db, controlPlane } = await fixture();
   try {
     initialize(controlPlane, "cutover-init-failure");

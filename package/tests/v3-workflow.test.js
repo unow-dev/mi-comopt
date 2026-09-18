@@ -5,7 +5,7 @@ import { StateControlPlane } from "../src/state/control-plane.js";
 import { STREAM_KEYS } from "../src/application/services.js";
 import { createV3OperationContext, runV3Idempotent, serviceRequestHashV3 } from "../src/application/v3/context.js";
 import { validateV3WorkStepResult } from "../src/workflow/v3/result-rules.js";
-import { buildCommentDataUpdateDefinitionV3, validateV3Definition } from "../src/workflow/v3/definitions.js";
+import { buildCommentDataUpdateDefinitionV3, resolveTargetRevision, validateV3Definition } from "../src/workflow/v3/definitions.js";
 import { validateAndHashDefinition } from "work-orchestrator";
 import { validateCommentDataUpdateOutcomeSchema, validateHumanArtifactSubmissionResultSchema } from "../src/workflow/v3/contracts.js";
 import { externalEventCommandId } from "../src/application/v3/deployment-services.js";
@@ -29,6 +29,20 @@ test("v3 definition is side-by-side and provider canonical hash matches", () => 
   assert.equal(local.revision, 3);
   assert.equal(provider.definitionHash, local.definitionHash);
   assert.equal(local.definitionHash, "9598f503ba9a8e8753e0b1d9d1e4af2f1a80a4d10b718aba5ab250840438a726");
+});
+
+test("[V3-CUT06] a conflicting immutable target revision is skipped and never overwritten", () => {
+  const candidate = validateV3Definition(buildCommentDataUpdateDefinitionV3({ revision: 3 }));
+  const registered = [];
+  const registry = {
+    getDefinition(workDefinitionId, revision) {
+      if (workDefinitionId === "comment-data-update" && revision === 3) return { definitionHash: `${candidate.definitionHash.slice(0, -1)}0` };
+      return undefined;
+    },
+    registerDefinition(definition) { registered.push(definition); },
+  };
+  assert.equal(resolveTargetRevision({ registry, publicApi: { validateAndHashDefinition } }), 4);
+  assert.deepEqual(registered, []);
 });
 
 test("v3 WorkStepResult and terminal outcomes reject authoritative extras", () => {
