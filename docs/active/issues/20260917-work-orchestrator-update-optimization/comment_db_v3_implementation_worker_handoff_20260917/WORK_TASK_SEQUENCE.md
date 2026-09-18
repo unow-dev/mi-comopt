@@ -32,5 +32,6 @@ Comment DB / Work Orchestrator v3を、正本の契約、v2互換性、依存関
 - ベースラインコミットは consumer 側 `3a9fea5`（`chore: establish comment db v3 implementation baseline`）。
 - provider 実体は `/home/uya/Workspace/work-orchestrator`、着手時の基準 commit は `976aa2f4b8ac68b0f72aeb4b1e35c96a71900bcb`、互換性実装 commit は `567c34e32634ebe1f0916d36e3a5662fbd6b638e`。provider の互換性変更は consumer の業務意味論と分離して実装した。
 - consumer/provider の v3 定義 hash は revision 3 / `9598f503ba9a8e8753e0b1d9d1e4af2f1a80a4d10b718aba5ab250840438a726` で一致した。v2 の凍結 hash は `implementation-evidence-v3.json` と integrity test で再確認する。
-- consumer の基盤実装コミットは `6247cf7a6116f9c649faad17cbadefd0b54aae84`、deployment/runtime統合コミットは `e4b4724dd40fcba44af96af6112522938f927bd0`。
-- local V3 E2E、deployment queueのsingle-flight/receipt-first、Temporal runtime開始ファサードを実装・検証した。Temporal上のfull E2E、E2E02〜04、79 verification IDの閉鎖、ならびに人間承認を要するPR5 cutoverは未実施のため、タスク9〜13は未完了のまま維持する。
+- consumer の基盤実装コミットは `6247cf7a6116f9c649faad17cbadefd0b54aae84`、deployment/runtime統合コミットは `e4b4724dd40fcba44af96af6112522938f927bd0`、Temporal/race検証コミットは `04f6b01cc613f2318b735c09baee6b8e7e37e592`。
+- local V3 E2E、Temporal上のE2E01、Human reject境界、Promotion stale-head、deployment queueのsingle-flight/FIFO/receipt-firstおよびE2E04相当を実装・検証した。Temporal上のE2E02〜04、79 verification IDの閉鎖、ならびに人間承認を要するPR5 cutoverは未実施のため、タスク9〜13は未完了のまま維持する。
+- Temporal Test Environmentと既存テストの干渉を避けるため、consumerのtest scriptは `--test-concurrency=1` で実行する。

@@ -10,7 +10,7 @@
     "startingCommit": "3a9fea5",
     "baselineCommitMessage": "chore: establish comment db v3 implementation baseline"
   },
-  "implementationCommit": "e4b4724dd40fcba44af96af6112522938f927bd0",
+  "implementationCommit": "04f6b01cc613f2318b735c09baee6b8e7e37e592",
   "providerBaseline": {
     "repository": "local:/home/uya/Workspace/work-orchestrator",
     "commit": "976aa2f4b8ac68b0f72aeb4b1e35c96a71900bcb",
@@ -802,8 +802,8 @@
       "verificationIds": [
         "V3-DE05"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
+      "status": "implemented",
+      "implementationRefs": ["package/src/application/v3/deployment-services.js"],
       "verificationEvidence": [],
       "notes": null
     },
@@ -814,8 +814,8 @@
       "verificationIds": [
         "V3-DE06"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
+      "status": "implemented",
+      "implementationRefs": ["package/src/application/v3/deployment-services.js"],
       "verificationEvidence": [],
       "notes": null
     },
@@ -826,8 +826,8 @@
       "verificationIds": [
         "V3-DE07"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
+      "status": "implemented",
+      "implementationRefs": ["package/src/application/v3/deployment-services.js", "package/src/integration/v3-runtime.js"],
       "verificationEvidence": [],
       "notes": null
     },
@@ -838,8 +838,8 @@
       "verificationIds": [
         "V3-DE08"
       ],
-      "status": "not_started",
-      "implementationRefs": [],
+      "status": "implemented",
+      "implementationRefs": ["package/src/integration/v3-runtime.js", "/home/uya/Workspace/work-orchestrator/package/src/temporal-workflow.ts"],
       "verificationEvidence": [],
       "notes": null
     },
