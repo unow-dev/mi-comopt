@@ -30,10 +30,16 @@ export class DeploymentQueueServiceV3 {
     if (typeof request.promotionVersionId !== "string" || request.promotionVersionId.length === 0 || typeof request.releaseId !== "string" || request.releaseId.length === 0) throw stateError("VERSION_REQUIRED", "promotionVersionId and releaseId are required");
     const target = "production";
     const existing = this.controlPlane.db.prepare("SELECT * FROM v3_deployment_requests WHERE accepted_promotion_decision_id = ? AND target = ?").get(request.acceptedPromotionDecisionId, target);
-    if (existing) return existing;
+    if (existing) {
+      if (existing.promotion_version_id !== request.promotionVersionId || existing.release_id !== request.releaseId) throw stateError("DEPLOYMENT_REQUEST_CONFLICT", "accepted Promotion Decision is bound to a different deployment intent");
+      return existing;
+    }
     return this.controlPlane._transaction((db) => {
       const raced = db.prepare("SELECT * FROM v3_deployment_requests WHERE accepted_promotion_decision_id = ? AND target = ?").get(request.acceptedPromotionDecisionId, target);
-      if (raced) return raced;
+      if (raced) {
+        if (raced.promotion_version_id !== request.promotionVersionId || raced.release_id !== request.releaseId) throw stateError("DEPLOYMENT_REQUEST_CONFLICT", "accepted Promotion Decision is bound to a different deployment intent");
+        return raced;
+      }
       const sequenceRow = db.prepare("SELECT next_sequence FROM v3_deployment_target_sequences WHERE target = ?").get(target);
       const sequence = sequenceRow ? Number(sequenceRow.next_sequence) : 1;
       if (sequenceRow) db.prepare("UPDATE v3_deployment_target_sequences SET next_sequence = ? WHERE target = ?").run(sequence + 1, target);
@@ -46,9 +52,12 @@ export class DeploymentQueueServiceV3 {
   }
 
   async trigger(ctx, request = {}) {
-    const promotion = promotionHead(this.controlPlane);
-    if ((promotion.head?.versionId ?? null) !== request.promotionVersionId || promotion.head?.payload?.state?.releaseId !== request.releaseId) return v3StepResult({ stepId: ctx.stepId, routingOutcome: "superseded", stateResult: "conflict", refs: { releaseId: request.releaseId, promotionVersionId: request.promotionVersionId } });
     const row = this.ensureIntent(ctx, { ...request, workflowSessionId: request.workflowSessionId ?? ctx.workflowSessionId });
+    const promotion = promotionHead(this.controlPlane);
+    if ((promotion.head?.versionId ?? null) !== request.promotionVersionId || promotion.head?.payload?.state?.releaseId !== request.releaseId) {
+      if (row.status === "queued") this.controlPlane._transaction((db) => db.prepare("UPDATE v3_deployment_requests SET status = 'superseded', updated_at = ? WHERE deployment_request_id = ? AND status = 'queued'").run(this.controlPlane.now(), row.deployment_request_id));
+      return v3StepResult({ stepId: ctx.stepId, routingOutcome: "superseded", stateResult: "conflict", refs: { releaseId: request.releaseId, promotionVersionId: request.promotionVersionId } });
+    }
     if (row.status === "superseded") return v3StepResult({ stepId: ctx.stepId, routingOutcome: "superseded", stateResult: "conflict", refs: { releaseId: row.release_id, promotionVersionId: row.promotion_version_id } });
     if (["succeeded"].includes(row.status)) return v3StepResult({ stepId: ctx.stepId, routingOutcome: "verify", stateResult: "already_deployed", refs: { deploymentRequestId: row.deployment_request_id, releaseId: row.release_id, promotionVersionId: row.promotion_version_id } });
 

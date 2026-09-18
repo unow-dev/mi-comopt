@@ -1,12 +1,17 @@
 import assert from "node:assert/strict";
+import { realpathSync } from "node:fs";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import test from "node:test";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { ArtifactStore, initWorkspace, openWorkspace, Registry } from "work-orchestrator";
+import { fileURLToPath } from "node:url";
+import { ArtifactStore, claimTaskUpdate, completeHumanTaskUpdate, initWorkspace, openWorkspace, receiveExternalEventUpdate, Registry, runtimeStateQuery, workSessionWorkflow } from "work-orchestrator";
+import { TestWorkflowEnvironment } from "@temporalio/testing";
+import { Worker } from "@temporalio/worker";
 import { completeValidatedHumanArtifact } from "../src/integration/human-artifact-completion-v3.js";
 import { createV3LocalRuntime, createV3TemporalRuntime, prepareV3SessionInput, startCommentDataUpdateV3 } from "../src/integration/v3-runtime.js";
 import { DeploymentQueueServiceV3 } from "../src/application/v3/deployment-services.js";
+import { PromotionApplicationServiceV3 } from "../src/application/v3/release-services.js";
 import { createV3OperationContext } from "../src/application/v3/context.js";
 import { STREAM_KEYS } from "../src/application/services.js";
 import { openCommentDatabase } from "../src/database/comment-database.js";
@@ -33,7 +38,7 @@ function seedV3State(controlPlane) {
   ]) seed(controlPlane, stream, versionId, { policy_kind: policyKind, auto_commit: true });
 }
 
-async function localFixture() {
+async function localFixture(sessionId = "v3-e2e-session", updateRequestId = "update-v3-e2e") {
   const root = await mkdtemp(path.join(tmpdir(), "comment-db-v3-runtime-"));
   initWorkspace(root);
   const workspace = openWorkspace(root);
@@ -44,7 +49,7 @@ async function localFixture() {
   const input = prepareV3SessionInput({
     controlPlane,
     input: {
-      updateRequestId: "update-v3-e2e",
+      updateRequestId,
       pinned: {
         initialCorpusVersionId: "corpus-0",
         classificationVersionId: "classification-0",
@@ -58,8 +63,8 @@ async function localFixture() {
       target: { promotionStream: "production", deploymentTarget: "production" },
     },
   });
-  await startCommentDataUpdateV3({ runtime: environment.runtime, controlPlane, sessionId: "v3-e2e-session", input });
-  return { ...environment, controlPlane, db, root, workspace };
+  await startCommentDataUpdateV3({ runtime: environment.runtime, controlPlane, sessionId, input });
+  return { ...environment, controlPlane, db, root, workspace, sessionId };
 }
 
 function task(runtime, sessionId, stepId) {
@@ -70,14 +75,14 @@ function task(runtime, sessionId, stepId) {
 
 async function submitFile(fixture, stepId, logicalPath, value) {
   const actor = { actorId: "reviewer", actorType: "human" };
-  const current = task(fixture.runtime, "v3-e2e-session", stepId);
-  const execution = await fixture.runtime.openHumanTaskWorkspace("v3-e2e-session", current.taskId, actor);
+  const current = task(fixture.runtime, fixture.sessionId, stepId);
+  const execution = await fixture.runtime.openHumanTaskWorkspace(fixture.sessionId, current.taskId, actor);
   await writeFile(path.join(execution.outputPath, logicalPath), JSON.stringify(value));
   return completeValidatedHumanArtifact({
     runtime: fixture.runtime,
     registry: fixture.workspace.registry,
     artifactStore: fixture.workspace.artifactStore,
-    sessionId: "v3-e2e-session",
+    sessionId: fixture.sessionId,
     taskId: current.taskId,
     actor,
     executionId: execution.executionId,
@@ -86,10 +91,69 @@ async function submitFile(fixture, stepId, logicalPath, value) {
   });
 }
 
+function findTemporalTask(state, stepId) {
+  return Object.values(state?.tasks ?? {}).find((item) => item.stepId === stepId && item.state === "ready");
+}
+
+function temporalTask(state, stepId) {
+  const task = findTemporalTask(state, stepId);
+  assert.ok(task, `Temporal task ${stepId} must be ready`);
+  return task;
+}
+
+async function waitForTemporalState(handle, predicate, attempts = 120) {
+  for (let index = 0; index < attempts; index += 1) {
+    const state = await handle.query(runtimeStateQuery);
+    if (state && predicate(state)) return state;
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
+  return handle.query(runtimeStateQuery);
+}
+
+async function completeTemporalDecision(handle, stepId, outcome = "accept") {
+  const state = await waitForTemporalState(handle, (candidate) => findTemporalTask(candidate, stepId));
+  const task = temporalTask(state, stepId);
+  return handle.executeUpdate(completeHumanTaskUpdate, {
+    args: [{ taskId: task.taskId, actor: { actorId: "reviewer", actorType: "human" }, outcome, result: { rationale: "v3 temporal integration test" }, commandId: `temporal-decision:${stepId}` }],
+  });
+}
+
+async function completeTemporalArtifact({ handle, artifactStore, stepId, logicalPath, value }) {
+  const state = await waitForTemporalState(handle, (candidate) => findTemporalTask(candidate, stepId));
+  const task = temporalTask(state, stepId);
+  const actor = { actorId: "reviewer", actorType: "human" };
+  const claimed = await handle.executeUpdate(claimTaskUpdate, {
+    args: [{ taskId: task.taskId, actor, commandId: `temporal-claim:${stepId}` }],
+  });
+  const content = Buffer.from(JSON.stringify(value));
+  const staged = artifactStore.stage(content, "application/json");
+  artifactStore.finalize(staged);
+  const artifact = {
+    artifactVersionId: `${claimed.executionId}:artifact:0`,
+    artifactKind: "file",
+    blobHash: staged.blobHash,
+    size: staged.size,
+    mediaType: "application/json",
+    logicalPath,
+    origin: { kind: "execution", executionId: claimed.executionId },
+    immutable: true,
+  };
+  return handle.executeUpdate(completeHumanTaskUpdate, {
+    args: [{
+      taskId: task.taskId,
+      actor,
+      outcome: "submitted",
+      result: { executionId: claimed.executionId, artifact: { artifactVersionId: artifact.artifactVersionId, blobHash: artifact.blobHash, logicalPath, size: artifact.size } },
+      artifactVersions: [artifact],
+      commandId: `temporal-submit:${stepId}`,
+    }],
+  });
+}
+
 async function submitDecision(fixture, stepId, outcome = "accept") {
-  const current = task(fixture.runtime, "v3-e2e-session", stepId);
+  const current = task(fixture.runtime, fixture.sessionId, stepId);
   return fixture.runtime.completeHumanTaskWithInput(
-    "v3-e2e-session",
+    fixture.sessionId,
     current.taskId,
     { actorId: "reviewer", actorType: "human" },
     { outcome, result: { rationale: "v3 integration test" } },
@@ -97,11 +161,17 @@ async function submitDecision(fixture, stepId, outcome = "accept") {
   );
 }
 
+async function disposeLocalFixture(fixture) {
+  fixture.workspace.registry.close();
+  fixture.db.close();
+  await rm(fixture.root, { recursive: true, force: true });
+}
+
 test("[V3-E2E01][V3-HF05] local v3 runtime completes review, deployment event, and record flow", async () => {
   const fixture = await localFixture();
   try {
     await submitFile(fixture, "00-receive-update-artifact", "comment-batch.json", []);
-    const stateAfterEvidence = fixture.runtime.state("v3-e2e-session");
+    const stateAfterEvidence = fixture.runtime.state(fixture.sessionId);
     const worksetId = stateAfterEvidence.resultsByStepId["03a-prepare-classification-handoff"].refs.worksetId;
     await submitFile(fixture, "03b-receive-classification-response", "response.json", { workset_id: worksetId, decisions: {} });
     await submitDecision(fixture, "05-review-classification");
@@ -109,7 +179,7 @@ test("[V3-E2E01][V3-HF05] local v3 runtime completes review, deployment event, a
     await submitDecision(fixture, "09-review-keyword-selection");
     await submitDecision(fixture, "13-review-production-promotion");
 
-    const beforeEvent = fixture.runtime.state("v3-e2e-session");
+    const beforeEvent = fixture.runtime.state(fixture.sessionId);
     const trigger = beforeEvent.resultsByStepId["16-trigger-deployment"];
     assert.equal(trigger.stateResult, "triggered");
     const requestId = trigger.refs.deploymentRequestId;
@@ -132,14 +202,269 @@ test("[V3-E2E01][V3-HF05] local v3 runtime completes review, deployment event, a
       { registry: fixture.workspace.registry },
     );
     assert.deepEqual(delivery, { delivered: ["v3-e2e-deployment-event"], deadLettered: [] });
-    const completed = fixture.runtime.state("v3-e2e-session");
+    const completed = fixture.runtime.state(fixture.sessionId);
     assert.equal(completed.session.state, "completed");
     assert.equal(completed.resultsByStepId["19-verify-deployment"].stateResult, "verified");
     assert.equal(completed.resultsByStepId["20-record-deployment-state"].stateResult, "committed");
   } finally {
-    fixture.workspace.registry.close();
-    fixture.db.close();
-    await rm(fixture.root, { recursive: true, force: true });
+    await disposeLocalFixture(fixture);
+  }
+});
+
+test("[V3-E2E02] Human reject at Classification, Keyword, and Promotion prevents downstream execution", async () => {
+  const classification = await localFixture("v3-e2e-reject-classification", "update-v3-reject-classification");
+  try {
+    await submitFile(classification, "00-receive-update-artifact", "comment-batch.json", []);
+    const worksetId = classification.runtime.state(classification.sessionId).resultsByStepId["03a-prepare-classification-handoff"].refs.worksetId;
+    await submitFile(classification, "03b-receive-classification-response", "response.json", { workset_id: worksetId, decisions: {} });
+    await submitDecision(classification, "05-review-classification", "reject");
+    const state = classification.runtime.state(classification.sessionId);
+    assert.equal(state.session.state, "completed");
+    assert.equal(state.resultsByStepId["06-finalize-classification"].stateResult, "rejected");
+    assert.equal(state.resultsByStepId["07a-prepare-keyword-handoff"], undefined);
+  } finally {
+    await disposeLocalFixture(classification);
+  }
+
+  const keyword = await localFixture("v3-e2e-reject-keyword", "update-v3-reject-keyword");
+  try {
+    await submitFile(keyword, "00-receive-update-artifact", "comment-batch.json", []);
+    const worksetId = keyword.runtime.state(keyword.sessionId).resultsByStepId["03a-prepare-classification-handoff"].refs.worksetId;
+    await submitFile(keyword, "03b-receive-classification-response", "response.json", { workset_id: worksetId, decisions: {} });
+    await submitDecision(keyword, "05-review-classification");
+    await submitFile(keyword, "07b-receive-keyword-proposal", "candidate_proposal.json", { schema_version: 1, request_id: "candidate", input_fingerprint: "candidate-input", actions: [] });
+    await submitDecision(keyword, "09-review-keyword-selection", "reject");
+    const state = keyword.runtime.state(keyword.sessionId);
+    assert.equal(state.session.state, "completed");
+    assert.equal(state.resultsByStepId["10-finalize-keyword-selection"].stateResult, "rejected");
+    assert.equal(state.resultsByStepId["11-build-release-bundle"], undefined);
+  } finally {
+    await disposeLocalFixture(keyword);
+  }
+
+  const promotion = await localFixture("v3-e2e-reject-promotion", "update-v3-reject-promotion");
+  try {
+    await submitFile(promotion, "00-receive-update-artifact", "comment-batch.json", []);
+    const worksetId = promotion.runtime.state(promotion.sessionId).resultsByStepId["03a-prepare-classification-handoff"].refs.worksetId;
+    await submitFile(promotion, "03b-receive-classification-response", "response.json", { workset_id: worksetId, decisions: {} });
+    await submitDecision(promotion, "05-review-classification");
+    await submitFile(promotion, "07b-receive-keyword-proposal", "candidate_proposal.json", { schema_version: 1, request_id: "candidate", input_fingerprint: "candidate-input", actions: [] });
+    await submitDecision(promotion, "09-review-keyword-selection");
+    await submitDecision(promotion, "13-review-production-promotion", "reject");
+    const state = promotion.runtime.state(promotion.sessionId);
+    assert.equal(state.session.state, "completed");
+    assert.equal(state.resultsByStepId["14-finalize-production-promotion"].stateResult, "rejected");
+    assert.equal(state.resultsByStepId["16-trigger-deployment"], undefined);
+  } finally {
+    await disposeLocalFixture(promotion);
+  }
+});
+
+test("[V3-E2E03] Accepted Promotion Decision is retained while a concurrent head advance supersedes the stale commit", async () => {
+  const db = await openCommentDatabase(":memory:", { stateControlPlane: true });
+  const controlPlane = new StateControlPlane(db);
+  seedV3State(controlPlane);
+  db.prepare("INSERT INTO v3_release_bundles (release_id, release_key, pins_json, projection_definition_version_id, bundle_sha256, bundle_json, materialization_json, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)").run(
+    "release-e2e3",
+    "release-key-e2e3",
+    JSON.stringify({}),
+    "projection-0",
+    "0".repeat(64),
+    JSON.stringify({ schema_version: 1 }),
+    JSON.stringify({ projectionDefinitionVersionId: "projection-0", artifacts: [] }),
+    controlPlane.now(),
+  );
+  const service = new PromotionApplicationServiceV3(controlPlane);
+  const proposed = service.propose(
+    createV3OperationContext({ sessionId: "v3-e2e03", stepId: "13-propose-production-promotion", permissions: ["state:read", "state:propose"] }),
+    { releaseId: "release-e2e3", promotionStream: "production" },
+  );
+  const promotionStream = controlPlane.ensureStream(STREAM_KEYS.promotion);
+  const competingState = { target: "production", releaseId: "release-e2e3-newer" };
+  const competingProposal = controlPlane.createProposal({
+    proposalId: "proposal-e2e3-competing",
+    streamId: promotionStream.stream_id,
+    expectedHeadVersionId: null,
+    proposedSemanticSha256: semanticSha256(competingState),
+    payload: { schema_version: 1, state: competingState },
+    operationId: "operation-e2e3-competing-proposal",
+  });
+  const competingDecision = controlPlane.createDecision({
+    decisionId: "decision-e2e3-competing",
+    proposalId: competingProposal.proposalId,
+    outcome: "accepted",
+    authorityKind: "system_policy",
+    authorityRef: "test",
+    transitionPolicyVersionId: "promotion-policy-0",
+    operationId: "operation-e2e3-competing-decision",
+  });
+  const competingCommit = controlPlane.commitProposal({ proposalId: competingProposal.proposalId, decisionId: competingDecision.decisionId, operationId: "operation-e2e3-competing-commit" });
+
+  const result = service.finalize(
+    createV3OperationContext({ sessionId: "v3-e2e03", stepId: "14-finalize-production-promotion", permissions: ["state:read", "state:commit"] }),
+    { proposalId: proposed.refs.proposalId, releaseId: "release-e2e3", review: { outcome: "accept", actor: { actorId: "reviewer", actorType: "human" }, rationale: "stale-head test" } },
+  );
+  assert.equal(result.stateResult, "conflict");
+  assert.equal(controlPlane.readDecision(proposed.refs.proposalId).outcome, "accepted");
+  assert.equal(controlPlane.resolveHead(promotionStream.stream_id).versionId, competingCommit.versionId);
+  assert.equal(db.prepare("SELECT COUNT(*) AS count FROM state_transitions WHERE decision_id = ?").get(controlPlane.readDecision(proposed.refs.proposalId).decisionId).count, 0);
+  db.close();
+});
+
+test("[V3-E2E04] Newer Promotion prevents older deployment authority from committing and stale queued requests make no external call", async () => {
+  const db = await openCommentDatabase(":memory:", { stateControlPlane: true });
+  const controlPlane = new StateControlPlane(db);
+  seedV3State(controlPlane);
+  const firstPromotion = seed(controlPlane, STREAM_KEYS.promotion, "promotion-e2e4-1", { target: "production", releaseId: "release-e2e4-1" });
+  const promotionStream = controlPlane.ensureStream(STREAM_KEYS.promotion);
+  const newerState = { target: "production", releaseId: "release-e2e4-2" };
+  const newerProposal = controlPlane.createProposal({
+    proposalId: "proposal-e2e4-newer",
+    streamId: promotionStream.stream_id,
+    expectedHeadVersionId: firstPromotion.versionId,
+    proposedSemanticSha256: semanticSha256(newerState),
+    payload: { schema_version: 1, state: newerState },
+    operationId: "operation-e2e4-newer-proposal",
+  });
+  const newerDecision = controlPlane.createDecision({
+    decisionId: "decision-e2e4-newer",
+    proposalId: newerProposal.proposalId,
+    outcome: "accepted",
+    authorityKind: "system_policy",
+    authorityRef: "test",
+    transitionPolicyVersionId: "promotion-policy-0",
+    operationId: "operation-e2e4-newer-decision",
+  });
+  const adapterCalls = [];
+  const completed = new Set();
+  const adapter = {
+    async ensureDeployment(request) {
+      adapterCalls.push(request.deploymentRequestId);
+      return { status: "requested", externalRunRef: `run-${request.deploymentRequestId}` };
+    },
+    async verifyDeployment(request) {
+      const verified = completed.has(request.deploymentRequestId);
+      return { verified, servedReleaseId: verified ? request.releaseId : null, verificationRef: verified ? `verification-${request.deploymentRequestId}` : null };
+    },
+  };
+  const service = new DeploymentQueueServiceV3(controlPlane, { adapter });
+  const oldRequest = { acceptedPromotionDecisionId: "decision-e2e4-old", promotionVersionId: firstPromotion.versionId, releaseId: "release-e2e4-1", target: "production" };
+  const oldContext = createV3OperationContext({ sessionId: "v3-e2e04-old", stepId: "16-trigger-deployment", permissions: ["state:read", "deployment:trigger"] });
+  const firstTrigger = await service.trigger(oldContext, oldRequest);
+  assert.equal(firstTrigger.stateResult, "triggered");
+  assert.equal(adapterCalls.length, 1);
+
+  const newerCommit = controlPlane.commitProposal({ proposalId: newerProposal.proposalId, decisionId: newerDecision.decisionId, operationId: "operation-e2e4-newer-commit" });
+  const newRequest = { acceptedPromotionDecisionId: "decision-e2e4-new", promotionVersionId: newerCommit.versionId, releaseId: "release-e2e4-2", target: "production" };
+  const newContext = createV3OperationContext({ sessionId: "v3-e2e04-new", stepId: "16-trigger-deployment", permissions: ["state:read", "deployment:trigger"] });
+  const waiting = await service.trigger(newContext, newRequest);
+  assert.equal(waiting.stateResult, "triggered");
+  assert.equal(adapterCalls.length, 1);
+
+  completed.add(firstTrigger.refs.deploymentRequestId);
+  service.receiveCompletedEvent({ eventId: "e2e4-old-completed", eventType: "deployment.completed", correlationKey: firstTrigger.refs.deploymentRequestId, payload: { deploymentRequestId: firstTrigger.refs.deploymentRequestId, target: "production", releaseId: "release-e2e4-1", status: "succeeded", externalRunRef: `run-${firstTrigger.refs.deploymentRequestId}` } });
+  const oldVerification = await service.verify(createV3OperationContext({ sessionId: "v3-e2e04-old", stepId: "19-verify-deployment", permissions: ["state:read", "deployment:verify"] }), { deploymentRequestId: firstTrigger.refs.deploymentRequestId, releaseId: "release-e2e4-1", promotionVersionId: firstPromotion.versionId });
+  assert.equal(oldVerification.stateResult, "conflict");
+  assert.equal(controlPlane.streamId(STREAM_KEYS.deployment.domain, STREAM_KEYS.deployment.streamKey), null);
+
+  const secondTrigger = await service.trigger(newContext, newRequest);
+  assert.equal(secondTrigger.stateResult, "triggered");
+  assert.equal(adapterCalls.length, 2);
+  completed.add(secondTrigger.refs.deploymentRequestId);
+  service.receiveCompletedEvent({ eventId: "e2e4-new-completed", eventType: "deployment.completed", correlationKey: secondTrigger.refs.deploymentRequestId, payload: { deploymentRequestId: secondTrigger.refs.deploymentRequestId, target: "production", releaseId: "release-e2e4-2", status: "succeeded", externalRunRef: `run-${secondTrigger.refs.deploymentRequestId}` } });
+  const verification = await service.verify(createV3OperationContext({ sessionId: "v3-e2e04-new", stepId: "19-verify-deployment", permissions: ["state:read", "deployment:verify"] }), { deploymentRequestId: secondTrigger.refs.deploymentRequestId, releaseId: "release-e2e4-2", promotionVersionId: newerCommit.versionId });
+  assert.equal(verification.stateResult, "verified");
+  const recorded = service.record(createV3OperationContext({ sessionId: "v3-e2e04-new", stepId: "20-record-deployment-state", permissions: ["state:read", "state:propose", "state:auto-decide", "state:commit"] }), { deploymentRequestId: secondTrigger.refs.deploymentRequestId, releaseId: "release-e2e4-2", promotionVersionId: newerCommit.versionId, verificationRef: verification.refs.verificationRef });
+  assert.equal(recorded.stateResult, "committed");
+  assert.equal(controlPlane.resolveHead(STREAM_KEYS.deployment).payload.state.deploymentRequestId, secondTrigger.refs.deploymentRequestId);
+
+  const staleRequest = { acceptedPromotionDecisionId: "decision-e2e4-stale", promotionVersionId: firstPromotion.versionId, releaseId: "release-e2e4-1", target: "production" };
+  service.ensureIntent(createV3OperationContext({ sessionId: "v3-e2e04-stale", stepId: "16-trigger-deployment" }), staleRequest);
+  const stale = await service.trigger(createV3OperationContext({ sessionId: "v3-e2e04-stale", stepId: "16-trigger-deployment", permissions: ["state:read", "deployment:trigger"] }), staleRequest);
+  assert.equal(stale.stateResult, "conflict");
+  assert.equal(adapterCalls.length, 2);
+  assert.equal(db.prepare("SELECT status FROM v3_deployment_requests WHERE accepted_promotion_decision_id = ?").get("decision-e2e4-stale").status, "superseded");
+  db.close();
+});
+
+test("[V3-E2E01][V3-HF05][V3-DE02] Temporal v3 runtime completes the same review, artifact, and deployment event flow", { timeout: 120_000 }, async () => {
+  const root = await mkdtemp(path.join(tmpdir(), "comment-db-v3-temporal-e2e-"));
+  const db = await openCommentDatabase(":memory:", { stateControlPlane: true });
+  const controlPlane = new StateControlPlane(db);
+  seedV3State(controlPlane);
+  const registry = new Registry(path.join(root, "registry.sqlite"));
+  const artifactStore = new ArtifactStore(path.join(root, "artifacts"));
+  const environment = await TestWorkflowEnvironment.createTimeSkipping();
+  const runtime = createV3TemporalRuntime({ controlPlane, registry, artifactStore });
+  const taskQueue = "comment-db-v3-temporal-e2e";
+  const worker = await Worker.create({
+    connection: environment.nativeConnection,
+    taskQueue,
+    workflowsPath: realpathSync(fileURLToPath(new URL("../../node_modules/work-orchestrator/dist/temporal-workflow.js", import.meta.url))),
+    activities: runtime.activities,
+  });
+  const workerRun = worker.run();
+  try {
+    const input = prepareV3SessionInput({
+      controlPlane,
+      input: {
+        updateRequestId: "update-v3-temporal-e2e",
+        pinned: {
+          initialCorpusVersionId: "corpus-0",
+          classificationVersionId: "classification-0",
+          keywordSelectionVersionId: "keyword-0",
+          corpusPolicyVersionId: "corpus-policy-0",
+          classificationPolicyVersionId: "classification-policy-0",
+          keywordPolicyVersionId: "keyword-policy-0",
+          accountPolicyVersionId: "account-policy-0",
+          projectionDefinitionVersionId: "projection-0",
+        },
+        target: { promotionStream: "production", deploymentTarget: "production" },
+      },
+    });
+    const handle = await environment.client.workflow.start(workSessionWorkflow, {
+      workflowId: "v3-temporal-e2e",
+      taskQueue,
+      args: [{ sessionId: "v3-temporal-e2e", workDefinitionId: "comment-data-update", revision: 3, input }],
+    });
+    await completeTemporalArtifact({ handle, artifactStore, stepId: "00-receive-update-artifact", logicalPath: "comment-batch.json", value: [] });
+    const afterClassificationHandoff = await waitForTemporalState(handle, (state) => findTemporalTask(state, "03b-receive-classification-response"));
+    const worksetId = afterClassificationHandoff.resultsByStepId["03a-prepare-classification-handoff"].refs.worksetId;
+    await completeTemporalArtifact({ handle, artifactStore, stepId: "03b-receive-classification-response", logicalPath: "response.json", value: { workset_id: worksetId, decisions: {} } });
+    await completeTemporalDecision(handle, "05-review-classification");
+    await completeTemporalArtifact({ handle, artifactStore, stepId: "07b-receive-keyword-proposal", logicalPath: "candidate_proposal.json", value: { schema_version: 1, request_id: "candidate", input_fingerprint: "candidate-input", actions: [] } });
+    await completeTemporalDecision(handle, "09-review-keyword-selection");
+    await completeTemporalDecision(handle, "13-review-production-promotion");
+
+    const beforeEvent = await waitForTemporalState(handle, (state) => state.resultsByStepId["16-trigger-deployment"]?.stateResult === "triggered");
+    const trigger = beforeEvent.resultsByStepId["16-trigger-deployment"];
+    const deployment = runtime.agentAdapter.taskHandlers.services.deployment;
+    const requestId = trigger.refs.deploymentRequestId;
+    deployment.adapter.complete(requestId, "succeeded");
+    const event = {
+      eventId: "v3-temporal-deployment-event",
+      eventType: "deployment.completed",
+      correlationKey: requestId,
+      payload: { deploymentRequestId: requestId, target: "production", releaseId: trigger.refs.releaseId, status: "succeeded", externalRunRef: "v3-temporal-external-run" },
+    };
+    deployment.receiveCompletedEvent(event);
+    const delivery = await deployment.deliverPendingEvents(
+      (sessionId, deliveredEvent, commandId) => handle.executeUpdate(receiveExternalEventUpdate, { args: [{ event: deliveredEvent, actor: { actorId: "provider", actorType: "external" }, commandId }] }),
+      { registry },
+    );
+    assert.deepEqual(delivery, { delivered: [event.eventId], deadLettered: [] });
+    const result = await handle.result();
+    assert.equal(result.state, "completed");
+    const completed = await handle.query(runtimeStateQuery);
+    assert.equal(completed.resultsByStepId["19-verify-deployment"].stateResult, "verified");
+    assert.equal(completed.resultsByStepId["20-record-deployment-state"].stateResult, "committed");
+  } finally {
+    await worker.shutdown();
+    await workerRun.catch(() => undefined);
+    await environment.teardown();
+    registry.close();
+    db.close();
+    await rm(root, { recursive: true, force: true });
   }
 });
 
