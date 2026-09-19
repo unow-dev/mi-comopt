@@ -74,11 +74,23 @@ readyになったartifact Taskは、必ず次の順で処理する。
       --step-id "$STEP_ID" \
       --actor "$ACTOR"
 
-00-receive-update-artifactのexpectedFileはcomment-batch.json、07b-receive-keyword-proposalのexpectedFileはcandidate_proposal.jsonである。proposalはJSON objectだけを保存し、説明文やMarkdown code fenceを付けない。
+対象TaskとexpectedFileは次のとおり。
+
+- 00-receive-update-artifact: comment-batch.json
+- 03b-receive-classification-response: response.json
+- 07b-receive-keyword-proposal: candidate_proposal.json
+
+03bでは前段のartifactContextに表示されたworksetIdと、response.jsonのworkset_idが一致することを確認する。response.jsonはworkset_idとdecisionsだけを持つJSON objectにする。07bではrequestIdとinputFingerprintを確認し、candidate_proposal.jsonはJSON objectだけを保存する。いずれも説明文やMarkdown code fenceを付けない。
 
 ## 4. Decision型Human Task
 
 Promotionなどはartifactを配置せず、open後にoutcomeとrationaleを指定して完了する。
+
+Decision Taskのstep IDは次の3つである。tasksに表示されたready Taskを対象にする。
+
+- 05-review-classification
+- 09-review-keyword-selection
+- 13-review-production-promotion
 
     STEP_ID=13-review-production-promotion
     npm run comment-data-update:v3 -- human-task open \
@@ -95,7 +107,7 @@ Promotionなどはartifactを配置せず、open後にoutcomeとrationaleを指�
       --outcome accept \
       --rationale "production review approved"
 
-acceptは、対象Release、CI結果および公開経路を確認してから実行する。中止する場合はoutcome rejectと理由を指定する。
+acceptは、対象Release、CI結果および公開経路を確認し、6章のPages同時実行gateを通してから実行する。中止する場合はoutcome rejectと理由を指定する。
 
 ## 5. interventionの手動retry
 
@@ -120,7 +132,21 @@ retry exhausted後にmanual_retryを含むinterventionがreadyになった場合
 
 ## 6. Pages公開の確認
 
-Promotion accept後、operatorがworkflow dispatchを行う。対象runがworkflow_dispatchで、deployment request IDを含むことを確認する。
+Promotion accept前に、Pages workflowのqueuedまたはin_progress runがないことを確認する。workflowは同一groupを直列化するため、残存runがある場合は完了を待ってからPromotionをacceptする。
+
+    for STATUS in queued in_progress; do
+      COUNT=$(gh run list --repo unow-dev/mi-comopt \
+        --workflow deploy-pages.yml \
+        --status "$STATUS" \
+        --json databaseId \
+        --jq 'length')
+      test "$COUNT" -eq 0 || {
+        echo "Pages workflow is still $STATUS: $COUNT run(s)" >&2
+        exit 1
+      }
+    done
+
+確認後にPromotionをacceptし、operatorがworkflow dispatchを行う。対象runがworkflow_dispatchで、deployment request IDを含むことを確認する。
 
     gh run list --repo unow-dev/mi-comopt \
       --workflow deploy-pages.yml --limit 5 \
@@ -143,6 +169,10 @@ Promotion accept後、operatorがworkflow dispatchを行う。対象runがworkfl
     npm run comment-data-update:v3 -- tasks \
       --db "$DB" --workspace "$WO" \
       --session-id "$SESSION"
+    sqlite3 "$DB" \
+      ".headers on" \
+      ".mode column" \
+      "SELECT deployment_request_id, workflow_session_id, release_id, target, status, external_run_ref FROM v3_deployment_requests WHERE workflow_session_id = '$SESSION' ORDER BY created_at DESC;"
     npm --workspace package run cutover:v3 -- status --db "$DB"
 
 次をすべて確認して更新を完了とする。
