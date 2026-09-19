@@ -24,7 +24,7 @@ Comment DB / Work Orchestrator v3を、正本の契約、v2互換性、依存関
 - [x] 16. 専用entrypoint作業結果の範囲で、AIエージェントが、利用コマンド、制約および検証結果を記録する。
 - [x] 17. Human artifact運用情報の範囲で、AIエージェントが、前段結果に由来するworkset/request identityを専用entrypointのTask表示へ提示する。
 - [x] 18. 永続Release artifact運用の範囲で、AIエージェントが、プロセス再起動後も既存materializationを検証・再利用できるproduction operator構成を整備する。
-- [ ] 19. GitHub Pages deployment連携の範囲で、AIエージェントが、workflow dispatch、完了event配送および公開release identity検証をproduction operatorへ接続する。
+- [x] 19. GitHub Pages deployment連携の範囲で、AIエージェントが、workflow dispatch、完了event配送および公開release identity検証をproduction operatorへ接続する。
 
 ## Work Notes
 
@@ -59,3 +59,6 @@ Comment DB / Work Orchestrator v3を、正本の契約、v2互換性、依存関
 - operatorはWorkspace配下のFileReleaseArtifactStoreを使用し、既存の既定`release.json` materializationはDBのbundleと保存hashを照合してrehydrateする。対象release `release-v3_d8425ff73a1135c15e0deefc6d2a0e74` はread-only検証で再生成hashとDB hashが一致した。
 - GitHub Pages連携では、production operatorがActions workflow dispatchの入力として`deployment_request_id`、`release_id`、release bundle SHA-256を渡し、完了runを`deployment.completed`へ変換する。workflowはPages公開物に`comment-db-v3-deployment.json`を生成し、operatorは公開markerの同一identityを検証してからv3 deployment verificationへ進む。
 - GitHub Pagesの実workflowは`unow-dev/mi-comopt`の`.github/workflows/deploy-pages.yml`（workflow id `343090137`）であり、公開先は`https://unow-dev.github.io/mi-comopt/`。workflow変更がGitHub側へ反映されるまでは、現行production SessionのPromotion reviewをacceptしない。
+- GitHub Pages連携をconsumer commit `165ea83`から`3a66875`まで段階的に反映し、private provider checkout用の`WORK_ORCHESTRATOR_REPO_TOKEN` secret、provider build/link、workspace依存installおよびdeploy jobの公開後検証依存を構成した。最終push起点run `35442948209` はvalidate・Pages deploy・公開UI release検証まで成功した。
+- production Session `production-comment-data-update-20260918T232637Z-15719` のPromotion reviewを`production-reviewer`がacceptし、workflow_dispatch run `35443131060`（deployment request `deployment-request-v3_1f890e659af56ce584a1e5cab94bffd4`）がvalidate・Pages deploy・v3 marker検証まで成功した。operator syncで`deployment.completed`をDBへ配送し、Sessionは`completed`、deployment requestは`succeeded`となった。
+- 公開marker `https://unow-dev.github.io/mi-comopt/comment-db-v3-deployment.json` はtarget `production`、release `release-v3_d8425ff73a1135c15e0deefc6d2a0e74`、deployment requestおよびrelease bundle SHA-256がDB・workflow入力と一致した。
