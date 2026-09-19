@@ -110,6 +110,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Checkout pinned Work Orchestrator provider
+        uses: actions/checkout@v4
+        with:
+          repository: unow-dev/work-orchestrator
+          ref: 3a6359fbdb44c3d2189ba63ce0215b07b4b2aadc
+          path: work-orchestrator
+          token: ${{ secrets.WORK_ORCHESTRATOR_REPO_TOKEN }}
+
+      - name: Build Work Orchestrator provider
+        working-directory: work-orchestrator/package
+        run: npm ci && npm run build
+
+      - name: Link provider workspace dependency
+        run: ln -s "$GITHUB_WORKSPACE/work-orchestrator" "$GITHUB_WORKSPACE/../work-orchestrator"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Download build output
         uses: actions/download-artifact@v4
         with:
