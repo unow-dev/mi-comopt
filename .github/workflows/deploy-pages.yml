@@ -70,7 +70,7 @@ jobs:
         run: npm run verify:data
 
       - name: Verify UI release
-        run: npm --workspace package run verify:optimicom-ui-release -- --release docs/active/temp/optimicom-react-tailwind/public/optimicom-ui-release.json
+        run: npm --workspace package run verify:optimicom-ui-release -- --release ../docs/active/temp/optimicom-react-tailwind/public/optimicom-ui-release.json
 
       - name: Write v3 deployment identity
         if: github.event_name == 'workflow_dispatch'
@@ -134,7 +134,7 @@ jobs:
         run: >-
           npm --workspace package run verify:deployed-optimicom-ui-release --
           --url '${{ steps.deployment.outputs.page_url }}'
-          --expected docs/active/temp/optimicom-react-tailwind/public/optimicom-ui-release.json
+          --expected ../docs/active/temp/optimicom-react-tailwind/public/optimicom-ui-release.json
 
       - name: Verify deployed v3 identity
         if: github.event_name == 'workflow_dispatch'
