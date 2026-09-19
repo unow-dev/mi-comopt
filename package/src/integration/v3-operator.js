@@ -4,9 +4,11 @@ import { executionWorkspace, openWorkspace } from "work-orchestrator";
 import { completeValidatedHumanArtifact, EXPECTED_FILES } from "./human-artifact-completion-v3.js";
 import { createV3LocalRuntime, prepareV3SessionInput, startCommentDataUpdateV3 } from "./v3-runtime.js";
 import { MemoryDeploymentAdapter } from "../deployment/adapter.js";
+import { FileReleaseArtifactStore } from "../release/artifact-store.js";
 import { openCommentDatabase } from "../database/comment-database.js";
 import { StateControlPlane } from "../state/control-plane.js";
 import { stateError } from "../state/errors.js";
+import { canonicalJson, prefixedSha256 } from "../state/canonical.js";
 
 const WORK_DEFINITION_ID = "comment-data-update";
 const V3_REVISION = 3;
@@ -63,6 +65,29 @@ function taskSummary(task, state = undefined) {
   return summary;
 }
 
+function rehydrateReleaseArtifacts(controlPlane, releaseArtifactStore) {
+  const rows = controlPlane.db.prepare(
+    `SELECT b.release_id AS releaseId, b.bundle_json AS bundleJson,
+            a.logical_path AS logicalPath, a.blob_hash AS blobHash, a.byte_length AS byteLength
+       FROM v3_release_bundles AS b
+       JOIN v3_release_artifacts AS a ON a.release_id = b.release_id
+      WHERE b.materialization_json IS NOT NULL
+      ORDER BY b.release_id, a.logical_path`,
+  ).all();
+  for (const row of rows) {
+    const expectedSha256 = `sha256:${row.blobHash}`;
+    const existing = releaseArtifactStore.read({ releaseId: row.releaseId, artifactKey: row.logicalPath });
+    if (existing) {
+      if (prefixedSha256(existing) !== expectedSha256 || existing.length !== Number(row.byteLength)) throw stateError("ARTIFACT_STORE_INTEGRITY_ERROR", `persistent release artifact differs: ${row.releaseId}/${row.logicalPath}`);
+      continue;
+    }
+    if (row.logicalPath !== "release.json") throw stateError("ARTIFACT_STORE_REHYDRATION_FAILED", `cannot rehydrate release artifact without source bytes: ${row.releaseId}/${row.logicalPath}`);
+    const content = Buffer.from(canonicalJson(JSON.parse(row.bundleJson)));
+    if (prefixedSha256(content) !== expectedSha256 || content.length !== Number(row.byteLength)) throw stateError("ARTIFACT_STORE_REHYDRATION_FAILED", `rehydrated release artifact hash does not match authority: ${row.releaseId}/${row.logicalPath}`);
+    releaseArtifactStore.write({ releaseId: row.releaseId, artifactKey: row.logicalPath, content });
+  }
+}
+
 /**
  * Open the already-initialized production authorities. This function never
  * initializes a Workspace or creates a replacement database. The runtime uses
@@ -80,12 +105,15 @@ export async function openV3Operator({ dbPath, workspacePath, deploymentAdapter 
   try {
     workspace = openWorkspace(resolvedWorkspacePath);
     controlPlane = new StateControlPlane(db);
+    const releaseArtifactStore = new FileReleaseArtifactStore(path.join(workspace.root, ".work-orchestrator", "release-artifacts"));
+    rehydrateReleaseArtifacts(controlPlane, releaseArtifactStore);
     const environment = createV3LocalRuntime({
       controlPlane,
       registry: workspace.registry,
       artifactStore: workspace.artifactStore,
       workspace,
       deploymentAdapter,
+      releaseArtifactStore,
       revision: V3_REVISION,
     });
     let closed = false;

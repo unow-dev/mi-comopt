@@ -23,6 +23,7 @@ Comment DB / Work Orchestrator v3を、正本の契約、v2互換性、依存関
 - [x] 15. 専用entrypoint検証の範囲で、AIエージェントまたはCIが、永続Workspaceを跨ぐSession開始、Human artifact検証、Human review完了およびactor境界を確認する。
 - [x] 16. 専用entrypoint作業結果の範囲で、AIエージェントが、利用コマンド、制約および検証結果を記録する。
 - [x] 17. Human artifact運用情報の範囲で、AIエージェントが、前段結果に由来するworkset/request identityを専用entrypointのTask表示へ提示する。
+- [x] 18. 永続Release artifact運用の範囲で、AIエージェントが、プロセス再起動後も既存materializationを検証・再利用できるproduction operator構成を整備する。
 
 ## Work Notes
 
@@ -53,3 +54,5 @@ Comment DB / Work Orchestrator v3を、正本の契約、v2互換性、依存関
 - 専用operatorの永続Workspace跨ぎテストでartifact、Classification review、Keyword review、Promotion reviewおよびactor境界を確認した。consumer全体は173 tests passed、operator focused testsは2 tests passed、buildと`git diff --check`も成功した。
 - operator CLIはlocal persistent runtime向けであり、外部production deployment adapterを自動構成しない。deployment境界を通すには実adapterと`deployment.completed` event配送・verificationを別途構成する。
 - `tasks`のartifact Human Task表示に、Classificationの`worksetId`またはKeyword proposalの`requestId`・`inputFingerprint`を前段結果から提示するよう補強した。operatorがDBのruntime snapshotを直接参照せず、提示されたidentityでartifactを作成できる。
+- production Session `production-comment-data-update-20260918T232637Z-15719` のread-only診断で、`12-materialize-release` が `ARTIFACT_INTEGRITY_ERROR` を3回記録し、`RETRY_EXHAUSTED` interventionになっていることを確認した。原因はDBの既存materialization metadataに対して、operatorのプロセス内MemoryReleaseArtifactStoreが再起動後に空になることだった。
+- operatorはWorkspace配下のFileReleaseArtifactStoreを使用し、既存の既定`release.json` materializationはDBのbundleと保存hashを照合してrehydrateする。対象release `release-v3_d8425ff73a1135c15e0deefc6d2a0e74` はread-only検証で再生成hashとDB hashが一致した。
