@@ -41,7 +41,15 @@ npm run comment-data-update:v3 -- human-task complete \
 
 Decision型Human Taskは、`open`後に`--outcome accept|reject --rationale "..."`を付けて完了します。Classification responseとkeyword proposalのartifactも同じ`open`/ファイル配置/`complete`経路で、専用validatorがファイル名、件数、bytes、実行IDおよびArtifactVersion identityを検証します。`tasks`のartifact taskには、`response.json`の`workset_id`、または`candidate_proposal.json`の`request_id`・`input_fingerprint`に使う前段identityも表示されます。`sessions`で既存Sessionを一覧し、`human-task release`で同じactorのclaimを解放できます。
 
-このentrypointはtargetをproductionに固定します。Release artifactはproduction Workspace配下へ永続化し、既存の既定`release.json` materializationはauthority DBのhashを照合して必要時にrehydrateします。外部production deployment adapterはこのworkspaceに接続されていないため、deployment境界を実運用で通す場合は別途そのadapterとdeployment.completed event配送を構成してください。
+このentrypointはtargetをproductionに固定します。Release artifactはproduction Workspace配下へ永続化し、既存の既定`release.json` materializationはauthority DBのhashを照合して必要時にrehydrateします。production operatorの既定DeploymentAdapterはGitHub Pagesです。`.github/workflows/deploy-pages.yml`へworkflow dispatchし、Pages上の`comment-db-v3-deployment.json`が同じ`deployment_request_id`、`release_id`およびrelease bundle SHA-256を持つことを検証します。`tasks`または`sessions`を実行すると、完了したActions runを`deployment.completed`として正本DBへ取り込み、Work Orchestratorへ配送します。
+
+GitHub API認証はtoken値をコマンドラインへ書かず、実行シェルで一時的に設定します。既に`gh`へログイン済みなら次で取得できます。
+
+```bash
+export GITHUB_TOKEN="$(gh auth token)"
+```
+
+Pages URLは既定で`https://unow-dev.github.io/mi-comopt/`です。別のworkflow、refまたはURLを使う場合は`COMMENT_DATA_UPDATE_PAGES_WORKFLOW`、`COMMENT_DATA_UPDATE_PAGES_REF`、`COMMENT_DATA_UPDATE_PAGES_URL`を設定します。GitHub側へworkflow変更が反映される前にPromotion reviewをacceptしないでください。
 
 `candidate-workflow.mjs` は、handoff の契約に従うローカル決定処理を提供します。
 

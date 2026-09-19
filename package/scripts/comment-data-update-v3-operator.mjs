@@ -9,6 +9,7 @@ import {
   openV3Operator,
   releaseV3HumanTask,
   startV3Session,
+  syncV3DeploymentEvents,
 } from "../src/integration/v3-operator.js";
 
 const TOP_LEVEL_COMMANDS = new Set(["start", "sessions", "tasks", "human-task"]);
@@ -38,6 +39,7 @@ Decision task:
   human-task open の後、human-task complete に --outcome と --rationale を指定する。
 
 このentrypointはproduction target固定で、v3 application-service adapterを使用します。
+GitHub Pages workflow dispatch、deployment.completed event配送およびPages上のrelease marker検証までを行います。
 汎用 Work Orchestrator CLI の new は使用しません。`;
 }
 
@@ -108,6 +110,7 @@ async function main(argv) {
   let operator;
   try {
     operator = await openV3Operator({ dbPath: args.dbPath, workspacePath: args.workspacePath });
+    await syncV3DeploymentEvents(operator);
     let result;
     if (args.command === "start") {
       result = await startV3Session(operator, {

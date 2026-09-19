@@ -7,6 +7,7 @@ import { initWorkspace } from "work-orchestrator";
 import { openCommentDatabase } from "../src/database/comment-database.js";
 import { STREAM_KEYS } from "../src/application/services.js";
 import { StateControlPlane } from "../src/state/control-plane.js";
+import { MemoryDeploymentAdapter } from "../src/deployment/adapter.js";
 import {
   completeV3HumanTask,
   getV3Session,
@@ -59,7 +60,7 @@ test("v3 operator persists Session start, Human artifact open, and validated com
   const value = await fixture();
   let operator;
   try {
-    operator = await openV3Operator(value);
+    operator = await openV3Operator({ ...value, deploymentAdapter: new MemoryDeploymentAdapter() });
     const started = await startV3Session(operator, {
       sessionId: "operator-session-1",
       updateRequestId: "operator-update-1",
@@ -71,7 +72,7 @@ test("v3 operator persists Session start, Human artifact open, and validated com
     operator.close();
     operator = undefined;
 
-    operator = await openV3Operator(value);
+    operator = await openV3Operator({ ...value, deploymentAdapter: new MemoryDeploymentAdapter() });
     const opened = await openV3HumanTask(operator, {
       sessionId: started.sessionId,
       stepId: "00-receive-update-artifact",

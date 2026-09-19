@@ -3,7 +3,7 @@ import { existsSync } from "node:fs";
 import { executionWorkspace, openWorkspace } from "work-orchestrator";
 import { completeValidatedHumanArtifact, EXPECTED_FILES } from "./human-artifact-completion-v3.js";
 import { createV3LocalRuntime, prepareV3SessionInput, startCommentDataUpdateV3 } from "./v3-runtime.js";
-import { MemoryDeploymentAdapter } from "../deployment/adapter.js";
+import { GitHubPagesDeploymentAdapter } from "../deployment/github-pages-adapter.js";
 import { FileReleaseArtifactStore } from "../release/artifact-store.js";
 import { openCommentDatabase } from "../database/comment-database.js";
 import { StateControlPlane } from "../state/control-plane.js";
@@ -94,7 +94,7 @@ function rehydrateReleaseArtifacts(controlPlane, releaseArtifactStore) {
  * the v3 application-service adapter, while the provider Registry and
  * ArtifactStore remain the workflow authorities.
  */
-export async function openV3Operator({ dbPath, workspacePath, deploymentAdapter = new MemoryDeploymentAdapter() } = {}) {
+export async function openV3Operator({ dbPath, workspacePath, deploymentAdapter = undefined } = {}) {
   requiredString(dbPath, "dbPath");
   requiredString(workspacePath, "workspacePath");
   if (dbPath !== ":memory:" && !existsSync(path.resolve(dbPath))) throw stateError("AUTHORITY_NOT_FOUND", `production authority DB does not exist: ${dbPath}`);
@@ -107,18 +107,22 @@ export async function openV3Operator({ dbPath, workspacePath, deploymentAdapter 
     controlPlane = new StateControlPlane(db);
     const releaseArtifactStore = new FileReleaseArtifactStore(path.join(workspace.root, ".work-orchestrator", "release-artifacts"));
     rehydrateReleaseArtifacts(controlPlane, releaseArtifactStore);
+    const resolvedDeploymentAdapter = deploymentAdapter ?? new GitHubPagesDeploymentAdapter({
+      releaseBundleSha256: (releaseId) => controlPlane.db.prepare("SELECT bundle_sha256 FROM v3_release_bundles WHERE release_id = ?").get(releaseId)?.bundle_sha256,
+    });
     const environment = createV3LocalRuntime({
       controlPlane,
       registry: workspace.registry,
       artifactStore: workspace.artifactStore,
       workspace,
-      deploymentAdapter,
+      deploymentAdapter: resolvedDeploymentAdapter,
       releaseArtifactStore,
       revision: V3_REVISION,
     });
     let closed = false;
     return {
       ...environment,
+      deploymentAdapter: resolvedDeploymentAdapter,
       controlPlane,
       workspace,
       close() {
@@ -151,6 +155,39 @@ export function listV3Sessions(operator) {
         actionableHumanTasks: tasks.filter((task) => task.workerKind === "human" && ["ready", "active"].includes(task.state)).map((task) => taskSummary(task, state)),
       };
     });
+}
+
+/**
+ * Reconcile completed GitHub Actions runs before exposing operator state. The
+ * deployment service remains the authority for event validation, outbox
+ * deduplication, and delivery into the local Work Orchestrator runtime.
+ */
+export async function syncV3DeploymentEvents(operator) {
+  const adapter = operator?.deploymentAdapter;
+  const deployment = operator?.agentAdapter?.taskHandlers?.services?.deployment;
+  if (!adapter || typeof adapter.pollCompletedDeployments !== "function" || !deployment) return { polled: 0, received: [], delivered: [], deadLettered: [] };
+  const requests = operator.controlPlane.db.prepare(
+    `SELECT deployment_request_id, release_id, target, status
+       FROM v3_deployment_requests
+      WHERE status = 'active'
+      ORDER BY deployment_sequence, deployment_request_id`,
+  ).all();
+  if (requests.length === 0) return { polled: 0, received: [], delivered: [], deadLettered: [] };
+  const events = await adapter.pollCompletedDeployments(requests);
+  const received = [];
+  for (const event of events) {
+    received.push(deployment.receiveCompletedEvent(event));
+  }
+  const delivery = await deployment.deliverPendingEvents(
+    (sessionId, event, commandId) => operator.runtime.receiveExternalEvent(
+      sessionId,
+      event,
+      { actorId: "github-pages", actorType: "external" },
+      commandId,
+    ),
+    { registry: operator.workspace.registry },
+  );
+  return { polled: requests.length, received, delivered: delivery.delivered, deadLettered: delivery.deadLettered };
 }
 
 export function getV3Session(operator, sessionId) {

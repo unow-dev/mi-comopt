@@ -1,11 +1,26 @@
 name: Deploy React UI to GitHub Pages
 
+run-name: Deploy React UI to GitHub Pages / ${{ inputs.deployment_request_id || github.sha }}
+
 on:
   pull_request:
   push:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      deployment_request_id:
+        description: v3 deployment request identity
+        required: true
+        type: string
+      release_id:
+        description: v3 release identity
+        required: true
+        type: string
+      release_bundle_sha256:
+        description: v3 release bundle SHA-256 without the sha256 prefix
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -39,8 +54,21 @@ jobs:
       - name: Verify account data
         run: npm run verify:data
 
-      - name: Verify joint release
-        run: npm run verify:release
+      - name: Verify UI release
+        run: npm --workspace package run verify:optimicom-ui-release -- --release docs/active/temp/optimicom-react-tailwind/public/optimicom-ui-release.json
+
+      - name: Write v3 deployment identity
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          DEPLOYMENT_REQUEST_ID: ${{ inputs.deployment_request_id }}
+          RELEASE_ID: ${{ inputs.release_id }}
+          RELEASE_BUNDLE_SHA256: ${{ inputs.release_bundle_sha256 }}
+        run: >-
+          node package/scripts/write-pages-deployment-marker.mjs
+          --output-root docs/active/temp/optimicom-react-tailwind/public
+          --deployment-request-id "$DEPLOYMENT_REQUEST_ID"
+          --release-id "$RELEASE_ID"
+          --release-bundle-sha256 "$RELEASE_BUNDLE_SHA256"
 
       - name: Build React UI
         run: npm run build
@@ -87,5 +115,21 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Verify deployed data-release identity
-        run: node package/scripts/verify-deployed-release.mjs --url '${{ steps.deployment.outputs.page_url }}' --expected package/public/data-release.json
+      - name: Verify deployed UI release identity
+        run: >-
+          npm --workspace package run verify:deployed-optimicom-ui-release --
+          --url '${{ steps.deployment.outputs.page_url }}'
+          --expected docs/active/temp/optimicom-react-tailwind/public/optimicom-ui-release.json
+
+      - name: Verify deployed v3 identity
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          DEPLOYMENT_REQUEST_ID: ${{ inputs.deployment_request_id }}
+          RELEASE_ID: ${{ inputs.release_id }}
+          RELEASE_BUNDLE_SHA256: ${{ inputs.release_bundle_sha256 }}
+        run: >-
+          node package/scripts/verify-deployed-v3-pages.mjs
+          --url '${{ steps.deployment.outputs.page_url }}'
+          --deployment-request-id "$DEPLOYMENT_REQUEST_ID"
+          --release-id "$RELEASE_ID"
+          --release-bundle-sha256 "$RELEASE_BUNDLE_SHA256"
