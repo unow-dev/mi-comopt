@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-12T20:12:48.990Z",
+  "generated_at": "2026-09-21T14:09:38Z",
   "source": {
     "db_schema_version": 8,
     "snapshot_ref": {
-      "payload_sha256": "98b1a2d6ca08fe61b8b821d4498e8bab8683d4cf0c4ac0843cb5b89f7a014c7c",
+      "payload_sha256": "55b1cc7eabfd8e4f81e01c06b9835dd0ee08f7f497dd7a25a0c5d5c92971a25c",
       "snapshot_index": 0
     },
-    "source_dataset_artifact_sha256": "sha256:182e5633d3083d855e7719219c8f5b0750c44e2ad643170f863fa12255909b19",
+    "source_dataset_artifact_sha256": "sha256:5010f632877718b3ec86b2de87aa6dd46d6779ac8c25c8043be30d630953b4e1",
     "keyword_publication": {
-      "run_id": "run_8c7e7beb-3acd-497d-8615-ea1a8f71dc18",
-      "published_at": "2026-09-12T20:12:45Z",
-      "applied_at": "2026-09-12T20:12:46.287Z",
-      "candidates_content_sha256": "sha256:f9f6fddad531d33aa740c701e77508015fdbf7ca39d7bef144914b531436e40f"
+      "run_id": "run_de31f7fb-9beb-450d-a4dd-e2958a8fabf2",
+      "published_at": "2026-09-21T14:09:38Z",
+      "applied_at": "2026-09-21T14:09:38Z",
+      "candidates_content_sha256": "sha256:b8fdac39353fde30fb18e7dd57191295805eecdeba00b8bef45b6cfaf7beb050"
     }
   },
   "policies": {
@@ -27,24 +27,24 @@
   },
   "artifacts": {
     "comments": {
-      "path": "artifacts/source-dataset.182e5633d3083d855e7719219c8f5b0750c44e2ad643170f863fa12255909b19.json",
-      "artifact_sha256": "sha256:182e5633d3083d855e7719219c8f5b0750c44e2ad643170f863fa12255909b19",
-      "record_count": 24622
+      "path": "artifacts/source-dataset.5010f632877718b3ec86b2de87aa6dd46d6779ac8c25c8043be30d630953b4e1.json",
+      "artifact_sha256": "sha256:5010f632877718b3ec86b2de87aa6dd46d6779ac8c25c8043be30d630953b4e1",
+      "record_count": 11768
     },
     "overview": {
-      "path": "artifacts/overview.d2aa8830518b3e4545b15d0e725eb84cca58514fdf9c9323c01740d3cb60e1ec.json",
-      "artifact_sha256": "sha256:d2aa8830518b3e4545b15d0e725eb84cca58514fdf9c9323c01740d3cb60e1ec",
+      "path": "artifacts/overview.a195b49b269a67c4496aad2c7ddcd1025258ea8153ba91cb72ddc1463530ed9a.json",
+      "artifact_sha256": "sha256:a195b49b269a67c4496aad2c7ddcd1025258ea8153ba91cb72ddc1463530ed9a",
       "record_count": 30
     },
     "keywords": {
-      "path": "artifacts/filter-keyword-candidates.99a9173011e03e60b35b13014503dbb3acfd3529e5ba86a56cd6ada05b95449e.json",
-      "artifact_sha256": "sha256:99a9173011e03e60b35b13014503dbb3acfd3529e5ba86a56cd6ada05b95449e",
-      "record_count": 196
+      "path": "artifacts/filter-keyword-candidates.c484b0acec3b376044d47dd89d3271f101d25d3a2ac79481dfd2c60cd1402b10.json",
+      "artifact_sha256": "sha256:c484b0acec3b376044d47dd89d3271f101d25d3a2ac79481dfd2c60cd1402b10",
+      "record_count": 73
     },
     "accounts": {
-      "path": "artifacts/account-block-candidates.7d7948363bf986d5d07635a9eb0209219e2e403a9316a59d72fe99f798bcdc2a.json",
-      "artifact_sha256": "sha256:7d7948363bf986d5d07635a9eb0209219e2e403a9316a59d72fe99f798bcdc2a",
-      "record_count": 58
+      "path": "artifacts/account-block-candidates.e3856c4b62e83627a73a25862b658e6ea9f527faec8d1bd44d8c4b6351de30d6.json",
+      "artifact_sha256": "sha256:e3856c4b62e83627a73a25862b658e6ea9f527faec8d1bd44d8c4b6351de30d6",
+      "record_count": 15
     }
   }
 }
