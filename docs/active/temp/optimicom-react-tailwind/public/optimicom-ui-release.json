@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-21T14:09:38Z",
+  "generated_at": "2026-09-21T14:44:25Z",
   "source": {
     "db_schema_version": 8,
     "snapshot_ref": {
@@ -9,10 +9,10 @@
     },
     "source_dataset_artifact_sha256": "sha256:5010f632877718b3ec86b2de87aa6dd46d6779ac8c25c8043be30d630953b4e1",
     "keyword_publication": {
-      "run_id": "run_de31f7fb-9beb-450d-a4dd-e2958a8fabf2",
-      "published_at": "2026-09-21T14:09:38Z",
-      "applied_at": "2026-09-21T14:09:38Z",
-      "candidates_content_sha256": "sha256:b8fdac39353fde30fb18e7dd57191295805eecdeba00b8bef45b6cfaf7beb050"
+      "run_id": "run_66c34b11-0955-4125-91a1-7731105f667c",
+      "published_at": "2026-09-21T14:44:25Z",
+      "applied_at": "2026-09-21T14:44:25Z",
+      "candidates_content_sha256": "sha256:d0170bdc5a8dbaa48304c9d87ba30264997f18788a394bbfd545eaf0e9304667"
     }
   },
   "policies": {
@@ -37,8 +37,8 @@
       "record_count": 30
     },
     "keywords": {
-      "path": "artifacts/filter-keyword-candidates.c484b0acec3b376044d47dd89d3271f101d25d3a2ac79481dfd2c60cd1402b10.json",
-      "artifact_sha256": "sha256:c484b0acec3b376044d47dd89d3271f101d25d3a2ac79481dfd2c60cd1402b10",
+      "path": "artifacts/filter-keyword-candidates.e8cbbc445d8439ebef9e19ce4ae75087ca18313c3fe901ee03a2e5e190f654f1.json",
+      "artifact_sha256": "sha256:e8cbbc445d8439ebef9e19ce4ae75087ca18313c3fe901ee03a2e5e190f654f1",
       "record_count": 73
     },
     "accounts": {
