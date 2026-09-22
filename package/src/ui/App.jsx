@@ -34,9 +34,9 @@ function Pill({ children, tone = 'blue' }) {
 }
 
 function Brand({ compact = false }) {
-  return <div className={`flex items-center ${compact ? 'gap-2' : 'gap-3'}`} aria-label="Optimicom">
+  return <div className={`flex items-center ${compact ? 'gap-2' : 'gap-3'}`} aria-label="ドキドキ☆コメント管理室！">
     <div className={`grid place-items-center rounded-xl bg-[linear-gradient(145deg,#4EC8F7,#2BB1EA_55%,#FF5F98)] font-black text-white shadow-[0_8px_18px_rgba(46,173,229,.22)] ${compact ? 'h-8 w-8 text-xs' : 'h-11 w-11 text-base'}`}>O+</div>
-    <div className="whitespace-nowrap text-[17px] font-black tracking-[-.045em] text-ink">Optimi<span className="text-pink">com</span>{!compact && <small className="mt-1 block text-[9px] font-bold tracking-[.08em] text-[#7A91AE]">コメントケアコンソール</small>}</div>
+    <div className="whitespace-nowrap text-[13px] font-black tracking-[-.08em] text-ink">ドキドキ☆コメント管理室！{!compact && <small className="mt-1 block text-[9px] font-bold tracking-[.08em] text-[#7A91AE]">コメントケアコンソール</small>}</div>
   </div>
 }
 
@@ -68,7 +68,7 @@ function SectionHeader({ title, description, right }) {
 }
 
 function HomeScreen({ onChange }) {
-  return <section className="animate-screen"><article className="relative overflow-hidden rounded-[28px] border border-[#D9EAF5] bg-[linear-gradient(145deg,#FFFFFF,#F4FCFF_58%,#FFF4F8)] p-[34px] shadow-panel max-[560px]:p-[24px_18px]"><Pill>COMMENT OPTIMIZATION PLATFORM</Pill><h1 className="relative my-4 max-w-[760px] text-[clamp(38px,5vw,64px)] font-black leading-[1.02] tracking-[-.065em] max-[560px]:text-[40px]">コメント欄を、<br /><span className="text-pink">もっと健やかに。</span></h1><p className="relative m-0 max-w-[720px] text-sm leading-[1.8] text-[#657B99]">Optimicomは、通常・二次反応・一次迷惑の3分類によるコメント分析と、フィルター候補・アカウント候補を確認するためのコンソールです。</p></article><div className="mt-4 grid grid-cols-4 gap-3 max-[820px]:grid-cols-2">{screens.slice(1).map(([id, label, icon]) => <button key={id} type="button" onClick={() => onChange(id)} className={`${card} flex items-center gap-3 p-4 text-left text-[11px] font-black text-[#55708F] transition hover:-translate-y-0.5 hover:border-[#8ED9F8]`}><span className="grid h-9 w-9 place-items-center rounded-xl bg-[#EAF9FF] text-[#2298D3]"><Icon name={icon} /></span>{label}</button>)}</div></section>
+  return <section className="animate-screen"><article className="relative overflow-hidden rounded-[28px] border border-[#D9EAF5] bg-[linear-gradient(145deg,#FFFFFF,#F4FCFF_58%,#FFF4F8)] p-[34px] shadow-panel max-[560px]:p-[24px_18px]"><Pill>COMMENT OPTIMIZATION PLATFORM</Pill><h1 className="relative my-4 max-w-[760px] text-[clamp(38px,5vw,64px)] font-black leading-[1.02] tracking-[-.065em] max-[560px]:text-[40px]">コメント欄を、<br /><span className="text-pink">もっと健やかに。</span></h1><p className="relative m-0 max-w-[720px] text-sm leading-[1.8] text-[#657B99]">ドキドキ☆コメント管理室！は、通常・二次反応・一次迷惑の3分類によるコメント分析と、フィルター候補・アカウント候補を確認するためのコンソールです。</p></article><div className="mt-4 grid grid-cols-4 gap-3 max-[820px]:grid-cols-2">{screens.slice(1).map(([id, label, icon]) => <button key={id} type="button" onClick={() => onChange(id)} className={`${card} flex items-center gap-3 p-4 text-left text-[11px] font-black text-[#55708F] transition hover:-translate-y-0.5 hover:border-[#8ED9F8]`}><span className="grid h-9 w-9 place-items-center rounded-xl bg-[#EAF9FF] text-[#2298D3]"><Icon name={icon} /></span>{label}</button>)}</div></section>
 }
 
 function Percentage({ count, total }) {
