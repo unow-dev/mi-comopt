@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { readFile } from "node:fs/promises";
+import { spawnSync } from "node:child_process";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import {
   completeV3HumanTask,
   listV3HumanTasks,
@@ -11,6 +16,90 @@ import {
   startV3Session,
   syncV3DeploymentEvents,
 } from "../src/integration/v3-operator.js";
+
+const REPOSITORY_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+const COMMENT_DATABASE_CLI = path.join(REPOSITORY_ROOT, "package", "scripts", "comment-database.mjs");
+const SNAPSHOT_REF_PATTERN = /^[0-9a-f]{64}:[0-9]+$/;
+
+function productionKeywordPublicationRoot() {
+  return path.resolve(process.env.COMMENT_DATA_UPDATE_KEYWORD_PUBLICATION_ROOT ?? path.join(REPOSITORY_ROOT, "work", "20260826", "candidate-publication-final"));
+}
+
+function productionThreeClassHistoryPath() {
+  return path.resolve(process.env.COMMENT_DATA_UPDATE_THREE_CLASS_HISTORY ?? path.join(REPOSITORY_ROOT, "docs", "active", "operations", "integrated-labeling-state", "three_class_history.json"));
+}
+
+function corpusSnapshotRef(controlPlane, corpusVersionId) {
+  const version = controlPlane.readVersion(corpusVersionId);
+  const refs = version?.payload?.state?.snapshot_refs ?? [];
+  if (!Array.isArray(refs) || refs.length !== 1) {
+    throw new Error(`corpus version ${corpusVersionId} must contain exactly one imported snapshot reference`);
+  }
+  const reference = refs[0];
+  const normalized = typeof reference === "string"
+    ? reference
+    : `${reference?.payloadSha256 ?? ""}:${reference?.snapshotIndex ?? ""}`;
+  if (!SNAPSHOT_REF_PATTERN.test(normalized)) throw new Error(`corpus version ${corpusVersionId} contains an invalid snapshot reference`);
+  return normalized;
+}
+
+function createProductionKeywordHandoffBuilder(dbPath) {
+  const publicationRoot = productionKeywordPublicationRoot();
+  const resolvedDbPath = dbPath === ":memory:" ? dbPath : path.resolve(dbPath);
+  return ({ candidateRequestId, request, controlPlane }) => {
+    const temporaryRoot = mkdtempSync(path.join(tmpdir(), "comment-db-v3-keyword-handoff-"));
+    const outputPath = path.join(temporaryRoot, "keyword-candidate-handoff.zip");
+    try {
+      const result = spawnSync(process.execPath, [
+        COMMENT_DATABASE_CLI,
+        "generate-keyword-candidate-handoff",
+        "--db", resolvedDbPath,
+        "--snapshot-ref", corpusSnapshotRef(controlPlane, request.corpusVersionId),
+        "--classification-version-id", request.classificationVersionId,
+        "--publication-root", publicationRoot,
+        "--output", outputPath,
+        "--request-id", candidateRequestId,
+      ], { cwd: REPOSITORY_ROOT, encoding: "utf8" });
+      if (result.error) throw result.error;
+      if (result.status !== 0) throw new Error(`keyword candidate handoff generation failed: ${result.stderr.trim() || result.stdout.trim()}`);
+      const response = JSON.parse(result.stdout.trim().split(/\r?\n/).at(-1));
+      return {
+        content: readFileSync(outputPath),
+        requestId: response.requestId,
+        inputFingerprint: response.inputFingerprint,
+      };
+    } finally {
+      rmSync(temporaryRoot, { recursive: true, force: true });
+    }
+  };
+}
+
+function createProductionClassificationWorksetBuilder(dbPath) {
+  const historyPath = productionThreeClassHistoryPath();
+  const resolvedDbPath = dbPath === ":memory:" ? dbPath : path.resolve(dbPath);
+  return ({ corpusVersionId, controlPlane }) => {
+    const temporaryRoot = mkdtempSync(path.join(tmpdir(), "comment-db-v3-classification-workset-"));
+    const outputPath = path.join(temporaryRoot, "three-class-workset.zip");
+    try {
+      const result = spawnSync(process.execPath, [
+        COMMENT_DATABASE_CLI,
+        "generate-three-class-workset",
+        "--db", resolvedDbPath,
+        "--snapshot-ref", corpusSnapshotRef(controlPlane, corpusVersionId),
+        "--history", historyPath,
+        "--output", outputPath,
+      ], { cwd: REPOSITORY_ROOT, encoding: "utf8" });
+      if (result.error) throw result.error;
+      if (result.status !== 0) throw new Error(`classification workset generation failed: ${result.stderr.trim() || result.stdout.trim()}`);
+      const line = result.stdout.trim().split(/\r?\n/).at(-1) ?? "";
+      const generatedWorksetId = /^generated workset=([0-9a-f-]{36})\s/.exec(line)?.[1];
+      if (!generatedWorksetId) throw new Error(`classification workset generator returned an invalid result: ${line}`);
+      return { content: readFileSync(outputPath), worksetId: generatedWorksetId };
+    } finally {
+      rmSync(temporaryRoot, { recursive: true, force: true });
+    }
+  };
+}
 
 const TOP_LEVEL_COMMANDS = new Set(["start", "sessions", "tasks", "human-task"]);
 const HUMAN_TASK_COMMANDS = new Set(["open", "complete", "release"]);
@@ -109,7 +198,12 @@ async function main(argv) {
   requireAuthorityArgs(args);
   let operator;
   try {
-    operator = await openV3Operator({ dbPath: args.dbPath, workspacePath: args.workspacePath });
+    operator = await openV3Operator({
+      dbPath: args.dbPath,
+      workspacePath: args.workspacePath,
+      classificationWorksetBuilder: createProductionClassificationWorksetBuilder(args.dbPath),
+      keywordHandoffBuilder: createProductionKeywordHandoffBuilder(args.dbPath),
+    });
     await syncV3DeploymentEvents(operator);
     let result;
     if (args.command === "start") {

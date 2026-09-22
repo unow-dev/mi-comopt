@@ -15,6 +15,7 @@ import { STREAM_KEYS } from "../src/application/services.js";
 import { openCommentDatabase } from "../src/database/comment-database.js";
 import { StateControlPlane } from "../src/state/control-plane.js";
 import { semanticSha256 } from "../src/state/canonical.js";
+import { testKeywordHandoffBuilder } from "./v3-keyword-handoff-test-support.js";
 
 function seed(controlPlane, stream, versionId, state = {}) {
   const record = controlPlane.ensureStream(stream);
@@ -135,7 +136,7 @@ async function temporalHarness({ environment = undefined, taskQueue = "comment-d
   const registry = new Registry(path.join(root, "registry.sqlite"));
   const artifactStore = new ArtifactStore(path.join(root, "artifacts"));
   const ownedEnvironment = environment ?? await TestWorkflowEnvironment.createLocal();
-  const runtime = createV3TemporalRuntime({ controlPlane, registry, artifactStore });
+  const runtime = createV3TemporalRuntime({ controlPlane, registry, artifactStore, keywordHandoffBuilder: testKeywordHandoffBuilder });
   const worker = await Worker.create({
     connection: ownedEnvironment.nativeConnection,
     taskQueue,

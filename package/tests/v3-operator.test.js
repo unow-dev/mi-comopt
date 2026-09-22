@@ -16,6 +16,7 @@ import {
   openV3Operator,
   startV3Session,
 } from "../src/integration/v3-operator.js";
+import { testKeywordHandoffBuilder } from "./v3-keyword-handoff-test-support.js";
 
 function seed(controlPlane, stream, versionId, state = {}) {
   const record = controlPlane.ensureStream(stream);
@@ -42,7 +43,7 @@ async function fixture() {
     [STREAM_KEYS.deploymentPolicy, "deployment-policy-0", "deployment-production"],
   ]) seed(controlPlane, stream, versionId, { policy_kind: policyKind, auto_commit: true });
   controlPlane.close();
-  return { root, dbPath, workspacePath };
+  return { root, dbPath, workspacePath, keywordHandoffBuilder: testKeywordHandoffBuilder };
 }
 
 async function submitArtifact(operator, sessionId, stepId, value, actorId) {

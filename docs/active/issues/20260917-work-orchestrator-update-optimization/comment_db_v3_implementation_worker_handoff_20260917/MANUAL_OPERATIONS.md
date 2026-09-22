@@ -80,7 +80,17 @@ readyになったartifact Taskは、必ず次の順で処理する。
 - 03b-receive-classification-response: response.json
 - 07b-receive-keyword-proposal: candidate_proposal.json
 
-03bでは前段のartifactContextに表示されたworksetIdと、response.jsonのworkset_idが一致することを確認する。response.jsonはworkset_idとdecisionsだけを持つJSON objectにする。07bではrequestIdとinputFingerprintを確認し、candidate_proposal.jsonはJSON objectだけを保存する。いずれも説明文やMarkdown code fenceを付けない。
+03bでは前段のartifactContextに表示されたworksetIdと、response.jsonのworkset_idが一致することを確認する。response.jsonはworkset_idとdecisionsだけを持つJSON objectにする。
+
+07aの`keyword-candidate-handoff.zip`は、v3 application-service adapterが現行keyword publication、source dataset、policy、taxonomyおよびcandidate schemaを束ねて生成する。`07a-prepare-keyword-handoff`の生成結果をChatGPTへ渡し、ZIP内の`prompt.txt`と契約・入力ファイルを根拠に、ChatGPTが`candidate_proposal.json`を作成する。`candidate_proposal.json`を人間が手作業で推測・作成してはならない。ChatGPTから返ったJSONについて、次を確認してから07bのoutputPathへ配置する。
+
+- `schema_version`が`1`
+- `request_id`が07bのartifactContextに表示されたrequestIdと一致
+- `input_fingerprint`が07bのartifactContextに表示されたinputFingerprintと一致
+- `actions`が配列
+- ファイルがJSON objectだけで、説明文やMarkdown code fenceを含まない
+
+07bではrequestIdとinputFingerprintを確認し、確認済みの`candidate_proposal.json`だけを保存する。いずれも説明文やMarkdown code fenceを付けない。handoff ZIPが生成されず、またはZIPとして検証できない場合は07bへ進まず、operator/application-serviceの設定不備として止める。
 
 ## 4. Decision型Human Task
 

@@ -293,10 +293,30 @@ function readKeywordTaxonomyInput() {
   return readJsonBytes(KEYWORD_TAXONOMY_PATH, "HANDOFF_INPUT_MISMATCH", "taxonomy");
 }
 
-function loadDbSourceDataset(db, snapshotRef) {
+function readV3SnapshotLabels(db, snapshotId, classificationVersionId) {
+  if (typeof classificationVersionId !== "string" || classificationVersionId.length === 0) {
+    throw new CommentDatabaseError("VALIDATION_ERROR", "classificationVersionId must be a non-empty string");
+  }
+  return db.prepare(
+    `SELECT sco.source_index, csl.label
+       FROM snapshot_comment_observations AS sco
+       JOIN classification_state_labels AS csl
+         ON csl.observation_id = CAST(sco.observation_id AS TEXT)
+        AND csl.version_id = ?
+      WHERE sco.snapshot_id = ?
+      ORDER BY sco.source_index ASC`,
+  ).all(classificationVersionId, snapshotId).map((row) => ({
+    sourceIndex: Number(row.source_index),
+    label: row.label,
+  }));
+}
+
+function loadDbSourceDataset(db, snapshotRef, { classificationVersionId = undefined } = {}) {
   validateSnapshotRef(snapshotRef);
   const selectedSnapshots = readSelectedSnapshots(db, [snapshotRef]);
-  const labels = readSnapshotThreeClassLabels(db, selectedSnapshots[0].snapshot.snapshotId);
+  const labels = classificationVersionId === undefined
+    ? readSnapshotThreeClassLabels(db, selectedSnapshots[0].snapshot.snapshotId)
+    : readV3SnapshotLabels(db, selectedSnapshots[0].snapshot.snapshotId, classificationVersionId);
   const dataset = buildDbKeywordCandidateDataset(selectedSnapshots, labels);
   const bytes = serializeDbKeywordCandidateDataset(dataset);
   return {
@@ -652,13 +672,13 @@ function buildPublicationRecord({ handoff, request, publication, snapshotId, app
   };
 }
 
-export async function generateKeywordCandidateHandoff({ dbPath, snapshotRef, publicationRoot, outputPath }) {
+export async function generateKeywordCandidateHandoff({ dbPath, snapshotRef, publicationRoot, outputPath, requestId = undefined, classificationVersionId = undefined }) {
   if (!publicationRoot || !outputPath) throw new CommentDatabaseError("VALIDATION_ERROR", "publicationRoot and outputPath are required");
   validateSnapshotRef(snapshotRef);
   assertOutputPathAbsent(outputPath);
   const db = await openCommentDatabase(dbPath);
   try {
-    const source = loadDbSourceDataset(db, snapshotRef);
+    const source = loadDbSourceDataset(db, snapshotRef, { classificationVersionId });
     const publication = readCurrentPublicationFiles(publicationRoot, GENERATION_PUBLICATION_FILES);
     const policyInput = readKeywordPolicyInput();
     const taxonomyInput = readKeywordTaxonomyInput();
@@ -673,6 +693,7 @@ export async function generateKeywordCandidateHandoff({ dbPath, snapshotRef, pub
       taxonomyInput,
       explicitSourceSha: source.artifactSha256,
       explicitSourceRef: source.artifactRef,
+      requestId,
       runtimeBytes: readRuntimeContractBytes(),
     });
     const output = writeExclusiveHandoffZip(outputPath, prepared.files);

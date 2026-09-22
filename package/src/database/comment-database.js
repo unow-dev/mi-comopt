@@ -1143,10 +1143,21 @@ function insertRawInputMaterialization(db, request, payloadSha256) {
   return commentObservationCount;
 }
 
-export async function importRawInput(input, options = {}) {
+/**
+ * Materialize one validated raw input on an already-open database connection.
+ *
+ * The v3 application services keep the Comment DB connection open while
+ * processing a workflow step. Re-opening the same database from the service
+ * would make the evidence step record only a hash and leave the source data
+ * unavailable to the next corpus step. This synchronous variant lets the
+ * service import the accepted artifact on the same authority connection.
+ */
+export function importRawInputIntoDatabase(db, input) {
+  if (!db || typeof db.prepare !== "function" || typeof db.exec !== "function") {
+    throw new CommentDatabaseError("VALIDATION_ERROR", "an open Comment DB connection is required");
+  }
   const request = validateRawInputRequest(input);
   const payloadSha256 = computeRawPayloadSha256(request.payloadBytes);
-  const db = await openCommentDatabase(options.dbPath);
   let transactionStarted = false;
   try {
     db.exec("BEGIN IMMEDIATE");
@@ -1180,6 +1191,13 @@ export async function importRawInput(input, options = {}) {
     if (transactionStarted) rollbackQuietly(db);
     if (error instanceof CommentDatabaseError) throw error;
     throw new CommentDatabaseError("IMPORT_FAILED", error.message, { cause: error });
+  }
+}
+
+export async function importRawInput(input, options = {}) {
+  const db = await openCommentDatabase(options.dbPath);
+  try {
+    return importRawInputIntoDatabase(db, input);
   } finally {
     try {
       db.close();

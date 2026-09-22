@@ -94,7 +94,7 @@ function rehydrateReleaseArtifacts(controlPlane, releaseArtifactStore) {
  * the v3 application-service adapter, while the provider Registry and
  * ArtifactStore remain the workflow authorities.
  */
-export async function openV3Operator({ dbPath, workspacePath, deploymentAdapter = undefined } = {}) {
+export async function openV3Operator({ dbPath, workspacePath, deploymentAdapter = undefined, classificationWorksetBuilder = undefined, keywordHandoffBuilder = undefined } = {}) {
   requiredString(dbPath, "dbPath");
   requiredString(workspacePath, "workspacePath");
   if (dbPath !== ":memory:" && !existsSync(path.resolve(dbPath))) throw stateError("AUTHORITY_NOT_FOUND", `production authority DB does not exist: ${dbPath}`);
@@ -117,6 +117,8 @@ export async function openV3Operator({ dbPath, workspacePath, deploymentAdapter 
       workspace,
       deploymentAdapter: resolvedDeploymentAdapter,
       releaseArtifactStore,
+      classificationWorksetBuilder,
+      keywordHandoffBuilder,
       revision: V3_REVISION,
     });
     let closed = false;

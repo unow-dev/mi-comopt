@@ -117,13 +117,13 @@ function routingForResult(stepId, result) {
   return "continue";
 }
 
-export function createV3ApplicationServiceTaskHandlers({ controlPlane, deploymentAdapter, artifactStore, releaseArtifactStore = artifactStore, artifactBuilder, classificationWorksetBuilder } = {}) {
+export function createV3ApplicationServiceTaskHandlers({ controlPlane, deploymentAdapter, artifactStore, releaseArtifactStore = artifactStore, artifactBuilder, classificationWorksetBuilder, keywordHandoffBuilder } = {}) {
   if (!controlPlane) throw stateError("CONFIGURATION_ERROR", "controlPlane is required");
-  const evidence = new EvidenceApplicationServiceV3(controlPlane);
+  const evidence = new EvidenceApplicationServiceV3(controlPlane, { artifactStore });
   const corpus = new CorpusApplicationServiceV3(controlPlane);
   const classificationHandoff = new ClassificationHandoffService(controlPlane, artifactStore, { worksetBuilder: classificationWorksetBuilder });
   const classification = new ClassificationApplicationServiceV3(controlPlane);
-  const keywordHandoff = new KeywordHandoffService(controlPlane, artifactStore);
+  const keywordHandoff = new KeywordHandoffService(controlPlane, artifactStore, { handoffBuilder: keywordHandoffBuilder });
   const keyword = new KeywordSelectionApplicationServiceV3(controlPlane);
   const release = new ReleaseApplicationServiceV3(controlPlane, { artifactStore: releaseArtifactStore, artifactBuilder });
   const promotion = new PromotionApplicationServiceV3(controlPlane);

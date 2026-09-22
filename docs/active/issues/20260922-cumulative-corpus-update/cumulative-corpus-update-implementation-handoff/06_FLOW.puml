@@ -1,0 +1,39 @@
+@startuml
+title Cumulative Corpus Update - Boundary / Input / Processing / Output
+
+left to right direction
+
+rectangle "1. Corpus Update\n\nInput\n- Current Corpus v2\n- Incoming snapshot refs\n\nProcess\n- existing + incoming\n- snapshot-ref first-win unique\n- v1 head rejected\n\nOutput\n- CorpusVersion v2" as Corpus
+
+rectangle "2. Cumulative Projection\n\nInput\n- Ordered snapshot refs\n\nProcess\n- corpus order\n- source_index ASC\n- 5-field exact dedupe\n- first-wins\n- no normalization\n\nOutput\n- Survivor observations" as Projection
+
+rectangle "3. Classification\n\nInput\n- Survivors\n- Prior ClassificationVersion\n\nProcess\n1 exact observation label\n2 same-comment label\n3 human decision\n- resolved items MUST NOT reach ChatGPT\n\nOutput\n- Complete ClassificationVersion" as Classification
+
+rectangle "4. Analysis Source\n\nInput\n- CorpusVersion\n- ClassificationVersion\n\nProcess\n- exact coverage assertion\n- public source_index re-numbering\n\nOutput\n- Source Dataset v2" as Source
+
+rectangle "5. Analysis / Release / Deploy\n\nInput\n- Source Dataset v2\n\nProcess\n- keyword\n- account\n- overview\n- comments\n- cross-pin + SHA gates\n\nOutput\n- Verified production Release" as Release
+
+Corpus --> Projection
+Projection --> Classification
+Classification --> Source
+Source --> Release
+
+note bottom of Projection
+Logical population =
+Existing valid data
++ Newly added data
+- exact 5-field duplicates
+end note
+
+note bottom of Classification
+ChatGPT handoff invariant:
+priorExactLabel == none
+AND
+priorCommentLabel == none
+end note
+
+rectangle "R. One-time Recovery\n\nInput\n- baseCorpusVersionId\n- brokenHeadCorpusVersionId\n\nProcess\n- freeze + drain\n- rebuild Corpus v2\n- recover historical labels\n- classify genuinely unresolved only\n\nOutput\n- Corrected cumulative state" as Recovery
+
+Recovery ..> Corpus : bootstrap before normal updates
+
+@enduml

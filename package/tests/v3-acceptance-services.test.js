@@ -9,6 +9,7 @@ import { ArtifactStore } from "work-orchestrator";
 import {
   ClassificationApplicationServiceV3,
   ClassificationHandoffService,
+  EvidenceApplicationServiceV3,
   KeywordHandoffService,
   KeywordSelectionApplicationServiceV3,
   STREAM_KEYS,
@@ -18,6 +19,7 @@ import { contentSha256 } from "../src/processing/keyword-candidates/candidate-wo
 import { openCommentDatabase } from "../src/database/comment-database.js";
 import { StateControlPlane } from "../src/state/control-plane.js";
 import { semanticSha256 } from "../src/state/canonical.js";
+import { testKeywordHandoffBuilder } from "./v3-keyword-handoff-test-support.js";
 import { prepareV3SessionInput } from "../src/integration/v3-runtime.js";
 import {
   EXPECTED_FILES,
@@ -114,6 +116,35 @@ test("[V3-S02][V3-S03][V3-S04][V3-S05][V3-S06][V3-RV05] Session input pins exact
   }
 });
 
+test("[V3-EVIDENCE01] accepted comment-batch artifacts are materialized before corpus state advances", async () => {
+  const { db, controlPlane } = await makeDatabase();
+  const artifactStore = new MemoryArtifactStore();
+  const bytes = Buffer.from(JSON.stringify([
+    { username: "u1", handle: "h1", comment: "新しいコメント", postedAt: "1日前", postedDate: "2026-09-20" },
+  ]), "utf8");
+  const artifact = artifactStore.write({
+    artifactVersionId: "artifact-comment-batch",
+    logicalPath: "comment-batch.json",
+    content: bytes,
+  });
+  try {
+    const service = new EvidenceApplicationServiceV3(controlPlane, { artifactStore });
+    const result = service.ingest(context("evidence-materialize", "01-ingest-evidence"), {
+      inputArtifact: artifact,
+      commentBatch: JSON.parse(bytes.toString("utf8")),
+    });
+    assert.equal(result.stateResult, "succeeded");
+    assert.equal(result.refs.snapshotRef.payloadSha256, artifact.blobHash);
+    assert.deepEqual(
+      db.prepare("SELECT payload_sha256, input_format, byte_length FROM raw_inputs").all().map((row) => ({ ...row })),
+      [{ payload_sha256: artifact.blobHash, input_format: "tiktokCommentBatch-1.0.0", byte_length: bytes.length }],
+    );
+    assert.equal(db.prepare("SELECT COUNT(*) AS count FROM snapshot_comment_observations").get().count, 1);
+  } finally {
+    db.close();
+  }
+});
+
 test("[V3-CL01][V3-CL02][V3-CL03][V3-CL04][V3-CL05][V3-DEP05] Classification routing, identity, dependencies, and rejection are fail-closed", async () => {
   const { db, controlPlane } = await makeDatabase();
   const artifactStore = new MemoryArtifactStore();
@@ -176,7 +207,7 @@ test("[V3-KW01][V3-KW02][V3-KW03][V3-KW04][V3-KW05][V3-DEP06] Keyword handoff us
   const { db, controlPlane } = await makeDatabase({ keywordExtra: { candidateInputFingerprint: fingerprint } });
   const artifactStore = new MemoryArtifactStore();
   try {
-    const handoff = new KeywordHandoffService(controlPlane, artifactStore);
+    const handoff = new KeywordHandoffService(controlPlane, artifactStore, { handoffBuilder: testKeywordHandoffBuilder });
     const reused = handoff.prepare(context("keyword-reuse", "07a-prepare-keyword-handoff"), {
       corpusVersionId: "corpus-0",
       classificationVersionId: "classification-0",
@@ -234,6 +265,22 @@ test("[V3-KW01][V3-KW02][V3-KW03][V3-KW04][V3-KW05][V3-DEP06] Keyword handoff us
       review: { outcome: "reject", actor: { actorId: "reviewer", actorType: "human" } },
     });
     assert.equal(rejected.stateResult, "rejected");
+  } finally {
+    db.close();
+  }
+});
+
+test("[V3-KW06] Keyword handoff fails closed when the full handoff builder is not configured", async () => {
+  const { db, controlPlane } = await makeDatabase();
+  try {
+    const handoff = new KeywordHandoffService(controlPlane, new MemoryArtifactStore());
+    assert.throws(() => handoff.prepare(context("keyword-builder-missing", "07a-prepare-keyword-handoff"), {
+      corpusVersionId: "corpus-0",
+      classificationVersionId: "classification-0",
+      keywordSelectionVersionId: "keyword-0",
+      keywordPolicyVersionId: "keyword-policy-0",
+      candidateInput: { source: "classification-0", mode: "all" },
+    }), /HANDOFF_BUILDER_UNAVAILABLE/);
   } finally {
     db.close();
   }

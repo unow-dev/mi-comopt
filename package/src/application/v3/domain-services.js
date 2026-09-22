@@ -5,6 +5,9 @@ import { fileURLToPath } from "node:url";
 import { deflateRawSync } from "node:zlib";
 import { canonicalJson, cloneJson, deterministicId, semanticSha256 } from "../../state/canonical.js";
 import { StateControlPlaneError, stateError } from "../../state/errors.js";
+import { adaptCommentBatchBytes } from "../../collector/comment-batch/comment-batch-adapter.js";
+import { importRawInputIntoDatabase } from "../../database/comment-database.js";
+import { readSelectedSnapshots } from "../../database/raw-snapshot-repository.js";
 import {
   STREAM_KEYS,
   normalizeLabels,
@@ -17,6 +20,8 @@ import {
 } from "../services.js";
 import { buildResponseSchema as buildThreeClassResponseSchema, PROTOCOL_VERSION } from "../../three-class-workset/protocol.js";
 import { contentSha256 } from "../../processing/keyword-candidates/candidate-workflow.js";
+import { readExistingCommentLabels, readTargetObservations, readWorksetExcludedComments } from "../../database/three-class-label-repository.js";
+import { worseThreeClassLabel } from "../../three-class/label-resolution.js";
 import { v3StepResult } from "./result.js";
 import { runV3Idempotent } from "./context.js";
 
@@ -98,6 +103,12 @@ function artifactWrite(artifactStore, { artifactId, logicalPath, content, metada
 
 function routeConflict(stepId, conflictAt, refs = {}) { return v3StepResult({ stepId, routingOutcome: "superseded", stateResult: "conflict", refs, details: { conflictAt } }); }
 
+function deterministicCandidateRequestId(seed) {
+  const hex = contentSha256(seed).slice("sha256:".length);
+  const variant = ["8", "9", "a", "b"][Number.parseInt(hex[16], 16) % 4];
+  return `cgr_${hex.slice(0, 8)}-${hex.slice(8, 12)}-4${hex.slice(13, 16)}-${variant}${hex.slice(17, 20)}-${hex.slice(20, 32)}`;
+}
+
 const PACKAGE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 const THREE_CLASS_TEMPLATES = Object.freeze({
   "PROMPT.md": path.join(PACKAGE_ROOT, "templates", "three-class-workset", "PROMPT.md"),
@@ -177,8 +188,30 @@ function minimalThreeClassWorksetZip(worksetId) {
   return Buffer.concat([...local, centralBytes, end]);
 }
 
+function countUnresolvedClassificationObservations(controlPlane, corpusVersion, classificationVersionId) {
+  const refs = corpusVersion?.payload?.state?.snapshot_refs;
+  if (!Array.isArray(refs) || refs.length === 0) return null;
+  const snapshots = readSelectedSnapshots(controlPlane.db, refs);
+  const snapshotIds = snapshots.map(({ snapshot }) => snapshot.snapshotId);
+  const placeholders = snapshotIds.map(() => "?").join(", ");
+  if (!classificationVersionId) return snapshots.reduce((total, bundle) => total + bundle.observations.length, 0);
+  const row = controlPlane.db.prepare(
+    `SELECT COUNT(*) AS count
+       FROM snapshot_comment_observations AS sco
+       LEFT JOIN classification_state_labels AS csl
+         ON csl.version_id = ?
+        AND csl.observation_id = CAST(sco.observation_id AS TEXT)
+      WHERE sco.snapshot_id IN (${placeholders})
+        AND csl.observation_id IS NULL`,
+  ).get(classificationVersionId, ...snapshotIds);
+  return Number(row.count);
+}
+
 export class EvidenceApplicationServiceV3 {
-  constructor(controlPlane) { this.controlPlane = controlPlane; }
+  constructor(controlPlane, { artifactStore = undefined } = {}) {
+    this.controlPlane = controlPlane;
+    this.artifactStore = artifactStore;
+  }
 
   ingest(ctx, request = {}) {
     requireContext(ctx, ["evidence:write"]);
@@ -186,10 +219,31 @@ export class EvidenceApplicationServiceV3 {
       const artifact = request.inputArtifact ?? request.artifact;
       const payload = request.commentBatch ?? request.payload;
       if (!artifact || typeof artifact !== "object") throw stateError("ARTIFACT_REQUIRED", "the accepted input ArtifactVersion is required");
+      const blobHash = typeof artifact.blobHash === "string" ? artifact.blobHash.replace(/^sha256:/, "") : null;
+      let inputBytes = null;
+      if (blobHash && this.artifactStore && typeof this.artifactStore.read === "function") {
+        inputBytes = this.artifactStore.read(blobHash);
+      }
+      if (!inputBytes && Array.isArray(payload)) inputBytes = Buffer.from(JSON.stringify(payload), "utf8");
+      if (!inputBytes) throw stateError("ARTIFACT_UNAVAILABLE", "the accepted comment-batch artifact bytes are unavailable");
+      const imported = importRawInputIntoDatabase(this.controlPlane.db, adaptCommentBatchBytes(inputBytes));
+      if (blobHash && imported.payloadSha256 !== blobHash) throw stateError("ARTIFACT_IDENTITY_MISMATCH", "the imported comment-batch payload hash differs from the accepted artifact");
       const evidenceId = request.evidenceId ?? deterministicId("evidence", `${artifact.artifactVersionId}:${artifact.blobHash}`);
       const snapshotIndex = request.snapshotIndex ?? 0;
-      const snapshotRef = { payloadSha256: artifact.blobHash?.replace(/^sha256:/, ""), snapshotIndex };
-      this.controlPlane.recordEvidence({ evidenceId, sourceKind: "tiktokCommentBatch", sourceRef: artifact.artifactVersionId, payload: payload ?? { artifactVersionId: artifact.artifactVersionId, snapshotRef }, evidenceSha256: snapshotRef.payloadSha256, operationId: `${ctx.operationId}/evidence` });
+      const snapshotRef = { payloadSha256: imported.payloadSha256, snapshotIndex };
+      this.controlPlane.recordEvidence({
+        evidenceId,
+        sourceKind: "tiktokCommentBatch",
+        sourceRef: artifact.artifactVersionId,
+        payload: {
+          artifactVersionId: artifact.artifactVersionId,
+          snapshotRef,
+          importStatus: imported.status,
+          commentObservationCount: imported.commentObservationCount,
+        },
+        evidenceSha256: snapshotRef.payloadSha256,
+        operationId: `${ctx.operationId}/evidence`,
+      });
       return v3StepResult({ stepId: ctx.stepId, routingOutcome: "continue", stateResult: "succeeded", refs: { evidenceIds: [evidenceId], snapshotRef } });
     };
     return runV3Idempotent(this.controlPlane, ctx, "comment-data-update.v3.evidence.ingest", request, run);
@@ -206,7 +260,21 @@ export class CorpusApplicationServiceV3 {
       const expected = request.initialCorpusVersionId ?? null;
       versionInStream(this.controlPlane, expected, STREAM_KEYS.corpus, "initialCorpusVersionId");
       const policy = readExactPolicyVersion(this.controlPlane, request.corpusPolicyVersionId, "corpus");
-      const state = cloneJson(request.state ?? { snapshot_refs: request.snapshotRefs ?? [], evidence_ids: request.evidenceIds ?? [] });
+      const evidenceIds = request.evidenceIds ?? request.evidence ?? [];
+      let requestedSnapshotRefs = request.snapshotRefs ?? (request.snapshotRef ? [request.snapshotRef] : []);
+      if (requestedSnapshotRefs.length === 0 && Array.isArray(evidenceIds)) {
+        requestedSnapshotRefs = evidenceIds.flatMap((evidenceId) => {
+          const row = this.controlPlane.db.prepare("SELECT payload_json FROM state_evidence WHERE evidence_id = ?").get(evidenceId);
+          if (!row) return [];
+          try {
+            const evidence = JSON.parse(row.payload_json);
+            return evidence.snapshotRef ? [evidence.snapshotRef] : [];
+          } catch {
+            return [];
+          }
+        });
+      }
+      const state = cloneJson(request.state ?? { snapshot_refs: requestedSnapshotRefs, evidence_ids: evidenceIds });
       if (state.schema_version === undefined && state.schemaVersion === undefined) state.schema_version = 1;
       const semanticHash = semanticSha256(state);
       const prior = expected ? this.controlPlane.readVersion(expected) : null;
@@ -244,18 +312,25 @@ export class ClassificationHandoffService extends HandoffBase {
       const corpus = versionInStream(this.controlPlane, request.corpusVersionId, STREAM_KEYS.corpus, "corpusVersionId", { nullable: false });
       const policy = readExactPolicyVersion(this.controlPlane, request.classificationPolicyVersionId, "classification");
       const prior = versionInStream(this.controlPlane, request.classificationVersionId, STREAM_KEYS.classification, "classificationVersionId");
+      const derivedUnresolved = countUnresolvedClassificationObservations(this.controlPlane, corpus, request.classificationVersionId);
       const unresolved = Number(
         request.unresolvedTargetCount
         ?? request.unresolvedTargets?.length
         ?? prior?.payload?.state?.unresolved_target_count
         ?? corpus?.payload?.state?.unresolved_target_count
+        ?? derivedUnresolved
         ?? 0,
       );
       const contextFingerprint = semanticSha256({ corpusVersionId: request.corpusVersionId, classificationVersionId: request.classificationVersionId ?? null, classificationPolicyVersionId: policy.versionId });
       if (prior && prior.payload?.handoffContextFingerprint === contextFingerprint) return v3StepResult({ stepId: ctx.stepId, routingOutcome: "reuse", stateResult: "reused", refs: { classificationVersionId: prior.versionId } });
       if (unresolved === 0) return v3StepResult({ stepId: ctx.stepId, routingOutcome: "ready_without_handoff", stateResult: "succeeded", refs: {} });
-      const worksetId = request.worksetId ?? randomUUID();
-      const bytes = request.worksetBytes ?? this.worksetBuilder({ worksetId, corpusVersionId: request.corpusVersionId, classificationVersionId: request.classificationVersionId, classificationPolicyVersionId: policy.versionId, contextFingerprint });
+      const requestedWorksetId = request.worksetId ?? randomUUID();
+      const built = request.worksetBytes
+        ? { content: request.worksetBytes, worksetId: requestedWorksetId }
+        : this.worksetBuilder({ worksetId: requestedWorksetId, corpusVersionId: request.corpusVersionId, classificationVersionId: request.classificationVersionId, classificationPolicyVersionId: policy.versionId, contextFingerprint, controlPlane: this.controlPlane });
+      const worksetId = request.worksetId ?? built?.worksetId ?? requestedWorksetId;
+      if (built?.worksetId !== undefined && built.worksetId !== worksetId) throw stateError("HANDOFF_IDENTITY_MISMATCH", "classification workset_id does not match the prepared workset");
+      const bytes = built?.content ?? built?.bytes ?? built;
       const artifact = this.writeArtifact({ id: worksetId, logicalPath: "three-class-workset.zip", content: bytes, metadata: { worksetId } });
       return v3StepResult({ stepId: ctx.stepId, routingOutcome: "handoff_required", stateResult: "created", refs: { worksetId }, details: { artifact, contextFingerprint } });
     };
@@ -303,7 +378,10 @@ class ReviewableV3Service {
       try {
         const metadata = this.resultRef === "classification"
           ? (request.handoffPreparation?.details?.contextFingerprint ? { handoffContextFingerprint: request.handoffPreparation.details.contextFingerprint } : {})
-          : (request.handoffPreparation?.refs?.candidateInputFingerprint ? { candidateInputFingerprint: request.handoffPreparation.refs.candidateInputFingerprint } : {});
+          : {
+            ...(request.handoffPreparation?.refs?.candidateInputFingerprint ? { candidateInputFingerprint: request.handoffPreparation.refs.candidateInputFingerprint } : {}),
+            ...(request.handoffPreparation?.details?.handoffContextFingerprint ? { handoffContextFingerprint: request.handoffPreparation.details.handoffContextFingerprint } : {}),
+          };
         this.controlPlane.createProposal({ proposalId, streamId: target.stream_id, expectedHeadVersionId: priorId, proposedSemanticSha256: semanticHash, payload: { schema_version: 1, state, ...metadata }, dependencies, assessmentRefs: { assessmentId }, operationId: `${ctx.operationId}/proposal` });
       } catch (error) {
         if (error instanceof StateControlPlaneError && error.code === "HEAD_CONFLICT") return routeConflict(ctx.stepId, this.domain);
@@ -350,6 +428,40 @@ class ReviewableV3Service {
 
 export class ClassificationApplicationServiceV3 extends ReviewableV3Service {
   constructor(controlPlane) { super(controlPlane, { domain: "classification", streamKey: STREAM_KEYS.classification, policyKind: "classification", resultRef: "classification", stepId: "03-update-classification", normalizer: normalizeLabels, handler: typedClassificationHandler, dependencyRoles: ["corpus", "policy"] }); }
+
+  assess(ctx, request = {}) {
+    const response = request.response;
+    const worksetId = request.handoffPreparation?.refs?.worksetId;
+    if (worksetId && response?.decisions && typeof response.decisions === "object" && !Array.isArray(response.decisions)) {
+      const targetObservations = readTargetObservations(this.controlPlane.db, worksetId);
+      if (targetObservations.length > 0) {
+        const excludedComments = new Set(readWorksetExcludedComments(this.controlPlane.db, worksetId));
+        const existingLabelByComment = new Map();
+        for (const row of readExistingCommentLabels(this.controlPlane.db)) {
+          existingLabelByComment.set(row.commentText, worseThreeClassLabel(existingLabelByComment.get(row.commentText), row.label));
+        }
+        const itemIdByComment = new Map();
+        const seenComments = new Set();
+        for (const target of targetObservations) {
+          if (seenComments.has(target.commentText)) continue;
+          seenComments.add(target.commentText);
+          if (excludedComments.has(target.commentText)) continue;
+          itemIdByComment.set(target.commentText, `I${itemIdByComment.size + 1}`);
+        }
+        const labelByComment = new Map(existingLabelByComment);
+        for (const [itemId, label] of Object.entries(response.decisions)) {
+          const commentText = [...itemIdByComment.entries()].find(([, candidateId]) => candidateId === itemId)?.[0];
+          if (commentText !== undefined) labelByComment.set(commentText, label);
+        }
+        const labels = targetObservations.flatMap((target) => {
+          const label = labelByComment.get(target.commentText);
+          return label === undefined ? [] : [{ observationId: String(target.observationId), label }];
+        });
+        request = { ...request, proposedState: { schema_version: 1, labels } };
+      }
+    }
+    return super.assess(ctx, request);
+  }
 }
 
 export class KeywordSelectionApplicationServiceV3 extends ReviewableV3Service {
@@ -357,6 +469,11 @@ export class KeywordSelectionApplicationServiceV3 extends ReviewableV3Service {
 }
 
 export class KeywordHandoffService extends HandoffBase {
+  constructor(controlPlane, artifactStore, { handoffBuilder = undefined } = {}) {
+    super(controlPlane, artifactStore);
+    this.handoffBuilder = handoffBuilder;
+  }
+
   prepare(ctx, request = {}) {
     requireContext(ctx, ["state:read", "artifact:write"]);
     const run = () => {
@@ -364,12 +481,26 @@ export class KeywordHandoffService extends HandoffBase {
       versionInStream(this.controlPlane, request.classificationVersionId, STREAM_KEYS.classification, "classificationVersionId", { nullable: false });
       const policy = readExactPolicyVersion(this.controlPlane, request.keywordPolicyVersionId, "keyword-selection");
       const prior = versionInStream(this.controlPlane, request.keywordSelectionVersionId, STREAM_KEYS.keywordSelection, "keywordSelectionVersionId");
-      const candidateInputFingerprint = contentSha256({ corpusVersionId: request.corpusVersionId, classificationVersionId: request.classificationVersionId, keywordSelectionVersionId: request.keywordSelectionVersionId ?? null, keywordPolicyVersionId: policy.versionId, candidateInput: request.candidateInput ?? null });
-      if (prior && prior.payload?.candidateInputFingerprint === candidateInputFingerprint) return v3StepResult({ stepId: ctx.stepId, routingOutcome: "reuse", stateResult: "reused", refs: { keywordSelectionVersionId: prior.versionId } });
-      const candidateRequestId = request.candidateRequestId ?? deterministicId("candidate-request", `${ctx.operationId}:${candidateInputFingerprint}`);
-      const bytes = request.handoffBytes ?? Buffer.from(canonicalJson({ schema_version: 1, request_id: candidateRequestId, input_fingerprint: candidateInputFingerprint }), "utf8");
-      const artifact = this.writeArtifact({ id: candidateRequestId, logicalPath: "keyword-candidate-handoff.zip", content: bytes, metadata: { candidateRequestId, candidateInputFingerprint } });
-      return v3StepResult({ stepId: ctx.stepId, routingOutcome: "handoff_required", stateResult: "created", refs: { candidateRequestId, candidateInputFingerprint }, details: { artifact } });
+      const handoffContextFingerprint = contentSha256({ corpusVersionId: request.corpusVersionId, classificationVersionId: request.classificationVersionId, keywordSelectionVersionId: request.keywordSelectionVersionId ?? null, keywordPolicyVersionId: policy.versionId, candidateInput: request.candidateInput ?? null });
+      if (prior && (prior.payload?.handoffContextFingerprint === handoffContextFingerprint || prior.payload?.candidateInputFingerprint === handoffContextFingerprint)) {
+        return v3StepResult({ stepId: ctx.stepId, routingOutcome: "reuse", stateResult: "reused", refs: { keywordSelectionVersionId: prior.versionId } });
+      }
+      const candidateRequestId = request.candidateRequestId ?? deterministicCandidateRequestId(`${ctx.operationId}:${handoffContextFingerprint}`);
+      if (!/^cgr_[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(candidateRequestId)) throw stateError("HANDOFF_IDENTITY_MISMATCH", "keyword candidate handoff request_id must be a cgr UUIDv4");
+      const built = request.handoffBytes
+        ? { content: request.handoffBytes, requestId: candidateRequestId, inputFingerprint: handoffContextFingerprint }
+        : (this.handoffBuilder ? this.handoffBuilder({ candidateRequestId, candidateInputFingerprint: handoffContextFingerprint, request, controlPlane: this.controlPlane }) : null);
+      if (!built) throw stateError("HANDOFF_BUILDER_UNAVAILABLE", "keyword candidate handoff builder is not configured");
+      const bytes = built.content ?? built.bytes;
+      const zipSignature = (Buffer.isBuffer(bytes) || bytes instanceof Uint8Array) && bytes.length >= 4 ? Buffer.from(bytes).subarray(0, 4).toString("hex") : null;
+      if (!zipSignature || !["504b0304", "504b0506", "504b0708"].includes(zipSignature)) {
+        throw stateError("HANDOFF_ARTIFACT_INVALID", "keyword candidate handoff builder must return a ZIP artifact");
+      }
+      if (built.requestId !== undefined && built.requestId !== candidateRequestId) throw stateError("HANDOFF_IDENTITY_MISMATCH", "keyword candidate handoff request_id does not match the prepared request");
+      const candidateInputFingerprint = built.inputFingerprint ?? built.candidateInputFingerprint;
+      if (typeof candidateInputFingerprint !== "string" || !/^sha256:[0-9a-f]{64}$/.test(candidateInputFingerprint)) throw stateError("HANDOFF_IDENTITY_MISMATCH", "keyword candidate handoff input_fingerprint is invalid");
+      const artifact = this.writeArtifact({ id: candidateRequestId, logicalPath: "keyword-candidate-handoff.zip", content: Buffer.from(bytes), metadata: { candidateRequestId, candidateInputFingerprint } });
+      return v3StepResult({ stepId: ctx.stepId, routingOutcome: "handoff_required", stateResult: "created", refs: { candidateRequestId, candidateInputFingerprint }, details: { artifact, handoffContextFingerprint } });
     };
     return runV3Idempotent(this.controlPlane, ctx, "comment-data-update.v3.keyword-selection.handoff.prepare", request, run);
   }

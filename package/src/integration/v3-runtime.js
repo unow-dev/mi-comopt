@@ -57,7 +57,7 @@ export function registerV3Definition({ registry, revision = undefined } = {}) {
   return { definition, revision: targetRevision };
 }
 
-export function createV3LocalRuntime({ controlPlane, registry = new Registry(), artifactStore = ArtifactStore.temporary(), workspace = undefined, deploymentAdapter = new MemoryDeploymentAdapter(), releaseArtifactStore = new MemoryReleaseArtifactStore(), artifactBuilder = undefined, classificationWorksetBuilder = undefined, revision = undefined, worker = undefined } = {}) {
+export function createV3LocalRuntime({ controlPlane, registry = new Registry(), artifactStore = ArtifactStore.temporary(), workspace = undefined, deploymentAdapter = new MemoryDeploymentAdapter(), releaseArtifactStore = new MemoryReleaseArtifactStore(), artifactBuilder = undefined, classificationWorksetBuilder = undefined, keywordHandoffBuilder = undefined, revision = undefined, worker = undefined } = {}) {
   if (!controlPlane) throw stateError("CONFIGURATION_ERROR", "controlPlane is required");
   const { definition, revision: targetRevision } = registerV3Definition({ registry, revision });
   const artifactVersionStore = createV3ArtifactVersionStore(artifactStore);
@@ -68,6 +68,7 @@ export function createV3LocalRuntime({ controlPlane, registry = new Registry(), 
     releaseArtifactStore,
     artifactBuilder: artifactBuilder ?? (({ bundle }) => ({ "release.json": Buffer.from(canonicalJson(bundle)) })),
     classificationWorksetBuilder,
+    keywordHandoffBuilder,
   });
   const runtime = new WorkOrchestrator({
     registry,
@@ -82,7 +83,7 @@ export function createV3LocalRuntime({ controlPlane, registry = new Registry(), 
 /** Build the same v3 application adapter for a Temporal Worker. The provider
  * registry/artifact store stay the runtime authority; the consumer control
  * plane remains the business authority captured by the adapter closure. */
-export function createV3TemporalRuntime({ controlPlane, registry, artifactStore, client = undefined, deploymentAdapter = new MemoryDeploymentAdapter(), releaseArtifactStore = new MemoryReleaseArtifactStore(), artifactBuilder = undefined, classificationWorksetBuilder = undefined, revision = undefined, worker = undefined } = {}) {
+export function createV3TemporalRuntime({ controlPlane, registry, artifactStore, client = undefined, deploymentAdapter = new MemoryDeploymentAdapter(), releaseArtifactStore = new MemoryReleaseArtifactStore(), artifactBuilder = undefined, classificationWorksetBuilder = undefined, keywordHandoffBuilder = undefined, revision = undefined, worker = undefined } = {}) {
   if (!controlPlane || !registry || !artifactStore) throw stateError("CONFIGURATION_ERROR", "controlPlane, Registry and ArtifactStore are required");
   const { definition, revision: targetRevision } = registerV3Definition({ registry, revision });
   const artifactVersionStore = createV3ArtifactVersionStore(artifactStore);
@@ -93,6 +94,7 @@ export function createV3TemporalRuntime({ controlPlane, registry, artifactStore,
     releaseArtifactStore,
     artifactBuilder: artifactBuilder ?? (({ bundle }) => ({ "release.json": Buffer.from(canonicalJson(bundle)) })),
     classificationWorksetBuilder,
+    keywordHandoffBuilder,
   });
   const workers = [worker ?? v3ApplicationWorkerProfile()];
   const activities = createTemporalActivities({ registry, artifactStore, workers, agentAdapter });

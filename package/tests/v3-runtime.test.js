@@ -13,6 +13,7 @@ import { STREAM_KEYS } from "../src/application/services.js";
 import { openCommentDatabase } from "../src/database/comment-database.js";
 import { StateControlPlane } from "../src/state/control-plane.js";
 import { semanticSha256 } from "../src/state/canonical.js";
+import { testKeywordHandoffBuilder } from "./v3-keyword-handoff-test-support.js";
 
 function seed(controlPlane, stream, versionId, state = {}) {
   const record = controlPlane.ensureStream(stream);
@@ -41,7 +42,7 @@ async function localFixture(sessionId = "v3-e2e-session", updateRequestId = "upd
   const db = await openCommentDatabase(":memory:", { stateControlPlane: true });
   const controlPlane = new StateControlPlane(db);
   seedV3State(controlPlane);
-  const environment = createV3LocalRuntime({ controlPlane, registry: workspace.registry, artifactStore: workspace.artifactStore, workspace });
+  const environment = createV3LocalRuntime({ controlPlane, registry: workspace.registry, artifactStore: workspace.artifactStore, workspace, keywordHandoffBuilder: testKeywordHandoffBuilder });
   const input = prepareV3SessionInput({
     controlPlane,
     input: {
@@ -389,6 +390,7 @@ test("[V3-E2E01] Temporal runtime facade registers the same v3 definition and fo
       controlPlane,
       registry,
       artifactStore,
+      keywordHandoffBuilder: testKeywordHandoffBuilder,
       client: {
         async start(input) {
           calls.push(input);
