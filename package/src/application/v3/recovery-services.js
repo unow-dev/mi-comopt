@@ -1,6 +1,6 @@
 import { canonicalJson, deterministicId, prefixedSha256, semanticSha256 } from "../../state/canonical.js";
 import { stateError } from "../../state/errors.js";
-import { STREAM_KEYS, typedClassificationHandler, typedCorpusHandler } from "../services.js";
+import { STREAM_KEYS, normalizeLabels, typedClassificationHandler, typedCorpusHandler } from "../services.js";
 import { readSelectedSnapshotsInReferenceOrder } from "../../database/raw-snapshot-repository.js";
 import { readHistoricalClassificationGroupLabels } from "../../database/three-class-label-repository.js";
 import { projectCumulativeCorpus } from "../../processing/analysis-input/raw-snapshot-projection.js";
@@ -437,11 +437,12 @@ export class RecoveryApplicationServiceV3 {
       ? (this.controlPlane.readDependencies(prior.versionId).find((item) => item.role === "policy")?.versionId ?? null)
       : this.controlPlane.resolveHead(this.controlPlane.ensureStream(STREAM_KEYS.classificationPolicy).stream_id)?.versionId ?? null;
     if (!policyVersionId) throw stateError("RECOVERY_POLICY_REQUIRED", "classification policy dependency is required for recovery");
-    const state = { schema_version: 2, labels: classificationPlan.labels };
-    const proposalId = deterministicId("proposal", `recovery:${plan.recoveryId}:classification`);
-    this.controlPlane.createProposal({ proposalId, streamId: classificationStream.stream_id, expectedHeadVersionId: prior?.versionId ?? null, proposedSemanticSha256: semanticSha256(state), payload: { schema_version: 1, state }, dependencies: [{ role: "corpus", versionId: recoveredCorpusVersionId }, { role: "policy", versionId: policyVersionId }], assessmentRefs: { recoveryId: plan.recoveryId, recoveryPlanSha256: plan.recoveryPlanSha256 }, operationId: `recovery:${plan.recoveryId}:classification-proposal` });
-    const decision = this.controlPlane.createDecision({ decisionId: deterministicId("decision", `recovery:${plan.recoveryId}:classification`), proposalId, outcome: "accepted", authorityKind: "system_policy", authorityRef: actorId, transitionPolicyVersionId: policyVersionId, operationId: `recovery:${plan.recoveryId}:classification-decision` });
-    const commit = this.controlPlane.commitProposal({ proposalId, decisionId: decision.decisionId, operationId: `recovery:${plan.recoveryId}:classification-state-commit`, domainHandler: typedClassificationHandler() });
+    const state = normalizeLabels({ schema_version: 2, labels: classificationPlan.labels });
+    const classificationFingerprint = semanticSha256(state);
+    const proposalId = deterministicId("proposal", `recovery:${plan.recoveryId}:classification:${classificationFingerprint}`);
+    this.controlPlane.createProposal({ proposalId, streamId: classificationStream.stream_id, expectedHeadVersionId: prior?.versionId ?? null, proposedSemanticSha256: classificationFingerprint, payload: { schema_version: 1, state }, dependencies: [{ role: "corpus", versionId: recoveredCorpusVersionId }, { role: "policy", versionId: policyVersionId }], assessmentRefs: { recoveryId: plan.recoveryId, recoveryPlanSha256: plan.recoveryPlanSha256 }, operationId: `recovery:${plan.recoveryId}:classification-proposal:${classificationFingerprint}` });
+    const decision = this.controlPlane.createDecision({ decisionId: deterministicId("decision", `recovery:${plan.recoveryId}:classification:${classificationFingerprint}`), proposalId, outcome: "accepted", authorityKind: "system_policy", authorityRef: actorId, transitionPolicyVersionId: policyVersionId, operationId: `recovery:${plan.recoveryId}:classification-decision:${classificationFingerprint}` });
+    const commit = this.controlPlane.commitProposal({ proposalId, decisionId: decision.decisionId, operationId: `recovery:${plan.recoveryId}:classification-state-commit:${classificationFingerprint}`, domainHandler: typedClassificationHandler() });
     recordRecoveryReceipt(this.controlPlane, plan.recoveryId, "classification-commit", { recoveryPlanSha256: plan.recoveryPlanSha256, recoveredCorpusVersionId, classificationVersionId: commit.versionId }, { classificationVersionId: commit.versionId, previouslyResolvedItemCount: 0 });
     this._ensureSourceDataset(plan, recoveredCorpusVersionId, commit.versionId);
     return commit;
