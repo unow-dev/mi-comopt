@@ -112,11 +112,19 @@ function readSourceDataset(db, corpusVersionId, classificationVersionId) {
   });
   const selected = readSelectedSnapshotsInReferenceOrder(db, normalizedRefs);
   const projection = projectCumulativeCorpus(selected);
-  const labels = projection.survivors.length === 0 ? [] : db.prepare(
-    `SELECT observation_id, label
-       FROM classification_state_labels
-      WHERE version_id = ? AND observation_id IN (${projection.survivors.map(() => "?").join(", ")})`,
-  ).all(classificationVersionId, ...projection.survivors.map((row) => row.observationId)).map((row) => ({ observationId: String(row.observation_id), label: row.label }));
+  const labels = [];
+  const observationIds = projection.survivors.map((row) => row.observationId);
+  const batchSize = 500;
+  for (let offset = 0; offset < observationIds.length; offset += batchSize) {
+    const batch = observationIds.slice(offset, offset + batchSize);
+    const placeholders = batch.map(() => "?").join(", ");
+    const rows = db.prepare(
+      `SELECT observation_id, label
+         FROM classification_state_labels
+        WHERE version_id = ? AND observation_id IN (${placeholders})`,
+    ).all(classificationVersionId, ...batch);
+    labels.push(...rows.map((row) => ({ observationId: String(row.observation_id), label: row.label })));
+  }
   const dataset = buildCumulativeSourceDataset({ corpusVersionId, classificationVersionId, snapshotRefs: normalizedRefs, survivors: projection.survivors, labelRows: labels });
   const bytes = serializeCumulativeSourceDataset(dataset);
   return { dataset, bytes, snapshotRefs: normalizedRefs };
