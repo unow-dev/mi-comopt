@@ -7,7 +7,7 @@
 ## Task Sequence
 
 - [x] 1. 要求整理の範囲で、AIエージェントが、累積corpus不変条件、変更対象、非変更対象、受入条件、およびproduction recoveryを含む完了条件を確認する。
-- [ ] 2. 未決事項の範囲で、人間が、正常なbaseCorpusVersionId、復旧対象のbrokenHeadCorpusVersionId、実行主体、対象環境、およびproduction実行時の承認事項を確定する。
+- [x] 2. 未決事項の範囲で、人間が、正常なbaseCorpusVersionId、復旧対象のbrokenHeadCorpusVersionId、実行主体、対象環境、およびproduction実行時の承認事項を確定する。
 - [x] 3. 既存実装の範囲で、AIエージェントが、corpus・raw snapshot・classification・source dataset・下流artifact・Release・cutover・operatorの現行境界とテストbaselineを確認する。
 - [x] 4. 仕様整理の範囲で、AIエージェントが、schema v2、snapshot参照順、source_index順、5項目完全一致dedupe、分類authority、Source Dataset v2、cross-pin、およびrecovery CLIの実装条件を整理する。
 - [x] 5. Corpus投影基盤の範囲で、AIエージェントが、snapshot参照順readerと累積projectionを整備し、observationIdの露出、source_index順、および保存値を変更しないfirst-wins重複排除を実現する。
@@ -40,5 +40,9 @@
 - ベースラインコミットは `a413a65 chore: baseline cumulative corpus handoff review`。
 - 実装では、ordered snapshot reader、累積Corpus/Classification/Source Dataset v2、下流artifactのcross-pin、`recovery_frozen` と recovery CLI、immutable operation receipt、provider read-back verifier、および小規模Recovery E2Eを追加した。
 - 構文検査と `git diff --check` は成功し、パッケージ全体の `npm test` は191件成功・0件失敗だった。
-- 本番のbase/broken head・実行主体・承認、human classification/keyword handoff、corrected Releaseのdeploy、実配信read-back、`recovery complete` は未実施であり、人間の判断後に実行する。
+- Task 2で確定したproduction実行値は、DB=`/home/uya/Workspace/tiktok-filter-keywords/var/comment-history.sqlite3`、WORKSPACE=`/home/uya/Workspace/tiktok-filter-keywords/var/work-orchestrator-production`、base=`corpus_11f00c59a24b2621012c41a4d9d57635`、broken head=`version_78dea873204723b7e4f1008610ca894a`、actor=`codex`、target=`production`。
+- Production recoveryはfreeze、nonterminal session 0件のdrain確認、non-mutating plan、plan SHA bind済みstartまで実行済み。Recovery IDは`recovery_20d03fbc08ddea65dae1230727fb8912`、plan SHAは`sha256:7422fa11f5544350c7d23273c26896c815e12c7c3b6e41e7bb4738b0994614a5`、実測値はbase logical 24,285、incoming raw 11,768、duplicate 225、expected logical 35,828。
+- Production recovery中に検出したSQLite変数上限と分類semantic SHA正規化の不具合を修正し、`npm test`全件成功、修正コミットは`0282fb3`。Recovery corpus/classification/Source Datasetは生成済みで、`previouslyResolvedItemCount == 0`を確認済み。
+- 復旧Source Dataset SHAは`sha256:9d227344b829e094cb6c4d73949337021840904a1a2e17fa4f8057d6e03d24e0`。旧candidate publicationは別SHAにbindされていたため再利用せず、復旧入力にbindしたcandidate handoff（request=`cgr_20d03fbc-08dd-4a65-8dae-1230727fb891`、input fingerprint=`sha256:ccb6fa63e36a8ce7cd7ec43973f06397414b3eefb3e111e34a98b3c43d90b247`、196 candidates）を生成済み。
+- 現在はrecovery cutoverを`recovery_frozen`のまま保持している。keywordのhuman proposal/review、corrected Releaseのmaterialize・promote・deploy、provider read-back、`recovery verify`、`recovery complete`は未実施。
 - 参照する正本は同ディレクトリの`01_IMPLEMENTATION_SPEC.md`、`02_WORK_ITEMS.md`、`04_ACCEPTANCE_TESTS.md`、`05_RECOVERY_RUNBOOK.md`、`09_HANDOFF.yaml`、`11_RECOVERY_CLI_AND_DOD.md`、`13_REVIEW_ROUND_2.md`とする。
