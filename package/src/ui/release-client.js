@@ -26,9 +26,14 @@ function validateManifestArtifact(artifact, key) {
 }
 
 export function validateReleaseManifest(manifest) {
-  if (!isObject(manifest) || manifest.schema_version !== 1 || typeof manifest.generated_at !== 'string' || Number.isNaN(Date.parse(manifest.generated_at))) invalid('manifest')
+  if (!isObject(manifest) || ![1, 2].includes(manifest.schema_version) || typeof manifest.generated_at !== 'string' || Number.isNaN(Date.parse(manifest.generated_at))) invalid('manifest')
   if (!isObject(manifest.source) || manifest.source.db_schema_version !== 8 || !isSha(manifest.source.source_dataset_artifact_sha256)) invalid('source')
-  if (!isObject(manifest.source.snapshot_ref) || !/^[0-9a-f]{64}$/.test(manifest.source.snapshot_ref.payload_sha256) || !Number.isSafeInteger(manifest.source.snapshot_ref.snapshot_index) || manifest.source.snapshot_ref.snapshot_index < 0) invalid('source.snapshot_ref')
+  if (manifest.schema_version === 2) {
+    if (typeof manifest.source.corpus_version_id !== 'string' || typeof manifest.source.classification_version_id !== 'string' || !Array.isArray(manifest.source.snapshot_refs) || manifest.source.snapshot_refs.length === 0) invalid('source cumulative identity')
+    manifest.source.snapshot_refs.forEach((reference) => {
+      if (!isObject(reference) || !/^[0-9a-f]{64}$/.test(reference.payload_sha256) || !Number.isSafeInteger(reference.snapshot_index) || reference.snapshot_index < 0) invalid('source.snapshot_refs')
+    })
+  } else if (!isObject(manifest.source.snapshot_ref) || !/^[0-9a-f]{64}$/.test(manifest.source.snapshot_ref.payload_sha256) || !Number.isSafeInteger(manifest.source.snapshot_ref.snapshot_index) || manifest.source.snapshot_ref.snapshot_index < 0) invalid('source.snapshot_ref')
   const publication = manifest.source.keyword_publication
   if (!isObject(publication) || typeof publication.run_id !== 'string' || typeof publication.published_at !== 'string' || typeof publication.applied_at !== 'string' || !isSha(publication.candidates_content_sha256)) invalid('source.keyword_publication')
   if (!isObject(manifest.policies) || !isObject(manifest.policies.keyword) || !isObject(manifest.policies.account) || !isSha(manifest.policies.keyword.content_sha256) || !isSha(manifest.policies.account.content_sha256)) invalid('policies')
@@ -39,7 +44,7 @@ export function validateReleaseManifest(manifest) {
 }
 
 function validateComments(value) {
-  if (!isObject(value) || value.schema_version !== 1 || value.labeling_status !== 'published' || !isObject(value.snapshot_ref) || !Array.isArray(value.records)) invalid('comments artifact')
+  if (!isObject(value) || ![1, 2].includes(value.schema_version) || value.labeling_status !== 'published' || (value.schema_version === 1 ? !isObject(value.snapshot_ref) : !isObject(value.source)) || !Array.isArray(value.records)) invalid('comments artifact')
   value.records.forEach((record, index) => {
     if (!isObject(record) || record.source_index !== index || !['username', 'handle', 'comment', 'postedAt', 'postedDate'].every((key) => typeof record[key] === 'string') || !isDate(record.postedDate) || !LABELS.includes(record.label)) invalid(`comments.records[${index}]`)
   })

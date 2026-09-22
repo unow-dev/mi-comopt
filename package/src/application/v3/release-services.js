@@ -32,7 +32,34 @@ function pinsFromRequest(controlPlane, request) {
   const pins = {};
   for (const [name, expected] of Object.entries(PIN_STREAMS)) pins[name] = readExact(controlPlane, request[name], name, expected).versionId;
   for (const [name, kind] of Object.entries(POLICY_KINDS)) pins[name] = readExactPolicyVersion(controlPlane, request[name], kind).versionId;
+  if (request.sourceDatasetArtifactSha256 !== undefined) {
+    if (typeof request.sourceDatasetArtifactSha256 !== "string" || !/^(?:sha256:)?[0-9a-f]{64}$/.test(request.sourceDatasetArtifactSha256)) throw stateError("SOURCE_DATASET_IDENTITY_INVALID", "sourceDatasetArtifactSha256 must be a SHA-256 value");
+    pins.sourceDatasetArtifactSha256 = request.sourceDatasetArtifactSha256.replace(/^sha256:/, "");
+  }
   return pins;
+}
+
+function assertPinnedDependency(controlPlane, versionId, role, expectedVersionId) {
+  const dependencies = controlPlane.readDependencies(versionId);
+  const dependency = dependencies.find((item) => item.role === role);
+  // Legacy genesis fixtures have no dependency rows.  When a dependency is
+  // present, however, it is authoritative and must match the release pin.
+  if (dependency && dependency.versionId !== expectedVersionId) {
+    throw stateError("RELEASE_DEPENDENCY_MISMATCH", `${versionId} ${role} dependency does not match the release pin`);
+  }
+}
+
+function assertReleaseDependencies(controlPlane, pins) {
+  assertPinnedDependency(controlPlane, pins.classificationVersionId, "corpus", pins.corpusVersionId);
+  assertPinnedDependency(controlPlane, pins.keywordSelectionVersionId, "corpus", pins.corpusVersionId);
+  assertPinnedDependency(controlPlane, pins.keywordSelectionVersionId, "classification", pins.classificationVersionId);
+  if (pins.sourceDatasetArtifactSha256) {
+    for (const versionId of [pins.classificationVersionId, pins.keywordSelectionVersionId]) {
+      const state = controlPlane.readVersion(versionId)?.payload?.state ?? {};
+      const candidate = state.source_dataset_artifact_sha256 ?? state.sourceDatasetArtifactSha256;
+      if (candidate !== undefined && String(candidate).replace(/^sha256:/, "") !== pins.sourceDatasetArtifactSha256) throw stateError("SOURCE_DATASET_IDENTITY_MISMATCH", `${versionId} source dataset SHA does not match the release pin`);
+    }
+  }
 }
 
 function releaseKeyObject(pins) {
@@ -46,6 +73,7 @@ function releaseKeyObject(pins) {
     keywordPolicyVersionId: pins.keywordPolicyVersionId,
     accountPolicyVersionId: pins.accountPolicyVersionId,
     projectionDefinitionVersionId: pins.projectionDefinitionVersionId,
+    sourceDatasetArtifactSha256: pins.sourceDatasetArtifactSha256 ?? null,
   };
 }
 
@@ -60,10 +88,11 @@ export class ReleaseApplicationServiceV3 {
   build(ctx, request = {}) {
     const run = () => {
       const pins = pinsFromRequest(this.controlPlane, request);
+      assertReleaseDependencies(this.controlPlane, pins);
       const keyObject = releaseKeyObject(pins);
       const releaseKey = semanticSha256(keyObject);
       const releaseId = deterministicId("release-v3", releaseKey);
-      const bundle = { schema_version: 1, contract: "comment-db-release/v3", releaseKey, pins: keyObject, exact: true };
+      const bundle = { schema_version: 2, contract: "comment-db-release/v3", releaseKey, pins: keyObject, exact: true };
       const existing = this.controlPlane.db.prepare("SELECT * FROM v3_release_bundles WHERE release_key = ?").get(releaseKey);
       if (existing) return v3StepResult({ stepId: ctx.stepId, routingOutcome: "continue", stateResult: "reused", refs: { releaseId: existing.release_id }, details: { releaseKey } });
       this.controlPlane._transaction((db) => {
@@ -87,7 +116,8 @@ export class ReleaseApplicationServiceV3 {
         if (!intact) throw stateError("ARTIFACT_INTEGRITY_ERROR", `materialized release ${request.releaseId} is not intact`);
         return v3StepResult({ stepId: ctx.stepId, routingOutcome: "continue", stateResult: "already_materialized", refs: { releaseId: request.releaseId } });
       }
-      const produced = request.artifacts ?? (typeof this.artifactBuilder === "function" ? this.artifactBuilder({ releaseId: request.releaseId, bundle: JSON.parse(release.bundle_json), pins: JSON.parse(release.pins_json) }) : null);
+      if (Object.hasOwn(request, "artifacts")) throw stateError("ARTIFACT_OVERRIDE_FORBIDDEN", "production release artifacts must be produced by the configured builder");
+      const produced = typeof this.artifactBuilder === "function" ? this.artifactBuilder({ releaseId: request.releaseId, bundle: JSON.parse(release.bundle_json), pins: JSON.parse(release.pins_json) }) : null;
       if (!produced || typeof produced !== "object" || Array.isArray(produced) || Object.keys(produced).length === 0) throw stateError("ARTIFACT_REQUIRED", "v3 release materialization requires artifacts");
       const records = [];
       for (const logicalPath of Object.keys(produced).sort()) {

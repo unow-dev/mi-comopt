@@ -5,7 +5,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { openCommentDatabaseReadOnly } from "../src/database/comment-database.js";
-import { readSelectedSnapshots } from "../src/database/raw-snapshot-repository.js";
+import { readSelectedSnapshotsInReferenceOrder } from "../src/database/raw-snapshot-repository.js";
+import { projectCumulativeCorpus } from "../src/processing/analysis-input/raw-snapshot-projection.js";
 import {
   canonicalizeCandidate,
   conflictSet,
@@ -19,8 +20,8 @@ import {
   validateOptimicomUiReleaseAtRoot,
 } from "../src/processing/optimicom-ui-release/release.js";
 import {
-  buildDbKeywordCandidateDataset,
-  serializeDbKeywordCandidateDataset,
+  buildCumulativeSourceDataset,
+  serializeCumulativeSourceDataset,
 } from "../src/processing/optimicom-ui-release/source-dataset.js";
 import {
   prefixedSha256,
@@ -100,27 +101,25 @@ function readRelease(db, releaseId) {
 function readSourceDataset(db, corpusVersionId, classificationVersionId) {
   const corpus = readStateVersion(db, corpusVersionId);
   const refs = corpus.payload?.state?.snapshot_refs ?? [];
-  if (!Array.isArray(refs) || refs.length !== 1) throw new Error("corpus version must contain exactly one snapshot reference");
-  const rawRef = refs[0];
-  const snapshotRef = typeof rawRef === "string"
-    ? rawRef
-    : `${rawRef?.payloadSha256 ?? ""}:${rawRef?.snapshotIndex ?? ""}`;
-  const match = /^([0-9a-f]{64}):(\d+)$/.exec(snapshotRef);
-  if (!match) throw new Error(`invalid corpus snapshot reference: ${snapshotRef}`);
-  const selected = readSelectedSnapshots(db, [{ payloadSha256: match[1], snapshotIndex: Number(match[2]) }]);
-  const snapshotId = selected[0].snapshot.snapshotId;
-  const labels = db.prepare(
-    `SELECT sco.source_index, csl.label
-       FROM snapshot_comment_observations AS sco
-       JOIN classification_state_labels AS csl
-         ON csl.observation_id = CAST(sco.observation_id AS TEXT)
-        AND csl.version_id = ?
-      WHERE sco.snapshot_id = ?
-      ORDER BY sco.source_index ASC`,
-  ).all(classificationVersionId, snapshotId).map((row) => ({ sourceIndex: Number(row.source_index), label: row.label }));
-  const dataset = buildDbKeywordCandidateDataset(selected, labels);
-  const bytes = serializeDbKeywordCandidateDataset(dataset);
-  return { dataset, bytes, snapshotRef: `${dataset.snapshot_ref.payload_sha256}:${dataset.snapshot_ref.snapshot_index}` };
+  if (!Array.isArray(refs) || refs.length === 0) throw new Error("corpus version must contain snapshot references");
+  const normalizedRefs = refs.map((reference) => {
+    const raw = typeof reference === "string"
+      ? reference
+      : `${reference?.payloadSha256 ?? ""}:${reference?.snapshotIndex ?? ""}`;
+    const match = /^([0-9a-f]{64}):(\d+)$/.exec(raw);
+    if (!match) throw new Error(`invalid corpus snapshot reference: ${raw}`);
+    return { payloadSha256: match[1], snapshotIndex: Number(match[2]) };
+  });
+  const selected = readSelectedSnapshotsInReferenceOrder(db, normalizedRefs);
+  const projection = projectCumulativeCorpus(selected);
+  const labels = projection.survivors.length === 0 ? [] : db.prepare(
+    `SELECT observation_id, label
+       FROM classification_state_labels
+      WHERE version_id = ? AND observation_id IN (${projection.survivors.map(() => "?").join(", ")})`,
+  ).all(classificationVersionId, ...projection.survivors.map((row) => row.observationId)).map((row) => ({ observationId: String(row.observation_id), label: row.label }));
+  const dataset = buildCumulativeSourceDataset({ corpusVersionId, classificationVersionId, snapshotRefs: normalizedRefs, survivors: projection.survivors, labelRows: labels });
+  const bytes = serializeCumulativeSourceDataset(dataset);
+  return { dataset, bytes, snapshotRefs: normalizedRefs };
 }
 
 function normalizeAcceptedProposal(proposal, taxonomy) {
@@ -235,7 +234,7 @@ export async function exportV3OptimicomUiRelease({
       releaseBundleSha256: release.bundle_sha256,
       projectionRunId,
       outputRoot: path.resolve(outputRoot),
-      sourceSnapshotRef: source.snapshotRef,
+      sourceSnapshotRefs: source.snapshotRefs,
       recordCounts: {
         comments: built.manifest.artifacts.comments.record_count,
         overview: built.manifest.artifacts.overview.record_count,

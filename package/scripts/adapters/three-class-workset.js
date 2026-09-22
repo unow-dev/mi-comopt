@@ -9,11 +9,13 @@ import {
 } from "../../src/database/comment-database.js";
 import {
   readSelectedSnapshots,
+  readSelectedSnapshotsInReferenceOrder,
   resolveSelectedSnapshotRefs,
 } from "../../src/database/raw-snapshot-repository.js";
 import {
   insertObservationLabel,
   readExistingCommentLabels,
+  readClassificationVersionLabels,
   readExistingTargetLabels,
   readTargetObservations,
   readWorksetExcludedComments,
@@ -40,6 +42,8 @@ import {
   PROTOCOL_VERSION,
 } from "../../src/three-class-workset/protocol.js";
 import { worseThreeClassLabel } from "../../src/three-class/label-resolution.js";
+import { projectCumulativeCorpus } from "../../src/processing/analysis-input/raw-snapshot-projection.js";
+import { assertClassificationHandoffSafe, planCumulativeClassification } from "../../src/three-class/cumulative-classification-plan.js";
 
 const PACKAGER_PATH = path.join(REPOSITORY_ROOT, "package", "scripts", "pack-three-class-workset.py");
 const PROMPT_TEMPLATE_PATH = path.join(REPOSITORY_ROOT, "package", "templates", "three-class-workset", "PROMPT.md");
@@ -370,6 +374,7 @@ export async function generateThreeClassWorkset({
   dbPath,
   snapshotRefs = [],
   snapshotShas = [],
+  classificationVersionId = undefined,
   historyPath,
   outputPath,
 }) {
@@ -397,11 +402,26 @@ export async function generateThreeClassWorkset({
   try {
     db = await openCommentDatabase(dbPath);
     const resolvedRefs = resolveSelectedSnapshotRefs(db, { snapshotRefs, snapshotShas });
-    const selectedSnapshots = readSelectedSnapshots(db, resolvedRefs);
-    const artifacts = buildAnalysisArtifacts(selectedSnapshots);
-    const effectiveCommentLabels = buildEffectiveCommentLabelMap(readExistingCommentLabels(db));
-    const generatedHistory = mergeThreeClassHistory(history, effectiveCommentLabels);
-    const itemPlan = buildThreeClassItemPlan(artifacts.records, new Set(effectiveCommentLabels.keys()));
+    const selectedSnapshots = classificationVersionId
+      ? readSelectedSnapshotsInReferenceOrder(db, resolvedRefs)
+      : readSelectedSnapshots(db, resolvedRefs);
+    const artifacts = classificationVersionId
+      ? projectCumulativeCorpus(selectedSnapshots)
+      : buildAnalysisArtifacts(selectedSnapshots);
+    const effectiveCommentLabels = classificationVersionId
+      ? new Map()
+      : buildEffectiveCommentLabelMap(readExistingCommentLabels(db));
+    const generatedHistory = classificationVersionId
+      ? { protocol_version: history.protocol_version, items: [] }
+      : mergeThreeClassHistory(history, effectiveCommentLabels);
+    const itemPlan = classificationVersionId
+      ? (() => {
+        const priorLabels = readClassificationVersionLabels(db, classificationVersionId);
+        const plan = planCumulativeClassification({ survivors: artifacts.survivors, priorLabels });
+        assertClassificationHandoffSafe({ items: plan.handoffItems, priorExactByObservationId: plan.priorExactByObservationId, priorCommentLabels: plan.priorCommentLabels });
+        return { items: plan.handoffItems.map((item) => ({ id: item.id, comment: item.commentText })), actuallyExcludedComments: new Set() };
+      })()
+      : buildThreeClassItemPlan(artifacts.records, new Set(effectiveCommentLabels.keys()));
     const worksetId = randomUUID();
     const itemsValue = {
       protocol_version: PROTOCOL_VERSION,

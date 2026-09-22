@@ -19,7 +19,6 @@ import {
 
 const REPOSITORY_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const COMMENT_DATABASE_CLI = path.join(REPOSITORY_ROOT, "package", "scripts", "comment-database.mjs");
-const SNAPSHOT_REF_PATTERN = /^[0-9a-f]{64}:[0-9]+$/;
 
 function productionKeywordPublicationRoot() {
   return path.resolve(process.env.COMMENT_DATA_UPDATE_KEYWORD_PUBLICATION_ROOT ?? path.join(REPOSITORY_ROOT, "work", "20260826", "candidate-publication-final"));
@@ -29,18 +28,17 @@ function productionThreeClassHistoryPath() {
   return path.resolve(process.env.COMMENT_DATA_UPDATE_THREE_CLASS_HISTORY ?? path.join(REPOSITORY_ROOT, "docs", "active", "operations", "integrated-labeling-state", "three_class_history.json"));
 }
 
-function corpusSnapshotRef(controlPlane, corpusVersionId) {
+function corpusSnapshotRefs(controlPlane, corpusVersionId) {
   const version = controlPlane.readVersion(corpusVersionId);
   const refs = version?.payload?.state?.snapshot_refs ?? [];
-  if (!Array.isArray(refs) || refs.length !== 1) {
-    throw new Error(`corpus version ${corpusVersionId} must contain exactly one imported snapshot reference`);
-  }
-  const reference = refs[0];
-  const normalized = typeof reference === "string"
-    ? reference
-    : `${reference?.payloadSha256 ?? ""}:${reference?.snapshotIndex ?? ""}`;
-  if (!SNAPSHOT_REF_PATTERN.test(normalized)) throw new Error(`corpus version ${corpusVersionId} contains an invalid snapshot reference`);
-  return normalized;
+  if (!Array.isArray(refs) || refs.length === 0) throw new Error(`corpus version ${corpusVersionId} contains no snapshot references`);
+  return refs.map((reference) => {
+    const normalized = typeof reference === "string"
+      ? reference
+      : `${reference?.payloadSha256 ?? ""}:${reference?.snapshotIndex ?? ""}`;
+    if (!/^[0-9a-f]{64}:[0-9]+$/.test(normalized)) throw new Error(`corpus version ${corpusVersionId} contains an invalid snapshot reference`);
+    return normalized;
+  });
 }
 
 function createProductionKeywordHandoffBuilder(dbPath) {
@@ -54,7 +52,8 @@ function createProductionKeywordHandoffBuilder(dbPath) {
         COMMENT_DATABASE_CLI,
         "generate-keyword-candidate-handoff",
         "--db", resolvedDbPath,
-        "--snapshot-ref", corpusSnapshotRef(controlPlane, request.corpusVersionId),
+        ...corpusSnapshotRefs(controlPlane, request.corpusVersionId).flatMap((reference) => ["--snapshot-ref", reference]),
+        "--corpus-version-id", request.corpusVersionId,
         "--classification-version-id", request.classificationVersionId,
         "--publication-root", publicationRoot,
         "--output", outputPath,
@@ -77,7 +76,7 @@ function createProductionKeywordHandoffBuilder(dbPath) {
 function createProductionClassificationWorksetBuilder(dbPath) {
   const historyPath = productionThreeClassHistoryPath();
   const resolvedDbPath = dbPath === ":memory:" ? dbPath : path.resolve(dbPath);
-  return ({ corpusVersionId, controlPlane }) => {
+  return ({ corpusVersionId, classificationVersionId, controlPlane }) => {
     const temporaryRoot = mkdtempSync(path.join(tmpdir(), "comment-db-v3-classification-workset-"));
     const outputPath = path.join(temporaryRoot, "three-class-workset.zip");
     try {
@@ -85,7 +84,8 @@ function createProductionClassificationWorksetBuilder(dbPath) {
         COMMENT_DATABASE_CLI,
         "generate-three-class-workset",
         "--db", resolvedDbPath,
-        "--snapshot-ref", corpusSnapshotRef(controlPlane, corpusVersionId),
+        ...corpusSnapshotRefs(controlPlane, corpusVersionId).flatMap((reference) => ["--snapshot-ref", reference]),
+        ...(classificationVersionId ? ["--classification-version-id", classificationVersionId] : []),
         "--history", historyPath,
         "--output", outputPath,
       ], { cwd: REPOSITORY_ROOT, encoding: "utf8" });

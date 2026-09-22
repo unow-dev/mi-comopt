@@ -62,7 +62,7 @@ function usageFor(command = undefined) {
     return "Usage: npm run comment-db -- verify-raw-inputs [--snapshot-ref <sha:index> ...] [--db path.sqlite3]";
   }
   if (command === "generate-three-class-workset") {
-    return "Usage: npm run comment-db -- generate-three-class-workset (--snapshot-ref <sha:index> ... | --snapshot-sha <sha256> ...) --history path.json --output path.zip [--db path.sqlite3]";
+    return "Usage: npm run comment-db -- generate-three-class-workset (--snapshot-ref <sha:index> ... | --snapshot-sha <sha256> ...) --history path.json --output path.zip [--db path.sqlite3] [--classification-version-id ID]";
   }
   if (command === "validate-three-class-response") {
     return "Usage: npm run comment-db -- validate-three-class-response --workset path.zip --response path.json";
@@ -71,7 +71,7 @@ function usageFor(command = undefined) {
     return "Usage: npm run comment-db -- apply-three-class-response --workset path.zip --response path.json [--db path.sqlite3]";
   }
   if (command === "generate-keyword-candidate-handoff") {
-    return "Usage: npm run comment-db -- generate-keyword-candidate-handoff --snapshot-ref <sha:index> --publication-root path --output path.zip [--db path.sqlite3] [--request-id ID] [--classification-version-id ID]";
+    return "Usage: npm run comment-db -- generate-keyword-candidate-handoff --snapshot-ref <sha:index> ... --publication-root path --output path.zip [--db path.sqlite3] [--request-id ID] [--classification-version-id ID] [--corpus-version-id ID]";
   }
   if (command === "apply-keyword-candidate-publication") {
     return "Usage: npm run comment-db -- apply-keyword-candidate-publication --handoff-manifest path/handoff_manifest.json --publication-root path [--db path.sqlite3]";
@@ -188,10 +188,10 @@ function parseArguments(argv) {
     "backfill-raw-inputs": new Set(["--db", "--raw-root"]),
     "export-analysis-input": new Set(["--snapshot-ref", "--snapshot-sha", "--output", "--manifest", "--db"]),
     "verify-raw-inputs": new Set(["--snapshot-ref", "--snapshot-sha", "--db"]),
-    "generate-three-class-workset": new Set(["--snapshot-ref", "--snapshot-sha", "--history", "--output", "--db"]),
+    "generate-three-class-workset": new Set(["--snapshot-ref", "--snapshot-sha", "--history", "--output", "--db", "--classification-version-id"]),
     "validate-three-class-response": new Set(["--workset", "--response"]),
     "apply-three-class-response": new Set(["--workset", "--response", "--db"]),
-    "generate-keyword-candidate-handoff": new Set(["--snapshot-ref", "--publication-root", "--output", "--db", "--request-id", "--classification-version-id"]),
+    "generate-keyword-candidate-handoff": new Set(["--snapshot-ref", "--publication-root", "--output", "--db", "--request-id", "--classification-version-id", "--corpus-version-id"]),
     "apply-keyword-candidate-publication": new Set(["--handoff-manifest", "--publication-root", "--db"]),
     "export-keyword-candidates-ui": new Set(["--output", "--db"]),
     "export-three-class-label-summary-ui": new Set(["--snapshot-ref", "--output", "--db"]),
@@ -227,6 +227,8 @@ function parseArguments(argv) {
       setOnce(args, "requestId", requireOptionValue(argv, index, option), option);
     } else if (option === "--classification-version-id") {
       setOnce(args, "classificationVersionId", requireOptionValue(argv, index, option), option);
+    } else if (option === "--corpus-version-id") {
+      setOnce(args, "corpusVersionId", requireOptionValue(argv, index, option), option);
     } else if (option === "--snapshot-sha") {
       parseSnapshotSha(args, requireOptionValue(argv, index, option));
     } else if (option === "--snapshot-ref") {
@@ -234,7 +236,7 @@ function parseArguments(argv) {
     } else {
       throw new CliArgumentError("unknown option: " + option);
     }
-    if (["--input", "--db", "--raw-root", "--output", "--manifest", "--history", "--workset", "--response", "--publication-root", "--handoff-manifest", "--snapshot-sha", "--snapshot-ref", "--request-id", "--classification-version-id"].includes(option)) {
+    if (["--input", "--db", "--raw-root", "--output", "--manifest", "--history", "--workset", "--response", "--publication-root", "--handoff-manifest", "--snapshot-sha", "--snapshot-ref", "--request-id", "--classification-version-id", "--corpus-version-id"].includes(option)) {
       index += 1;
     }
   }
@@ -273,7 +275,7 @@ function parseArguments(argv) {
     if (args.response === undefined) throw new CliArgumentError("--response is required");
   }
   if (command === "generate-keyword-candidate-handoff") {
-    if (args.snapshotRefs.length !== 1) throw new CliArgumentError("exactly one --snapshot-ref is required");
+    if (args.snapshotRefs.length === 0) throw new CliArgumentError("at least one --snapshot-ref is required");
     if (args.publicationRoot === undefined) throw new CliArgumentError("--publication-root is required");
     if (args.output === undefined) throw new CliArgumentError("--output is required");
   }
@@ -371,6 +373,7 @@ async function generateWorkset(args) {
     dbPath: args.db === undefined ? undefined : resolveInvocationPath(args.db),
     snapshotRefs: args.snapshotRefs.map((reference) => ({ ...reference })),
     snapshotShas: [...args.snapshotShas],
+    classificationVersionId: args.classificationVersionId,
     historyPath: resolveInvocationPath(args.history),
     outputPath: resolveInvocationPath(args.output),
   });
@@ -458,6 +461,8 @@ try {
     const result = await generateKeywordCandidateHandoff({
       dbPath: args.db === undefined ? undefined : resolveInvocationPath(args.db),
       snapshotRef: args.snapshotRefs[0],
+      snapshotRefs: args.snapshotRefs,
+      corpusVersionId: args.corpusVersionId,
       publicationRoot: resolveInvocationPath(args.publicationRoot),
       outputPath: resolveInvocationPath(args.output),
       requestId: args.requestId,

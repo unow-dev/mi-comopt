@@ -10,10 +10,10 @@ import {
 } from "../account-block-candidates/account-block-candidate-workflow.js";
 import { contentSha256 } from "../keyword-candidates/candidate-workflow.js";
 import { buildOverviewArtifact, validateOverviewArtifact } from "./overview.js";
-import { validateSourceDataset } from "./source-dataset.js";
+import { validateSourceDataset, validateSourceDatasetV2 } from "./source-dataset.js";
 
 export const UI_RELEASE_ROOT = "optimicom-ui-release.json";
-export const UI_RELEASE_SCHEMA_VERSION = 1;
+export const UI_RELEASE_SCHEMA_VERSION = 2;
 export const UI_ARTIFACT_KEYS = ["comments", "overview", "keywords", "accounts"];
 const UI_ARTIFACT_PREFIXES = {
   comments: "source-dataset",
@@ -101,7 +101,7 @@ function buildAccountProjection(sourceDataset) {
 }
 
 export function buildOptimicomUiArtifacts({ sourceDataset, sourceDatasetBytes, keywords, keywordBytes, accountPolicy, overview = undefined }) {
-  validateSourceDataset(sourceDataset);
+  (sourceDataset.schema_version === 2 ? validateSourceDatasetV2 : validateSourceDataset)(sourceDataset);
   if (!Buffer.isBuffer(sourceDatasetBytes)) fail("SOURCE_DATASET_INVALID", "source dataset bytes are required");
   const expectedSourceBytes = Buffer.from(serializeJson(sourceDataset), "utf8");
   if (!expectedSourceBytes.equals(sourceDatasetBytes)) fail("SOURCE_DATASET_INVALID", "source dataset bytes do not match deterministic serialization");
@@ -170,14 +170,22 @@ export function buildOptimicomUiRelease({
   if (publication.source_dataset_artifact_sha256 !== sourceDatasetSha) fail("KEYWORD_PUBLICATION_INVALID", "source dataset SHA does not match current publication");
   return {
     manifest: {
-      schema_version: UI_RELEASE_SCHEMA_VERSION,
+      schema_version: sourceDataset.schema_version === 2 ? 2 : 1,
       generated_at: generatedAt,
       source: {
         db_schema_version: 8,
-        snapshot_ref: {
-          payload_sha256: sourceDataset.snapshot_ref.payload_sha256,
-          snapshot_index: sourceDataset.snapshot_ref.snapshot_index,
-        },
+        ...(sourceDataset.schema_version === 2
+          ? {
+            corpus_version_id: sourceDataset.source.corpus_version_id,
+            classification_version_id: sourceDataset.source.classification_version_id,
+            snapshot_refs: sourceDataset.source.snapshot_refs,
+          }
+          : {
+            snapshot_ref: {
+              payload_sha256: sourceDataset.snapshot_ref.payload_sha256,
+              snapshot_index: sourceDataset.snapshot_ref.snapshot_index,
+            },
+          }),
         source_dataset_artifact_sha256: sourceDatasetSha,
         keyword_publication: {
           run_id: publication.run_id,
@@ -211,12 +219,26 @@ function safeArtifactPath(value, context) {
 
 export function validateOptimicomUiReleaseManifest(manifest) {
   exactKeys(manifest, ["schema_version", "generated_at", "source", "policies", "artifacts"], "release");
-  if (manifest.schema_version !== 1) fail("UI_RELEASE_INVALID", "schema_version must be 1");
+  if (![1, 2].includes(manifest.schema_version)) fail("UI_RELEASE_INVALID", "schema_version must be 1 or 2");
   assertTimestamp(manifest.generated_at, "generated_at");
-  exactKeys(manifest.source, ["db_schema_version", "snapshot_ref", "source_dataset_artifact_sha256", "keyword_publication"], "release.source");
+  const sourceKeys = manifest.schema_version === 2
+    ? ["db_schema_version", "corpus_version_id", "classification_version_id", "snapshot_refs", "source_dataset_artifact_sha256", "keyword_publication"]
+    : ["db_schema_version", "snapshot_ref", "source_dataset_artifact_sha256", "keyword_publication"];
+  exactKeys(manifest.source, sourceKeys, "release.source");
   if (manifest.source.db_schema_version !== 8) fail("UI_RELEASE_INVALID", "db_schema_version must be 8");
-  exactKeys(manifest.source.snapshot_ref, ["payload_sha256", "snapshot_index"], "release.source.snapshot_ref");
-  if (!HEX_SHA256.test(manifest.source.snapshot_ref.payload_sha256) || !Number.isSafeInteger(manifest.source.snapshot_ref.snapshot_index) || manifest.source.snapshot_ref.snapshot_index < 0) fail("UI_RELEASE_INVALID", "snapshot_ref is invalid");
+  if (manifest.schema_version === 2) {
+    for (const key of ["corpus_version_id", "classification_version_id"]) {
+      if (typeof manifest.source[key] !== "string" || manifest.source[key].length === 0) fail("UI_RELEASE_INVALID", `${key} is invalid`);
+    }
+    if (!Array.isArray(manifest.source.snapshot_refs) || manifest.source.snapshot_refs.length === 0) fail("UI_RELEASE_INVALID", "snapshot_refs is invalid");
+    manifest.source.snapshot_refs.forEach((reference, index) => {
+      exactKeys(reference, ["payload_sha256", "snapshot_index"], `release.source.snapshot_refs[${index}]`);
+      if (!HEX_SHA256.test(reference.payload_sha256) || !Number.isSafeInteger(reference.snapshot_index) || reference.snapshot_index < 0) fail("UI_RELEASE_INVALID", `snapshot_refs[${index}] is invalid`);
+    });
+  } else {
+    exactKeys(manifest.source.snapshot_ref, ["payload_sha256", "snapshot_index"], "release.source.snapshot_ref");
+    if (!HEX_SHA256.test(manifest.source.snapshot_ref.payload_sha256) || !Number.isSafeInteger(manifest.source.snapshot_ref.snapshot_index) || manifest.source.snapshot_ref.snapshot_index < 0) fail("UI_RELEASE_INVALID", "snapshot_ref is invalid");
+  }
   assertSha(manifest.source.source_dataset_artifact_sha256, "source.source_dataset_artifact_sha256");
   exactKeys(manifest.source.keyword_publication, ["run_id", "published_at", "applied_at", "candidates_content_sha256"], "release.source.keyword_publication");
   assertRunId(manifest.source.keyword_publication.run_id, "source.keyword_publication.run_id");
@@ -262,8 +284,10 @@ export function validateOptimicomUiArtifactBytes(manifest, dataArtifacts) {
     const value = parseArtifact(bytes, key);
     parsedArtifacts[key] = value;
     if (key === "comments") {
-      validateSourceDataset(value);
-      if (value.snapshot_ref.payload_sha256 !== manifest.source.snapshot_ref.payload_sha256 || value.snapshot_ref.snapshot_index !== manifest.source.snapshot_ref.snapshot_index) fail("UI_ARTIFACT_INVALID", "comments snapshot identity does not match release");
+      (value.schema_version === 2 ? validateSourceDatasetV2 : validateSourceDataset)(value);
+      if (manifest.schema_version === 2) {
+        if (value.source.corpus_version_id !== manifest.source.corpus_version_id || value.source.classification_version_id !== manifest.source.classification_version_id || JSON.stringify(value.source.snapshot_refs) !== JSON.stringify(manifest.source.snapshot_refs)) fail("UI_ARTIFACT_INVALID", "comments cumulative identity does not match release");
+      } else if (value.snapshot_ref.payload_sha256 !== manifest.source.snapshot_ref.payload_sha256 || value.snapshot_ref.snapshot_index !== manifest.source.snapshot_ref.snapshot_index) fail("UI_ARTIFACT_INVALID", "comments snapshot identity does not match release");
       if (value.records.length !== manifest.artifacts.comments.record_count) fail("UI_ARTIFACT_COUNT_MISMATCH", "comments record count does not match release");
     } else if (key === "overview") {
       validateOverviewArtifact(value);

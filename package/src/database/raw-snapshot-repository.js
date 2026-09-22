@@ -140,7 +140,7 @@ function assertCommentRowShape(row, materializationKind, payloadSha256, snapshot
 
 function readSnapshotObservations(db, snapshotId, payloadSha256, snapshotIndex, loadedCount, materializationKind) {
   const rows = db.prepare(
-    `SELECT source_index, comment_pk, level, comment_id_raw, video_id_raw,
+    `SELECT observation_id, source_index, comment_pk, level, comment_id_raw, video_id_raw,
             parent_comment_id_raw, user_id_raw, created_at,
             username, handle, comment_text, posted_at, posted_date
      FROM snapshot_comment_observations
@@ -154,6 +154,7 @@ function readSnapshotObservations(db, snapshotId, payloadSha256, snapshotIndex, 
   assertSourceIndices(rows, payloadSha256, snapshotIndex);
   rows.forEach((row) => assertCommentRowShape(row, materializationKind, payloadSha256, snapshotIndex));
   return rows.map((row) => ({
+    observationId: Number(row.observation_id),
     sourceIndex: Number(row.source_index),
     username: row.username,
     handle: row.handle,
@@ -205,6 +206,20 @@ export function readSelectedSnapshots(db, snapshotRefs) {
       ),
     };
   });
+}
+
+/**
+ * Read snapshots in the semantic order supplied by the corpus state.
+ * `readSelectedSnapshots` intentionally retains the legacy SHA ordering;
+ * cumulative corpus projection must not inherit that ordering.
+ */
+export function readSelectedSnapshotsInReferenceOrder(db, snapshotRefs) {
+  const selected = readSelectedSnapshots(db, snapshotRefs);
+  const byReference = new Map(selected.map((bundle) => [
+    snapshotReferenceKey(bundle.snapshot),
+    bundle,
+  ]));
+  return snapshotRefs.map((reference) => byReference.get(snapshotReferenceKey(reference)));
 }
 
 export const readAnalysisSnapshots = readSelectedSnapshots;

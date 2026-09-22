@@ -6,24 +6,24 @@
 
 ## Task Sequence
 
-- [ ] 1. 要求整理の範囲で、AIエージェントが、実装仕様、実装順序、変更対象、受入条件、recovery手順、決定事項、対象外事項、および文書間の優先順位を確認する。
-- [ ] 2. 実装前確認の範囲で、AIエージェントが、現行corpus更新、snapshot投影、分類、Source Dataset、下流分析、release、operator、cutover、およびWeb consumerの契約と変更境界を確認する。
+- [x] 1. 要求整理の範囲で、AIエージェントが、実装仕様、実装順序、変更対象、受入条件、recovery手順、決定事項、対象外事項、および文書間の優先順位を確認する。
+- [x] 2. 実装前確認の範囲で、AIエージェントが、現行corpus更新、snapshot投影、分類、Source Dataset、下流分析、release、operator、cutover、およびWeb consumerの契約と変更境界を確認する。
 - [ ] 3. 仕様差異の判断範囲で、人間が、現行実装またはproduction状態が確定済み仕様と矛盾する場合に、仕様へ差し戻す要否、追加の承認、および作業継続条件を判断する。
-- [ ] 4. 累積corpus基盤の実装範囲で、AIエージェントが、既存corpusのsnapshot参照を順序どおりに保持し、追加参照をfirst-winsで統合し、5項目完全一致の観測値を重複排除できる状態へ変更する。
-- [ ] 5. Corpus v2 stateの実装範囲で、AIエージェントが、累積snapshot参照を正本として保存し、同一stateの再更新をno-opとし、v1 headの通常更新を拒否し、snapshot参照の保存形式を一意に扱える状態へ変更する。
-- [ ] 6. 累積分類計画の実装範囲で、AIエージェントが、直前のClassificationVersionをauthorityとして、observation単位、comment text単位、human decisionの順に分類を解決し、survivor全件を含むcomplete stateを生成できる状態へ変更する。
-- [ ] 7. 分類handoff安全性の実装範囲で、AIエージェントが、既存分類で解決済みの項目をChatGPT対象へ混入させず、handoff確定直前の検証、human review要否、および失敗時のfail-closed動作を整備する。
-- [ ] 8. Source Dataset v2の実装範囲で、AIエージェントが、累積projectionと分類結果を完全一致で検証し、survivor順に公開用indexを再採番し、corpus・classification・snapshot参照を追跡できるsourceを生成する。
-- [ ] 9. 下流分析統一の実装範囲で、AIエージェントが、keyword、account、overview、およびcommentsを同一のSource Dataset v2から生成し、各経路に残るsingle-snapshot前提と独自snapshot再読込を解消する。
-- [ ] 10. Release整合性の実装範囲で、AIエージェントが、corpus・classification・source・downstream artifactの依存関係とSHAをfail-closedで検証し、production artifactの任意overrideを受け付けないrelease生成・materialize経路を整備する。
-- [ ] 11. Web consumer互換性の確認範囲で、AIエージェントが、実Web consumerのSource Dataset契約を確認し、schema versionまたはsingle snapshot参照への固定依存が残る場合に、同一cutoverで必要な対応範囲を特定する。
+- [x] 4. 累積corpus基盤の実装範囲で、AIエージェントが、既存corpusのsnapshot参照を順序どおりに保持し、追加参照をfirst-winsで統合し、5項目完全一致の観測値を重複排除できる状態へ変更する。
+- [x] 5. Corpus v2 stateの実装範囲で、AIエージェントが、累積snapshot参照を正本として保存し、同一stateの再更新をno-opとし、v1 headの通常更新を拒否し、snapshot参照の保存形式を一意に扱える状態へ変更する。
+- [x] 6. 累積分類計画の実装範囲で、AIエージェントが、直前のClassificationVersionをauthorityとして、observation単位、comment text単位、human decisionの順に分類を解決し、survivor全件を含むcomplete stateを生成できる状態へ変更する。
+- [x] 7. 分類handoff安全性の実装範囲で、AIエージェントが、既存分類で解決済みの項目をChatGPT対象へ混入させず、handoff確定直前の検証、human review要否、および失敗時のfail-closed動作を整備する。
+- [x] 8. Source Dataset v2の実装範囲で、AIエージェントが、累積projectionと分類結果を完全一致で検証し、survivor順に公開用indexを再採番し、corpus・classification・snapshot参照を追跡できるsourceを生成する。
+- [x] 9. 下流分析統一の実装範囲で、AIエージェントが、keyword、account、overview、およびcommentsを同一のSource Dataset v2から生成し、各経路に残るsingle-snapshot前提と独自snapshot再読込を解消する。
+- [x] 10. Release整合性の実装範囲で、AIエージェントが、corpus・classification・source・downstream artifactの依存関係とSHAをfail-closedで検証し、production artifactの任意overrideを受け付けないrelease生成・materialize経路を整備する。
+- [x] 11. Web consumer互換性の確認範囲で、AIエージェントが、実Web consumerのSource Dataset契約を確認し、schema versionまたはsingle snapshot参照への固定依存が残る場合に、同一cutoverで必要な対応範囲を特定する。
 - [ ] 12. Recovery入力確定の範囲で、人間が、既存欠落状態の有無、recovery実施可否、`baseCorpusVersionId`、`brokenHeadCorpusVersionId`、および対象productionの復旧範囲を確定する。
-- [ ] 13. Recovery実装の範囲で、AIエージェントが、明示されたbaseからbroken headまでの承認済み範囲を累積復旧し、既存分類を可能な限り継承し、真に未解決な項目だけを再分類対象にできる状態へ整備する。
-- [ ] 14. Production cutover準備の範囲で、AIエージェントが、通常更新とrecoveryを分離し、new startsのfreeze、非終端処理のdrain、head再確認、再実行時のidempotency、およびfailure時のfix-forward条件を検証可能にする。
+- [x] 13. Recovery実装の範囲で、AIエージェントが、明示されたbaseからbroken headまでの承認済み範囲を累積復旧し、既存分類を可能な限り継承し、真に未解決な項目だけを再分類対象にできる状態へ整備する。
+- [x] 14. Production cutover準備の範囲で、AIエージェントが、通常更新とrecoveryを分離し、new startsのfreeze、非終端処理のdrain、head再確認、再実行時のidempotency、およびfailure時のfix-forward条件を検証可能にする。
 - [ ] 15. Production公開判断の範囲で、人間が、実装結果、受入結果、recovery対象、公開対象、deployment条件、および失敗時のfix-forward方針を確認してcutover・公開を承認する。
 - [ ] 16. Production cutover実行の範囲で、AIエージェントが、承認済みの順序でfreeze、state構築、分類、Source Dataset生成、下流artifact生成、corrected releaseの公開、およびdeployment verificationを実行する。
-- [ ] 17. 回帰・受入検証の範囲で、AIエージェントまたはCIが、累積projection、exact dedupe、分類継承、handoff安全性、complete state、Source Dataset v2、release gate、recovery冪等性、およびend-to-endのlogical corpus identityを確認する。
-- [ ] 18. 作業結果の範囲で、AIエージェントが、変更内容、検証結果、production recovery・deploymentの結果、未完了事項、運用上の注意点、および対象外事項を記録する。
+- [x] 17. 回帰・受入検証の範囲で、AIエージェントまたはCIが、累積projection、exact dedupe、分類継承、handoff安全性、complete state、Source Dataset v2、release gate、recovery冪等性、およびend-to-endのlogical corpus identityを確認する。
+- [x] 18. 作業結果の範囲で、AIエージェントが、変更内容、検証結果、production recovery・deploymentの結果、未完了事項、運用上の注意点、および対象外事項を記録する。
 
 ## Work Notes
 
@@ -35,3 +35,7 @@
 - 既存のbroken headがある場合、全raw snapshotまたは全corpus履歴を無条件にunionせず、人間が確定したbaseとbroken headの範囲だけをrecoveryする。broken semanticsへのrollbackは行わず、失敗時はfreezeを維持してfix-forwardする。
 - 本番入力、recovery対象、cutover承認、公開可否などの判断は人間が行う。人間による確定前にproduction mutationやcorrected releaseの公開を完了扱いにしない。
 - `docs/archive` 配下の文書は参照しない。
+- v3の新規実装はlegacy projection/workset/source verifierを削除せず、v3 authorityから隔離して互換性を維持した。
+- production recoveryのbase/head、cutover承認、公開およびdeployment verificationは未実施であり、人間の確定待ちである。
+- `npm --workspace package test` は185件すべて成功し、`git diff --check` も成功した。
+- baseline commitは `17df88d chore: baseline before cumulative corpus update`。本実装はbaseline後の差分として記録する。

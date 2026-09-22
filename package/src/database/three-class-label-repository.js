@@ -94,6 +94,26 @@ export function readExistingCommentLabels(db) {
   }));
 }
 
+/** Read labels from one pinned v3 ClassificationVersion only. */
+export function readClassificationVersionLabels(db, versionId) {
+  if (typeof versionId !== "string" || versionId.length === 0) return [];
+  return db.prepare(
+    `SELECT
+        CAST(labels.observation_id AS TEXT) AS observation_id,
+        sco.comment_text,
+        labels.label
+     FROM classification_state_labels AS labels
+     LEFT JOIN snapshot_comment_observations AS sco
+       ON CAST(sco.observation_id AS TEXT) = labels.observation_id
+     WHERE labels.version_id = ?
+     ORDER BY CAST(labels.observation_id AS INTEGER), labels.observation_id`,
+  ).all(versionId).map((row) => ({
+    observationId: String(row.observation_id),
+    commentText: row.comment_text,
+    label: row.label,
+  }));
+}
+
 export function readExistingTargetLabels(db, worksetId) {
   return db.prepare(
     `SELECT

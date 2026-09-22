@@ -7,7 +7,8 @@ import { canonicalJson, cloneJson, deterministicId, semanticSha256 } from "../..
 import { StateControlPlaneError, stateError } from "../../state/errors.js";
 import { adaptCommentBatchBytes } from "../../collector/comment-batch/comment-batch-adapter.js";
 import { importRawInputIntoDatabase } from "../../database/comment-database.js";
-import { readSelectedSnapshots } from "../../database/raw-snapshot-repository.js";
+import { readSelectedSnapshots, readSelectedSnapshotsInReferenceOrder } from "../../database/raw-snapshot-repository.js";
+import { projectCumulativeCorpus } from "../../processing/analysis-input/raw-snapshot-projection.js";
 import {
   STREAM_KEYS,
   normalizeLabels,
@@ -20,8 +21,13 @@ import {
 } from "../services.js";
 import { buildResponseSchema as buildThreeClassResponseSchema, PROTOCOL_VERSION } from "../../three-class-workset/protocol.js";
 import { contentSha256 } from "../../processing/keyword-candidates/candidate-workflow.js";
-import { readExistingCommentLabels, readTargetObservations, readWorksetExcludedComments } from "../../database/three-class-label-repository.js";
+import { readClassificationVersionLabels, readExistingCommentLabels, readTargetObservations, readWorksetExcludedComments } from "../../database/three-class-label-repository.js";
 import { worseThreeClassLabel } from "../../three-class/label-resolution.js";
+import {
+  assertClassificationHandoffSafe,
+  assertCompleteClassificationState,
+  planCumulativeClassification,
+} from "../../three-class/cumulative-classification-plan.js";
 import { v3StepResult } from "./result.js";
 import { runV3Idempotent } from "./context.js";
 
@@ -207,6 +213,63 @@ function countUnresolvedClassificationObservations(controlPlane, corpusVersion, 
   return Number(row.count);
 }
 
+function normalizeCorpusSnapshotRef(reference) {
+  if (typeof reference === "string") {
+    const match = /^([0-9a-f]{64}):(\d+)$/.exec(reference);
+    if (!match) throw stateError("CORPUS_STATE_INVALID", `invalid snapshot reference: ${reference}`);
+    return { payloadSha256: match[1], snapshotIndex: Number(match[2]) };
+  }
+  if (!reference || typeof reference !== "object" || Array.isArray(reference)
+    || typeof reference.payloadSha256 !== "string"
+    || !/^[0-9a-f]{64}$/.test(reference.payloadSha256)
+    || !Number.isSafeInteger(reference.snapshotIndex)
+    || reference.snapshotIndex < 0) {
+    throw stateError("CORPUS_STATE_INVALID", "snapshot reference must be { payloadSha256, snapshotIndex }");
+  }
+  return { payloadSha256: reference.payloadSha256, snapshotIndex: reference.snapshotIndex };
+}
+
+function uniqueCorpusSnapshotRefs(references) {
+  const result = [];
+  const seen = new Set();
+  for (const reference of references ?? []) {
+    const normalized = normalizeCorpusSnapshotRef(reference);
+    const key = `${normalized.payloadSha256}:${normalized.snapshotIndex}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    result.push(normalized);
+  }
+  return result;
+}
+
+function corpusSnapshotRefs(corpusVersion) {
+  return uniqueCorpusSnapshotRefs(corpusVersion?.payload?.state?.snapshot_refs ?? corpusVersion?.payload?.state?.snapshotRefs ?? []);
+}
+
+function cumulativeClassificationPlan(controlPlane, corpusVersion, classificationVersionId, decisions = {}) {
+  const refs = corpusSnapshotRefs(corpusVersion);
+  const bundles = refs.length === 0
+    ? []
+    : readSelectedSnapshotsInReferenceOrder(controlPlane.db, refs);
+  const projection = projectCumulativeCorpus(bundles);
+  const priorLabels = classificationVersionId
+    ? readClassificationVersionLabels(controlPlane.db, classificationVersionId)
+    : [];
+  const plan = planCumulativeClassification({ survivors: projection.survivors, priorLabels, decisions });
+  return { refs, projection, plan };
+}
+
+function publicClassificationPlan(plan) {
+  return {
+    labels: plan.labels,
+    unresolved: plan.unresolved,
+    handoffItems: plan.handoffItems,
+    resolution: plan.resolution,
+    humanDecisionCount: plan.humanDecisionCount,
+    derivedOnly: plan.derivedOnly,
+  };
+}
+
 export class EvidenceApplicationServiceV3 {
   constructor(controlPlane, { artifactStore = undefined } = {}) {
     this.controlPlane = controlPlane;
@@ -274,10 +337,23 @@ export class CorpusApplicationServiceV3 {
           }
         });
       }
-      const state = cloneJson(request.state ?? { snapshot_refs: requestedSnapshotRefs, evidence_ids: evidenceIds });
-      if (state.schema_version === undefined && state.schemaVersion === undefined) state.schema_version = 1;
-      const semanticHash = semanticSha256(state);
       const prior = expected ? this.controlPlane.readVersion(expected) : null;
+      const priorState = prior?.payload?.state ?? prior?.payload ?? null;
+      const priorSchemaVersion = priorState?.schema_version ?? priorState?.schemaVersion ?? 1;
+      const priorStoredRefs = corpusSnapshotRefs(prior);
+      const priorRefs = priorSchemaVersion === 2 ? priorStoredRefs : [];
+      if (prior && priorSchemaVersion !== 2 && priorStoredRefs.length === 0) {
+        // An empty v1 seed is retained as a bootstrap marker for old local
+        // fixtures. It is upgraded to a v2 genesis when the first snapshot
+        // arrives; a populated v1 head is never updated in place.
+      } else if (prior && priorSchemaVersion !== 2) {
+        throw stateError("CORPUS_BOOTSTRAP_REQUIRED", "a v1 corpus head cannot receive a normal update");
+      }
+      const state = {
+        schema_version: 2,
+        snapshot_refs: uniqueCorpusSnapshotRefs([...priorRefs, ...requestedSnapshotRefs]),
+      };
+      const semanticHash = semanticSha256(state);
       if (prior && prior.semanticSha256 === semanticHash) return v3StepResult({ stepId: ctx.stepId, routingOutcome: "continue", stateResult: "unchanged", refs: { corpusVersionId: prior.versionId } });
       const proposalId = deterministicId("proposal", `${ctx.operationId}:corpus`);
       try {
@@ -312,27 +388,55 @@ export class ClassificationHandoffService extends HandoffBase {
       const corpus = versionInStream(this.controlPlane, request.corpusVersionId, STREAM_KEYS.corpus, "corpusVersionId", { nullable: false });
       const policy = readExactPolicyVersion(this.controlPlane, request.classificationPolicyVersionId, "classification");
       const prior = versionInStream(this.controlPlane, request.classificationVersionId, STREAM_KEYS.classification, "classificationVersionId");
-      const derivedUnresolved = countUnresolvedClassificationObservations(this.controlPlane, corpus, request.classificationVersionId);
-      const unresolved = Number(
-        request.unresolvedTargetCount
-        ?? request.unresolvedTargets?.length
-        ?? prior?.payload?.state?.unresolved_target_count
-        ?? corpus?.payload?.state?.unresolved_target_count
-        ?? derivedUnresolved
-        ?? 0,
-      );
+      const hasCumulativeRefs = corpusSnapshotRefs(corpus).length > 0;
+      const cumulativeCandidate = hasCumulativeRefs
+        ? cumulativeClassificationPlan(this.controlPlane, corpus, request.classificationVersionId)
+        : null;
+      // Keep the empty-snapshot compatibility fixture on the existing
+      // unresolved-target route. A non-empty cumulative projection always
+      // uses the versioned planner below.
+      const cumulative = cumulativeCandidate?.projection.survivors.length > 0 ? cumulativeCandidate : null;
+      const unresolved = cumulative
+        ? cumulative.plan.handoffItems.length
+        : Number(
+          request.unresolvedTargetCount
+          ?? request.unresolvedTargets?.length
+          ?? prior?.payload?.state?.unresolved_target_count
+          ?? corpus?.payload?.state?.unresolved_target_count
+          ?? countUnresolvedClassificationObservations(this.controlPlane, corpus, request.classificationVersionId)
+          ?? 0,
+        );
       const contextFingerprint = semanticSha256({ corpusVersionId: request.corpusVersionId, classificationVersionId: request.classificationVersionId ?? null, classificationPolicyVersionId: policy.versionId });
       if (prior && prior.payload?.handoffContextFingerprint === contextFingerprint) return v3StepResult({ stepId: ctx.stepId, routingOutcome: "reuse", stateResult: "reused", refs: { classificationVersionId: prior.versionId } });
       if (unresolved === 0) return v3StepResult({ stepId: ctx.stepId, routingOutcome: "ready_without_handoff", stateResult: "succeeded", refs: {} });
       const requestedWorksetId = request.worksetId ?? randomUUID();
+      if (cumulative) {
+        // This is deliberately immediately before the builder is invoked so
+        // no resolved item can enter the handoff artifact construction path.
+        assertClassificationHandoffSafe({
+          items: cumulative.plan.handoffItems,
+          priorExactByObservationId: cumulative.plan.priorExactByObservationId,
+          priorCommentLabels: cumulative.plan.priorCommentLabels,
+        });
+      }
       const built = request.worksetBytes
         ? { content: request.worksetBytes, worksetId: requestedWorksetId }
-        : this.worksetBuilder({ worksetId: requestedWorksetId, corpusVersionId: request.corpusVersionId, classificationVersionId: request.classificationVersionId, classificationPolicyVersionId: policy.versionId, contextFingerprint, controlPlane: this.controlPlane });
+        : this.worksetBuilder({
+          worksetId: requestedWorksetId,
+          corpusVersionId: request.corpusVersionId,
+          classificationVersionId: request.classificationVersionId,
+          classificationPolicyVersionId: policy.versionId,
+          contextFingerprint,
+          controlPlane: this.controlPlane,
+          snapshotRefs: cumulative?.refs,
+          classificationPlan: cumulative ? publicClassificationPlan(cumulative.plan) : undefined,
+          items: cumulative?.plan.handoffItems,
+        });
       const worksetId = request.worksetId ?? built?.worksetId ?? requestedWorksetId;
       if (built?.worksetId !== undefined && built.worksetId !== worksetId) throw stateError("HANDOFF_IDENTITY_MISMATCH", "classification workset_id does not match the prepared workset");
       const bytes = built?.content ?? built?.bytes ?? built;
       const artifact = this.writeArtifact({ id: worksetId, logicalPath: "three-class-workset.zip", content: bytes, metadata: { worksetId } });
-      return v3StepResult({ stepId: ctx.stepId, routingOutcome: "handoff_required", stateResult: "created", refs: { worksetId }, details: { artifact, contextFingerprint } });
+      return v3StepResult({ stepId: ctx.stepId, routingOutcome: "handoff_required", stateResult: "created", refs: { worksetId }, details: { artifact, contextFingerprint, ...(cumulative ? { classificationPlan: publicClassificationPlan(cumulative.plan), snapshotRefs: cumulative.refs } : {}) } });
     };
     return runV3Idempotent(this.controlPlane, ctx, "comment-data-update.v3.classification.handoff.prepare", request, run);
   }
@@ -390,7 +494,7 @@ class ReviewableV3Service {
       // A dependency-only refresh may be system-committed when the pinned
       // policy explicitly authorizes it. A semantic payload change always
       // stays reviewable, regardless of request flags.
-      if (samePayload && policyAllowsAutoCommit(policy.payload?.state ?? policy.payload ?? {}, request)) {
+      if ((samePayload || request.derivedOnly === true) && policyAllowsAutoCommit(policy.payload?.state ?? policy.payload ?? {}, request)) {
         requireContext(ctx, ["state:auto-decide", "state:commit"]);
         const decision = this.controlPlane.createDecision({ decisionId: deterministicId("decision", `${ctx.operationId}:${this.domain}`), proposalId, outcome: "accepted", authorityKind: "system_policy", authorityRef: `${this.domain}-policy`, transitionPolicyVersionId: policy.versionId, operationId: `${ctx.operationId}/decision` });
         const commit = this.controlPlane.commitProposal({ proposalId, decisionId: decision.decisionId, operationId: `${ctx.operationId}/commit`, noOpPolicy: "semantic-and-dependencies", domainHandler: this.handler() });
@@ -430,6 +534,38 @@ export class ClassificationApplicationServiceV3 extends ReviewableV3Service {
   constructor(controlPlane) { super(controlPlane, { domain: "classification", streamKey: STREAM_KEYS.classification, policyKind: "classification", resultRef: "classification", stepId: "03-update-classification", normalizer: normalizeLabels, handler: typedClassificationHandler, dependencyRoles: ["corpus", "policy"] }); }
 
   assess(ctx, request = {}) {
+    const corpus = request.corpusVersionId
+      ? versionInStream(this.controlPlane, request.corpusVersionId, STREAM_KEYS.corpus, "corpusVersionId", { nullable: false })
+      : null;
+    const cumulativeCandidate = corpus && corpusSnapshotRefs(corpus).length > 0
+      ? cumulativeClassificationPlan(this.controlPlane, corpus, request.classificationVersionId)
+      : null;
+    const hasCumulativeRefs = cumulativeCandidate?.projection.survivors.length > 0;
+    if (hasCumulativeRefs) {
+      const responseDecisions = request.response?.decisions
+        && typeof request.response.decisions === "object"
+        && !Array.isArray(request.response.decisions)
+        ? request.response.decisions
+        : {};
+      const cumulativeBeforeResponse = cumulativeCandidate;
+      const submittedItems = request.handoffPreparation?.details?.classificationPlan?.handoffItems
+        ?? cumulativeBeforeResponse.plan.handoffItems;
+      assertClassificationHandoffSafe({
+        items: submittedItems,
+        priorExactByObservationId: cumulativeBeforeResponse.plan.priorExactByObservationId,
+        priorCommentLabels: cumulativeBeforeResponse.plan.priorCommentLabels,
+      });
+      const cumulative = cumulativeClassificationPlan(this.controlPlane, corpus, request.classificationVersionId, responseDecisions);
+      if (cumulative.plan.unresolved.length > 0) {
+        throw stateError("CLASSIFICATION_STATE_COVERAGE_MISMATCH", "classification response did not resolve every cumulative survivor");
+      }
+      assertCompleteClassificationState(cumulative.projection.survivors, cumulative.plan.labels);
+      request = {
+        ...request,
+        proposedState: { schema_version: 2, labels: cumulative.plan.labels },
+        derivedOnly: cumulative.plan.humanDecisionCount === 0,
+      };
+    }
     const response = request.response;
     const worksetId = request.handoffPreparation?.refs?.worksetId;
     if (worksetId && response?.decisions && typeof response.decisions === "object" && !Array.isArray(response.decisions)) {

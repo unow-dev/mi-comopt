@@ -10,6 +10,7 @@ import {
 } from "../../src/database/comment-database.js";
 import {
   readSelectedSnapshots,
+  readSelectedSnapshotsInReferenceOrder,
 } from "../../src/database/raw-snapshot-repository.js";
 import {
   readSnapshotThreeClassLabels,
@@ -31,8 +32,11 @@ import {
 } from "../../src/processing/keyword-candidates/candidate-workflow.js";
 import {
   buildDbKeywordCandidateDataset,
+  buildCumulativeSourceDataset,
   serializeDbKeywordCandidateDataset,
+  serializeCumulativeSourceDataset,
 } from "../../src/processing/optimicom-ui-release/source-dataset.js";
+import { projectCumulativeCorpus } from "../../src/processing/analysis-input/raw-snapshot-projection.js";
 import {
   HANDOFF_FILES,
   prepareHandoffBundle,
@@ -328,6 +332,34 @@ function loadDbSourceDataset(db, snapshotRef, { classificationVersionId = undefi
   };
 }
 
+export function loadDbCumulativeSourceDataset(db, { corpusVersionId, classificationVersionId, snapshotRefs } = {}) {
+  if (typeof corpusVersionId !== "string" || corpusVersionId.length === 0) {
+    throw new CommentDatabaseError("VALIDATION_ERROR", "corpusVersionId is required for Source Dataset v2");
+  }
+  if (typeof classificationVersionId !== "string" || classificationVersionId.length === 0) {
+    throw new CommentDatabaseError("VALIDATION_ERROR", "classificationVersionId is required for Source Dataset v2");
+  }
+  const refs = snapshotRefs ?? [];
+  if (!Array.isArray(refs) || refs.length === 0) throw new CommentDatabaseError("SNAPSHOT_NOT_FOUND", "at least one cumulative snapshot reference is required");
+  const selectedSnapshots = readSelectedSnapshotsInReferenceOrder(db, refs);
+  const projection = projectCumulativeCorpus(selectedSnapshots);
+  const placeholders = projection.survivors.map(() => "?").join(", ");
+  const labels = projection.survivors.length === 0 ? [] : db.prepare(
+    `SELECT observation_id, label
+       FROM classification_state_labels
+      WHERE version_id = ? AND observation_id IN (${placeholders})`,
+  ).all(classificationVersionId, ...projection.survivors.map((row) => row.observationId)).map((row) => ({ observationId: String(row.observation_id), label: row.label }));
+  const dataset = buildCumulativeSourceDataset({ corpusVersionId, classificationVersionId, snapshotRefs: refs, survivors: projection.survivors, labelRows: labels });
+  const bytes = serializeCumulativeSourceDataset(dataset);
+  return {
+    snapshotRefs: refs,
+    dataset,
+    bytes,
+    artifactSha256: byteSha256(bytes),
+    artifactRef: `${corpusVersionId}:${classificationVersionId}`,
+  };
+}
+
 function assertSemanticEqual(left, right, code, message) {
   try {
     if (contentSha256(left) !== contentSha256(right)) throw codedError(code, message);
@@ -347,17 +379,21 @@ function assertEqualValues(values, code, message) {
 }
 
 function validateDbSourceDatasetShape(dataset) {
-  if (!isRecord(dataset) || dataset.schema_version !== 1 || dataset.labeling_status !== "published" || !Array.isArray(dataset.records)) {
+  if (!isRecord(dataset) || ![1, 2].includes(dataset.schema_version) || dataset.labeling_status !== "published" || !Array.isArray(dataset.records)) {
     throw codedError("KEYWORD_CANDIDATE_SOURCE_MISMATCH", "source_dataset shape is invalid");
   }
-  const reference = dataset.snapshot_ref;
-  if (
-    !isRecord(reference)
-    || !PLAIN_SHA256_PATTERN.test(reference.payload_sha256 ?? "")
-    || !Number.isSafeInteger(reference.snapshot_index)
-    || reference.snapshot_index < 0
-  ) {
-    throw codedError("KEYWORD_CANDIDATE_SOURCE_MISMATCH", "source_dataset snapshot_ref is invalid");
+  if (dataset.schema_version === 2) {
+    if (!isRecord(dataset.source) || typeof dataset.source.corpus_version_id !== "string" || typeof dataset.source.classification_version_id !== "string" || !Array.isArray(dataset.source.snapshot_refs) || dataset.source.snapshot_refs.length === 0) {
+      throw codedError("KEYWORD_CANDIDATE_SOURCE_MISMATCH", "source_dataset cumulative identity is invalid");
+    }
+    dataset.source.snapshot_refs.forEach((reference) => {
+      if (!isRecord(reference) || !PLAIN_SHA256_PATTERN.test(reference.payload_sha256 ?? "") || !Number.isSafeInteger(reference.snapshot_index) || reference.snapshot_index < 0) throw codedError("KEYWORD_CANDIDATE_SOURCE_MISMATCH", "source_dataset snapshot_refs is invalid");
+    });
+  } else {
+    const reference = dataset.snapshot_ref;
+    if (!isRecord(reference) || !PLAIN_SHA256_PATTERN.test(reference.payload_sha256 ?? "") || !Number.isSafeInteger(reference.snapshot_index) || reference.snapshot_index < 0) {
+      throw codedError("KEYWORD_CANDIDATE_SOURCE_MISMATCH", "source_dataset snapshot_ref is invalid");
+    }
   }
   dataset.records.forEach((record, index) => {
     if (
@@ -672,13 +708,17 @@ function buildPublicationRecord({ handoff, request, publication, snapshotId, app
   };
 }
 
-export async function generateKeywordCandidateHandoff({ dbPath, snapshotRef, publicationRoot, outputPath, requestId = undefined, classificationVersionId = undefined }) {
+export async function generateKeywordCandidateHandoff({ dbPath, snapshotRef, snapshotRefs = undefined, corpusVersionId = undefined, publicationRoot, outputPath, requestId = undefined, classificationVersionId = undefined }) {
   if (!publicationRoot || !outputPath) throw new CommentDatabaseError("VALIDATION_ERROR", "publicationRoot and outputPath are required");
-  validateSnapshotRef(snapshotRef);
+  const selectedRefs = snapshotRefs ?? (snapshotRef ? [snapshotRef] : []);
+  if (!Array.isArray(selectedRefs) || selectedRefs.length === 0) throw new CommentDatabaseError("SNAPSHOT_NOT_FOUND", "at least one snapshot reference is required");
+  selectedRefs.forEach(validateSnapshotRef);
   assertOutputPathAbsent(outputPath);
   const db = await openCommentDatabase(dbPath);
   try {
-    const source = loadDbSourceDataset(db, snapshotRef, { classificationVersionId });
+    const source = corpusVersionId || selectedRefs.length > 1
+      ? loadDbCumulativeSourceDataset(db, { corpusVersionId, classificationVersionId, snapshotRefs: selectedRefs })
+      : loadDbSourceDataset(db, selectedRefs[0], { classificationVersionId });
     const publication = readCurrentPublicationFiles(publicationRoot, GENERATION_PUBLICATION_FILES);
     const policyInput = readKeywordPolicyInput();
     const taxonomyInput = readKeywordTaxonomyInput();
@@ -746,13 +786,18 @@ export async function applyKeywordCandidatePublication({ dbPath, handoffManifest
 
   const db = await openCommentDatabase(dbPath);
   try {
-    const snapshotRef = {
-      payloadSha256: sourceDatasetInput.value.snapshot_ref.payload_sha256,
-      snapshotIndex: sourceDatasetInput.value.snapshot_ref.snapshot_index,
-    };
     let source;
     try {
-      source = loadDbSourceDataset(db, snapshotRef);
+      source = sourceDatasetInput.value.schema_version === 2
+        ? loadDbCumulativeSourceDataset(db, {
+          corpusVersionId: sourceDatasetInput.value.source.corpus_version_id,
+          classificationVersionId: sourceDatasetInput.value.source.classification_version_id,
+          snapshotRefs: sourceDatasetInput.value.source.snapshot_refs.map((reference) => ({ payloadSha256: reference.payload_sha256, snapshotIndex: reference.snapshot_index })),
+        })
+        : loadDbSourceDataset(db, {
+          payloadSha256: sourceDatasetInput.value.snapshot_ref.payload_sha256,
+          snapshotIndex: sourceDatasetInput.value.snapshot_ref.snapshot_index,
+        });
     } catch (error) {
       if (error.code === "THREE_CLASS_LABELS_INCOMPLETE") {
         throw codedError("KEYWORD_CANDIDATE_SOURCE_MISMATCH", "DB labels do not reproduce the handoff source dataset", { cause: error });

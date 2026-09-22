@@ -208,7 +208,10 @@ function typedCorpusHandler() {
     persist({ db, versionId, proposal }) {
       const state = asState(proposal.payload.state, "corpus state");
       db.prepare("INSERT INTO corpus_states (version_id, state_json) VALUES (?, ?)").run(versionId, canonicalJson(state));
-      for (const snapshotRef of state.snapshot_refs ?? state.snapshotRefs ?? []) db.prepare("INSERT INTO corpus_state_snapshots (version_id, snapshot_ref) VALUES (?, ?)").run(versionId, String(snapshotRef));
+      for (const snapshotRef of state.snapshot_refs ?? state.snapshotRefs ?? []) {
+        const serialized = typeof snapshotRef === "string" ? snapshotRef : canonicalJson(snapshotRef);
+        db.prepare("INSERT INTO corpus_state_snapshots (version_id, snapshot_ref) VALUES (?, ?)").run(versionId, serialized);
+      }
     },
   };
 }
