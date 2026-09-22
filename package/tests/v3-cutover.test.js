@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { openCommentDatabase } from "../src/database/comment-database.js";
+import { ensureStateControlPlane } from "../src/state/schema.js";
 import { StateControlPlane } from "../src/state/control-plane.js";
 import { assertLegacyCurrentMarkerReaderAllowed, assertLegacyWriterAllowed } from "../src/migration/legacy-boundary.js";
 import {
@@ -177,6 +178,65 @@ test("recovery cancellation is allowed only before a mutating stage", async () =
     const cancelled = advancePersistedV3Cutover(controlPlane, "recovery_cancelled", { mutatingRecoveryStageCompleted: false, actorId: "operator" });
     assert.equal(cancelled.state, "smoke_verified");
     assert.throws(() => advancePersistedV3Cutover(controlPlane, "recovery_completed", { verificationPassed: true, recoveryId: "recovery-2", verificationReceiptOperationId: "recovery:recovery-2:verify" }), /CUTOVER_ORDER_INVALID/);
+  } finally {
+    db.close();
+  }
+});
+
+test("existing v3 cutover tables are upgraded to permit recovery_frozen without losing receipts", async () => {
+  const { db } = await fixture();
+  try {
+    db.exec("DROP TABLE v3_cutover_events");
+    db.exec("DROP TABLE v3_cutover_control");
+    db.exec(`
+      CREATE TABLE v3_cutover_control (
+        control_id TEXT PRIMARY KEY CHECK (control_id = 'comment-data-update'),
+        state TEXT NOT NULL CHECK (state IN ('v2_open', 'v2_frozen', 'v2_drained', 'legacy_disabled', 'v3_enabled', 'smoke_verified', 'v3_frozen')),
+        target_revision INTEGER NOT NULL CHECK (target_revision >= 3),
+        target_definition_hash TEXT NOT NULL,
+        provider_compatible INTEGER NOT NULL CHECK (provider_compatible IN (0, 1)),
+        mandatory_verification_passed INTEGER NOT NULL CHECK (mandatory_verification_passed IN (0, 1)),
+        v2_hashes_unchanged INTEGER NOT NULL CHECK (v2_hashes_unchanged IN (0, 1)),
+        v2_hashes_json TEXT NOT NULL,
+        legacy_writer_enabled INTEGER NOT NULL CHECK (legacy_writer_enabled IN (0, 1)),
+        v2_starts_enabled INTEGER NOT NULL CHECK (v2_starts_enabled IN (0, 1)),
+        v3_starts_enabled INTEGER NOT NULL CHECK (v3_starts_enabled IN (0, 1)),
+        evidence_json TEXT NOT NULL,
+        last_event_id TEXT,
+        updated_at TEXT NOT NULL
+      )
+    `);
+    db.exec(`
+      CREATE TABLE v3_cutover_events (
+        event_id TEXT PRIMARY KEY,
+        control_id TEXT NOT NULL,
+        from_state TEXT NOT NULL,
+        to_state TEXT NOT NULL,
+        event_name TEXT NOT NULL,
+        evidence_json TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (control_id) REFERENCES v3_cutover_control(control_id)
+      )
+    `);
+    db.prepare(`INSERT INTO v3_cutover_control
+      (control_id, state, target_revision, target_definition_hash, provider_compatible,
+       mandatory_verification_passed, v2_hashes_unchanged, v2_hashes_json,
+       legacy_writer_enabled, v2_starts_enabled, v3_starts_enabled, evidence_json,
+       last_event_id, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+      .run("comment-data-update", "smoke_verified", 3, TARGET_HASH, 1, 1, 1, "{}", 0, 0, 1, "{}", "event-existing", "2026-09-22T00:00:00.000Z");
+    db.prepare(`INSERT INTO v3_cutover_events
+      (event_id, control_id, from_state, to_state, event_name, evidence_json, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?)`)
+      .run("event-existing", "comment-data-update", "v3_enabled", "smoke_verified", "smoke_passed", "{}", "2026-09-22T00:00:00.000Z");
+
+    ensureStateControlPlane(db);
+    const sql = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'v3_cutover_control'").get().sql;
+    assert.match(sql, /recovery_frozen/);
+    assert.equal(db.prepare("SELECT COUNT(*) AS count FROM v3_cutover_events").get().count, 1);
+    const controlPlane = new StateControlPlane(db);
+    const frozen = advancePersistedV3Cutover(controlPlane, "recovery_freeze", { newV3Starts: 0 });
+    assert.equal(frozen.state, "recovery_frozen");
   } finally {
     db.close();
   }

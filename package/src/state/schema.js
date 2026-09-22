@@ -355,6 +355,76 @@ CREATE INDEX IF NOT EXISTS idx_state_proposals_stream ON state_proposals(stream_
 CREATE INDEX IF NOT EXISTS idx_deployment_events_request ON deployment_completed_events(deployment_request_id);
 `;
 
+function migrateLegacyV3CutoverRecoveryState(db) {
+  const row = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'v3_cutover_control'").get();
+  if (!row?.sql || row.sql.includes("'recovery_frozen'")) return;
+
+  db.exec("BEGIN IMMEDIATE");
+  let committed = false;
+  try {
+    db.exec("DROP INDEX IF EXISTS idx_v3_cutover_events_created");
+    db.exec("ALTER TABLE v3_cutover_events RENAME TO v3_cutover_events_legacy_recovery");
+    db.exec("ALTER TABLE v3_cutover_control RENAME TO v3_cutover_control_legacy_recovery");
+    db.exec(`
+      CREATE TABLE v3_cutover_control (
+        control_id TEXT PRIMARY KEY CHECK (control_id = 'comment-data-update'),
+        state TEXT NOT NULL CHECK (state IN ('v2_open', 'v2_frozen', 'v2_drained', 'legacy_disabled', 'v3_enabled', 'smoke_verified', 'v3_frozen', 'recovery_frozen')),
+        target_revision INTEGER NOT NULL CHECK (target_revision >= 3),
+        target_definition_hash TEXT NOT NULL,
+        provider_compatible INTEGER NOT NULL CHECK (provider_compatible IN (0, 1)),
+        mandatory_verification_passed INTEGER NOT NULL CHECK (mandatory_verification_passed IN (0, 1)),
+        v2_hashes_unchanged INTEGER NOT NULL CHECK (v2_hashes_unchanged IN (0, 1)),
+        v2_hashes_json TEXT NOT NULL,
+        legacy_writer_enabled INTEGER NOT NULL CHECK (legacy_writer_enabled IN (0, 1)),
+        v2_starts_enabled INTEGER NOT NULL CHECK (v2_starts_enabled IN (0, 1)),
+        v3_starts_enabled INTEGER NOT NULL CHECK (v3_starts_enabled IN (0, 1)),
+        evidence_json TEXT NOT NULL,
+        last_event_id TEXT,
+        updated_at TEXT NOT NULL
+      )
+    `);
+    db.exec(`
+      CREATE TABLE v3_cutover_events (
+        event_id TEXT PRIMARY KEY,
+        control_id TEXT NOT NULL,
+        from_state TEXT NOT NULL,
+        to_state TEXT NOT NULL,
+        event_name TEXT NOT NULL,
+        evidence_json TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (control_id) REFERENCES v3_cutover_control(control_id)
+      )
+    `);
+    db.exec(`
+      INSERT INTO v3_cutover_control
+        (control_id, state, target_revision, target_definition_hash, provider_compatible,
+         mandatory_verification_passed, v2_hashes_unchanged, v2_hashes_json,
+         legacy_writer_enabled, v2_starts_enabled, v3_starts_enabled, evidence_json,
+         last_event_id, updated_at)
+      SELECT control_id, state, target_revision, target_definition_hash, provider_compatible,
+         mandatory_verification_passed, v2_hashes_unchanged, v2_hashes_json,
+         legacy_writer_enabled, v2_starts_enabled, v3_starts_enabled, evidence_json,
+         last_event_id, updated_at
+        FROM v3_cutover_control_legacy_recovery
+    `);
+    db.exec(`
+      INSERT INTO v3_cutover_events
+        (event_id, control_id, from_state, to_state, event_name, evidence_json, created_at)
+      SELECT event_id, control_id, from_state, to_state, event_name, evidence_json, created_at
+        FROM v3_cutover_events_legacy_recovery
+    `);
+    db.exec("DROP TABLE v3_cutover_events_legacy_recovery");
+    db.exec("DROP TABLE v3_cutover_control_legacy_recovery");
+    db.exec("CREATE INDEX idx_v3_cutover_events_created ON v3_cutover_events(control_id, created_at, event_id)");
+    db.exec("COMMIT");
+    committed = true;
+  } finally {
+    if (!committed) {
+      try { db.exec("ROLLBACK"); } catch { /* preserve the migration error */ }
+    }
+  }
+}
+
 export function ensureStateControlPlane(db) {
   if (!db || typeof db.exec !== "function" || typeof db.prepare !== "function") {
     throw new TypeError("a node:sqlite DatabaseSync connection is required");
@@ -362,6 +432,7 @@ export function ensureStateControlPlane(db) {
   db.exec("PRAGMA foreign_keys = ON");
   db.exec(STATE_CONTROL_PLANE_SQL);
   db.exec(COMMENT_DB_V3_SQL);
+  migrateLegacyV3CutoverRecoveryState(db);
   const v3Columns = (table) => new Set(db.prepare(`PRAGMA table_info(${table})`).all().map((row) => row.name));
   if (!v3Columns("v3_deployment_requests").has("workflow_session_id")) db.exec("ALTER TABLE v3_deployment_requests ADD COLUMN workflow_session_id TEXT NOT NULL DEFAULT ''");
   const deploymentTable = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'deployment_requests'").get();
