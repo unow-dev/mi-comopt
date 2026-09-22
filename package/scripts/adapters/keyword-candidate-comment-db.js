@@ -343,12 +343,19 @@ export function loadDbCumulativeSourceDataset(db, { corpusVersionId, classificat
   if (!Array.isArray(refs) || refs.length === 0) throw new CommentDatabaseError("SNAPSHOT_NOT_FOUND", "at least one cumulative snapshot reference is required");
   const selectedSnapshots = readSelectedSnapshotsInReferenceOrder(db, refs);
   const projection = projectCumulativeCorpus(selectedSnapshots);
-  const placeholders = projection.survivors.map(() => "?").join(", ");
-  const labels = projection.survivors.length === 0 ? [] : db.prepare(
-    `SELECT observation_id, label
-       FROM classification_state_labels
-      WHERE version_id = ? AND observation_id IN (${placeholders})`,
-  ).all(classificationVersionId, ...projection.survivors.map((row) => row.observationId)).map((row) => ({ observationId: String(row.observation_id), label: row.label }));
+  const labels = [];
+  const observationIds = projection.survivors.map((row) => row.observationId);
+  const batchSize = 500;
+  for (let offset = 0; offset < observationIds.length; offset += batchSize) {
+    const batch = observationIds.slice(offset, offset + batchSize);
+    const placeholders = batch.map(() => "?").join(", ");
+    const rows = db.prepare(
+      `SELECT observation_id, label
+         FROM classification_state_labels
+        WHERE version_id = ? AND observation_id IN (${placeholders})`,
+    ).all(classificationVersionId, ...batch);
+    labels.push(...rows.map((row) => ({ observationId: String(row.observation_id), label: row.label })));
+  }
   const dataset = buildCumulativeSourceDataset({ corpusVersionId, classificationVersionId, snapshotRefs: refs, survivors: projection.survivors, labelRows: labels });
   const bytes = serializeCumulativeSourceDataset(dataset);
   return {
