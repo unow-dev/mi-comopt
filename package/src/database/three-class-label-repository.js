@@ -122,18 +122,28 @@ export function readClassificationVersionLabels(db, versionId) {
 export function readHistoricalClassificationGroupLabels(db, observationIds = []) {
   const ids = [...new Set((observationIds ?? []).map((value) => String(value)))].filter((value) => value.length > 0);
   if (ids.length === 0) return [];
-  const placeholders = ids.map(() => "?").join(", ");
-  return db.prepare(
-    `SELECT
-        csl.version_id,
-        v.version_no,
-        CAST(csl.observation_id AS TEXT) AS observation_id,
-        csl.label
-       FROM classification_state_labels AS csl
-       JOIN state_versions AS v ON v.version_id = csl.version_id
-      WHERE CAST(csl.observation_id AS TEXT) IN (${placeholders})
-      ORDER BY v.version_no DESC, csl.version_id DESC, CAST(csl.observation_id AS INTEGER), csl.observation_id`,
-  ).all(...ids).map((row) => ({
+  const rows = [];
+  const batchSize = 500;
+  for (let start = 0; start < ids.length; start += batchSize) {
+    const batch = ids.slice(start, start + batchSize);
+    const placeholders = batch.map(() => "?").join(", ");
+    rows.push(...db.prepare(
+      `SELECT
+          csl.version_id,
+          v.version_no,
+          CAST(csl.observation_id AS TEXT) AS observation_id,
+          csl.label
+         FROM classification_state_labels AS csl
+         JOIN state_versions AS v ON v.version_id = csl.version_id
+        WHERE CAST(csl.observation_id AS TEXT) IN (${placeholders})`,
+    ).all(...batch));
+  }
+  return rows.sort((left, right) => (
+    Number(right.version_no) - Number(left.version_no)
+    || String(right.version_id).localeCompare(String(left.version_id))
+    || Number(left.observation_id) - Number(right.observation_id)
+    || String(left.observation_id).localeCompare(String(right.observation_id))
+  )).map((row) => ({
     versionId: row.version_id,
     versionNo: Number(row.version_no),
     observationId: String(row.observation_id),
