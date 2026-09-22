@@ -568,7 +568,11 @@ export class ClassificationApplicationServiceV3 extends ReviewableV3Service {
     }
     const response = request.response;
     const worksetId = request.handoffPreparation?.refs?.worksetId;
-    if (worksetId && response?.decisions && typeof response.decisions === "object" && !Array.isArray(response.decisions)) {
+    // The legacy workset DB-global label path remains available only for the
+    // legacy empty-corpus compatibility fixture. A cumulative v3 assessment
+    // must use the pinned ClassificationVersion planner above and never read
+    // snapshot_comment_three_class_labels as an authority.
+    if (!cumulativeCandidate && worksetId && response?.decisions && typeof response.decisions === "object" && !Array.isArray(response.decisions)) {
       const targetObservations = readTargetObservations(this.controlPlane.db, worksetId);
       if (targetObservations.length > 0) {
         const excludedComments = new Set(readWorksetExcludedComments(this.controlPlane.db, worksetId));

@@ -17,6 +17,7 @@ import {
   assertCompleteClassificationState,
   planCumulativeClassification,
 } from "../src/three-class/cumulative-classification-plan.js";
+import { assertV3CorpusPreflight } from "../src/migration/v3-cutover.js";
 
 const sha = (value) => value;
 
@@ -167,6 +168,7 @@ test("Corpus v3 persists ordered v2 refs, deduplicates reinsertion, and rejects 
       versionId: "corpus-v1",
       payload: { schema_version: 1, state: { schema_version: 1, snapshot_refs: [ref("a")] } },
     });
+    assert.throws(() => assertV3CorpusPreflight(v1ControlPlane), /CORPUS_BOOTSTRAP_REQUIRED/);
     assert.throws(() => new CorpusApplicationServiceV3(v1ControlPlane).update(contextFor("corpus-v1-reject"), {
       initialCorpusVersionId: "corpus-v1",
       corpusPolicyVersionId: "corpus-policy-v1",

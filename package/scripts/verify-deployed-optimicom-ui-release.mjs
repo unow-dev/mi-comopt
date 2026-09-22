@@ -55,6 +55,9 @@ export async function verifyDeployedOptimicomUiRelease({ url, expected, fetchImp
     status: "verified",
     url: baseUrl.href,
     identity: releaseIdentity(deployedManifest),
+    manifest: deployedManifest,
+    manifestBytes: deployedManifestBytes,
+    artifacts,
     recordCounts: Object.fromEntries(UI_ARTIFACT_KEYS.map((key) => [key, deployedManifest.artifacts[key].record_count])),
   };
 }
@@ -69,10 +72,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     const url = valueFor("--url");
     const expected = valueFor("--expected");
     if (!url || !expected) throw new Error("Usage: node scripts/verify-deployed-optimicom-ui-release.mjs --url <deployment-base> --expected <local-release>");
-    console.log(JSON.stringify(await verifyDeployedOptimicomUiRelease({ url, expected })));
+    const result = await verifyDeployedOptimicomUiRelease({ url, expected });
+    const { manifest: _manifest, manifestBytes: _manifestBytes, artifacts: _artifacts, ...summary } = result;
+    console.log(JSON.stringify(summary));
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
     process.exitCode = 1;
   }
 }
-

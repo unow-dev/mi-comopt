@@ -114,6 +114,33 @@ export function readClassificationVersionLabels(db, versionId) {
   }));
 }
 
+/**
+ * Recovery-only historical lookup. The query is deliberately keyed by the
+ * current recovery corpus' observation IDs; it never groups DB history by
+ * comment text and therefore cannot import labels from an unrelated corpus.
+ */
+export function readHistoricalClassificationGroupLabels(db, observationIds = []) {
+  const ids = [...new Set((observationIds ?? []).map((value) => String(value)))].filter((value) => value.length > 0);
+  if (ids.length === 0) return [];
+  const placeholders = ids.map(() => "?").join(", ");
+  return db.prepare(
+    `SELECT
+        csl.version_id,
+        v.version_no,
+        CAST(csl.observation_id AS TEXT) AS observation_id,
+        csl.label
+       FROM classification_state_labels AS csl
+       JOIN state_versions AS v ON v.version_id = csl.version_id
+      WHERE CAST(csl.observation_id AS TEXT) IN (${placeholders})
+      ORDER BY v.version_no DESC, csl.version_id DESC, CAST(csl.observation_id AS INTEGER), csl.observation_id`,
+  ).all(...ids).map((row) => ({
+    versionId: row.version_id,
+    versionNo: Number(row.version_no),
+    observationId: String(row.observation_id),
+    label: row.label,
+  }));
+}
+
 export function readExistingTargetLabels(db, worksetId) {
   return db.prepare(
     `SELECT

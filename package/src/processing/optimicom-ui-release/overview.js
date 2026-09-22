@@ -1,4 +1,4 @@
-import { OPTIMICOM_LABELS, validateSourceDataset } from "./source-dataset.js";
+import { OPTIMICOM_LABELS, validateSourceDataset, validateSourceDatasetV2 } from "./source-dataset.js";
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const PERIODS = [
@@ -78,7 +78,7 @@ function buildPeriod(daily, endDate, days) {
 }
 
 export function buildOverviewArtifact(dataset) {
-  validateSourceDataset(dataset);
+  (dataset?.schema_version === 2 ? validateSourceDatasetV2 : validateSourceDataset)(dataset);
   if (dataset.records.length === 0) fail("OVERVIEW_DATE_ANCHOR_MISSING", "source dataset needs at least one record");
   const dates = dataset.records.map((record) => record.postedDate).sort();
   const dataStartDate = dates[0];
@@ -134,4 +134,3 @@ export function validateOverviewArtifact(overview) {
   }
   return overview;
 }
-

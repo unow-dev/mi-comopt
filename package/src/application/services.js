@@ -178,7 +178,7 @@ function assertDependencyRoles(db, proposal, allowedRoles, expectedPolicyKind = 
   }
 }
 
-function typedClassificationHandler() {
+export function typedClassificationHandler() {
   return {
     validate({ db, proposal }) { const state = normalizeLabels(proposal.payload.state); if (semanticSha256(state) !== proposal.proposedSemanticSha256) throw stateError("SEMANTIC_FINGERPRINT_MISMATCH", "classification semantic fingerprint is invalid"); assertDependencyRoles(db, proposal, ["corpus", "policy"], "classification"); },
     persist({ db, versionId, proposal }) {
@@ -190,7 +190,7 @@ function typedClassificationHandler() {
   };
 }
 
-function typedKeywordHandler() {
+export function typedKeywordHandler() {
   return {
     validate({ db, proposal }) { const state = normalizeKeywordEntries(proposal.payload.state); if (semanticSha256(state) !== proposal.proposedSemanticSha256) throw stateError("SEMANTIC_FINGERPRINT_MISMATCH", "keyword selection semantic fingerprint is invalid"); assertDependencyRoles(db, proposal, ["corpus", "classification", "policy"], "keyword-selection"); },
     persist({ db, versionId, proposal }) {
@@ -202,7 +202,7 @@ function typedKeywordHandler() {
   };
 }
 
-function typedCorpusHandler() {
+export function typedCorpusHandler() {
   return {
     validate({ proposal }) { const state = asState(proposal.payload.state, "corpus state"); if (semanticSha256(state) !== proposal.proposedSemanticSha256) throw stateError("SEMANTIC_FINGERPRINT_MISMATCH", "corpus semantic fingerprint is invalid"); },
     persist({ db, versionId, proposal }) {
@@ -418,4 +418,4 @@ export function createDefaultOperationContext(overrides = {}) {
   };
 }
 
-export { requireContext, stepResult, normalizeLabels, normalizeKeywordEntries, typedClassificationHandler, typedKeywordHandler, typedCorpusHandler, policyPayload, policyKindAlias };
+export { requireContext, stepResult, normalizeLabels, normalizeKeywordEntries, policyPayload, policyKindAlias };

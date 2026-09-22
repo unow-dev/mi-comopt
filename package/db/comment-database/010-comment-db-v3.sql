@@ -67,7 +67,7 @@ CREATE INDEX IF NOT EXISTS idx_v3_deployment_events_pending
 
 CREATE TABLE IF NOT EXISTS v3_cutover_control (
   control_id TEXT PRIMARY KEY CHECK (control_id = 'comment-data-update'),
-  state TEXT NOT NULL CHECK (state IN ('v2_open', 'v2_frozen', 'v2_drained', 'legacy_disabled', 'v3_enabled', 'smoke_verified', 'v3_frozen')),
+  state TEXT NOT NULL CHECK (state IN ('v2_open', 'v2_frozen', 'v2_drained', 'legacy_disabled', 'v3_enabled', 'smoke_verified', 'v3_frozen', 'recovery_frozen')),
   target_revision INTEGER NOT NULL CHECK (target_revision >= 3),
   target_definition_hash TEXT NOT NULL,
   provider_compatible INTEGER NOT NULL CHECK (provider_compatible IN (0, 1)),

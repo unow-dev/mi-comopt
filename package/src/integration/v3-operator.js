@@ -9,6 +9,7 @@ import { openCommentDatabase } from "../database/comment-database.js";
 import { StateControlPlane } from "../state/control-plane.js";
 import { stateError } from "../state/errors.js";
 import { canonicalJson, prefixedSha256 } from "../state/canonical.js";
+import { assertV3CorpusPreflight } from "../migration/v3-cutover.js";
 
 const WORK_DEFINITION_ID = "comment-data-update";
 const V3_REVISION = 3;
@@ -211,6 +212,7 @@ export function listV3HumanTasks(operator, sessionId) {
 export async function startV3Session(operator, { sessionId, updateRequestId, actorId, pinned = {} } = {}) {
   requiredString(sessionId, "sessionId");
   requiredString(updateRequestId, "updateRequestId");
+  assertV3CorpusPreflight(operator.controlPlane);
   const input = prepareV3SessionInput({
     controlPlane: operator.controlPlane,
     input: {

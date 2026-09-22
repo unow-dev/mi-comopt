@@ -84,17 +84,26 @@ function cumulativeRecord(observation) {
 export function projectCumulativeCorpus(snapshotBundles) {
   if (!Array.isArray(snapshotBundles)) throw new TypeError("snapshotBundles must be an array");
   const survivors = [];
-  const seen = new Set();
+  const groupByKey = new Map();
+  const dedupeGroups = [];
   const manifestSnapshots = [];
+  let rawObservationCount = 0;
 
   for (const bundle of snapshotBundles) {
     const observations = [...(bundle?.observations ?? [])].sort(compareObservations);
     const outputStartIndex = survivors.length;
     for (const observation of observations) {
+      rawObservationCount += 1;
       const key = exactObservationKey(observation);
-      if (seen.has(key)) continue;
-      seen.add(key);
-      survivors.push(cumulativeRecord(observation));
+      const existingGroupIndex = groupByKey.get(key);
+      if (existingGroupIndex !== undefined) {
+        dedupeGroups[existingGroupIndex].observations.push(cumulativeRecord(observation));
+        continue;
+      }
+      groupByKey.set(key, dedupeGroups.length);
+      const record = cumulativeRecord(observation);
+      survivors.push(record);
+      dedupeGroups.push({ key, survivor: record, observations: [record] });
     }
     if (bundle?.snapshot) {
       manifestSnapshots.push({
@@ -117,6 +126,9 @@ export function projectCumulativeCorpus(snapshotBundles) {
     survivors,
     observations: survivors,
     records: survivors,
+    dedupeGroups,
+    rawObservationCount,
+    duplicateObservationCount: rawObservationCount - survivors.length,
     manifestSnapshots,
   };
 }

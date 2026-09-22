@@ -2,7 +2,7 @@ import { canonicalJson, deterministicId, semanticSha256 } from "../state/canonic
 import { stateError } from "../state/errors.js";
 
 export const V3_CUTOVER_CONTROL_ID = "comment-data-update";
-export const V3_CUTOVER_STATES = Object.freeze(["v2_open", "v2_frozen", "v2_drained", "legacy_disabled", "v3_enabled", "smoke_verified", "v3_frozen"]);
+export const V3_CUTOVER_STATES = Object.freeze(["v2_open", "v2_frozen", "v2_drained", "legacy_disabled", "v3_enabled", "smoke_verified", "v3_frozen", "recovery_frozen"]);
 const V3_START_STATES = new Set(["v3_enabled", "smoke_verified"]);
 const SHA256_PATTERN = /^[0-9a-f]{64}$/;
 const SMOKE_EVIDENCE_KEYS = Object.freeze([
@@ -71,8 +71,9 @@ export function advanceV3Cutover(state, event, evidence = {}) {
     v2_drained: { legacy_disabled: "legacy_disabled" },
     legacy_disabled: { enable_v3: "v3_enabled" },
     v3_enabled: { smoke_passed: "smoke_verified", smoke_failed: "v3_frozen" },
-    smoke_verified: { smoke_failed: "v3_frozen" },
+    smoke_verified: { smoke_failed: "v3_frozen", recovery_freeze: "recovery_frozen" },
     v3_frozen: { fix_forward_v3: "v3_enabled" },
+    recovery_frozen: { recovery_cancelled: "smoke_verified", recovery_completed: "smoke_verified" },
   };
   const next = transitions[current][event];
   if (!next) throw stateError("CUTOVER_ORDER_INVALID", `${event} cannot advance cutover from ${current}`);
@@ -80,7 +81,12 @@ export function advanceV3Cutover(state, event, evidence = {}) {
   if (event === "drain_complete" && evidence.nonterminalV2Sessions !== 0) throw stateError("CUTOVER_GATE_FAILED", "nonterminal v2 sessions must be zero");
   if (event === "enable_v3" && evidence.legacyWriterEnabled === true) throw stateError("CUTOVER_DUAL_AUTHORITY", "legacy authority must be disabled before v3 enablement");
   if (event === "fix_forward_v3" && (evidence.legacyWriterEnabled !== false || evidence.newV2Starts !== 0)) throw stateError("CUTOVER_DUAL_AUTHORITY", "fix-forward v3 requires disabled legacy authority and zero new v2 starts");
+  if (event === "recovery_freeze" && evidence.newV3Starts !== 0) throw stateError("CUTOVER_GATE_FAILED", "new v3 starts must be stopped before planned recovery");
+  if (event === "recovery_cancelled" && evidence.mutatingRecoveryStageCompleted === true) throw stateError("RECOVERY_CANCEL_FORBIDDEN", "recovery cancel is only allowed before mutation");
+  if (event === "recovery_completed" && evidence.verificationPassed !== true) throw stateError("RECOVERY_VERIFICATION_REQUIRED", "recovery completion requires a successful verification receipt");
   if (event === "smoke_failed") return { state: next, newV3StartsFrozen: true, legacyWriterEnabled: false, fixForwardOnly: true };
+  if (event === "recovery_freeze") return { state: next, newV3StartsFrozen: true, legacyWriterEnabled: false, fixForwardOnly: false };
+  if (event === "recovery_cancelled" || event === "recovery_completed") return { state: next, newV3StartsFrozen: false, legacyWriterEnabled: false, fixForwardOnly: true };
   if (event === "fix_forward_v3") return { state: next, newV3StartsFrozen: false, legacyWriterEnabled: false, fixForwardOnly: true };
   return { state: next, newV3StartsFrozen: next === "v2_frozen" || next === "v3_frozen", legacyWriterEnabled: next !== "legacy_disabled" && next !== "v3_enabled" && next !== "smoke_verified", fixForwardOnly: true };
 }
@@ -91,6 +97,13 @@ function assertPersistentEventEvidence(event, evidence) {
   if (event === "fix_forward_v3") {
     if (evidence.legacyWriterEnabled !== false || evidence.newV2Starts !== 0) throw stateError("CUTOVER_DUAL_AUTHORITY", "fix-forward v3 requires disabled legacy authority and zero new v2 starts");
     requiredString(evidence.fixForwardRef, "fixForwardRef");
+  }
+  if (event === "recovery_freeze" && evidence.newV3Starts !== 0) throw stateError("CUTOVER_GATE_FAILED", "new v3 starts must be stopped before planned recovery");
+  if (event === "recovery_cancelled" && evidence.mutatingRecoveryStageCompleted === true) throw stateError("RECOVERY_CANCEL_FORBIDDEN", "recovery cancel is only allowed before mutation");
+  if (event === "recovery_completed") {
+    if (evidence.verificationPassed !== true) throw stateError("RECOVERY_VERIFICATION_REQUIRED", "recovery completion requires a successful verification receipt");
+    requiredString(evidence.recoveryId, "recoveryId");
+    requiredString(evidence.verificationReceiptOperationId, "verificationReceiptOperationId");
   }
   if (event === "smoke_passed") {
     const missing = SMOKE_EVIDENCE_KEYS.filter((key) => evidence[key] !== true);
@@ -182,6 +195,24 @@ export function assertV3StartAllowed(controlPlane, revision) {
   if (!control) return true;
   if (!V3_START_STATES.has(control.state) || !control.v3StartsEnabled) throw stateError("V3_START_FROZEN", `v3 starts are not enabled in cutover state ${control.state}`);
   if (revision !== control.targetRevision) throw stateError("CUTOVER_REVISION_MISMATCH", `requested revision ${revision} does not match cutover target ${control.targetRevision}`);
+  return true;
+}
+
+/**
+ * Reject a populated legacy Corpus v1 head before a normal v3 Session is
+ * created. An empty v1 seed remains a bootstrap marker for old local
+ * fixtures; the first corpus update upgrades it to v2.
+ */
+export function assertV3CorpusPreflight(controlPlane) {
+  const stream = controlPlane?.ensureStream?.({ domain: "corpus", streamKey: "comments" });
+  const head = stream ? controlPlane.resolveHead(stream.stream_id) : null;
+  if (!head) return true;
+  const state = head.payload?.state ?? head.payload ?? {};
+  const schemaVersion = state.schema_version ?? state.schemaVersion ?? 1;
+  const refs = state.snapshot_refs ?? state.snapshotRefs ?? [];
+  if (schemaVersion !== 2 && Array.isArray(refs) && refs.length > 0) {
+    throw stateError("CORPUS_BOOTSTRAP_REQUIRED", "normal v3 session start requires a Corpus v2 head");
+  }
   return true;
 }
 

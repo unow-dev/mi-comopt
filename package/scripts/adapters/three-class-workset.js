@@ -375,6 +375,7 @@ export async function generateThreeClassWorkset({
   snapshotRefs = [],
   snapshotShas = [],
   classificationVersionId = undefined,
+  recoveryItems = undefined,
   historyPath,
   outputPath,
 }) {
@@ -402,26 +403,33 @@ export async function generateThreeClassWorkset({
   try {
     db = await openCommentDatabase(dbPath);
     const resolvedRefs = resolveSelectedSnapshotRefs(db, { snapshotRefs, snapshotShas });
-    const selectedSnapshots = classificationVersionId
+    const selectedSnapshots = classificationVersionId || recoveryItems !== undefined
       ? readSelectedSnapshotsInReferenceOrder(db, resolvedRefs)
       : readSelectedSnapshots(db, resolvedRefs);
-    const artifacts = classificationVersionId
+    const artifacts = classificationVersionId || recoveryItems !== undefined
       ? projectCumulativeCorpus(selectedSnapshots)
       : buildAnalysisArtifacts(selectedSnapshots);
-    const effectiveCommentLabels = classificationVersionId
+    const effectiveCommentLabels = classificationVersionId || recoveryItems !== undefined
       ? new Map()
       : buildEffectiveCommentLabelMap(readExistingCommentLabels(db));
-    const generatedHistory = classificationVersionId
+    const recoveryItemPlan = recoveryItems === undefined ? undefined : (() => {
+      try {
+        return { items: validateItems({ protocol_version: PROTOCOL_VERSION, workset_id: randomUUID(), items: recoveryItems }).items, actuallyExcludedComments: new Set() };
+      } catch (error) {
+        rethrowProtocol(error);
+      }
+    })();
+    const generatedHistory = recoveryItemPlan || classificationVersionId
       ? { protocol_version: history.protocol_version, items: [] }
       : mergeThreeClassHistory(history, effectiveCommentLabels);
-    const itemPlan = classificationVersionId
+    const itemPlan = recoveryItemPlan ?? (classificationVersionId
       ? (() => {
         const priorLabels = readClassificationVersionLabels(db, classificationVersionId);
         const plan = planCumulativeClassification({ survivors: artifacts.survivors, priorLabels });
         assertClassificationHandoffSafe({ items: plan.handoffItems, priorExactByObservationId: plan.priorExactByObservationId, priorCommentLabels: plan.priorCommentLabels });
         return { items: plan.handoffItems.map((item) => ({ id: item.id, comment: item.commentText })), actuallyExcludedComments: new Set() };
       })()
-      : buildThreeClassItemPlan(artifacts.records, new Set(effectiveCommentLabels.keys()));
+      : buildThreeClassItemPlan(artifacts.records, new Set(effectiveCommentLabels.keys())));
     const worksetId = randomUUID();
     const itemsValue = {
       protocol_version: PROTOCOL_VERSION,

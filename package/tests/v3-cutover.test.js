@@ -135,3 +135,49 @@ test("cutover transition is idempotent by operation and event receipt", async ()
     db.close();
   }
 });
+
+test("planned recovery has a dedicated freeze state and only verified completion can release it", async () => {
+  const { db, controlPlane } = await fixture();
+  try {
+    initialize(controlPlane, "cutover-recovery-init");
+    advancePersistedV3Cutover(controlPlane, "freeze_v2", { newV2Starts: 0 });
+    advancePersistedV3Cutover(controlPlane, "drain_complete", { nonterminalV2Sessions: 0 });
+    advancePersistedV3Cutover(controlPlane, "legacy_disabled", { legacyWriterEnabled: false });
+    advancePersistedV3Cutover(controlPlane, "enable_v3", { legacyWriterEnabled: false, newV2Starts: 0 });
+    advancePersistedV3Cutover(controlPlane, "smoke_passed", smokeEvidence());
+
+    const frozen = advancePersistedV3Cutover(controlPlane, "recovery_freeze", { newV3Starts: 0 }, { operationId: "cutover-recovery-freeze" });
+    assert.equal(frozen.state, "recovery_frozen");
+    assert.equal(frozen.v3StartsEnabled, false);
+    assert.throws(() => advancePersistedV3Cutover(controlPlane, "fix_forward_v3", { legacyWriterEnabled: false, newV2Starts: 0, fixForwardRef: "fix://forbidden" }), /CUTOVER_ORDER_INVALID/);
+    assert.throws(() => advancePersistedV3Cutover(controlPlane, "recovery_completed", { verificationPassed: false, recoveryId: "recovery-1", verificationReceiptOperationId: "recovery:recovery-1:verify" }), /RECOVERY_VERIFICATION_REQUIRED/);
+
+    const completed = advancePersistedV3Cutover(controlPlane, "recovery_completed", {
+      recoveryId: "recovery-1",
+      verificationPassed: true,
+      verificationReceiptOperationId: "recovery:recovery-1:verify",
+    }, { operationId: "cutover-recovery-complete" });
+    assert.equal(completed.state, "smoke_verified");
+    assert.equal(completed.v3StartsEnabled, true);
+  } finally {
+    db.close();
+  }
+});
+
+test("recovery cancellation is allowed only before a mutating stage", async () => {
+  const { db, controlPlane } = await fixture();
+  try {
+    initialize(controlPlane, "cutover-recovery-cancel-init");
+    advancePersistedV3Cutover(controlPlane, "freeze_v2", { newV2Starts: 0 });
+    advancePersistedV3Cutover(controlPlane, "drain_complete", { nonterminalV2Sessions: 0 });
+    advancePersistedV3Cutover(controlPlane, "legacy_disabled", { legacyWriterEnabled: false });
+    advancePersistedV3Cutover(controlPlane, "enable_v3", { legacyWriterEnabled: false, newV2Starts: 0 });
+    advancePersistedV3Cutover(controlPlane, "smoke_passed", smokeEvidence());
+    advancePersistedV3Cutover(controlPlane, "recovery_freeze", { newV3Starts: 0 });
+    const cancelled = advancePersistedV3Cutover(controlPlane, "recovery_cancelled", { mutatingRecoveryStageCompleted: false, actorId: "operator" });
+    assert.equal(cancelled.state, "smoke_verified");
+    assert.throws(() => advancePersistedV3Cutover(controlPlane, "recovery_completed", { verificationPassed: true, recoveryId: "recovery-2", verificationReceiptOperationId: "recovery:recovery-2:verify" }), /CUTOVER_ORDER_INVALID/);
+  } finally {
+    db.close();
+  }
+});

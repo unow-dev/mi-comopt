@@ -124,7 +124,13 @@ export function assertClassificationHandoffSafe({ items = [], priorExactByObserv
 
 export function assertCompleteClassificationState(survivors, labels) {
   const survivorIds = new Set((survivors ?? []).map(asObservationId));
-  const labelIds = new Set((labels ?? []).map(asObservationId));
+  const labelRows = labels ?? [];
+  const labelIds = new Set(labelRows.map(asObservationId));
+  if (labelIds.size !== labelRows.length) {
+    throw planError("CLASSIFICATION_STATE_COVERAGE_MISMATCH", "classification contains duplicate observation labels", {
+      duplicateCount: labelRows.length - labelIds.size,
+    });
+  }
   const missing = [...survivorIds].filter((id) => !labelIds.has(id));
   const extra = [...labelIds].filter((id) => !survivorIds.has(id));
   if (missing.length > 0 || extra.length > 0) {

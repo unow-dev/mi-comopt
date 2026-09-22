@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { access, unlink, writeFile } from "node:fs/promises";
+import { access, readFile, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
   CommentDatabaseError,
@@ -62,7 +62,7 @@ function usageFor(command = undefined) {
     return "Usage: npm run comment-db -- verify-raw-inputs [--snapshot-ref <sha:index> ...] [--db path.sqlite3]";
   }
   if (command === "generate-three-class-workset") {
-    return "Usage: npm run comment-db -- generate-three-class-workset (--snapshot-ref <sha:index> ... | --snapshot-sha <sha256> ...) --history path.json --output path.zip [--db path.sqlite3] [--classification-version-id ID]";
+    return "Usage: npm run comment-db -- generate-three-class-workset (--snapshot-ref <sha:index> ... | --snapshot-sha <sha256> ...) --history path.json --output path.zip [--db path.sqlite3] [--classification-version-id ID] [--recovery-items-json path.json]";
   }
   if (command === "validate-three-class-response") {
     return "Usage: npm run comment-db -- validate-three-class-response --workset path.zip --response path.json";
@@ -188,7 +188,7 @@ function parseArguments(argv) {
     "backfill-raw-inputs": new Set(["--db", "--raw-root"]),
     "export-analysis-input": new Set(["--snapshot-ref", "--snapshot-sha", "--output", "--manifest", "--db"]),
     "verify-raw-inputs": new Set(["--snapshot-ref", "--snapshot-sha", "--db"]),
-    "generate-three-class-workset": new Set(["--snapshot-ref", "--snapshot-sha", "--history", "--output", "--db", "--classification-version-id"]),
+    "generate-three-class-workset": new Set(["--snapshot-ref", "--snapshot-sha", "--history", "--output", "--db", "--classification-version-id", "--recovery-items-json"]),
     "validate-three-class-response": new Set(["--workset", "--response"]),
     "apply-three-class-response": new Set(["--workset", "--response", "--db"]),
     "generate-keyword-candidate-handoff": new Set(["--snapshot-ref", "--publication-root", "--output", "--db", "--request-id", "--classification-version-id", "--corpus-version-id"]),
@@ -227,6 +227,8 @@ function parseArguments(argv) {
       setOnce(args, "requestId", requireOptionValue(argv, index, option), option);
     } else if (option === "--classification-version-id") {
       setOnce(args, "classificationVersionId", requireOptionValue(argv, index, option), option);
+    } else if (option === "--recovery-items-json") {
+      setOnce(args, "recoveryItemsPath", requireOptionValue(argv, index, option), option);
     } else if (option === "--corpus-version-id") {
       setOnce(args, "corpusVersionId", requireOptionValue(argv, index, option), option);
     } else if (option === "--snapshot-sha") {
@@ -236,7 +238,7 @@ function parseArguments(argv) {
     } else {
       throw new CliArgumentError("unknown option: " + option);
     }
-    if (["--input", "--db", "--raw-root", "--output", "--manifest", "--history", "--workset", "--response", "--publication-root", "--handoff-manifest", "--snapshot-sha", "--snapshot-ref", "--request-id", "--classification-version-id", "--corpus-version-id"].includes(option)) {
+    if (["--input", "--db", "--raw-root", "--output", "--manifest", "--history", "--workset", "--response", "--publication-root", "--handoff-manifest", "--snapshot-sha", "--snapshot-ref", "--request-id", "--classification-version-id", "--recovery-items-json", "--corpus-version-id"].includes(option)) {
       index += 1;
     }
   }
@@ -369,11 +371,15 @@ async function exportAnalysisInput(args) {
 }
 
 async function generateWorkset(args) {
+  const recoveryItems = args.recoveryItemsPath === undefined
+    ? undefined
+    : JSON.parse(await readFile(resolveInvocationPath(args.recoveryItemsPath), "utf8"));
   return generateThreeClassWorkset({
     dbPath: args.db === undefined ? undefined : resolveInvocationPath(args.db),
     snapshotRefs: args.snapshotRefs.map((reference) => ({ ...reference })),
     snapshotShas: [...args.snapshotShas],
     classificationVersionId: args.classificationVersionId,
+    recoveryItems,
     historyPath: resolveInvocationPath(args.history),
     outputPath: resolveInvocationPath(args.output),
   });
