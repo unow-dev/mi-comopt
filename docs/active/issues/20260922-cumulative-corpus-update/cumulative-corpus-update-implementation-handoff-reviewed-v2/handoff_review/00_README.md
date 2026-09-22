@@ -47,6 +47,9 @@ firstWinsDeduplicate(
 5. 既に欠落状態がproductionに存在する場合は `05_RECOVERY_RUNBOOK.md` を実行する。
 6. `06_FLOW.puml` は業務フロー確認用。
 7. `07_CURRENT_CODE_EVIDENCE.md` は現行コード上の問題箇所の索引。
+8. `11_RECOVERY_CLI_AND_DOD.md` は実装すべきrecovery CLI契約と、本issueをcloseできる最終条件。
+9. `12_REVIEW_CHANGES.md` は第1回レビューで追加・修正した判断の要約。
+10. `13_REVIEW_ROUND_2.md` は第2回レビューで採択したproduction recoveryの安全性修正。
 
 ## 重要な禁止事項
 
@@ -64,4 +67,16 @@ firstWinsDeduplicate(
 
 ## 完了定義
 
-このhandoffのacceptance matrixが全てgreenであり、production recovery対象がある場合はcorrected releaseのdeployment verificationまで完了していること。
+このissueではproductionに既知の欠落状態があるため、Recoveryは任意ではない。以下を全て満たすまでcloseしない。
+
+- acceptance matrixが全てgreen。
+- productionで`recovery freeze → drain → plan → start/resume`を実際に実行。
+- corrected cumulative releaseを実際にdeploy。
+- `recovery verify`で、生成データ・依存version・artifact SHA・served releaseを再検証。
+- Recovery classificationではexact 5-field dedupe group内の既存labelまで再利用し、それでも未解決のitemだけChatGPTへ送る。
+- `previouslyResolvedItemCount == 0`を確認。
+- verification evidenceをissueへ添付または参照。
+- planned recoveryは専用`recovery_frozen` stateで行い、`fix_forward_v3`では解除しない。
+- verification成功後にのみ`recovery complete`で`recovery_frozen`を解除。
+
+詳細は`11_RECOVERY_CLI_AND_DOD.md`を正本とする。

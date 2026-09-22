@@ -115,18 +115,23 @@ key = exact tuple(
 collision-freeなtuple encodingを用いること。separator文字列連結は使用しない。
 
 ```text
-seen = Set()
+seen = Map()
 survivors = []
+dedupeGroups = []
 
 for bundle in snapshotBundles in input order:
   for observation in source_index ASC:
     key = exactTuple(...5 fields...)
     if key in seen:
-      skip
+      dedupeGroups[seen.get(key)].observations.push(observation)
     else:
-      seen.add(key)
+      groupIndex = dedupeGroups.length
+      seen.set(key, groupIndex)
       survivors.push(observation)
+      dedupeGroups.push({ key, survivor: observation, observations: [observation] })
 ```
+
+通常の分析入力は`survivors`を使用する。Recoveryだけは、既存分類の再利用判定のため`dedupeGroups`も使用してよい。`dedupeGroups`は内部projection metadataであり、公開Source Datasetへ出さない。
 
 ---
 
@@ -401,6 +406,13 @@ baseCorpusVersion
 baseより後、broken headまでのcommitted corpus versions
 ```
 
+必須validation:
+
+- base / broken headは同一corpus stream。
+- baseはbroken headのcommitted ancestry上に存在する。
+- broken headはplan/start時点のcurrent corpus head。
+- rangeはcommit transitionを連続して辿れること。
+
 各versionのsnapshot refs:
 
 - schema v1: 旧挙動を再現して`payloadSha256 ASC, snapshotIndex ASC`
@@ -408,16 +420,39 @@ baseより後、broken headまでのcommitted corpus versions
 
 versionは`version_no ASC`で累積し、snapshot ref自体をfirst-win uniqueする。
 
+Recovery planの件数は曖昧な`incomingCount`ではなく、次をauthorityとする。
+
+```text
+baseLogicalRecordCount
+  = base refsだけをcumulative projectionしたsurvivor count
+
+appendedRawObservationCount
+  = baseより後に初出したsnapshot refsに含まれるraw observation count
+
+duplicateObservationCount
+  = appended observationsのうちfirst-win projectionでsurviveしない件数
+
+expectedLogicalRecordCount
+  = baseLogicalRecordCount
+  + appendedRawObservationCount
+  - duplicateObservationCount
+```
+
+今回の24,622 / 11,768 / 36,090は、この定義に実データが一致した場合のincident-specific evidenceであり、generic implementationへ固定値を埋め込まない。
+
 ### 9.2 Recovery classification
 
-1. recovery corpusをprojectionしてsurvivor observation IDsを確定。
-2. survivor IDだけについてclassification historyを検索。
-3. 同一observationIdが複数versionにあれば最新`version_no` labelを採用。
-4. observationIdで復旧できなければhistorical同一comment text labelを既存ルールで継承。
-5. なお未解決だけChatGPTへ送る。
-6. 新ClassificationVersionはsurvivor全件を含む。
+Recoveryでは「同一コメント」の採択済み定義である5-field exact dedupe groupも既存分類再利用のidentityとして扱う。
 
-historical scanはRecovery専用。通常更新へ持ち込まない。
+1. recovery corpusをprojectionし、survivorとdedupe groupを確定。
+2. **recovery corpus内の各dedupe groupに属するobservation IDsだけ**についてclassification historyを検索。
+3. group内にhistorical exact labelsがあれば、最も新しい`classification version_no`に存在するlabelをgroupのidentity labelとして採用する。同一latest version内で複数labelが衝突する場合のみ`worseThreeClassLabel()`で決定する。
+4. group identity labelをfirst-win survivorへbindingする。これにより、dedupe loser側にしか過去labelがない場合でも同一コメントをChatGPTへ再投入しない。
+5. identity labelで解決できないsurvivorについてのみ、**current recovery survivorsに復旧済みのidentity labels**から`commentText -> label` mapを構築し、既存`worseThreeClassLabel()`ルールで継承する。
+6. identity labelもsurvivor-derived same-comment labelもないものだけChatGPTへ送る。
+7. 新ClassificationVersionはsurvivor全件を含む。
+
+DB-global historical comment labelは使用しない。historical scanはRecovery専用で、通常更新へ持ち込まない。
 
 ---
 
@@ -427,8 +462,25 @@ production semantics変更はatomicにcutoverする。
 
 ただし単一DB transactionではなく、**外部可視性atomic・内部はfreeze下で再開可能**とする。
 
+planned recoveryは既存`v3_frozen`を流用せず、cutover stateへ`recovery_frozen`を追加する。DB列はTEXTのためtable shape migrationは不要。
+
+```text
+smoke_verified --recovery_freeze--> recovery_frozen
+recovery_frozen --recovery_cancelled--> smoke_verified   # mutating recovery stage開始前のみ
+recovery_frozen --recovery_completed--> smoke_verified  # successful verify後のみ
+```
+
+- `recovery_frozen`ではnormal v3 startsを禁止する。
+- `fix_forward_v3`は`recovery_frozen`から使用不可。
+- データ変更開始後は`recovery_completed`だけがplanned recoveryを解除できる。
+- `recovery_cancelled`はmutating recovery stage開始前だけ許可する。
+- `recovery_completed`にはmatching successful verification receiptを必須とする。
+
+処理順:
+
 - freeze
 - drain
+- plan/head再検証
 - bootstrap / cumulative state construction
 - classification
 - source dataset / analyses
@@ -437,4 +489,58 @@ production semantics変更はatomicにcutoverする。
 - verify
 - starts再開
 
-途中失敗時に欠落した旧releaseを正しい状態としてrollbackしない。freezeしたままfix-forward/retryする。
+途中失敗時に欠落した旧releaseを正しい状態としてrollbackしない。`recovery_frozen`のままfix-forward/retryする。
+
+さらに通常`start`にもpreflight guardを追加し、既存corpus headがschema v1ならsessionを作成する前に`CORPUS_BOOTSTRAP_REQUIRED`で拒否する。`CorpusApplicationServiceV3.update()`側の同じguardも残し、defense in depthとする。
+
+---
+
+## 11. Recovery classification authority clarification
+
+RecoveryでDB全classification履歴をcomment text単位に直接集約してはならない。
+
+採択する順序:
+
+```text
+1. cumulative projectionでcurrent recovery survivor + exact-dedupe groupsを確定
+2. recovery corpus内のgroup member observation IDsだけhistorical labelsを検索
+3. 各groupで最新classification version_noのlabelをidentity labelとして復旧
+4. same latest version内でlabel conflict時のみworseThreeClassLabel()
+5. identity labelをfirst-win survivorへbinding
+6. recovered survivor identity labelsだけからcommentText -> label mapを構築
+7. comment conflictは既存worseThreeClassLabel()
+8. identity labelもsurvivor-derived comment labelもないものだけunresolved
+```
+
+これにより、(a) recovery対象corpus外の古いlabelの再流入を防ぎ、かつ(b) dedupe loser側にしか既存labelがない同一コメントの不要な再分類も防ぐ。
+
+ChatGPT handoff safety assertionも同じauthorityを用い、`priorIdentityLabel == none AND priorCommentLabel == none`を要求する。DB-global `readExistingCommentLabels()`相当をRecoveryで使用しない。
+
+---
+
+## 12. Mandatory recovery CLI / production completion
+
+`comment-data-update:v3`へtop-level `recovery` commandを追加する。
+
+最低限のsubcommand contract:
+
+```text
+plan
+start
+status
+resume
+classification open|complete|review
+keyword open|complete|review
+verify
+complete
+```
+
+`recovery verify`はstatus表示ではなく、corrected releaseが実際にdeployされた後に、DB state・generated artifacts・served deployment identityを再読込して不変条件をfail-closed検証するcommandとする。公開Source Dataset v2には`observationId`を出さないため、verifyではrecovered corpus + ClassificationVersionからSource Dataset v2 bytesを決定的に再生成し、そのSHA/bytesをmaterialized commentsおよび**実際に配信中のcomments artifactをread-backしたbytes**と比較する。さらにserved release manifestとcomments / keywords / accounts / overviewの全公開artifactをproviderから取得してcontract/SHAを検証する。Overview / Accountは同じ再生成sourceから決定的に再構築してmaterialized/deployed成果物一致を確認し、Keywordは同一source dataset SHAへのpublication bindingとdeployed artifact identityを確認する。
+
+`recovery complete`は、同一recoveryId / corrected releaseに対する成功済みverification receiptが存在しない限り拒否する。
+
+Recovery stage / verificationの永続authorityには既存`application_operation_receipts`を使う。新しいrecovery progress tableは追加しない。`recovery status`はdeterministic stage operation IDsのreceiptとimmutable stateから再構成する。`recovery-verification.json`はissue添付用mirrorであり、freeze解除のauthorityはDB receiptとする。
+
+本issueは、productionで実際にRecoveryを実行し、`recovery verify`が成功するまで完了扱いにしない。
+
+詳細なCLI契約と証跡項目は`11_RECOVERY_CLI_AND_DOD.md`を参照。

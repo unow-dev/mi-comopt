@@ -39,6 +39,7 @@
 - duplicate snapshot ref → no-op。
 - semantic unchanged →新versionなし。
 - v1 headの通常更新は禁止。
+- normal v3 session startも、session/evidence作成前にv1 headを拒否する。
 
 ---
 
@@ -147,7 +148,8 @@ brokenHeadCorpusVersionId
 ### Done
 
 - recovery rangeからCorpus v2を再構成。
-- historical classificationをsurvivorに限定して復旧。
+- historical classificationはcurrent recovery corpusのexact 5-field dedupe group membersに限定して検索し、group identity labelをsurvivorへ復旧。
+- dedupe loser側だけにlabelがあるケースもChatGPTへ再送しない。
 - 真に未解決のみChatGPTへ。
 - idempotentに再実行可能。
 
@@ -161,10 +163,12 @@ brokenHeadCorpusVersionId
 
 ### Done
 
-- recovery中はnew v3 startsをfreeze。
+- `smoke_verified -> recovery_frozen`でnew v3 startsをfreeze。
+- `recovery_frozen`から`fix_forward_v3`を許可しない。
 - nonterminal sessionsをdrainしてからbootstrap。
 - corrected release deployment verification前にstartsを再開しない。
-- failure時は旧欠落releaseへrollbackせずfix-forward。
+- matching verification receipt付き`recovery_completed`だけで`smoke_verified`へ戻す。
+- failure時は旧欠落releaseへrollbackせず`recovery_frozen`のままretry。
 
 ---
 
@@ -198,3 +202,64 @@ tests/v3-cumulative-corpus-update.test.js
 - account source
 - overview source
 - release comments
+
+---
+
+## Ticket 12 — Recovery CLI contract
+
+### 変更
+
+`scripts/comment-data-update-v3-operator.mjs`相当の既存operatorにtop-level `recovery` commandを追加する。
+
+Required:
+
+```text
+recovery freeze
+recovery plan
+recovery start
+recovery cancel
+recovery status
+recovery resume
+recovery classification open|complete|review
+recovery keyword open|complete|review
+recovery verify
+recovery complete
+```
+
+### Done
+
+- workspace rootから`npm run comment-data-update:v3 -- recovery ...`で実行可能。
+- `freeze`は`smoke_verified -> recovery_frozen`へ遷移しstartsを停止。
+- drain後にのみ`plan`を許可。`plan`はnon-mutatingで`recoveryContract`, deterministic `recoveryId`, lineage, canonical counts, plan SHAを返す。
+- `cancel`は最初のmutating recovery stageより前だけ許可。
+- `start`はreview済みplan SHAへbindし、freeze/drain後に同一planを再計算してからcorpus mutationする。
+- reviewed planと`start`時再計算planが不一致なら`RECOVERY_PLAN_STALE`で`recovery_frozen`維持。
+- `resume`はidempotent。stage authorityはdeterministic `application_operation_receipts`。
+- `status`はreceipt + immutable stateから再構成。専用progress tableは追加しない。
+- `verify`はDB + generated artifacts + served deploymentを再検証し、DB receiptをauthorityとして保存する。
+- `complete`は成功済みverification receiptなしでは`recovery_frozen`を解除できない。
+
+---
+
+## Ticket 13 — Production recovery and issue-close evidence
+
+これは実装テストではなく、本issueのproduction完了作業。
+
+### Done
+
+- 実装したrecovery CLIをtarget production stateへ実行済み。
+- corrected cumulative releaseを実deploy済み。
+- `recovery verify`成功済み。
+- verification evidenceに以下を含む:
+  - recovery/base/broken/recovered version IDs
+  - classification/keyword/release IDs
+  - baseLogical/appendedRaw/duplicate/logical counts
+  - classification/source/deployed comment counts
+  - source/deployed artifact SHA
+  - ChatGPT item count
+  - `previouslyResolvedItemCount = 0`
+  - deployment verified=true
+- evidenceをissueへ添付または参照済み。
+- その後のみ`recovery complete`を実行。
+
+このTicketが未完了ならissueをcloseしない。

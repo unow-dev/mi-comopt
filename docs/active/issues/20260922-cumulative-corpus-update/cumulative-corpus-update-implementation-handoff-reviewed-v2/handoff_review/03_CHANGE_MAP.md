@@ -11,13 +11,15 @@
 | `src/processing/analysis-input/raw-snapshot-projection.js` | cumulative first-win projection追加 |
 | `src/three-class/label-resolution.js` | 既存`worseThreeClassLabel()`ルールを再利用。意味変更しない |
 | `src/three-class/cumulative-classification-plan.js` | 新規推奨。classification planのpure authority |
-| `scripts/comment-data-update-v3-operator.mjs` | single snapshot handoff前提撤去 |
+| `scripts/comment-data-update-v3-operator.mjs` | single snapshot handoff前提撤去、recovery CLI surface |
+| `src/integration/v3-operator.js` | normal start preflight: schema v1 corpus headをsession作成前に`CORPUS_BOOTSTRAP_REQUIRED` |
 | `scripts/adapters/keyword-candidate-comment-db.js` | Source Dataset v2 / cumulative corpus対応 |
 | `src/processing/optimicom-ui-release/source-dataset.js` | v2 schema、single snapshot制約撤去 |
 | `src/processing/optimicom-ui-release/release.js` | v2 source/manifest整合 |
 | `scripts/export-v3-optimicom-ui-release.mjs` | exactly-one-snapshot制約撤去、v2 export |
 | `src/application/v3/release-services.js` | cross-pin gate、artifact override撤去 |
-| `src/migration/v3-cutover.js` | planned recovery freeze/complete orchestration（必要に応じてevents拡張） |
+| `src/migration/v3-cutover.js` | `recovery_frozen` state、`recovery_freeze` / `recovery_cancelled` / `recovery_completed` transitions、通常`fix_forward_v3`との分離 |
+| deployment adapter / deployed-release verifier | served manifest + comments/keywords/accounts/overviewのread-back検証。既存provider verifierを再利用、足りなければinterface拡張 |
 
 ## Tests to extend
 
@@ -30,8 +32,8 @@
 | `tests/v3-handoff-integrity.test.js` | ChatGPT safety assertion / handoff identity |
 | `tests/keyword-candidate-comment-db.test.js` | Source Dataset v2 keyword input |
 | `tests/optimicom-ui-release.test.js` | Source Dataset v2 / release artifacts |
-| `tests/v3-cutover.test.js` | recovery freeze / fix-forward / completion |
-| `tests/v3-operator.test.js` | no single snapshot operator path |
+| `tests/v3-cutover.test.js` | `recovery_frozen` / stale-plan / completion receipt / `fix_forward_v3`拒否 |
+| `tests/v3-operator.test.js` | no single snapshot operator path、schema v1 corpus headをsession作成前に拒否 |
 
 ## New test recommended
 
@@ -48,7 +50,7 @@ Issue固有のend-to-end invariantのみを集約する。
 - existing projection-definition policy semantics
 - raw snapshots themselves
 - existing legacy three-class CLI behavior
-- DB table shape solely for this issue
+- DB table shape solely for this issue（recovery stage authorityは既存`application_operation_receipts`を使用）
 
 ## Legacy areas intentionally retained but removed from v3 authority
 

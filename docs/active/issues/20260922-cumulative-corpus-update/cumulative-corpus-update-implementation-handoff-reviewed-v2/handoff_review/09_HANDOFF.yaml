@@ -1,0 +1,89 @@
+issue: cumulative-corpus-update
+status: implementation-ready
+invariant:
+  deployed_population: existing_valid_plus_incoming_minus_exact_duplicates
+corpus:
+  schema_version: 2
+  snapshot_ref_identity: [payloadSha256, snapshotIndex]
+  update: append_prior_then_incoming_first_unique
+projection:
+  snapshot_order: corpus_state_order
+  observation_order: source_index_asc
+  dedupe:
+    strategy: first_wins
+    fields: [username, handle, comment, postedAt, postedDate]
+    normalization: none
+classification:
+  authority: classification_state_labels
+  normal_resolution_order:
+    - exact_observation_id_from_prior_pinned_classification
+    - prior_same_comment_text_from_prior_pinned_classification
+    - human_decision
+  recovery_resolution_order:
+    - newest_historical_label_within_current_exact_dedupe_group
+    - same_comment_label_derived_only_from_identity_resolved_current_survivors
+    - human_decision
+  db_global_comment_history_allowed: false
+  chatgpt_handoff_assertion:
+    identity_prior_label_must_be_absent: true
+    prior_comment_label_must_be_absent: true
+    error_code: CLASSIFICATION_WORKSET_CONTAINS_PREVIOUSLY_RESOLVED_ITEM
+  output_must_cover_all_survivors: true
+source_dataset:
+  schema_version: 2
+  authority_for_downstream: true
+release:
+  fail_closed_cross_pins: true
+  fail_closed_source_sha: true
+  arbitrary_request_artifact_override: false
+recovery:
+  required_for_this_issue: true
+  explicit_inputs:
+    - baseCorpusVersionId
+    - brokenHeadCorpusVersionId
+  preflight:
+    freeze_before_plan: true
+    command: recovery plan
+    mutating: false
+    requires_nonterminal_sessions_zero: true
+    start_binds_expected_plan_sha256: true
+  historical_scan: recovery_only
+  contract: cumulative-corpus-recovery/v1
+  cutover_state: recovery_frozen
+  enter_transition: recovery_freeze
+  cancel_transition: recovery_cancelled
+  complete_transition: recovery_completed
+  cancel_allowed_only_before_mutation: true
+  progress_authority: application_operation_receipts
+  normal_fix_forward_allowed_from_recovery_frozen: false
+  count_equation: baseLogicalRecordCount + appendedRawObservationCount - duplicateObservationCount
+  rollback_to_broken_semantics: false
+  commands:
+    - freeze
+    - plan
+    - start
+    - cancel
+    - status
+    - resume
+    - classification_open
+    - classification_complete
+    - classification_review
+    - keyword_open
+    - keyword_complete
+    - keyword_review
+    - verify
+    - complete
+  verify_rebuilds_source_dataset_bytes: true
+  verify_rebuilds_overview_and_account: true
+  verify_requires_provider_readback_of_all_public_artifacts: true
+  complete_requires_matching_verification_receipt: true
+production_cutover:
+  source_dataset_v2_and_downstream: atomic_visibility
+issue_completion:
+  ci_green_required: true
+  production_recovery_executed_required: true
+  corrected_release_deployed_required: true
+  recovery_verify_passed_required: true
+  previously_resolved_chatgpt_item_count_must_equal: 0
+  deployed_artifact_identity_verified_required: true
+  verification_evidence_attached_or_referenced_required: true

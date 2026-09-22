@@ -110,4 +110,9 @@ production authorityをpins由来builderに統一するため、request override
 
 `src/migration/v3-cutover.js`
 
-現行stateには`smoke_verified` / `v3_frozen`があり、`smoke_failed`後は`fix_forward_v3`で戻る設計。planned recoveryもこのfail-closed思想と整合させる。
+現行stateには`smoke_verified` / `v3_frozen`があり、`smoke_failed`後は`fix_forward_v3`で戻る設計。planned recoveryで`v3_frozen`を流用するとこのescape pathが残るため、専用`recovery_frozen` stateを追加する。mutation開始後は`recovery_completed`だけで解除し、mutation前のみ`recovery_cancelled`を許可する。
+
+
+## Current v3 start has no corpus-schema recovery preflight
+
+`src/integration/v3-operator.js`の`startV3Session()`はsession inputを準備してruntimeを開始するが、current corpus headがlegacy schema v1 / bootstrap-requiredかをsession作成前には検査していない。Corpus serviceだけで拒否するとEvidence ingest等の前段が進み得るため、normal startにもpreflight guardを追加する。
