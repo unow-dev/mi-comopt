@@ -23,7 +23,7 @@
 - [x] 15. 自動検証の範囲で、AIエージェントまたはCIが、projection、Corpus v2、classification、handoff safety、Source Dataset v2、Release gate、Recovery authority、CLI state transition、および小規模E2Eの受入条件を検証する。
 - [x] 16. Production recovery実行の範囲で、人間が、`recovery freeze`、nonterminal sessionのdrain、non-mutating `recovery plan`、plan SHAにbindした`recovery start`、必要なhuman handoff、corrected Releaseのdeployを実行する。
 - [x] 17. 配信検証の範囲で、AIエージェントまたはCIが、recovered corpus/classificationからの再生成結果、materialized artifact、served manifest、comments/keywords/accounts/overviewの実配信read-back、SHA、record count、および依存identityを照合する。
-- [ ] 18. 完了処理の範囲で、人間が、`previouslyResolvedItemCount == 0`、recovery verification receipt、実配信済みcorrected Release、および検証証跡を確認したうえで`recovery complete`を実行し、Issueの完了判断を行う。
+- [x] 18. 完了処理の範囲で、人間が、`previouslyResolvedItemCount == 0`、recovery verification receipt、実配信済みcorrected Release、および検証証跡を確認したうえで`recovery complete`を実行し、Issueの完了判断を行う。
 
 ## Work Notes
 
@@ -48,5 +48,5 @@
 - corrected Releaseは`release-v3_7094669ea8c00f598f5fed878311de54`として生成・materialize済みで、bundle SHAは`sha256:f51c512b7bf949ad0ea2294f3357631c04d6d4fe5695b79ecc24053a55ab476f`、promotion versionは`version_c7cf05e2fc97bd4349b91111b6ab80a9`。UI公開物はmanifestとcomments 35,828件、overview 30件、keywords 201件、accounts 78件を含み、ローカル整合性検証に成功した。
 - corrected UI公開物と実装コミットを`318f048`としてremote `main`へ反映した。push起点のPages run `35747999043`とv3入力付きdispatch run `35748052826`が成功し、deployment requestは`deployment-request-v3_601c735f85fb09a713375def3f7a5be1`、external runは`github-actions-run:35748052826`、deployment eventは`github-pages-deployment-35748052826`である。
 - `recovery verify`はprovider read-backを含めて成功し、`verificationPassed=true`、`deploymentVerified=true`、logical/source/comments 35,828件、overview 30件、keywords 201件、accounts 78件、`previouslyResolvedItemCount=0`を確認した。verify receiptのrecovery plan SHAは`sha256:7422fa11f5544350c7d23273c26896c815e12c7c3b6e41e7bb4738b0994614a5`。
-- recovery cutoverは引き続き`recovery_frozen`。`recovery complete`は未実施であり、タスク18の人間による完了確認後に実行する。
+- `recovery complete`は`recovery:recovery_20d03fbc08ddea65dae1230727fb8912:complete`として成功し、cutoverは`smoke_verified`へ復帰した。`v3_starts_enabled=true`、`legacy_writer_enabled=false`、`v2_starts_enabled=false`である。
 - 参照する正本は同ディレクトリの`01_IMPLEMENTATION_SPEC.md`、`02_WORK_ITEMS.md`、`04_ACCEPTANCE_TESTS.md`、`05_RECOVERY_RUNBOOK.md`、`09_HANDOFF.yaml`、`11_RECOVERY_CLI_AND_DOD.md`、`13_REVIEW_ROUND_2.md`とする。
