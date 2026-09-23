@@ -60,9 +60,26 @@ export function markKeywordCopied(state, candidateId, copiedAt, publicationRunId
   return { ...state, keywords: { ...state.keywords, [candidateId]: { copied_at: new Date(copiedAt).toISOString(), keyword_publication_run_id: publicationRunId } } }
 }
 
+export function clearKeywordCopied(state, candidateId) {
+  const keywords = { ...state.keywords }
+  delete keywords[candidateId]
+  return { ...state, keywords }
+}
+
 export function markAccountCopied(state, handle, copiedAt, sourceDatasetArtifactSha256) {
   const current = state.accounts[handle] ?? { copied_at: null, blocked_marked_at: null, source_dataset_artifact_sha256: sourceDatasetArtifactSha256 }
   return { ...state, accounts: { ...state.accounts, [handle]: { ...current, copied_at: new Date(copiedAt).toISOString(), source_dataset_artifact_sha256: sourceDatasetArtifactSha256 } } }
+}
+
+export function clearAccountCopied(state, handle) {
+  const current = state.accounts[handle]
+  if (!current) return state
+  if (current.blocked_marked_at === null) {
+    const accounts = { ...state.accounts }
+    delete accounts[handle]
+    return { ...state, accounts }
+  }
+  return { ...state, accounts: { ...state.accounts, [handle]: { ...current, copied_at: null } } }
 }
 
 export function toggleAccountBlocked(state, handle, blockedAt, sourceDatasetArtifactSha256) {
