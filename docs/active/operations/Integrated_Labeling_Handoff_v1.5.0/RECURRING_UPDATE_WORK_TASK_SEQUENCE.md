@@ -26,7 +26,7 @@
 - [ ] 18. リリース判断の範囲で、人間が、raw snapshot、公開対象、検証結果および公開可否を判断する。
 - [ ] 19. React UI反映の範囲で、AIエージェントが、承認済み公開データをUIの静的データへ反映し、テストとproduction buildを確認する。
 - [ ] 20. Git反映の範囲で、AIエージェントが、8 artifact・operational registry・data-release.json・必要文書だけをコミットし、rawと作業生成物を除外する。
-- [ ] 21. GitHub Pages公開の範囲で、AIエージェントまたはCIが、`main`のvalidation/build後に限りPagesへdeployし、公開URLの`data-release.json` bytes一致を確認する。
+- [ ] 21. GitHub Pages公開の範囲で、AIエージェントまたはCIが、DB Releaseから生成した専用UIブランチのvalidation/build後に限りPagesへdeployし、公開URLのRelease markerとUI manifestのbytes一致を確認する。
 - [ ] 22. 公開後継続性の範囲で、AIエージェントが、公開成功後だけStage 13 outputをprivate referenceへpromotionし、次回prepareのsmokeを実行する。
 - [ ] 23. 更新結果記録の範囲で、AIエージェントが、raw・Stage 13・three-class・keyword/account runの対応、入力SHA、公開件数、検証結果および注意点を記録する。
 
