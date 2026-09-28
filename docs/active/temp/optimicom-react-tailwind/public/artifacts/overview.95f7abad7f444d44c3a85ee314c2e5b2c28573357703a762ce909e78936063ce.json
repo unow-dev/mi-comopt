@@ -1,0 +1,315 @@
+{
+  "schema_version": 1,
+  "data_start_date": "2026-06-26",
+  "data_end_date": "2026-09-26",
+  "periods": {
+    "1d": {
+      "days": 1,
+      "start_date": "2026-09-26",
+      "end_date": "2026-09-26",
+      "coverage": "complete",
+      "observation_count": 119,
+      "counts": {
+        "direct_nuisance": 5,
+        "reactive": 1,
+        "normal": 113
+      }
+    },
+    "7d": {
+      "days": 7,
+      "start_date": "2026-09-20",
+      "end_date": "2026-09-26",
+      "coverage": "complete",
+      "observation_count": 1801,
+      "counts": {
+        "direct_nuisance": 48,
+        "reactive": 14,
+        "normal": 1739
+      }
+    },
+    "30d": {
+      "days": 30,
+      "start_date": "2026-08-28",
+      "end_date": "2026-09-26",
+      "coverage": "complete",
+      "observation_count": 12582,
+      "counts": {
+        "direct_nuisance": 237,
+        "reactive": 230,
+        "normal": 12115
+      }
+    }
+  },
+  "daily": [
+    {
+      "date": "2026-08-28",
+      "observation_count": 181,
+      "counts": {
+        "direct_nuisance": 2,
+        "reactive": 1,
+        "normal": 178
+      }
+    },
+    {
+      "date": "2026-08-29",
+      "observation_count": 99,
+      "counts": {
+        "direct_nuisance": 4,
+        "reactive": 7,
+        "normal": 88
+      }
+    },
+    {
+      "date": "2026-08-30",
+      "observation_count": 307,
+      "counts": {
+        "direct_nuisance": 6,
+        "reactive": 5,
+        "normal": 296
+      }
+    },
+    {
+      "date": "2026-08-31",
+      "observation_count": 302,
+      "counts": {
+        "direct_nuisance": 5,
+        "reactive": 14,
+        "normal": 283
+      }
+    },
+    {
+      "date": "2026-09-01",
+      "observation_count": 240,
+      "counts": {
+        "direct_nuisance": 8,
+        "reactive": 14,
+        "normal": 218
+      }
+    },
+    {
+      "date": "2026-09-02",
+      "observation_count": 409,
+      "counts": {
+        "direct_nuisance": 15,
+        "reactive": 23,
+        "normal": 371
+      }
+    },
+    {
+      "date": "2026-09-03",
+      "observation_count": 256,
+      "counts": {
+        "direct_nuisance": 2,
+        "reactive": 6,
+        "normal": 248
+      }
+    },
+    {
+      "date": "2026-09-04",
+      "observation_count": 534,
+      "counts": {
+        "direct_nuisance": 9,
+        "reactive": 10,
+        "normal": 515
+      }
+    },
+    {
+      "date": "2026-09-05",
+      "observation_count": 641,
+      "counts": {
+        "direct_nuisance": 17,
+        "reactive": 20,
+        "normal": 604
+      }
+    },
+    {
+      "date": "2026-09-06",
+      "observation_count": 537,
+      "counts": {
+        "direct_nuisance": 6,
+        "reactive": 21,
+        "normal": 510
+      }
+    },
+    {
+      "date": "2026-09-07",
+      "observation_count": 489,
+      "counts": {
+        "direct_nuisance": 4,
+        "reactive": 11,
+        "normal": 474
+      }
+    },
+    {
+      "date": "2026-09-08",
+      "observation_count": 516,
+      "counts": {
+        "direct_nuisance": 6,
+        "reactive": 18,
+        "normal": 492
+      }
+    },
+    {
+      "date": "2026-09-09",
+      "observation_count": 744,
+      "counts": {
+        "direct_nuisance": 14,
+        "reactive": 18,
+        "normal": 712
+      }
+    },
+    {
+      "date": "2026-09-10",
+      "observation_count": 814,
+      "counts": {
+        "direct_nuisance": 17,
+        "reactive": 8,
+        "normal": 789
+      }
+    },
+    {
+      "date": "2026-09-11",
+      "observation_count": 736,
+      "counts": {
+        "direct_nuisance": 7,
+        "reactive": 6,
+        "normal": 723
+      }
+    },
+    {
+      "date": "2026-09-12",
+      "observation_count": 451,
+      "counts": {
+        "direct_nuisance": 2,
+        "reactive": 5,
+        "normal": 444
+      }
+    },
+    {
+      "date": "2026-09-13",
+      "observation_count": 666,
+      "counts": {
+        "direct_nuisance": 11,
+        "reactive": 8,
+        "normal": 647
+      }
+    },
+    {
+      "date": "2026-09-14",
+      "observation_count": 482,
+      "counts": {
+        "direct_nuisance": 8,
+        "reactive": 6,
+        "normal": 468
+      }
+    },
+    {
+      "date": "2026-09-15",
+      "observation_count": 399,
+      "counts": {
+        "direct_nuisance": 8,
+        "reactive": 4,
+        "normal": 387
+      }
+    },
+    {
+      "date": "2026-09-16",
+      "observation_count": 457,
+      "counts": {
+        "direct_nuisance": 11,
+        "reactive": 4,
+        "normal": 442
+      }
+    },
+    {
+      "date": "2026-09-17",
+      "observation_count": 393,
+      "counts": {
+        "direct_nuisance": 5,
+        "reactive": 4,
+        "normal": 384
+      }
+    },
+    {
+      "date": "2026-09-18",
+      "observation_count": 330,
+      "counts": {
+        "direct_nuisance": 9,
+        "reactive": 1,
+        "normal": 320
+      }
+    },
+    {
+      "date": "2026-09-19",
+      "observation_count": 798,
+      "counts": {
+        "direct_nuisance": 13,
+        "reactive": 2,
+        "normal": 783
+      }
+    },
+    {
+      "date": "2026-09-20",
+      "observation_count": 413,
+      "counts": {
+        "direct_nuisance": 7,
+        "reactive": 2,
+        "normal": 404
+      }
+    },
+    {
+      "date": "2026-09-21",
+      "observation_count": 149,
+      "counts": {
+        "direct_nuisance": 6,
+        "reactive": 2,
+        "normal": 141
+      }
+    },
+    {
+      "date": "2026-09-22",
+      "observation_count": 275,
+      "counts": {
+        "direct_nuisance": 6,
+        "reactive": 0,
+        "normal": 269
+      }
+    },
+    {
+      "date": "2026-09-23",
+      "observation_count": 223,
+      "counts": {
+        "direct_nuisance": 3,
+        "reactive": 0,
+        "normal": 220
+      }
+    },
+    {
+      "date": "2026-09-24",
+      "observation_count": 282,
+      "counts": {
+        "direct_nuisance": 10,
+        "reactive": 5,
+        "normal": 267
+      }
+    },
+    {
+      "date": "2026-09-25",
+      "observation_count": 340,
+      "counts": {
+        "direct_nuisance": 11,
+        "reactive": 4,
+        "normal": 325
+      }
+    },
+    {
+      "date": "2026-09-26",
+      "observation_count": 119,
+      "counts": {
+        "direct_nuisance": 5,
+        "reactive": 1,
+        "normal": 113
+      }
+    }
+  ]
+}
