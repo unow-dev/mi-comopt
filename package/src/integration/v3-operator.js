@@ -10,6 +10,10 @@ import { StateControlPlane } from "../state/control-plane.js";
 import { stateError } from "../state/errors.js";
 import { canonicalJson, prefixedSha256 } from "../state/canonical.js";
 import { assertV3CorpusPreflight } from "../migration/v3-cutover.js";
+import {
+  createDbBackedUiReleaseArtifactBuilder,
+  DEFAULT_UI_PUBLICATION_ROOT,
+} from "./v3-ui-release-builder.js";
 
 const WORK_DEFINITION_ID = "comment-data-update";
 const V3_REVISION = 3;
@@ -95,7 +99,7 @@ function rehydrateReleaseArtifacts(controlPlane, releaseArtifactStore) {
  * the v3 application-service adapter, while the provider Registry and
  * ArtifactStore remain the workflow authorities.
  */
-export async function openV3Operator({ dbPath, workspacePath, deploymentAdapter = undefined, classificationWorksetBuilder = undefined, keywordHandoffBuilder = undefined } = {}) {
+export async function openV3Operator({ dbPath, workspacePath, deploymentAdapter = undefined, classificationWorksetBuilder = undefined, keywordHandoffBuilder = undefined, artifactBuilder = undefined, dbBackedUiRelease = false, publicationRoot = process.env.COMMENT_DATA_UPDATE_KEYWORD_PUBLICATION_ROOT ?? DEFAULT_UI_PUBLICATION_ROOT } = {}) {
   requiredString(dbPath, "dbPath");
   requiredString(workspacePath, "workspacePath");
   if (dbPath !== ":memory:" && !existsSync(path.resolve(dbPath))) throw stateError("AUTHORITY_NOT_FOUND", `production authority DB does not exist: ${dbPath}`);
@@ -108,8 +112,10 @@ export async function openV3Operator({ dbPath, workspacePath, deploymentAdapter 
     controlPlane = new StateControlPlane(db);
     const releaseArtifactStore = new FileReleaseArtifactStore(path.join(workspace.root, ".work-orchestrator", "release-artifacts"));
     rehydrateReleaseArtifacts(controlPlane, releaseArtifactStore);
+    const resolvedArtifactBuilder = artifactBuilder ?? (dbBackedUiRelease ? createDbBackedUiReleaseArtifactBuilder({ controlPlane, publicationRoot }) : undefined);
     const resolvedDeploymentAdapter = deploymentAdapter ?? new GitHubPagesDeploymentAdapter({
       releaseBundleSha256: (releaseId) => controlPlane.db.prepare("SELECT bundle_sha256 FROM v3_release_bundles WHERE release_id = ?").get(releaseId)?.bundle_sha256,
+      releaseArtifactReader: ({ releaseId, artifactKey }) => releaseArtifactStore.read({ releaseId, artifactKey }),
     });
     const environment = createV3LocalRuntime({
       controlPlane,
@@ -118,6 +124,7 @@ export async function openV3Operator({ dbPath, workspacePath, deploymentAdapter 
       workspace,
       deploymentAdapter: resolvedDeploymentAdapter,
       releaseArtifactStore,
+      artifactBuilder: resolvedArtifactBuilder,
       classificationWorksetBuilder,
       keywordHandoffBuilder,
       revision: V3_REVISION,

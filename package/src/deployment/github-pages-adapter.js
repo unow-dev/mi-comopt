@@ -1,5 +1,10 @@
 import { prefixedSha256 } from "../state/canonical.js";
 import { stateError } from "../state/errors.js";
+import {
+  UI_PUBLIC_ROOT,
+  UI_RELEASE_ROOT,
+} from "../integration/v3-ui-release-builder.js";
+import { validateOptimicomUiReleaseManifest } from "../processing/optimicom-ui-release/release.js";
 
 const API_ROOT = "https://api.github.com";
 const DEFAULT_REPOSITORY = "unow-dev/mi-comopt";
@@ -24,6 +29,14 @@ function runName(deploymentRequestId) {
 
 function externalRunRef(repository, workflow, deploymentRequestId) {
   return `github-actions:${repository}:${workflow}:${deploymentRequestId}`;
+}
+
+function repositoryPath(pathname) {
+  return pathname.split("/").map((segment) => encodeURIComponent(segment)).join("/");
+}
+
+function deploymentBranch(deploymentRequestId) {
+  return `codex/ui-release/${deploymentRequestId}`;
 }
 
 function eventId(run) {
@@ -62,6 +75,7 @@ export class GitHubPagesDeploymentAdapter {
     verifyRetries = 10,
     verifyDelayMs = 3000,
     sleep = defaultSleep,
+    releaseArtifactReader = undefined,
   } = {}) {
     this.repository = requiredString(repository, "repository");
     this.workflow = requiredString(workflow, "workflow");
@@ -73,6 +87,7 @@ export class GitHubPagesDeploymentAdapter {
     this.verifyRetries = Number.isSafeInteger(verifyRetries) && verifyRetries > 0 ? verifyRetries : 10;
     this.verifyDelayMs = Number.isSafeInteger(verifyDelayMs) && verifyDelayMs >= 0 ? verifyDelayMs : 3000;
     this.sleep = sleep;
+    this.releaseArtifactReader = releaseArtifactReader;
   }
 
   requireToken() {
@@ -107,9 +122,23 @@ export class GitHubPagesDeploymentAdapter {
     if (!response.ok) {
       const error = new Error(`GitHub API ${method} ${pathname} failed with HTTP ${response.status}: ${value?.message ?? "unknown error"}`);
       error.code = "GITHUB_API_ERROR";
+      error.status = response.status;
       throw error;
     }
     return value;
+  }
+
+  async optionalApi(pathname) {
+    try {
+      return await this.api(pathname);
+    } catch (error) {
+      if (error?.status === 404) return null;
+      throw error;
+    }
+  }
+
+  repositoryApiPath(suffix = "") {
+    return `/repos/${this.repository}${suffix}`;
   }
 
   async listRuns() {
@@ -131,11 +160,77 @@ export class GitHubPagesDeploymentAdapter {
     return normalizeSha256(await this.releaseBundleSha256(releaseId), `release ${releaseId} bundle SHA-256`);
   }
 
+  readReleaseArtifact(releaseId, artifactKey) {
+    if (typeof this.releaseArtifactReader !== "function") return null;
+    const bytes = this.releaseArtifactReader({ releaseId, artifactKey });
+    if (bytes === null || bytes === undefined) throw stateError("UI_RELEASE_ARTIFACT_MISSING", `release artifact ${releaseId}/${artifactKey} is missing`);
+    return Buffer.from(bytes);
+  }
+
+  async publishUiRelease({ deploymentRequestId, releaseId }) {
+    if (typeof this.releaseArtifactReader !== "function") return null;
+    const manifestBytes = this.readReleaseArtifact(releaseId, UI_RELEASE_ROOT);
+    let manifest;
+    try {
+      manifest = JSON.parse(manifestBytes.toString("utf8"));
+      validateOptimicomUiReleaseManifest(manifest);
+    } catch (error) {
+      throw stateError("UI_RELEASE_ARTIFACT_INVALID", error instanceof Error ? error.message : String(error));
+    }
+    const files = [{ logicalPath: UI_RELEASE_ROOT, content: manifestBytes }];
+    for (const artifact of Object.values(manifest.artifacts)) {
+      files.push({ logicalPath: artifact.path, content: this.readReleaseArtifact(releaseId, artifact.path) });
+    }
+    const manifestSha256 = prefixedSha256(manifestBytes).slice("sha256:".length);
+    const branch = deploymentBranch(deploymentRequestId);
+    const existingRef = await this.optionalApi(this.repositoryApiPath(`/git/ref/heads/${repositoryPath(branch)}`));
+    if (existingRef?.object?.sha) {
+      const existing = await this.api(`/repos/${this.repository}/contents/${repositoryPath(`${UI_PUBLIC_ROOT}/${UI_RELEASE_ROOT}`)}?ref=${encodeURIComponent(branch)}`);
+      const existingBytes = existing?.content ? Buffer.from(existing.content.replace(/\s/g, ""), "base64") : null;
+      if (!existingBytes || prefixedSha256(existingBytes).slice("sha256:".length) !== manifestSha256) {
+        throw stateError("UI_RELEASE_BRANCH_CONFLICT", `deployment branch ${branch} already contains a different UI release`);
+      }
+      return { ref: branch, manifestSha256 };
+    }
+
+    const baseRef = await this.api(this.repositoryApiPath(`/git/ref/heads/${repositoryPath(this.ref)}`));
+    const baseSha = baseRef?.object?.sha;
+    if (typeof baseSha !== "string" || baseSha.length === 0) throw stateError("GITHUB_API_ERROR", `base ref ${this.ref} did not return a commit SHA`);
+    const baseCommit = await this.api(`/repos/${this.repository}/git/commits/${encodeURIComponent(baseSha)}`);
+    const blobs = [];
+    for (const file of files) {
+      const blob = await this.api(`/repos/${this.repository}/git/blobs`, {
+        method: "POST",
+        body: { content: file.content.toString("base64"), encoding: "base64" },
+      });
+      if (typeof blob?.sha !== "string" || blob.sha.length === 0) throw stateError("GITHUB_API_ERROR", `UI artifact blob was not created: ${file.logicalPath}`);
+      blobs.push({ path: `${UI_PUBLIC_ROOT}/${file.logicalPath}`, mode: "100644", type: "blob", sha: blob.sha });
+    }
+    const tree = await this.api(`/repos/${this.repository}/git/trees`, {
+      method: "POST",
+      body: { base_tree: baseCommit.tree.sha, tree: blobs },
+    });
+    const commit = await this.api(`/repos/${this.repository}/git/commits`, {
+      method: "POST",
+      body: {
+        message: `chore: materialize UI release ${releaseId}`,
+        tree: tree.sha,
+        parents: [baseSha],
+      },
+    });
+    await this.api(`/repos/${this.repository}/git/refs`, {
+      method: "POST",
+      body: { ref: `refs/heads/${branch}`, sha: commit.sha },
+    });
+    return { ref: branch, manifestSha256 };
+  }
+
   async ensureDeployment({ deploymentRequestId, releaseId, target }) {
     requiredString(deploymentRequestId, "deploymentRequestId");
     requiredString(releaseId, "releaseId");
     if (target !== "production") throw stateError("VALIDATION_ERROR", "GitHub Pages adapter only supports production");
     const bundleSha256 = await this.resolveBundleSha256(releaseId);
+    const uiRelease = await this.publishUiRelease({ deploymentRequestId, releaseId });
     const runs = await this.listRuns();
     const existing = this.findRun(runs, deploymentRequestId);
     if (existing) {
@@ -152,11 +247,12 @@ export class GitHubPagesDeploymentAdapter {
     await this.api(this.workflowApiPath("/dispatches"), {
       method: "POST",
       body: {
-        ref: this.ref,
+        ref: uiRelease?.ref ?? this.ref,
         inputs: {
           deployment_request_id: deploymentRequestId,
           release_id: releaseId,
           release_bundle_sha256: bundleSha256,
+          ...(uiRelease ? { ui_release_manifest_sha256: uiRelease.manifestSha256 } : {}),
         },
       },
     });
@@ -197,6 +293,9 @@ export class GitHubPagesDeploymentAdapter {
   async verifyDeployment({ deploymentRequestId, releaseId, target, externalRunRef: runRef = undefined }) {
     if (target !== "production") throw stateError("VALIDATION_ERROR", "GitHub Pages adapter only supports production");
     const expectedBundleSha256 = await this.resolveBundleSha256(releaseId);
+    const expectedUiReleaseSha256 = typeof this.releaseArtifactReader === "function"
+      ? prefixedSha256(this.readReleaseArtifact(releaseId, UI_RELEASE_ROOT)).slice("sha256:".length)
+      : null;
     const markerUrl = new URL("comment-db-v3-deployment.json", this.pagesUrl).href;
     let lastFailure = "marker was not available";
     for (let attempt = 1; attempt <= this.verifyRetries; attempt += 1) {
@@ -209,6 +308,7 @@ export class GitHubPagesDeploymentAdapter {
         if (marker.deployment_request_id !== deploymentRequestId) throw new Error("deployment request identity mismatch");
         if (marker.release_id !== releaseId) throw new Error("release identity mismatch");
         if (marker.release_bundle_sha256 !== expectedBundleSha256) throw new Error("release bundle SHA-256 mismatch");
+        if (expectedUiReleaseSha256 && marker.ui_release_manifest_sha256 !== expectedUiReleaseSha256) throw new Error("UI release manifest SHA-256 mismatch");
         return {
           verified: true,
           servedReleaseId: marker.release_id,

@@ -343,6 +343,7 @@ async function main(argv) {
       workspacePath: args.workspacePath,
       classificationWorksetBuilder: createProductionClassificationWorksetBuilder(args.dbPath),
       keywordHandoffBuilder: createProductionKeywordHandoffBuilder(args.dbPath),
+      dbBackedUiRelease: true,
     });
     await syncV3DeploymentEvents(operator);
     let result;

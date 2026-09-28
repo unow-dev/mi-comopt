@@ -24,7 +24,7 @@
 - [ ] 16. local account publicationの範囲で、AIエージェントが、今回生成したkeyword metaと同じthree-class finalからaccount候補をstagingへ生成する。
 - [ ] 17. 共同公開検証の範囲で、AIエージェントが、keyword/accountの8 artifact、共有dataset SHA、data-release.jsonおよびcanonical runtime contractをfail-closed検証する。
 - [ ] 18. リリース判断の範囲で、人間が、raw snapshot、公開対象、検証結果および公開可否を判断する。
-- [ ] 19. React UI反映の範囲で、AIエージェントが、承認済み8 artifactとdata-release.jsonをUIの静的データへ反映し、テストとproduction buildを確認する。
+- [ ] 19. React UI反映の範囲で、AIエージェントが、承認済み公開データをUIの静的データへ反映し、テストとproduction buildを確認する。
 - [ ] 20. Git反映の範囲で、AIエージェントが、8 artifact・operational registry・data-release.json・必要文書だけをコミットし、rawと作業生成物を除外する。
 - [ ] 21. GitHub Pages公開の範囲で、AIエージェントまたはCIが、`main`のvalidation/build後に限りPagesへdeployし、公開URLの`data-release.json` bytes一致を確認する。
 - [ ] 22. 公開後継続性の範囲で、AIエージェントが、公開成功後だけStage 13 outputをprivate referenceへpromotionし、次回prepareのsmokeを実行する。
@@ -113,6 +113,7 @@
   ```
 
 - GitHub Pages初回設定は`.github/workflows/deploy-pages.yml`と`package/vite.config.js`で済んでいる。ViteのPages baseは`/mi-comopt/`、build artifactは`package/dist`、公開URLは`https://unow-dev.github.io/mi-comopt/`。次回以降はUIデータの更新を`main`へpushすればworkflowがbuild/deployする。
+- Comment DB v3のproduction operatorでは、Release materializeがDBのcorpus/classification/keyword-selection pinから`optimicom-ui-release.json`と4つのUI data artifactを生成し、Deployment adapterが生成物を専用branchへ公開してからPages workflowをdispatchする。Pages markerにはUI release manifest SHA-256を含め、DB Release identityと同時に検証する。
 - コミット対象は、承認済み公開データ、必要なUI設定、作業記録に限定する。`work/`、raw、ChatGPT handoff、回答CSV、中間publicationはコミットしない。別のactive Issueを内容確認なしにignoreしない。
 - 完了判定は、local `validate-current`・`verify:data`・`verify:release`・build成功、GitHub Actionsのvalidation/build/deploy成功、公開URLの`data-release.json` HTTP 200とrepository版bytes一致、Stage 13 reference promotionおよび次回prepare smokeまで行う。
 - 今回の実績（2026-08-26）：raw 24,622件、Stage 13人手判定3,190件、3-Class mandatory review 14件、公開candidate 194件、candidate run ID `run_bf8163da-cc49-4549-a42a-f02636d4b97c`。

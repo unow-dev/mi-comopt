@@ -4,9 +4,6 @@ run-name: Deploy React UI to GitHub Pages / ${{ inputs.deployment_request_id || 
 
 on:
   pull_request:
-  push:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       deployment_request_id:

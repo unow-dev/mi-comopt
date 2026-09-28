@@ -41,7 +41,7 @@ npm run comment-data-update:v3 -- human-task complete \
 
 Decision型Human Taskは、`open`後に`--outcome accept|reject --rationale "..."`を付けて完了します。Classification responseとkeyword proposalのartifactも同じ`open`/ファイル配置/`complete`経路で、専用validatorがファイル名、件数、bytes、実行IDおよびArtifactVersion identityを検証します。`tasks`のartifact taskには、`response.json`の`workset_id`、または`candidate_proposal.json`の`request_id`・`input_fingerprint`に使う前段identityも表示されます。`sessions`で既存Sessionを一覧し、`human-task release`で同じactorのclaimを解放できます。
 
-このentrypointはtargetをproductionに固定します。Release artifactはproduction Workspace配下へ永続化し、既存の既定`release.json` materializationはauthority DBのhashを照合して必要時にrehydrateします。production operatorの既定DeploymentAdapterはGitHub Pagesです。`.github/workflows/deploy-pages.yml`へworkflow dispatchし、Pages上の`comment-db-v3-deployment.json`が同じ`deployment_request_id`、`release_id`およびrelease bundle SHA-256を持つことを検証します。`tasks`または`sessions`を実行すると、完了したActions runを`deployment.completed`として正本DBへ取り込み、Work Orchestratorへ配送します。
+このentrypointはtargetをproductionに固定します。Release materializeではauthority DBのRelease pinからUIの`optimicom-ui-release.json`と4つのcontent-addressed data artifactを生成し、production Workspace配下のRelease artifact storeへ永続化します。production operatorの既定DeploymentAdapterはGitHub Pagesです。Deploymentごとに生成済みUI artifactを`codex/ui-release/<deployment_request_id>`ブランチへGit Data APIで公開してから、そのブランチを`.github/workflows/deploy-pages.yml`へworkflow dispatchします。Pages上の`comment-db-v3-deployment.json`には同じ`deployment_request_id`、`release_id`、release bundle SHA-256およびUI release manifest SHA-256が記録され、すべて一致することを検証します。`tasks`または`sessions`を実行すると、完了したActions runを`deployment.completed`として正本DBへ取り込み、Work Orchestratorへ配送します。
 
 GitHub API認証はtoken値をコマンドラインへ書かず、実行シェルで一時的に設定します。既に`gh`へログイン済みなら次で取得できます。
 
@@ -49,7 +49,7 @@ GitHub API認証はtoken値をコマンドラインへ書かず、実行シェ�
 export GITHUB_TOKEN="$(gh auth token)"
 ```
 
-Pages URLは既定で`https://unow-dev.github.io/mi-comopt/`です。別のworkflow、refまたはURLを使う場合は`COMMENT_DATA_UPDATE_PAGES_WORKFLOW`、`COMMENT_DATA_UPDATE_PAGES_REF`、`COMMENT_DATA_UPDATE_PAGES_URL`を設定します。GitHub側へworkflow変更が反映される前にPromotion reviewをacceptしないでください。
+このtokenには対象repositoryのContents writeとActions write相当の権限が必要です。Pages URLは既定で`https://unow-dev.github.io/mi-comopt/`です。別のworkflow、refまたはURLを使う場合は`COMMENT_DATA_UPDATE_PAGES_WORKFLOW`、`COMMENT_DATA_UPDATE_PAGES_REF`、`COMMENT_DATA_UPDATE_PAGES_URL`を設定します。候補公開の基準registryを変更する場合は`COMMENT_DATA_UPDATE_KEYWORD_PUBLICATION_ROOT`で`current/`を含むpublication rootを指定します。GitHub側へworkflow変更が反映される前にPromotion reviewをacceptしないでください。
 
 `candidate-workflow.mjs` は、handoff の契約に従うローカル決定処理を提供します。
 
