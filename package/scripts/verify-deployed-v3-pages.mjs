@@ -6,7 +6,7 @@ function valueFor(argv, name) {
   const index = argv.indexOf(name);
   return index === -1 ? undefined : argv[index + 1];
 }
-export async function verifyDeployedV3Pages({ url, deploymentRequestId, releaseId, releaseBundleSha256, fetchImpl = globalThis.fetch } = {}) {
+export async function verifyDeployedV3Pages({ url, deploymentRequestId, releaseId, releaseBundleSha256, uiReleaseManifestSha256 = undefined, fetchImpl = globalThis.fetch } = {}) {
   if (typeof fetchImpl !== "function") throw new Error("fetch is unavailable");
   const baseMarkerUrl = new URL("comment-db-v3-deployment.json", url.endsWith("/") ? url : `${url}/`);
   let lastError;
@@ -23,6 +23,7 @@ export async function verifyDeployedV3Pages({ url, deploymentRequestId, releaseI
       if (marker.deployment_request_id !== deploymentRequestId) throw new Error("deployed v3 deployment request identity mismatch");
       if (marker.release_id !== releaseId) throw new Error("deployed v3 release identity mismatch");
       if (marker.release_bundle_sha256 !== releaseBundleSha256) throw new Error("deployed v3 release bundle SHA-256 mismatch");
+      if (uiReleaseManifestSha256 && marker.ui_release_manifest_sha256 !== uiReleaseManifestSha256) throw new Error("deployed UI release manifest SHA-256 mismatch");
       return { status: "verified", url: baseMarkerUrl.href, releaseId, deploymentRequestId, markerSha256: prefixedSha256(bytes), attempts: attempt + 1 };
     } catch (error) {
       lastError = error;
@@ -38,8 +39,9 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const deploymentRequestId = valueFor(argv, "--deployment-request-id");
   const releaseId = valueFor(argv, "--release-id");
   const releaseBundleSha256 = valueFor(argv, "--release-bundle-sha256");
-  if (![url, deploymentRequestId, releaseId, releaseBundleSha256].every((value) => typeof value === "string" && value.length > 0)) {
-    throw new Error("Usage: node scripts/verify-deployed-v3-pages.mjs --url URL --deployment-request-id ID --release-id ID --release-bundle-sha256 SHA256");
+  const uiReleaseManifestSha256 = valueFor(argv, "--ui-release-manifest-sha256");
+  if (![url, deploymentRequestId, releaseId, releaseBundleSha256, uiReleaseManifestSha256].every((value) => typeof value === "string" && value.length > 0)) {
+    throw new Error("Usage: node scripts/verify-deployed-v3-pages.mjs --url URL --deployment-request-id ID --release-id ID --release-bundle-sha256 SHA256 --ui-release-manifest-sha256 SHA256");
   }
-  console.log(JSON.stringify(await verifyDeployedV3Pages({ url, deploymentRequestId, releaseId, releaseBundleSha256 })));
+  console.log(JSON.stringify(await verifyDeployedV3Pages({ url, deploymentRequestId, releaseId, releaseBundleSha256, uiReleaseManifestSha256 })));
 }

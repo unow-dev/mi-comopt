@@ -21,6 +21,10 @@ on:
         description: v3 release bundle SHA-256 without the sha256 prefix
         required: true
         type: string
+      ui_release_manifest_sha256:
+        description: UI release manifest SHA-256 without the sha256 prefix
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -78,12 +82,14 @@ jobs:
           DEPLOYMENT_REQUEST_ID: ${{ inputs.deployment_request_id }}
           RELEASE_ID: ${{ inputs.release_id }}
           RELEASE_BUNDLE_SHA256: ${{ inputs.release_bundle_sha256 }}
+          UI_RELEASE_MANIFEST_SHA256: ${{ inputs.ui_release_manifest_sha256 }}
         run: >-
           node package/scripts/write-pages-deployment-marker.mjs
           --output-root docs/active/temp/optimicom-react-tailwind/public
           --deployment-request-id "$DEPLOYMENT_REQUEST_ID"
           --release-id "$RELEASE_ID"
           --release-bundle-sha256 "$RELEASE_BUNDLE_SHA256"
+          --ui-release-manifest-sha256 "$UI_RELEASE_MANIFEST_SHA256"
 
       - name: Build React UI
         run: npm run build
@@ -166,9 +172,11 @@ jobs:
           DEPLOYMENT_REQUEST_ID: ${{ inputs.deployment_request_id }}
           RELEASE_ID: ${{ inputs.release_id }}
           RELEASE_BUNDLE_SHA256: ${{ inputs.release_bundle_sha256 }}
+          UI_RELEASE_MANIFEST_SHA256: ${{ inputs.ui_release_manifest_sha256 }}
         run: >-
           node package/scripts/verify-deployed-v3-pages.mjs
           --url '${{ steps.deployment.outputs.page_url }}'
           --deployment-request-id "$DEPLOYMENT_REQUEST_ID"
           --release-id "$RELEASE_ID"
           --release-bundle-sha256 "$RELEASE_BUNDLE_SHA256"
+          --ui-release-manifest-sha256 "$UI_RELEASE_MANIFEST_SHA256"

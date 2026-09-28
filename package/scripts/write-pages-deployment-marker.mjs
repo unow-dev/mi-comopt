@@ -15,10 +15,12 @@ const outputRoot = valueFor(argv, "--output-root");
 const deploymentRequestId = valueFor(argv, "--deployment-request-id");
 const releaseId = valueFor(argv, "--release-id");
 const releaseBundleSha256 = valueFor(argv, "--release-bundle-sha256");
-if (![outputRoot, deploymentRequestId, releaseId, releaseBundleSha256].every((value) => typeof value === "string" && value.length > 0)) {
-  throw new Error("Usage: node scripts/write-pages-deployment-marker.mjs --output-root PATH --deployment-request-id ID --release-id ID --release-bundle-sha256 SHA256");
+const uiReleaseManifestSha256 = valueFor(argv, "--ui-release-manifest-sha256");
+if (![outputRoot, deploymentRequestId, releaseId, releaseBundleSha256, uiReleaseManifestSha256].every((value) => typeof value === "string" && value.length > 0)) {
+  throw new Error("Usage: node scripts/write-pages-deployment-marker.mjs --output-root PATH --deployment-request-id ID --release-id ID --release-bundle-sha256 SHA256 --ui-release-manifest-sha256 SHA256");
 }
 if (!HEX_SHA256.test(releaseBundleSha256)) throw new Error("--release-bundle-sha256 must be a 64-character lowercase SHA-256 hex value");
+if (!HEX_SHA256.test(uiReleaseManifestSha256)) throw new Error("--ui-release-manifest-sha256 must be a 64-character lowercase SHA-256 hex value");
 
 const marker = {
   schema_version: 1,
@@ -26,6 +28,7 @@ const marker = {
   deployment_request_id: deploymentRequestId,
   release_id: releaseId,
   release_bundle_sha256: releaseBundleSha256,
+  ui_release_manifest_sha256: uiReleaseManifestSha256,
   generated_at: new Date().toISOString(),
 };
 const root = path.resolve(outputRoot);
