@@ -1,0 +1,249 @@
+{
+  "$description": "Canonical design tokens for the comment loading screen. Edit this file first; regenerate css/tokens.css with scripts/build-tokens.mjs.",
+  "color": {
+    "primitive": {
+      "white": {
+        "$type": "color",
+        "$value": "#ffffff"
+      },
+      "ice025": {
+        "$type": "color",
+        "$value": "#fbfeff"
+      },
+      "sky025": {
+        "$type": "color",
+        "$value": "#effaff"
+      },
+      "sky030": {
+        "$type": "color",
+        "$value": "#eefaff"
+      },
+      "sky040": {
+        "$type": "color",
+        "$value": "#edf9ff"
+      },
+      "sky050": {
+        "$type": "color",
+        "$value": "#e9f8fe"
+      },
+      "sky060": {
+        "$type": "color",
+        "$value": "#e8f7fd"
+      },
+      "sky070": {
+        "$type": "color",
+        "$value": "#e7f7fd"
+      },
+      "sky090": {
+        "$type": "color",
+        "$value": "#dff4fd"
+      },
+      "sky100": {
+        "$type": "color",
+        "$value": "#dff3fc"
+      },
+      "sky110": {
+        "$type": "color",
+        "$value": "#def3fc"
+      },
+      "sky120": {
+        "$type": "color",
+        "$value": "#dbf1fb"
+      },
+      "sky130": {
+        "$type": "color",
+        "$value": "#d8f1fb"
+      },
+      "cyan500": {
+        "$type": "color",
+        "$value": "#1ab7ec"
+      }
+    },
+    "semantic": {
+      "canvas": {
+        "$type": "color",
+        "$value": "{color.primitive.white}"
+      },
+      "canvasSubtle": {
+        "$type": "color",
+        "$value": "{color.primitive.ice025}"
+      },
+      "loadingAccent": {
+        "$type": "color",
+        "$value": "{color.primitive.cyan500}"
+      },
+      "backgroundGradientStart": {
+        "$type": "color",
+        "$value": "{color.primitive.sky025}"
+      },
+      "backgroundGradientEnd": {
+        "$type": "color",
+        "$value": "{color.primitive.sky100}"
+      },
+      "backgroundShape01": {
+        "$type": "color",
+        "$value": "{color.primitive.sky040}"
+      },
+      "backgroundShape02": {
+        "$type": "color",
+        "$value": "{color.primitive.sky090}"
+      },
+      "backgroundShape03": {
+        "$type": "color",
+        "$value": "{color.primitive.sky070}"
+      },
+      "backgroundShape04": {
+        "$type": "color",
+        "$value": "{color.primitive.sky030}"
+      },
+      "backgroundShape05": {
+        "$type": "color",
+        "$value": "{color.primitive.sky110}"
+      },
+      "backgroundShape06": {
+        "$type": "color",
+        "$value": "{color.primitive.sky050}"
+      },
+      "backgroundShape07": {
+        "$type": "color",
+        "$value": "{color.primitive.sky060}"
+      },
+      "backgroundShape08": {
+        "$type": "color",
+        "$value": "{color.primitive.sky120}"
+      },
+      "backgroundDot": {
+        "$type": "color",
+        "$value": "{color.primitive.sky130}"
+      },
+      "backgroundVeilCenter": {
+        "$type": "color",
+        "$value": "rgba(255, 255, 255, 0.98)"
+      },
+      "backgroundVeilMiddle": {
+        "$type": "color",
+        "$value": "rgba(255, 255, 255, 0.93)"
+      },
+      "backgroundVeilEdge": {
+        "$type": "color",
+        "$value": "rgba(249, 253, 255, 0.92)"
+      }
+    }
+  },
+  "typography": {
+    "fontFamilyUi": {
+      "$type": "fontFamily",
+      "$value": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    },
+    "loadingFontSize": {
+      "$type": "dimension",
+      "$value": "clamp(18px, 7.2vw, 23px)"
+    },
+    "loadingFontWeight": {
+      "$type": "number",
+      "$value": 700
+    },
+    "loadingLetterSpacing": {
+      "$type": "dimension",
+      "$value": "0.045em"
+    },
+    "loadingLineHeight": {
+      "$type": "number",
+      "$value": 1
+    }
+  },
+  "space": {
+    "screenInset": {
+      "$type": "dimension",
+      "$value": "16px"
+    },
+    "screenBottomBias": {
+      "$type": "dimension",
+      "$value": "2vh"
+    },
+    "loadingGap": {
+      "$type": "dimension",
+      "$value": "15px"
+    },
+    "loadingGapCompact": {
+      "$type": "dimension",
+      "$value": "13px"
+    }
+  },
+  "size": {
+    "emblem": {
+      "$type": "dimension",
+      "$value": "46px"
+    },
+    "loaderHeight": {
+      "$type": "dimension",
+      "$value": "28px"
+    }
+  },
+  "shadow": {
+    "emblem": {
+      "$type": "shadow",
+      "$value": "0 11px 24px rgba(0, 170, 225, 0.13)"
+    },
+    "loadingText": {
+      "$type": "shadow",
+      "$value": "0 4px 14px rgba(10, 174, 224, 0.13)"
+    }
+  },
+  "motion": {
+    "cycle": {
+      "$type": "duration",
+      "$value": "2.4s"
+    },
+    "waveStep": {
+      "$type": "duration",
+      "$value": "45ms"
+    },
+    "spinEasing": {
+      "$type": "cubicBezier",
+      "$value": "cubic-bezier(.2,.72,.22,1)"
+    },
+    "waveEasing": {
+      "$type": "cubicBezier",
+      "$value": "cubic-bezier(.34,.72,.3,1)"
+    }
+  },
+  "opacity": {
+    "backgroundTopLeft": {
+      "$type": "number",
+      "$value": 0.72
+    },
+    "backgroundTopRight": {
+      "$type": "number",
+      "$value": 0.67
+    },
+    "backgroundMidLeft": {
+      "$type": "number",
+      "$value": 0.66
+    },
+    "backgroundMidRight": {
+      "$type": "number",
+      "$value": 0.63
+    },
+    "backgroundBottom": {
+      "$type": "number",
+      "$value": 0.72
+    },
+    "backgroundDot": {
+      "$type": "number",
+      "$value": 0.95
+    },
+    "shapeMuted": {
+      "$type": "number",
+      "$value": 0.74
+    },
+    "shapeSoft": {
+      "$type": "number",
+      "$value": 0.82
+    },
+    "shapeSubtle": {
+      "$type": "number",
+      "$value": 0.76
+    }
+  }
+}

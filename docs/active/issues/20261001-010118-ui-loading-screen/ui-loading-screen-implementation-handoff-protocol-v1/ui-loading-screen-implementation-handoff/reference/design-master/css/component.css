@@ -1,0 +1,198 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  background: var(--color-semantic-canvas);
+  font-family: var(--typography-font-family-ui);
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  isolation: isolate;
+}
+
+.loading-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      var(--color-semantic-background-veil-center) 0 25%,
+      var(--color-semantic-background-veil-middle) 46%,
+      var(--color-semantic-background-veil-edge) 100%
+    ),
+    linear-gradient(
+      180deg,
+      var(--color-semantic-canvas) 0%,
+      var(--color-semantic-canvas-subtle) 100%
+    );
+}
+
+.loading-background__art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.loading-background__group--top-left { opacity: var(--opacity-background-top-left); }
+.loading-background__group--top-right { opacity: var(--opacity-background-top-right); }
+.loading-background__group--mid-left { opacity: var(--opacity-background-mid-left); }
+.loading-background__group--mid-right { opacity: var(--opacity-background-mid-right); }
+.loading-background__group--bottom { opacity: var(--opacity-background-bottom); }
+.loading-background__dots { fill: var(--color-semantic-background-dot); opacity: var(--opacity-background-dot); }
+
+.loading-background__gradient-start { stop-color: var(--color-semantic-background-gradient-start); }
+.loading-background__gradient-end { stop-color: var(--color-semantic-background-gradient-end); }
+
+.loading-background__fill--01 { fill: var(--color-semantic-background-shape01); }
+.loading-background__fill--02 { fill: var(--color-semantic-background-shape02); }
+.loading-background__fill--03 { fill: var(--color-semantic-background-shape03); }
+.loading-background__fill--04 { fill: var(--color-semantic-background-shape04); }
+.loading-background__fill--05 { fill: var(--color-semantic-background-shape05); }
+.loading-background__fill--06 { fill: var(--color-semantic-background-shape06); }
+.loading-background__fill--07 { fill: var(--color-semantic-background-shape07); }
+.loading-background__fill--08 { fill: var(--color-semantic-background-shape08); }
+.loading-background__fill--muted { opacity: var(--opacity-shape-muted); }
+.loading-background__fill--soft { opacity: var(--opacity-shape-soft); }
+.loading-background__fill--subtle { opacity: var(--opacity-shape-subtle); }
+
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--space-loading-gap);
+  padding:
+    var(--space-screen-inset)
+    var(--space-screen-inset)
+    calc(var(--space-screen-inset) + var(--space-screen-bottom-bias));
+}
+
+.loading-screen__emblem-stage {
+  width: 100%;
+  display: grid;
+  place-items: center;
+}
+
+/*
+  Rotation and scale intentionally live on separate elements.
+  Combining them changes the motion character and creates a visible loop jump.
+*/
+.loading-screen__emblem-spin {
+  display: grid;
+  place-items: center;
+  width: var(--size-emblem);
+  min-width: var(--size-emblem);
+  max-width: var(--size-emblem);
+  transform-origin: 50% 50%;
+  animation: emblem-spin var(--motion-cycle) var(--motion-spin-easing) infinite;
+}
+
+.loading-screen__emblem {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  display: block;
+  filter: drop-shadow(var(--shadow-emblem));
+  transform-origin: 50% 50%;
+  animation: emblem-pop var(--motion-cycle) linear infinite;
+}
+
+.loading-screen__status {
+  height: var(--size-loader-height);
+  display: grid;
+  place-items: center;
+}
+
+.loading-screen__label {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  color: var(--color-semantic-loading-accent);
+  font-size: var(--typography-loading-font-size);
+  font-weight: var(--typography-loading-font-weight);
+  letter-spacing: var(--typography-loading-letter-spacing);
+  line-height: var(--typography-loading-line-height);
+  white-space: nowrap;
+  text-shadow: var(--shadow-loading-text);
+}
+
+.loading-screen__character {
+  display: inline-block;
+  transform-origin: 50% 100%;
+  animation: loading-wave var(--motion-cycle) var(--motion-wave-easing) infinite;
+  animation-delay: calc(var(--character-index) * var(--motion-wave-step));
+}
+
+.loading-screen__character:nth-child(1)  { --character-index: 0; }
+.loading-screen__character:nth-child(2)  { --character-index: 1; }
+.loading-screen__character:nth-child(3)  { --character-index: 2; }
+.loading-screen__character:nth-child(4)  { --character-index: 3; }
+.loading-screen__character:nth-child(5)  { --character-index: 4; }
+.loading-screen__character:nth-child(6)  { --character-index: 5; }
+.loading-screen__character:nth-child(7)  { --character-index: 6; }
+.loading-screen__character:nth-child(8)  { --character-index: 7; }
+.loading-screen__character:nth-child(9)  { --character-index: 8; }
+.loading-screen__character:nth-child(10) { --character-index: 9; }
+.loading-screen__character:nth-child(11) { --character-index: 10; }
+
+@keyframes emblem-spin {
+  0%, 10% { transform: rotate(0deg); }
+  52%, 100% { transform: rotate(360deg); }
+}
+
+@keyframes emblem-pop {
+  0%, 8% { transform: scale(1); }
+  14% { transform: scale(0.92); }
+  24% { transform: scale(1.09); }
+  33% { transform: scale(0.985); }
+  40% { transform: scale(1.035); }
+  47%, 100% { transform: scale(1); }
+}
+
+@keyframes loading-wave {
+  0%, 12%, 68%, 100% { transform: translateY(0) scale(1); }
+  24% { transform: translateY(-5.5px) scale(1.045); }
+  36% { transform: translateY(-2px) scale(1.02); }
+  48% { transform: translateY(0.5px) scale(0.995); }
+}
+
+.loading-screen__visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 640px) {
+  .loading-screen {
+    gap: var(--space-loading-gap-compact);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-screen__emblem-spin,
+  .loading-screen__emblem,
+  .loading-screen__character {
+    animation: none !important;
+    transform: none;
+  }
+}

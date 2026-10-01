@@ -1,0 +1,13 @@
+{
+  "name": "comment-loading-design-master",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-tokens.mjs",
+    "check": "node scripts/check-master.mjs",
+    "test": "npm run check"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
