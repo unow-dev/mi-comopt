@@ -24,6 +24,8 @@ const screens = [
   ['accounts', 'ブロックアカウント候補', 'block'],
 ]
 const screenTitles = Object.fromEntries(screens.map(([id, label]) => [id, label]))
+const INITIAL_LOADING_MINIMUM_MS = 2000
+const ARTIFACT_LOADING_MINIMUM_MS = 700
 const card = 'rounded-[20px] border border-line bg-white/95 shadow-soft'
 const button = 'inline-flex min-h-10 items-center justify-center gap-2 rounded-full px-4 text-[11px] font-black transition hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-45'
 
@@ -134,17 +136,30 @@ function useArtifact(client, key) {
   const [attempt, setAttempt] = useState(0)
   useEffect(() => {
     let active = true
+    let timer = null
     const cached = client.getCachedArtifact(key)
     if (cached !== null) {
       setState((current) => current.status === 'ready' && current.value === cached ? current : { status: 'ready', value: cached, error: null })
       return () => { active = false }
     }
+    const startedAt = Date.now()
+    const finishLoading = (nextState) => {
+      if (!active) return
+      const remaining = Math.max(0, ARTIFACT_LOADING_MINIMUM_MS - (Date.now() - startedAt))
+      if (remaining === 0) {
+        setState(nextState)
+        return
+      }
+      timer = window.setTimeout(() => {
+        if (active) setState(nextState)
+      }, remaining)
+    }
     client.loadArtifact(key).then((value) => {
-      if (active) setState({ status: 'ready', value, error: null })
+      finishLoading({ status: 'ready', value, error: null })
     }).catch((error) => {
-      if (active) setState({ status: 'error', value: null, error })
+      finishLoading({ status: 'error', value: null, error })
     })
-    return () => { active = false }
+    return () => { active = false; window.clearTimeout(timer) }
   }, [attempt, client, key])
   const retry = () => {
     setState({ status: 'loading', value: null, error: null })
@@ -159,7 +174,7 @@ function AppShell({ screen, onChange, dataEndDate, children }) {
 
 function ArtifactRoute({ screen, client, onChange, dataEndDate, onDataEndDate, actions, commitAction, notify }) {
   const state = useArtifact(client, screen)
-  if (state.status === 'loading') return <LoadingScreen />
+  if (state.status === 'loading') return <AppShell screen={screen} onChange={onChange} dataEndDate={dataEndDate}><LoadingScreen mode="content" /></AppShell>
   if (state.status === 'error') {
     return <AppShell screen={screen} onChange={onChange} dataEndDate={dataEndDate}>
       <ErrorState error={state.error} onRetry={state.retry} />
@@ -180,6 +195,7 @@ function ArtifactRoute({ screen, client, onChange, dataEndDate, onDataEndDate, a
 export default function App() {
   const [screen, setScreen] = useState('home')
   const [session, setSession] = useState({ status: 'loading', client: null, error: null })
+  const [initialLoadingMinimumElapsed, setInitialLoadingMinimumElapsed] = useState(false)
   const sessionPromise = useRef(null)
   const [actions, setActions] = useState(emptyActionState)
   const [persistence, setPersistence] = useState({ storage: null, enabled: false })
@@ -187,6 +203,10 @@ export default function App() {
   const [dataEndDate, setDataEndDate] = useState('')
   const toastTimer = useRef(null)
 
+  useEffect(() => {
+    const timer = window.setTimeout(() => setInitialLoadingMinimumElapsed(true), INITIAL_LOADING_MINIMUM_MS)
+    return () => window.clearTimeout(timer)
+  }, [])
   useEffect(() => { if (!sessionPromise.current) sessionPromise.current = loadReleaseSession(); sessionPromise.current.then((client) => setSession({ status: 'ready', client, error: null })).catch((error) => setSession({ status: 'error', client: null, error })) }, [])
   useEffect(() => { let storage = null; try { storage = window.localStorage } catch { /* persistence remains disabled */ } const loaded = readActionState(storage); setActions(loaded.state); setPersistence({ storage, enabled: loaded.enabled }); if (loaded.warning) { setToast(loaded.warning); toastTimer.current = window.setTimeout(() => setToast(''), 2600) } return () => window.clearTimeout(toastTimer.current) }, [])
   useEffect(() => () => window.clearTimeout(toastTimer.current), [])
@@ -194,7 +214,7 @@ export default function App() {
   const commitAction = (next) => { setActions(next); if (persistence.enabled && !saveActionState(persistence.storage, next)) { setPersistence((value) => ({ ...value, enabled: false })); notify('ローカル状態を保存できませんでした。データ表示は継続します。') } }
   const changeScreen = (next) => { setScreen(next); window.scrollTo({ top: 0, behavior: 'smooth' }) }
   const rootError = <div className={`${card} p-12 text-center`} role="alert"><p className="m-0 text-sm font-black text-[#C44B72]">公開データを利用できません。</p><p className="mt-2 text-xs text-[#8A7180]">release rootの検証に失敗しました。</p></div>
-  const view = session.status === 'loading'
+  const view = session.status === 'loading' || !initialLoadingMinimumElapsed
     ? <LoadingScreen />
     : session.status === 'error'
       ? <AppShell screen={screen} onChange={changeScreen} dataEndDate={dataEndDate}>{rootError}</AppShell>

@@ -67,6 +67,20 @@
   font-family: var(--typography-font-family-ui);
 }
 
+.loading-screen--content {
+  position: relative;
+  inset: auto;
+  z-index: 0;
+  width: 100%;
+  min-height: max(300px, calc(100vh - 8rem));
+  overflow: hidden;
+  background: transparent;
+}
+
+.loading-screen--content .loading-background {
+  display: none;
+}
+
 .loading-background {
   position: absolute;
   inset: 0;
@@ -230,6 +244,12 @@
 @media (max-width: 640px) {
   .loading-screen__content {
     gap: var(--space-loading-gap-compact);
+  }
+}
+
+@media (max-width: 820px) {
+  .loading-screen--content {
+    min-height: max(280px, calc(100vh - 12rem));
   }
 }
 

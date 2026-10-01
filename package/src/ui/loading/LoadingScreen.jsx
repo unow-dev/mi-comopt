@@ -78,10 +78,14 @@ function LoadingBackground() {
   </div>
 }
 
-export default function LoadingScreen() {
-  return <div className="loading-screen">
+export default function LoadingScreen({ mode = 'full' }) {
+  const Container = mode === 'content' ? 'section' : 'div'
+  const ContentContainer = mode === 'content' ? 'div' : 'main'
+  const screenClassName = mode === 'content' ? 'loading-screen loading-screen--content' : 'loading-screen'
+
+  return <Container className={screenClassName} aria-label={mode === 'content' ? '読み込み中' : undefined}>
     <LoadingBackground />
-    <main className="loading-screen__content">
+    <ContentContainer className="loading-screen__content">
       <div className="loading-screen__emblem-stage">
         <div className="loading-screen__emblem-spin">
           <img className="loading-screen__emblem" src={emblemUrl} width="46" height="46" alt="" aria-hidden="true" />
@@ -94,6 +98,6 @@ export default function LoadingScreen() {
           {loadingCharacters.map((character, index) => <span className="loading-screen__character" key={`${character}-${index}`}>{character}</span>)}
         </div>
       </div>
-    </main>
-  </div>
+    </ContentContainer>
+  </Container>
 }
