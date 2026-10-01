@@ -111,6 +111,7 @@ export async function loadReleaseSession({ fetchImpl = globalThis.fetch, rootUrl
   const release = validateReleaseManifest(parseJson(rootBytes, rootUrl))
   const cache = new Map()
   const loading = new Map()
+  const getCachedArtifact = (key) => cache.has(key) ? cache.get(key) : null
   const loadArtifact = (key) => {
     if (!ARTIFACT_KEYS.includes(key)) return Promise.reject(new Error(`unknown artifact: ${key}`))
     if (cache.has(key)) return Promise.resolve(cache.get(key))
@@ -134,5 +135,5 @@ export async function loadReleaseSession({ fetchImpl = globalThis.fetch, rootUrl
     loading.set(key, request)
     return request
   }
-  return { release, loadArtifact, cache }
+  return { release, loadArtifact, getCachedArtifact, cache }
 }

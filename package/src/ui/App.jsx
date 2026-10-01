@@ -14,6 +14,7 @@ import {
   toggleAccountBlocked,
 } from './local-state.js'
 import { loadReleaseSession } from './release-client.js'
+import LoadingScreen from './loading/LoadingScreen.jsx'
 
 const screens = [
   ['home', 'ホーム', 'home'],
@@ -123,14 +124,57 @@ function AccountsScreen({ artifact, release, actions, commitAction, notify }) {
   return <section className="animate-screen"><SectionHeader title="ブロックアカウント候補" description="一次迷惑のbehavior eventが複数ある候補と、判定根拠例を確認します。" right={<Pill tone="pink">{artifact.length.toLocaleString('ja-JP')}候補</Pill>} /><div className="mb-3.5 flex items-center gap-[9px]"><input value={query} onChange={(event) => setQuery(event.target.value)} className="h-[42px] min-w-[220px] max-w-[420px] flex-1 rounded-[13px] border border-line bg-white px-[13px] outline-0 focus:border-[#72CCF4]" placeholder="ハンドルを検索" aria-label="ハンドルを検索" /></div><p className="mb-4 rounded-xl border border-[#D9EAF5] bg-[#F7FCFF] px-3 py-2.5 text-[10px] leading-[1.7] text-[#7085A0]">ブロック済みマークはこのブラウザ内の記録であり、TikTok上の状態を確認したものではありません。</p><div className="grid gap-3">{visible.map((item) => { const local = actions.accounts[item.handle]; const blocked = Boolean(local?.blocked_marked_at); const copied = Boolean(local?.copied_at); return <article key={item.handle} className={`${card} grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3.5 p-4 max-[560px]:grid-cols-1`}><div className="flex min-w-0 items-start gap-3"><div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[#ECF8FD] text-[#2A91C2]"><Icon name="user" /></div><div className="min-w-0"><strong className="block truncate text-[13px]">{item.handle}</strong><span className="mt-1 block text-[10px] text-[#8090A6]">一次迷惑 {item.direct_nuisance_count}件 / 根拠例 {item.evidence_sample.length}件</span>{blocked && <Pill tone="yellow">ブラウザ内マーク済み</Pill>}</div></div><div className="flex flex-wrap justify-end gap-2 max-[560px]:col-span-full max-[560px]:justify-stretch"><button type="button" onClick={() => setAccount(item)} className={`${button} border border-line bg-white text-[#5D7390]`}>根拠を見る</button><button type="button" onClick={() => copy(item)} className={`${button} ${copied ? 'border border-[#D3DCE5] bg-[#F1F4F7] text-[#6F7E91]' : 'bg-gradient-to-b from-[#57CBF9] to-[#2AA9E5] text-white'}`}>{copied ? '✓ コピー済み' : '⧉ コピー'}</button><button type="button" onClick={() => toggle(item)} className={`${button} border ${blocked ? 'border-[#F3DB94] bg-[#FFF9E8] text-[#A77808]' : 'border-line bg-white text-[#5D7390]'}`}>{blocked ? 'マーク解除' : 'ブロック済みとしてマーク'}</button></div></article> })}{visible.length === 0 && <div className={`${card} border-dashed p-10 text-center text-xs text-[#8A9AB0]`}>該当するアカウント候補はありません。</div>}</div><AccountModal account={account} onClose={() => setAccount(null)} /></section>
 }
 
-function LoadingState({ label = 'データを読み込んでいます。' }) { return <div className={`${card} p-12 text-center text-xs text-[#8192AA]`} role="status">{label}</div> }
 function ErrorState({ error, onRetry }) { return <div className={`${card} border-[#FFC7D7] bg-[#FFF9FB] p-10 text-center`} role="alert"><p className="m-0 text-xs font-black text-[#C44B72]">この画面の公開データを読み込めませんでした。</p><p className="mt-2 text-[10px] text-[#8A7180]">{error.message}</p><button type="button" onClick={onRetry} className={`${button} mt-4 bg-[#FFF0F5] text-[#C44B72]`}>再試行</button></div> }
 
-function useArtifact(client, key, enabled) {
-  const [state, setState] = useState({ status: 'idle', value: null, error: null })
+function useArtifact(client, key) {
+  const [state, setState] = useState(() => {
+    const value = client.getCachedArtifact(key)
+    return value === null ? { status: 'loading', value: null, error: null } : { status: 'ready', value, error: null }
+  })
   const [attempt, setAttempt] = useState(0)
-  useEffect(() => { if (!enabled) return undefined; let active = true; setState({ status: 'loading', value: null, error: null }); client.loadArtifact(key).then((value) => { if (active) setState({ status: 'ready', value, error: null }) }).catch((error) => { if (active) setState({ status: 'error', value: null, error }) }); return () => { active = false } }, [attempt, client, enabled, key])
-  return { ...state, retry: () => setAttempt((value) => value + 1) }
+  useEffect(() => {
+    let active = true
+    const cached = client.getCachedArtifact(key)
+    if (cached !== null) {
+      setState((current) => current.status === 'ready' && current.value === cached ? current : { status: 'ready', value: cached, error: null })
+      return () => { active = false }
+    }
+    client.loadArtifact(key).then((value) => {
+      if (active) setState({ status: 'ready', value, error: null })
+    }).catch((error) => {
+      if (active) setState({ status: 'error', value: null, error })
+    })
+    return () => { active = false }
+  }, [attempt, client, key])
+  const retry = () => {
+    setState({ status: 'loading', value: null, error: null })
+    setAttempt((value) => value + 1)
+  }
+  return { ...state, retry }
+}
+
+function AppShell({ screen, onChange, dataEndDate, children }) {
+  return <div className="min-h-screen text-sm leading-[1.55] text-ink"><div className="flex min-h-screen max-[820px]:block"><Sidebar screen={screen} onChange={onChange} /><main className="min-w-0 flex-1"><Header screen={screen} onChange={onChange} dataEndDate={dataEndDate} /><div className="p-7 max-[820px]:px-3.5 max-[820px]:pb-28 max-[820px]:pt-4">{children}</div></main></div><nav className="fixed bottom-[max(14px,env(safe-area-inset-bottom))] left-2.5 right-2.5 z-50 hidden rounded-[20px] border border-[#D8E8F3] bg-white/95 p-1.5 shadow-[0_16px_34px_rgba(44,83,122,.18)] max-[820px]:flex" aria-label="フッターナビゲーション">{screens.map(([id, label, icon]) => <button key={id} type="button" onClick={() => onChange(id)} className={`grid flex-1 place-items-center gap-0.5 rounded-[14px] border-0 px-0.5 py-[7px] text-[8px] font-black ${screen === id ? 'bg-[#EAF9FF] text-[#229ADD]' : 'bg-transparent text-[#73869F]'}`}><Icon name={icon} className="h-[19px] w-[19px]" />{label}</button>)}</nav></div>
+}
+
+function ArtifactRoute({ screen, client, onChange, dataEndDate, onDataEndDate, actions, commitAction, notify }) {
+  const state = useArtifact(client, screen)
+  if (state.status === 'loading') return <LoadingScreen />
+  if (state.status === 'error') {
+    return <AppShell screen={screen} onChange={onChange} dataEndDate={dataEndDate}>
+      <ErrorState error={state.error} onRetry={state.retry} />
+    </AppShell>
+  }
+
+  const content = screen === 'overview'
+    ? <OverviewScreen overview={state.value} onDataEndDate={onDataEndDate} />
+    : screen === 'comments'
+      ? <CommentsScreen artifact={state.value} />
+      : screen === 'keywords'
+        ? <KeywordScreen artifact={state.value} release={client.release} actions={actions} commitAction={commitAction} notify={notify} />
+        : <AccountsScreen artifact={state.value} release={client.release} actions={actions} commitAction={commitAction} notify={notify} />
+
+  return <AppShell screen={screen} onChange={onChange} dataEndDate={dataEndDate}>{content}</AppShell>
 }
 
 export default function App() {
@@ -149,16 +193,14 @@ export default function App() {
   const notify = (message) => { setToast(message); window.clearTimeout(toastTimer.current); toastTimer.current = window.setTimeout(() => setToast(''), 1800) }
   const commitAction = (next) => { setActions(next); if (persistence.enabled && !saveActionState(persistence.storage, next)) { setPersistence((value) => ({ ...value, enabled: false })); notify('ローカル状態を保存できませんでした。データ表示は継続します。') } }
   const changeScreen = (next) => { setScreen(next); window.scrollTo({ top: 0, behavior: 'smooth' }) }
-  const client = session.client
-  const overviewState = useArtifact(client, 'overview', Boolean(client && screen === 'overview'))
-  const commentsState = useArtifact(client, 'comments', Boolean(client && screen === 'comments'))
-  const keywordsState = useArtifact(client, 'keywords', Boolean(client && screen === 'keywords'))
-  const accountsState = useArtifact(client, 'accounts', Boolean(client && screen === 'accounts'))
+  const rootError = <div className={`${card} p-12 text-center`} role="alert"><p className="m-0 text-sm font-black text-[#C44B72]">公開データを利用できません。</p><p className="mt-2 text-xs text-[#8A7180]">release rootの検証に失敗しました。</p></div>
+  const view = session.status === 'loading'
+    ? <LoadingScreen />
+    : session.status === 'error'
+      ? <AppShell screen={screen} onChange={changeScreen} dataEndDate={dataEndDate}>{rootError}</AppShell>
+      : screen === 'home'
+        ? <AppShell screen={screen} onChange={changeScreen} dataEndDate={dataEndDate}><HomeScreen onChange={changeScreen} /></AppShell>
+        : <ArtifactRoute key={screen} screen={screen} client={session.client} onChange={changeScreen} dataEndDate={dataEndDate} onDataEndDate={setDataEndDate} actions={actions} commitAction={commitAction} notify={notify} />
 
-  let content
-  if (session.status === 'loading') content = <LoadingState label="公開データのrelease rootを読み込んでいます。" />
-  else if (session.status === 'error') content = <div className={`${card} p-12 text-center`} role="alert"><p className="m-0 text-sm font-black text-[#C44B72]">公開データを利用できません。</p><p className="mt-2 text-xs text-[#8A7180]">release rootの検証に失敗しました。</p></div>
-  else if (screen === 'home') content = <HomeScreen onChange={changeScreen} />
-  else { const state = { overview: overviewState, comments: commentsState, keywords: keywordsState, accounts: accountsState }[screen]; content = state.status === 'loading' || state.status === 'idle' ? <LoadingState /> : state.status === 'error' ? <ErrorState error={state.error} onRetry={state.retry} /> : screen === 'overview' ? <OverviewScreen overview={state.value} onDataEndDate={setDataEndDate} /> : screen === 'comments' ? <CommentsScreen artifact={state.value} /> : screen === 'keywords' ? <KeywordScreen artifact={state.value} release={client.release} actions={actions} commitAction={commitAction} notify={notify} /> : <AccountsScreen artifact={state.value} release={client.release} actions={actions} commitAction={commitAction} notify={notify} /> }
-  return <div className="min-h-screen text-sm leading-[1.55] text-ink"><div className="flex min-h-screen max-[820px]:block"><Sidebar screen={screen} onChange={changeScreen} /><main className="min-w-0 flex-1"><Header screen={screen} onChange={changeScreen} dataEndDate={dataEndDate} /><div className="p-7 max-[820px]:px-3.5 max-[820px]:pb-28 max-[820px]:pt-4">{content}</div></main></div><nav className="fixed bottom-[max(14px,env(safe-area-inset-bottom))] left-2.5 right-2.5 z-50 hidden rounded-[20px] border border-[#D8E8F3] bg-white/95 p-1.5 shadow-[0_16px_34px_rgba(44,83,122,.18)] max-[820px]:flex" aria-label="フッターナビゲーション">{screens.map(([id, label, icon]) => <button key={id} type="button" onClick={() => changeScreen(id)} className={`grid flex-1 place-items-center gap-0.5 rounded-[14px] border-0 px-0.5 py-[7px] text-[8px] font-black ${screen === id ? 'bg-[#EAF9FF] text-[#229ADD]' : 'bg-transparent text-[#73869F]'}`}><Icon name={icon} className="h-[19px] w-[19px]" />{label}</button>)}</nav><div className={`pointer-events-none fixed bottom-[22px] right-[22px] z-[100] rounded-[14px] bg-[#2D4F79] px-[17px] py-[13px] text-[11px] font-black text-white shadow-panel transition duration-[230ms] ${toast ? 'translate-y-0 opacity-100' : 'translate-y-[160%] opacity-0'}`}>{toast}</div></div>
+  return <>{view}<div className={`pointer-events-none fixed bottom-[22px] right-[22px] z-[100] rounded-[14px] bg-[#2D4F79] px-[17px] py-[13px] text-[11px] font-black text-white shadow-panel transition duration-[230ms] ${toast ? 'translate-y-0 opacity-100' : 'translate-y-[160%] opacity-0'}`}>{toast}</div></>
 }
