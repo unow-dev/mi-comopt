@@ -87,7 +87,7 @@ function Sidebar({ screen, onChange }) {
 
 function Header({ screen, onChange, dataEndDate }) {
   const title = screen === 'home'
-    ? <><span className="max-[820px]:hidden">ダッシュボード</span><span className="hidden items-center max-[820px]:inline-flex"><img src={logoSrc} alt="こちらコメント管理局！" className="block h-10 w-[178px] max-[360px]:w-[138px] object-contain object-center" /></span></>
+    ? <><span className="max-[820px]:hidden">ダッシュボード</span><span className="hidden items-center max-[820px]:inline-flex"><img src={logoSrc} alt="こちらコメント管理局！" className="block h-10 w-[162px] max-[360px]:w-[138px] object-contain object-center" /></span></>
     : screenTitles[screen]
   return <header className="sticky top-0 z-20 flex h-[72px] items-center justify-between gap-4 border-b border-[rgba(220,234,244,.92)] bg-[rgba(250,253,255,.92)] px-7 backdrop-blur-[18px] max-[820px]:h-16 max-[820px]:px-3.5">
     <div className="flex min-w-0 items-center gap-2.5">
