@@ -14,6 +14,7 @@ import {
   toggleAccountBlocked,
 } from './local-state.js'
 import { loadReleaseSession } from './release-client.js'
+import { derivePublicOrderIndex, formatDirectNuisanceRate, formatPublicOrderScore } from './public-order-index.js'
 import LoadingScreen from './loading/LoadingScreen.jsx'
 
 const screens = [
@@ -29,14 +30,15 @@ const ARTIFACT_LOADING_MINIMUM_MS = 700
 const card = 'rounded-[20px] border border-line bg-white/95 shadow-soft'
 const button = 'inline-flex min-h-10 items-center justify-center gap-2 rounded-full px-4 text-[11px] font-black transition hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-45'
 
-function Pill({ children, tone = 'blue' }) {
+function Pill({ children, tone = 'blue', className = '' }) {
   const styles = {
     blue: 'bg-[#EAF8FF] text-[#228FC9]',
     green: 'bg-[#EEFBF6] text-[#2E9D78]',
     yellow: 'bg-[#FFF8E5] text-[#A77808]',
     pink: 'bg-[#FFF0F5] text-[#D94A79]',
+    gray: 'bg-[#F1F4F7] text-[#6F7E91]',
   }
-  return <span className={`inline-flex items-center rounded-full px-2.5 py-1.5 text-[9px] font-black ${styles[tone]}`}>{children}</span>
+  return <span className={`inline-flex items-center rounded-full px-2.5 py-1.5 text-[9px] font-black ${styles[tone]} ${className}`}>{children}</span>
 }
 
 function Brand({ compact = false }) {
@@ -85,8 +87,96 @@ function OverviewScreen({ overview, onDataEndDate }) {
   const [periodKey, setPeriodKey] = useState('7d')
   useEffect(() => { onDataEndDate(overview.data_end_date) }, [onDataEndDate, overview.data_end_date])
   const period = overview.periods[periodKey]
+  const index = derivePublicOrderIndex(period.counts.direct_nuisance, period.observation_count)
   const maxDaily = Math.max(1, ...overview.daily.map((row) => row.observation_count ?? 0))
-  return <section className="animate-screen"><SectionHeader title="分析概要" right={<div className="flex gap-2">{[['1d', '1日'], ['7d', '7日'], ['30d', '30日']].map(([key, label]) => <button key={key} type="button" onClick={() => setPeriodKey(key)} className={`rounded-full border px-3 py-2 text-[10px] font-black ${periodKey === key ? 'border-[#8ED9F8] bg-[#EAF9FF] text-[#2298D3]' : 'border-line bg-white text-[#607592]'}`}>{label}</button>)}</div>} /><div className="mb-4 flex flex-wrap items-center gap-2"><span className="text-[11px] font-black text-[#587392]">対象観測数: {period.observation_count.toLocaleString('ja-JP')}</span>{period.coverage === 'partial' && <Pill tone="yellow">部分観測</Pill>}<span className="text-[10px] text-[#8A9AB0]">{period.start_date} — {period.end_date}</span></div><div className="grid grid-cols-3 gap-3 max-[820px]:grid-cols-1">{LABELS.map((item) => <article key={item.key} className={`${card} p-5`}><div className="flex items-center justify-between"><span className="text-[11px] font-black text-[#6B809D]">{item.label}</span><Pill tone={item.tone}>{item.key}</Pill></div><div className="mt-4 flex items-baseline gap-2"><strong className="text-4xl font-black text-[#234D7E]">{period.counts[item.key].toLocaleString('ja-JP')}</strong><Percentage count={period.counts[item.key]} total={period.observation_count} /></div></article>)}</div><div className="mt-4 grid grid-cols-[.8fr_1.2fr] gap-4 max-[980px]:grid-cols-1"><article className={`${card} p-5`}><h2 className="m-0 text-[15px] font-bold">分類構成</h2><p className="mt-1 text-[10px] text-muted">選択期間の対象観測数に占める割合</p><div className="mt-6 grid gap-3">{LABELS.map((item) => <div key={item.key}><div className="mb-1 flex justify-between text-[10px] font-black text-[#637896]"><span>{item.label}</span><span>{period.counts[item.key].toLocaleString('ja-JP')}件</span></div><div className="h-2 overflow-hidden rounded-full bg-[#ECF3F8]"><i className={`block h-full rounded-full ${item.key === 'normal' ? 'bg-[#8EE6C2]' : item.key === 'reactive' ? 'bg-[#FFD76A]' : 'bg-[#FF5F98]'}`} style={{ width: `${period.observation_count ? (period.counts[item.key] / period.observation_count) * 100 : 0}%` }} /></div></div>)}</div></article><article className={`${card} p-5`}><div className="flex items-start justify-between"><div><h2 className="m-0 text-[15px] font-bold">日次推移</h2><p className="mt-1 text-[10px] text-muted">欠測日は空白として表示</p></div><Pill>30日</Pill></div><div className="mt-5 flex h-[220px] items-end gap-1 overflow-hidden rounded-2xl border border-[#E7F0F6] bg-[#FBFEFF] px-2 pb-5 pt-4">{overview.daily.map((row) => <div key={row.date} className="group relative flex h-full flex-1 items-end" title={`${row.date}: ${row.observation_count === null ? '欠測' : `${row.observation_count}件`}`}><div className="flex w-full flex-col justify-end gap-px">{row.counts && <><i className="block w-full bg-[#FF5F98]" style={{ height: `${(row.counts.direct_nuisance / maxDaily) * 170}px` }} /><i className="block w-full bg-[#FFD76A]" style={{ height: `${(row.counts.reactive / maxDaily) * 170}px` }} /><i className="block w-full bg-[#8EE6C2]" style={{ height: `${(row.counts.normal / maxDaily) * 170}px` }} /></>}</div></div>)}</div><div className="mt-2 flex justify-between text-[9px] text-[#95A3B5]"><span>{overview.daily[0].date}</span><span>{overview.daily[29].date}</span></div></article></div></section>
+
+  const evaluationNames = {
+    goal_met: '目標達成',
+    goal_unmet: '目標未達',
+    caution: '注意',
+    warning: '警告',
+    unavailable: '算出不可',
+  }
+  const evaluationTones = {
+    goal_met: 'green',
+    goal_unmet: 'blue',
+    caution: 'yellow',
+    warning: 'pink',
+    unavailable: 'gray',
+  }
+  const scoreLabel = index.status === 'unavailable' ? '—' : formatPublicOrderScore(index.score, index.evaluation)
+  const rateLabel = index.status === 'unavailable' ? '—' : formatDirectNuisanceRate(index.directNuisanceRate, index.evaluation)
+  const markerPosition = index.status === 'unavailable' ? null : Math.min(index.directNuisanceRate / 6, 1) * 100
+
+  return <section className="animate-screen">
+    <SectionHeader title="コメント欄の状態" right={<div className="grid w-full grid-cols-3 gap-2 min-[821px]:w-auto" role="group" aria-label="分析期間">
+      {[['1d', '1日'], ['7d', '7日'], ['30d', '30日']].map(([key, label]) => <button key={key} type="button" aria-pressed={periodKey === key} onClick={() => setPeriodKey(key)} className={`min-h-11 rounded-[14px] border px-3 text-[11px] font-black ${periodKey === key ? 'border-[#8ED9F8] bg-[#EAF9FF] text-[#2298D3]' : 'border-line bg-white text-[#607592]'}`}>{label}</button>)}
+    </div>} />
+
+    <div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-2xl border border-[#DCEBF5] bg-white/70 px-3.5 py-3">
+      <span className="text-[11px] font-black text-[#587392]">対象観測数: {period.observation_count.toLocaleString('ja-JP')}</span>
+      {period.coverage === 'partial' && <Pill tone="yellow">部分観測</Pill>}
+      <span className="text-[10px] text-[#8A9AB0]">{period.start_date} — {period.end_date}</span>
+    </div>
+
+    <article className={`${card} p-4 min-[821px]:p-5`} aria-labelledby="public-order-index-title">
+      <div className="flex items-center justify-between gap-3">
+        <h2 id="public-order-index-title" className="m-0 text-[15px] font-bold">治安指数</h2>
+        <Pill tone={evaluationTones[index.evaluation]}>{evaluationNames[index.evaluation]}</Pill>
+      </div>
+      <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-x-3">
+        <div className="flex min-w-0 items-baseline gap-1">
+          <strong className="min-w-0 truncate text-[clamp(42px,13vw,58px)] font-black leading-none tracking-[-.055em] text-[#234D7E]">{scoreLabel}</strong>
+          <span className="shrink-0 text-[12px] font-bold text-[#8A9AB0]">/ 100</span>
+        </div>
+        <div className="pb-1 text-right">
+          <span className="block text-[9px] font-bold text-[#8A9AB0]">一次迷惑率</span>
+          <strong className="whitespace-nowrap text-[15px] font-black text-[#536B8D]">{rateLabel}</strong>
+        </div>
+      </div>
+      <div className="mt-5 px-1" aria-hidden="true">
+        <div className="relative h-2.5 rounded-full bg-[#ECF3F8]">
+          <div className="absolute inset-y-0 left-0 w-1/3 rounded-l-full bg-[#8EE6C2]" />
+          <div className="absolute inset-y-0 left-1/3 w-1/6 bg-[#6FC8F2]" />
+          <div className="absolute inset-y-0 left-1/2 w-1/6 bg-[#FFD76A]" />
+          <div className="absolute inset-y-0 left-2/3 right-0 rounded-r-full bg-[#FF8EAE]" />
+          {markerPosition !== null && <span className="absolute -top-[3px] h-4 w-[3px] rounded-full bg-[#234D7E] ring-2 ring-white" style={{ left: `calc(${markerPosition}% - 1.5px)` }} />}
+        </div>
+        <div className="relative mt-1 h-4 text-[9px] font-bold text-[#8A9AB0]">
+          {[['0%', 0], ['2%', 100 / 3], ['3%', 50], ['4%', 200 / 3], ['6%', 100]].map(([label, position], index) => <span key={label} className="absolute" style={{ left: `${position}%`, transform: index === 0 ? 'none' : index === 4 ? 'translateX(-100%)' : 'translateX(-50%)' }}>{label}</span>)}
+        </div>
+      </div>
+    </article>
+
+    <div className="mt-4 grid grid-cols-[.8fr_1.2fr] gap-4 max-[980px]:grid-cols-1">
+      <article className={`${card} p-4 min-[821px]:p-5`}>
+        <h2 className="m-0 text-[15px] font-bold">分類内訳</h2>
+        <p className="mt-1 text-[10px] text-muted">選択期間の対象観測数に占める割合</p>
+        <div className="mt-5 grid gap-4">
+          {LABELS.map((item) => {
+            const count = period.counts[item.key]
+            const percentage = period.observation_count ? (count / period.observation_count) * 100 : null
+            const color = item.key === 'normal' ? 'bg-[#8EE6C2]' : item.key === 'reactive' ? 'bg-[#FFD76A]' : 'bg-[#FF5F98]'
+            return <div key={item.key}>
+              <div className="mb-1 flex items-baseline justify-between gap-2 text-[10px] font-black text-[#637896]">
+                <span>{item.label}</span>
+                <span className="whitespace-nowrap">{count.toLocaleString('ja-JP')}件 <span className="ml-1 text-[#8A9AB0]">{percentage === null ? '—' : `${percentage.toFixed(1)}%`}</span></span>
+              </div>
+              <div className="h-2 overflow-hidden rounded-full bg-[#ECF3F8]"><i className={`block h-full rounded-full ${color}`} style={{ width: `${percentage ?? 0}%` }} /></div>
+            </div>
+          })}
+        </div>
+      </article>
+
+      <article className={`${card} p-4 min-[821px]:p-5`}>
+        <div className="flex items-start justify-between gap-3"><div><h2 className="m-0 text-[15px] font-bold">日次推移</h2><p className="mt-1 text-[10px] text-muted">期間選択と独立した30日系列（欠測日は空白）</p></div><Pill className="whitespace-nowrap">30日</Pill></div>
+        <div className="mt-4 flex h-[178px] items-end gap-px overflow-hidden rounded-2xl border border-[#E7F0F6] bg-[#FBFEFF] px-2 pb-5 pt-4 min-[821px]:h-[220px] min-[821px]:gap-1">
+          {overview.daily.map((row) => <div key={row.date} className="group relative flex h-full min-w-0 flex-1 items-end" title={`${row.date}: ${row.observation_count === null ? '欠測' : `${row.observation_count}件`}`}><div className="flex w-full min-w-0 flex-col justify-end gap-px">{row.counts && <><i className="block w-full max-[820px]:max-h-[136px] bg-[#FF5F98]" style={{ height: `${(row.counts.direct_nuisance / maxDaily) * 170}px` }} /><i className="block w-full max-[820px]:max-h-[136px] bg-[#FFD76A]" style={{ height: `${(row.counts.reactive / maxDaily) * 170}px` }} /><i className="block w-full max-[820px]:max-h-[136px] bg-[#8EE6C2]" style={{ height: `${(row.counts.normal / maxDaily) * 170}px` }} /></>}</div></div>)}
+        </div>
+        <div className="mt-2 flex justify-between text-[9px] text-[#95A3B5]"><span>{overview.daily[0].date}</span><span>{overview.daily[29].date}</span></div>
+      </article>
+    </div>
+  </section>
 }
 
 function CommentsScreen({ artifact }) {
