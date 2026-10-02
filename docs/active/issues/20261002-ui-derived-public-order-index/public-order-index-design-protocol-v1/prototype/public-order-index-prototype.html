@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>治安指数 UI プロトタイプ — Mobile First</title>
+  <style>
+    :root{
+      color:#17335f;
+      background:#f6fbff;
+      font-family:ui-rounded,"SF Pro Rounded","Hiragino Maru Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+      font-synthesis:none;
+      --line:#dceaf4;
+      --muted:#8294aa;
+      --ink:#17335f;
+      --sky:#2aa9e5;
+      --green:#2e9d78;
+      --yellow:#a77808;
+      --blue:#228fc9;
+      --pink:#d94a79;
+      --shadow:0 10px 28px rgba(44,83,122,.07);
+    }
+    *{box-sizing:border-box}
+    html{background:#f6fbff}
+    body{
+      margin:0;
+      min-width:320px;
+      min-height:100vh;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 15% -5%,rgba(78,200,247,.14),transparent 26%),
+        linear-gradient(180deg,#fbfeff 0,#f4faff 100%);
+    }
+    button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+    button:focus-visible{outline:3px solid rgba(78,200,247,.25);outline-offset:2px}
+
+    /* Mobile-first shell */
+    .app{min-height:100vh}
+    .sidebar{display:none}
+    .main{min-width:0}
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:20;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      min-height:60px;
+      padding:10px 14px;
+      border-bottom:1px solid rgba(220,234,244,.95);
+      background:rgba(250,253,255,.94);
+      backdrop-filter:blur(18px);
+    }
+    .topbar-title{display:flex;align-items:center;gap:10px;min-width:0}
+    .mini-brand{
+      width:34px;height:34px;flex:0 0 34px;
+      display:grid;place-items:center;
+      border-radius:12px;
+      background:linear-gradient(145deg,#58cdf8,#2aa9e5);
+      color:#fff;font-size:13px;font-weight:1000;
+      box-shadow:0 7px 15px rgba(42,169,229,.18);
+    }
+    .topbar strong{display:block;font-size:16px;line-height:1.2;letter-spacing:-.025em}
+    .topbar small{display:block;margin-top:2px;color:#93a3b5;font-size:8px;font-weight:800}
+    .date-pill{
+      flex:0 0 auto;
+      padding:7px 9px;
+      border:1px solid #d7e8f4;
+      border-radius:999px;
+      background:#fff;
+      color:#637896;
+      font-size:8px;
+      font-weight:900;
+      white-space:nowrap;
+    }
+
+    .content{
+      width:100%;
+      max-width:560px;
+      margin:0 auto;
+      padding:14px 12px calc(92px + env(safe-area-inset-bottom));
+    }
+
+    .page-intro{display:grid;gap:12px;margin-bottom:12px}
+    h1{margin:0;font-size:24px;line-height:1.2;letter-spacing:-.045em}
+    .page-sub{margin:4px 0 0;color:var(--muted);font-size:10px;line-height:1.6}
+
+    .period-tabs{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:4px;
+      padding:4px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#edf6fb;
+    }
+    .period-btn{
+      min-height:44px;
+      border:0;
+      border-radius:12px;
+      background:transparent;
+      color:#6d819c;
+      font-size:11px;
+      font-weight:1000;
+    }
+    .period-btn.active{
+      background:#fff;
+      color:#2298d3;
+      box-shadow:0 3px 10px rgba(44,83,122,.10),inset 0 0 0 1px #d9edf7;
+    }
+
+    .meta{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:8px 10px;
+      align-items:center;
+      margin:0 2px 12px;
+    }
+    .meta-main{display:flex;align-items:center;flex-wrap:wrap;gap:7px;min-width:0}
+    .meta strong{font-size:10px;color:#587392}
+    .meta time{grid-column:1/-1;font-size:9px;color:#91a1b3}
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:24px;
+      border-radius:999px;
+      padding:5px 9px;
+      font-size:9px;
+      line-height:1;
+      font-weight:1000;
+      white-space:nowrap;
+    }
+    .pill.green{background:#eefbf6;color:var(--green)}
+    .pill.blue{background:#eaf8ff;color:var(--blue)}
+    .pill.yellow{background:#fff8e5;color:var(--yellow)}
+    .pill.pink{background:#fff0f5;color:var(--pink)}
+    .pill.gray{background:#f1f4f7;color:#6f7e91}
+
+    .card{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:rgba(255,255,255,.97);
+      box-shadow:var(--shadow);
+    }
+
+    /* Primary mobile card */
+    .index-card{
+      position:relative;
+      overflow:hidden;
+      margin-bottom:12px;
+      padding:16px;
+      background:linear-gradient(145deg,rgba(255,255,255,.99),rgba(244,252,255,.99) 62%,rgba(255,249,251,.99));
+    }
+    .index-card:after{
+      content:"";
+      position:absolute;
+      right:-76px;
+      top:-92px;
+      width:220px;height:220px;
+      border-radius:50%;
+      background:radial-gradient(circle,rgba(78,200,247,.15),rgba(78,200,247,0) 69%);
+      pointer-events:none;
+    }
+    .index-head{
+      position:relative;z-index:1;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+    .index-label{display:flex;align-items:center;gap:8px;color:#627995;font-size:11px;font-weight:1000}
+    .shield{
+      width:30px;height:30px;
+      display:grid;place-items:center;
+      border-radius:11px;
+      background:#eaf9ff;color:#2298d3;font-size:15px;
+    }
+    .score-block{position:relative;z-index:1;margin-top:13px}
+    .score-row{display:flex;align-items:baseline;gap:7px;min-width:0}
+    .score{font-size:50px;line-height:.95;font-weight:1000;letter-spacing:-.065em;color:#234d7e}
+    .score-denom{font-size:12px;font-weight:1000;color:#8294a9}
+    .score-caption{margin:8px 0 0;color:#8394aa;font-size:9px;line-height:1.55}
+
+    .rate-box{
+      position:relative;z-index:1;
+      margin-top:15px;
+      padding-top:14px;
+      border-top:1px solid #e6f0f6;
+    }
+    .rate-line{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+    .rate-label{color:#637896;font-size:10px;font-weight:1000}
+    .rate-value{font-size:20px;line-height:1;font-weight:1000;color:#234d7e;letter-spacing:-.025em}
+    .gauge-wrap{margin-top:12px}
+    .gauge{
+      position:relative;height:11px;border-radius:999px;
+      background:linear-gradient(90deg,#8ee6c2 0 33.333%,#a9dff6 33.333% 50%,#ffd76a 50% 66.667%,#ff5f98 66.667% 100%);
+      box-shadow:inset 0 0 0 1px rgba(63,101,137,.08);
+    }
+    .marker{
+      position:absolute;top:50%;width:17px;height:17px;border-radius:50%;
+      border:4px solid #fff;background:#234d7e;
+      box-shadow:0 3px 9px rgba(35,77,126,.24);
+      transform:translate(-50%,-50%);transition:left .22s ease;
+    }
+    .gauge-scale{position:relative;height:14px;margin-top:6px;color:#9aabba;font-size:8px}
+    .gauge-scale span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+    .gauge-scale span:first-child{transform:none}
+    .gauge-scale span:last-child{transform:translateX(-100%)}
+    .target-row{display:flex;justify-content:space-between;gap:10px;margin-top:11px;color:#70839d;font-size:9px}
+    .target-row strong{color:#587392}
+    .target-note{color:#9aa9ba;text-align:right}
+
+    /* Consolidated classification on mobile */
+    .section-card{padding:15px;margin-bottom:12px}
+    .section-title-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+    .section-card h2{margin:0;font-size:14px;letter-spacing:-.02em}
+    .section-sub{color:var(--muted);font-size:9px}
+    .class-list{display:grid;gap:4px}
+    .class-row{
+      display:grid;
+      grid-template-columns:minmax(74px,.8fr) minmax(0,1.35fr) auto;
+      align-items:center;
+      gap:9px;
+      min-height:52px;
+      padding:8px 0;
+      border-top:1px solid #edf3f7;
+    }
+    .class-row:first-child{border-top:0}
+    .class-name{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:1000;color:#607793}
+    .class-dot{width:8px;height:8px;flex:0 0 8px;border-radius:50%}
+    .class-track{height:7px;border-radius:999px;background:#edf3f7;overflow:hidden}
+    .class-fill{display:block;height:100%;border-radius:999px;transition:width .22s ease}
+    .class-value{text-align:right}
+    .class-value strong{display:block;font-size:17px;line-height:1;font-weight:1000;color:#234d7e}
+    .class-value span{display:block;margin-top:4px;font-size:8px;color:#8b9bad;font-weight:900}
+    .normal{background:#8ee6c2}.reactive{background:#ffd76a}.direct{background:#ff5f98}
+
+    .trend-card{padding:15px;margin-bottom:12px}
+    .spark{
+      height:172px;
+      margin-top:12px;
+      padding:12px 8px 15px;
+      display:flex;align-items:flex-end;gap:3px;
+      border:1px solid #e7f0f6;
+      border-radius:14px;
+      background:#fbfeff;
+      overflow:hidden;
+    }
+    .day{height:100%;flex:1;display:flex;align-items:flex-end;min-width:2px}
+    .stack{width:100%;display:flex;flex-direction:column-reverse;gap:1px}
+    .seg{display:block;width:100%;min-height:0;border-radius:1px 1px 0 0}
+    .trend-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;color:#7d90a7;font-size:8px;font-weight:900}
+    .legend-item{display:flex;align-items:center;gap:5px}.legend-dot{width:7px;height:7px;border-radius:50%}
+
+    .prototype-note{
+      margin-top:4px;
+      padding:10px 12px;
+      border:1px dashed #cfe5f2;
+      border-radius:13px;
+      background:rgba(255,255,255,.58);
+      color:#7d90a7;
+      font-size:9px;
+      line-height:1.6;
+    }
+
+    .mobile-nav{
+      position:fixed;
+      left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom));
+      z-index:30;
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      padding:5px;
+      border:1px solid #d8e8f3;
+      border-radius:18px;
+      background:rgba(255,255,255,.96);
+      box-shadow:0 16px 34px rgba(44,83,122,.18);
+      backdrop-filter:blur(18px);
+    }
+    .mobile-nav span{
+      min-width:0;
+      padding:7px 2px;
+      border-radius:13px;
+      color:#7a8ca3;
+      text-align:center;
+      font-size:7px;
+      line-height:1.35;
+      font-weight:900;
+    }
+    .mobile-nav b{display:block;margin-bottom:2px;font-size:14px;font-weight:700}
+    .mobile-nav span.active{background:#eaf9ff;color:#229add}
+
+    /* Progressive enhancement for tablet/desktop */
+    @media (min-width:720px){
+      .content{max-width:900px;padding:24px 24px 40px}
+      .page-intro{grid-template-columns:1fr 300px;align-items:end;margin-bottom:16px}
+      h1{font-size:30px}
+      .meta{grid-template-columns:auto auto 1fr;margin-bottom:16px}
+      .meta time{grid-column:auto;justify-self:end}
+      .index-card{padding:22px}
+      .index-card-body{display:grid;grid-template-columns:minmax(230px,.8fr) minmax(320px,1.2fr);gap:28px;align-items:center}
+      .rate-box{margin-top:0;padding:0 0 0 24px;border-top:0;border-left:1px solid #e6f0f6}
+      .score{font-size:56px}
+      .dashboard-grid{display:grid;grid-template-columns:minmax(280px,.8fr) minmax(0,1.2fr);gap:14px}
+      .section-card,.trend-card{margin-bottom:0}
+      .spark{height:220px}
+      .mobile-nav{display:none}
+    }
+
+    @media (min-width:1020px){
+      .app{display:flex}
+      .sidebar{
+        position:sticky;top:0;
+        display:flex;flex:0 0 238px;flex-direction:column;
+        height:100vh;padding:20px 14px 18px;
+        border-right:1px solid var(--line);
+        background:rgba(255,255,255,.86);
+        backdrop-filter:blur(20px);
+      }
+      .brand{padding:7px 10px 20px}
+      .brand-mark{display:flex;align-items:center;gap:9px;color:#265f91;font-weight:1000;letter-spacing:-.04em}
+      .brand-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:13px;background:linear-gradient(145deg,#58cdf8,#2aa9e5);color:#fff;box-shadow:0 8px 18px rgba(42,169,229,.2)}
+      .brand small{display:block;margin:6px 0 0 47px;color:#9babbc;font-size:8px;font-weight:800}
+      .nav{display:grid;gap:5px}
+      .nav-item{display:flex;align-items:center;gap:10px;padding:10px;border:0;border-radius:13px;background:transparent;color:#617593;text-align:left;font-weight:900}
+      .nav-item.active{color:#1e9ddd;background:linear-gradient(90deg,#e8f9ff,#f7fdff);box-shadow:inset 0 0 0 1px #cdebf8}
+      .nav-icon{width:32px;height:32px;display:grid;place-items:center;border-radius:11px;background:#f2f7fb;font-size:15px}.nav-item.active .nav-icon{background:linear-gradient(145deg,#58cdf8,#2aa9e5);color:#fff}
+      .nav-label small{display:block;margin-top:2px;color:#a3b0c1;font-size:8px}
+      .sidebar-foot{margin-top:auto;padding:13px 10px 4px;border-top:1px solid var(--line);color:#98a7ba;font-size:9px;line-height:1.7}
+      .main{flex:1}
+      .topbar{padding:10px 26px}
+      .mini-brand{display:none}
+      .content{max-width:980px;margin:0;padding:28px 28px 42px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><span class="brand-icon">巡</span><span>こちらコメント管理局！</span></div>
+        <small>コメントパトロール</small>
+      </div>
+      <nav class="nav" aria-label="メインナビゲーション">
+        <button class="nav-item"><span class="nav-icon">⌂</span><span class="nav-label">ホーム<small>サービス概要</small></span></button>
+        <button class="nav-item active"><span class="nav-icon">▦</span><span class="nav-label">分析概要<small>分類と推移</small></span></button>
+        <button class="nav-item"><span class="nav-icon">☰</span><span class="nav-label">コメント一覧<small>対象観測</small></span></button>
+        <button class="nav-item"><span class="nav-icon">⌕</span><span class="nav-label">フィルターキーワード候補<small>推奨度確認</small></span></button>
+        <button class="nav-item"><span class="nav-icon">⊘</span><span class="nav-label">ブロックアカウント候補<small>候補判定</small></span></button>
+      </nav>
+      <div class="sidebar-foot">Comment DBを正本とする<br>read-only公開データ</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-title">
+          <span class="mini-brand">巡</span>
+          <div><strong>分析概要</strong><small>コメントパトロール</small></div>
+        </div>
+        <span class="date-pill">基準日 10/02</span>
+      </header>
+
+      <div class="content">
+        <section class="page-intro" aria-labelledby="page-title">
+          <div>
+            <h1 id="page-title">コメント欄の状態</h1>
+            <p class="page-sub">期間を切り替えて、治安指数と分類内訳を確認できます。</p>
+          </div>
+          <div class="period-tabs" role="group" aria-label="期間選択">
+            <button type="button" class="period-btn" data-period="1d" aria-pressed="false">1日</button>
+            <button type="button" class="period-btn active" data-period="7d" aria-pressed="true">7日</button>
+            <button type="button" class="period-btn" data-period="30d" aria-pressed="false">30日</button>
+          </div>
+        </section>
+
+        <div class="meta">
+          <div class="meta-main">
+            <strong id="observation-count">対象観測数 1,000件</strong>
+            <span class="pill yellow" id="coverage-pill">部分観測</span>
+          </div>
+          <time id="period-range">2026-09-26 — 2026-10-02</time>
+        </div>
+
+        <article class="card index-card" aria-labelledby="index-title">
+          <div class="index-head">
+            <div class="index-label"><span class="shield">◇</span><span id="index-title">治安指数</span></div>
+            <span class="pill yellow" id="evaluation-pill">注意</span>
+          </div>
+          <div class="index-card-body">
+            <div class="score-block">
+              <div class="score-row"><strong class="score" id="score-value">54</strong><span class="score-denom">/ 100</span></div>
+              <p class="score-caption">高いほど、選択期間に観測したコメント欄が穏やかな状態です。</p>
+            </div>
+            <div class="rate-box">
+              <div class="rate-line"><span class="rate-label">一次迷惑率</span><strong class="rate-value" id="rate-value">3.3%</strong></div>
+              <div class="gauge-wrap">
+                <div class="gauge" aria-hidden="true"><span class="marker" id="rate-marker" style="left:55%"></span></div>
+                <div class="gauge-scale"><span style="left:0%">0%</span><span style="left:33.333%">2%</span><span style="left:50%">3%</span><span style="left:66.667%">4%</span><span style="left:100%">6%+</span></div>
+              </div>
+              <div class="target-row"><span>目標 <strong>2.0%以下</strong></span><span class="target-note">一次迷惑率から算出</span></div>
+            </div>
+          </div>
+        </article>
+
+        <div class="dashboard-grid">
+          <article class="card section-card" aria-labelledby="breakdown-title">
+            <div class="section-title-row"><h2 id="breakdown-title">分類内訳</h2><span class="section-sub">観測数に占める割合</span></div>
+            <div class="class-list" id="class-list"></div>
+          </article>
+
+          <article class="card trend-card" aria-labelledby="trend-title">
+            <div class="section-title-row"><h2 id="trend-title">日次推移</h2><span class="section-sub">30日・欠測日は空白</span></div>
+            <div class="spark" id="spark"></div>
+            <div class="trend-legend">
+              <span class="legend-item"><i class="legend-dot normal"></i>通常</span>
+              <span class="legend-item"><i class="legend-dot reactive"></i>二次反応</span>
+              <span class="legend-item"><i class="legend-dot direct"></i>一次迷惑</span>
+            </div>
+          </article>
+        </div>
+
+        <div class="prototype-note">モバイル優先版: 375〜430pxを基準に、期間切替 → 観測情報 → 治安指数 → 分類内訳 → 日次推移の順に縦スクロールで確認できる構成です。部分観測は期間情報としてのみ表示し、指数評価には使用しません。</div>
+      </div>
+    </main>
+  </div>
+
+  <nav class="mobile-nav" aria-label="モバイルナビゲーション">
+    <span><b>⌂</b>ホーム</span>
+    <span class="active"><b>▦</b>分析</span>
+    <span><b>☰</b>コメント</span>
+    <span><b>⌕</b>候補</span>
+    <span><b>⊘</b>ブロック</span>
+  </nav>
+
+  <script>
+    const datasets = {
+      '1d': { start:'2026-10-02', end:'2026-10-02', coverage:'complete', observation_count:246, counts:{normal:225, reactive:17, direct_nuisance:4} },
+      '7d': { start:'2026-09-26', end:'2026-10-02', coverage:'partial', observation_count:1000, counts:{normal:870, reactive:97, direct_nuisance:33} },
+      '30d':{ start:'2026-09-03', end:'2026-10-02', coverage:'partial', observation_count:4280, counts:{normal:3740, reactive:446, direct_nuisance:94} }
+    };
+    const labels = [
+      {key:'normal',label:'通常',bar:'normal'},
+      {key:'reactive',label:'二次反応',bar:'reactive'},
+      {key:'direct_nuisance',label:'一次迷惑',bar:'direct'}
+    ];
+    const daily = [41,52,48,null,57,63,55,61,59,70,66,null,73,69,76,72,81,79,83,88,91,87,94,90,96,104,null,112,118,126];
+
+    function evaluate(rate){
+      if(rate <= 2) return 'goal_met';
+      if(rate < 3) return 'goal_unmet';
+      if(rate < 4) return 'caution';
+      return 'warning';
+    }
+    function score(rate){ return rate <= 2 ? 100 - 10*rate : Math.max(0,120 - 20*rate); }
+    function rateInEvaluation(value,e){
+      if(e==='goal_met') return value>=0 && value<=2;
+      if(e==='goal_unmet') return value>2 && value<3;
+      if(e==='caution') return value>=3 && value<4;
+      return value>=4;
+    }
+    function scoreInEvaluation(value,e){
+      if(e==='goal_met') return value>=80 && value<=100;
+      if(e==='goal_unmet') return value>60 && value<80;
+      if(e==='caution') return value>40 && value<=60;
+      return value>=0 && value<=40;
+    }
+    function formatRate(rate,e){
+      const one = Number(rate.toFixed(1));
+      if(rateInEvaluation(one,e)) return one.toFixed(1)+'%';
+      const two = Number(rate.toFixed(2));
+      if(rateInEvaluation(two,e)) return two.toFixed(2)+'%';
+      if(e==='goal_unmet' && rate<3) return rate<2.5 ? '2.0%超' : '3.0%未満';
+      if(e==='caution') return '4.0%未満';
+      return two.toFixed(2)+'%';
+    }
+    function formatScore(value,e){
+      const whole = Math.round(value);
+      if(scoreInEvaluation(whole,e)) return String(whole);
+      const one = Number(value.toFixed(1));
+      if(scoreInEvaluation(one,e)) return one.toFixed(1).replace(/\.0$/,'');
+      if(e==='goal_unmet') return value>70 ? '80未満' : '60超';
+      if(e==='caution') return '40超';
+      return String(whole);
+    }
+    const evalMeta = {
+      goal_met:{label:'目標達成',tone:'green'},
+      goal_unmet:{label:'目標未達',tone:'blue'},
+      caution:{label:'注意',tone:'yellow'},
+      warning:{label:'警告',tone:'pink'}
+    };
+    function pct(n,total){return total ? (n/total*100).toFixed(1)+'%' : '—'}
+
+    function render(periodKey){
+      const d=datasets[periodKey];
+      const total=d.observation_count;
+      const rate=total ? d.counts.direct_nuisance/total*100 : 0;
+      const e=total ? evaluate(rate) : null;
+      const s=total ? score(rate) : null;
+
+      document.querySelectorAll('.period-btn').forEach((b)=>{
+        const selected=b.dataset.period===periodKey;
+        b.classList.toggle('active',selected);
+        b.setAttribute('aria-pressed',String(selected));
+      });
+      document.getElementById('observation-count').textContent='対象観測数 '+total.toLocaleString('ja-JP')+'件';
+      document.getElementById('period-range').textContent=d.start+' — '+d.end;
+      const cp=document.getElementById('coverage-pill');
+      cp.style.display=d.coverage==='partial'?'inline-flex':'none';
+
+      const scoreEl=document.getElementById('score-value');
+      const rateEl=document.getElementById('rate-value');
+      const ep=document.getElementById('evaluation-pill');
+      const marker=document.getElementById('rate-marker');
+      if(!total){
+        scoreEl.textContent='—';rateEl.textContent='—';ep.textContent='算出不可';ep.className='pill gray';
+        marker.style.display='none';
+      } else {
+        scoreEl.textContent=formatScore(s,e);
+        rateEl.textContent=formatRate(rate,e);
+        ep.textContent=evalMeta[e].label;
+        ep.className='pill '+evalMeta[e].tone;
+        marker.style.display='block';
+        marker.style.left=Math.min(100,rate/6*100)+'%';
+      }
+
+      document.getElementById('class-list').innerHTML=labels.map(x=>`
+        <div class="class-row">
+          <div class="class-name"><i class="class-dot ${x.bar}"></i>${x.label}</div>
+          <div class="class-track"><i class="class-fill ${x.bar}" style="width:${total?d.counts[x.key]/total*100:0}%"></i></div>
+          <div class="class-value"><strong>${d.counts[x.key].toLocaleString('ja-JP')}</strong><span>${pct(d.counts[x.key],total)}</span></div>
+        </div>`).join('');
+
+      document.getElementById('spark').innerHTML=daily.map((v,i)=>{
+        if(v===null)return '<div class="day"></div>';
+        const n=Math.max(2,Math.round(v));
+        const dn=Math.max(1,Math.round(n*(.015+(i%5)*.004)));
+        const rx=Math.max(1,Math.round(n*(.07+(i%4)*.008)));
+        const nm=Math.max(1,n-dn-rx);
+        const max=150;
+        return `<div class="day" title="${n}件"><div class="stack"><i class="seg normal" style="height:${nm/max*145}px"></i><i class="seg reactive" style="height:${rx/max*145}px"></i><i class="seg direct" style="height:${dn/max*145}px"></i></div></div>`;
+      }).join('');
+    }
+
+    document.querySelectorAll('.period-btn').forEach(b=>b.addEventListener('click',()=>render(b.dataset.period)));
+    render('7d');
+  </script>
+</body>
+</html>
