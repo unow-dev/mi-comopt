@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "policy_version": "1.0.0",
+  "candidate_label": "direct_nuisance",
+  "minimum_behavior_events": 2,
+  "evidence_sample_size": 2
+}

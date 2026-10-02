@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "taxonomy_version": "1.0.0",
+  "categories": [
+    {
+      "category_id": "age_mockery",
+      "label": "年齢いじり",
+      "description": "年齢を材料にした嘲笑・攻撃候補"
+    },
+    {
+      "category_id": "appearance_attack",
+      "label": "容姿攻撃",
+      "description": "容姿への攻撃を表す候補"
+    },
+    {
+      "category_id": "attribute_attack",
+      "label": "属性攻撃",
+      "description": "属性を標的とする攻撃候補"
+    },
+    {
+      "category_id": "behavior_mockery",
+      "label": "行動嘲笑",
+      "description": "行動・仕草への嘲笑候補"
+    },
+    {
+      "category_id": "comparison_belittling",
+      "label": "比較・貶し",
+      "description": "比較による貶し・価値低下を表す候補"
+    },
+    {
+      "category_id": "copypasta_spam",
+      "label": "コピペ・長文スパム",
+      "description": "定型長文・コピペ等のスパム"
+    },
+    {
+      "category_id": "hate_mockery",
+      "label": "嫌悪・嘲笑",
+      "description": "嫌悪・嘲笑・侮蔑を表す候補"
+    },
+    {
+      "category_id": "link_spam",
+      "label": "リンクスパム",
+      "description": "外部リンク誘導を中心とするスパム"
+    },
+    {
+      "category_id": "reaction",
+      "label": "反応系",
+      "description": "反応・リアクションを表す候補"
+    },
+    {
+      "category_id": "sexual_objectification",
+      "label": "性的・対象化",
+      "description": "性的対象化・性的な嫌がらせ候補"
+    },
+    {
+      "category_id": "spam_solicitation",
+      "label": "スパム・勧誘",
+      "description": "フォロー・DM等への勧誘やスパム"
+    }
+  ]
+}

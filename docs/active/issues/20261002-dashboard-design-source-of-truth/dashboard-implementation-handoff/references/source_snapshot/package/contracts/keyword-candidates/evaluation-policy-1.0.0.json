@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "policy_version": "1.0.0",
+  "input": {
+    "comment_field": "comment",
+    "label_field": "label",
+    "allowed_labels": [
+      "direct_nuisance",
+      "reactive",
+      "normal"
+    ],
+    "required_dataset_totals": {
+      "direct_nuisance_min": 1,
+      "normal_min": 1
+    }
+  },
+  "normalization": {
+    "steps": [
+      {
+        "op": "remove_code_points",
+        "code_points": [
+          "U+200B",
+          "U+200C",
+          "U+200D",
+          "U+2060",
+          "U+FEFF"
+        ]
+      },
+      {
+        "op": "unicode_nfkc"
+      },
+      {
+        "op": "unicode_lowercase"
+      },
+      {
+        "op": "collapse_unicode_whitespace",
+        "replacement": " "
+      },
+      {
+        "op": "strip_outer_whitespace"
+      }
+    ]
+  },
+  "matching": {
+    "type": "normalized_substring",
+    "unit": "comment",
+    "variant_logic": "or",
+    "max_hits_per_candidate_per_comment": 1
+  },
+  "metrics": {
+    "precision_excluding_reactive": "D / (D + N); null iff D + N == 0",
+    "direct_recall_contribution": "D / D_total",
+    "normal_hit_rate": "N / N_total",
+    "utility_score": "D - N",
+    "reactive_is_reference_only": true
+  },
+  "recommendation_tiers": [
+    {
+      "name": "高推奨",
+      "min_direct_nuisance_hits": 2,
+      "min_precision": {
+        "numerator": 95,
+        "denominator": 100
+      },
+      "max_normal_hits": 1
+    },
+    {
+      "name": "中推奨",
+      "min_direct_nuisance_hits": 2,
+      "min_precision": {
+        "numerator": 80,
+        "denominator": 100
+      },
+      "max_normal_hits": 5
+    },
+    {
+      "name": "任意",
+      "min_direct_nuisance_hits": 1
+    }
+  ],
+  "publication": {
+    "min_direct_nuisance_hits": 1
+  },
+  "sorting": [
+    "recommendation_rank asc: 高推奨, 中推奨, 任意",
+    "exact precision_excluding_reactive desc",
+    "direct_nuisance_hits desc",
+    "normal_hits asc",
+    "normalized keyword Unicode-code-point length desc",
+    "normalized keyword Unicode code-point lexicographic order asc",
+    "candidate_id asc"
+  ],
+  "serialization": {
+    "rate_decimal_places_max": 6,
+    "rate_rounding": "ROUND_HALF_EVEN",
+    "utility_score_type": "integer"
+  }
+}
