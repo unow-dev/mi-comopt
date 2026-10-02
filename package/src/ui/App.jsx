@@ -29,6 +29,31 @@ const INITIAL_LOADING_MINIMUM_MS = 2000
 const ARTIFACT_LOADING_MINIMUM_MS = 700
 const card = 'rounded-[20px] border border-line bg-white/95 shadow-soft'
 const button = 'inline-flex min-h-10 items-center justify-center gap-2 rounded-full px-4 text-[11px] font-black transition hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-45'
+const evaluationNames = {
+  goal_met: '目標達成',
+  goal_unmet: '目標未達',
+  caution: '注意',
+  warning: '警告',
+  unavailable: '算出不可',
+}
+const evaluationTones = {
+  goal_met: 'green',
+  goal_unmet: 'blue',
+  caution: 'yellow',
+  warning: 'pink',
+  unavailable: 'gray',
+}
+
+function statusComment(evaluation, rateLabel) {
+  const comments = {
+    goal_met: `一次迷惑率は ${rateLabel} で、目標範囲内です。現在は落ち着いた状態です。`,
+    goal_unmet: `一次迷惑率は ${rateLabel} で、目標値を上回っています。分析概要で推移を確認してください。`,
+    caution: `一次迷惑率は ${rateLabel} で、注意が必要な水準です。分析概要で内訳と推移を確認してください。`,
+    warning: `一次迷惑率は ${rateLabel} で、警告水準です。対応候補もあわせて確認してください。`,
+    unavailable: '対象観測がないため、治安指数を算出できません。',
+  }
+  return comments[evaluation]
+}
 
 function Pill({ children, tone = 'blue', className = '' }) {
   const styles = {
@@ -53,7 +78,7 @@ function Sidebar({ screen, onChange }) {
     <nav className="grid gap-1.5" aria-label="メインナビゲーション">
       {screens.map(([id, label, icon]) => <button key={id} type="button" onClick={() => onChange(id)} className={`flex w-full items-center gap-[11px] rounded-[14px] border-0 p-3 text-left font-black transition ${screen === id ? 'bg-gradient-to-r from-[#E8F9FF] to-[#F7FDFF] text-[#1E9DDD] shadow-[inset_0_0_0_1px_#CDEBF8]' : 'bg-transparent text-[#617593] hover:bg-[#F0FAFF] hover:text-[#239DDA]'}`}>
         <span className={`grid h-[34px] w-[34px] shrink-0 place-items-center rounded-xl ${screen === id ? 'bg-gradient-to-br from-sky to-[#2EB0E9] text-white' : 'bg-[#F2F7FB] text-[#7B90AA]'}`}><Icon name={icon} /></span>
-        <span className="min-w-0">{label}<small className="mt-0.5 block text-[9px] font-bold text-[#A3B0C1]">{id === 'home' ? 'サービス概要' : id === 'overview' ? '分類と推移' : id === 'comments' ? '対象観測' : id === 'keywords' ? '推奨度確認' : '候補判定'}</small></span>
+        <span className="min-w-0">{label}<small className="mt-0.5 block text-[9px] font-bold text-[#A3B0C1]">{id === 'home' ? '状態と対応候補' : id === 'overview' ? '分類と推移' : id === 'comments' ? '対象観測' : id === 'keywords' ? '推奨度確認' : '候補判定'}</small></span>
       </button>)}
     </nav>
     <div className="mt-auto border-t border-line px-2.5 pb-1 pt-3.5 text-[10px] leading-[1.7] text-[#98A7BA]">Comment DBを正本とする<br />read-only公開データ</div>
@@ -61,13 +86,15 @@ function Sidebar({ screen, onChange }) {
 }
 
 function Header({ screen, onChange, dataEndDate }) {
-  const title = screen === 'home' ? <><span className="max-[820px]:hidden">ホーム</span><span className="hidden items-center max-[820px]:inline-flex"><img src={logoSrc} alt="こちらコメント管理局！" className="block h-10 w-[178px] object-contain object-center" /></span></> : screenTitles[screen]
+  const title = screen === 'home'
+    ? <><span className="max-[820px]:hidden">ダッシュボード</span><span className="hidden items-center max-[820px]:inline-flex"><img src={logoSrc} alt="こちらコメント管理局！" className="block h-10 w-[178px] max-[360px]:w-[138px] object-contain object-center" /></span></>
+    : screenTitles[screen]
   return <header className="sticky top-0 z-20 flex h-[72px] items-center justify-between gap-4 border-b border-[rgba(220,234,244,.92)] bg-[rgba(250,253,255,.92)] px-7 backdrop-blur-[18px] max-[820px]:h-16 max-[820px]:px-3.5">
     <div className="flex min-w-0 items-center gap-2.5">
       {screen !== 'home' && <button type="button" onClick={() => onChange('home')} aria-label="ホームへ戻る" className="grid h-[38px] w-[38px] shrink-0 place-items-center rounded-xl border border-line bg-white text-[#5A7594]"><Icon name="back" strokeWidth={2} /></button>}
       <div className="min-w-0"><strong className="block truncate text-lg font-black leading-[1.1] tracking-[-.025em] max-[820px]:text-base">{title}</strong></div>
     </div>
-    <div className="flex items-center gap-2"><span className="whitespace-nowrap rounded-full border border-[#D7E8F4] bg-white px-3 py-2 text-[10px] font-black text-[#587392] max-[560px]:max-w-[140px] max-[560px]:overflow-hidden max-[560px]:text-ellipsis">データ基準日: {dataEndDate || '—'}</span></div>
+    <div className="flex shrink-0 items-center gap-2"><span className="shrink-0 whitespace-nowrap rounded-full border border-[#D7E8F4] bg-white px-3 py-2 text-[10px] font-black text-[#587392] max-[560px]:px-2 max-[560px]:text-[9px]">データ基準日: {dataEndDate || '—'}</span></div>
   </header>
 }
 
@@ -75,43 +102,95 @@ function SectionHeader({ title, right }) {
   return <div className="mb-5 flex items-end justify-between gap-[18px] max-[820px]:mb-4 max-[820px]:flex-col max-[820px]:items-start"><div><h1 className="mb-0 mt-0 text-[32px] font-black leading-[1.15] tracking-[-.05em] max-[820px]:text-[27px]">{title}</h1></div>{right}</div>
 }
 
-function HomeScreen({ onChange }) {
-  return <section className="animate-screen"><article className="relative overflow-hidden rounded-[28px] border border-[#D9EAF5] bg-[linear-gradient(145deg,#FFFFFF,#F4FCFF_58%,#FFF4F8)] p-[34px] shadow-panel max-[560px]:p-[24px_18px]"><h1 className="relative my-4 max-w-[760px] text-[clamp(38px,5vw,64px)] font-black leading-[1.02] tracking-[-.065em] max-[560px]:text-[40px]">いざゆけ、<br /><span className="text-pink">コメントパトロール！</span></h1><p className="relative m-0 max-w-[720px] text-sm leading-[1.8] text-[#657B99]">『こちらコメント管理局！』は、AIといっしょにコメント欄を管理するサービスです。<br /><br />AIがコメントを分析。<br />フィルターキーワードの候補を見つけます。<br />ブロック候補のアカウントも提案します。<br /><br />AIが判断に迷ったら、あなたの出番。<br />「いいね！」「わるいね！」「削除だね！」で仕分けましょう。（未実装）<br /><br />全部のコメントを読むのは大変。<br />でも、全部AIに任せるのもちょっと不安。<br />なら、AIと人で役割分担しよう！<br /><br /><strong className="mt-2 block">いざゆけ、コメントパトロール！</strong></p></article><div className="mt-4 grid grid-cols-4 gap-3 max-[820px]:grid-cols-2">{screens.slice(1).map(([id, label, icon]) => <button key={id} type="button" onClick={() => onChange(id)} className={`${card} flex items-center gap-3 p-4 text-left text-[11px] font-black text-[#55708F] transition hover:-translate-y-0.5 hover:border-[#8ED9F8]`}><span className="grid h-9 w-9 place-items-center rounded-xl bg-[#EAF9FF] text-[#2298D3]"><Icon name={icon} /></span>{label}</button>)}</div></section>
+function DashboardScreen({ client, periodKey, onPeriodChange, onChange, onDataEndDate }) {
+  const state = useArtifact(client, 'overview', { minimumLoadingMs: 0 })
+  const overview = state.status === 'ready' ? state.value : null
+  useEffect(() => {
+    if (overview) onDataEndDate(overview.data_end_date)
+  }, [onDataEndDate, overview])
+
+  const period = overview?.periods[periodKey]
+  const index = period ? derivePublicOrderIndex(period.counts.direct_nuisance, period.observation_count) : null
+  const scoreLabel = index?.status === 'unavailable' ? '—' : index ? formatPublicOrderScore(index.score, index.evaluation) : null
+  const rateLabel = index?.status === 'unavailable' ? '—' : index ? formatDirectNuisanceRate(index.directNuisanceRate, index.evaluation) : null
+  const markerPosition = index?.status === 'unavailable' ? null : index ? Math.min(index.directNuisanceRate / 6, 1) * 100 : null
+  const candidateCounts = client.release.artifacts
+
+  return <section className="animate-screen">
+    <SectionHeader title="コメント欄の状態" right={<PeriodSelector periodKey={periodKey} onPeriodChange={onPeriodChange} />} />
+
+    {period && <div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-2xl border border-[#DCEBF5] bg-white/70 px-3.5 py-3">
+      <span className="text-[11px] font-black text-[#587392]">集計期間: {period.start_date} — {period.end_date}</span>
+      {period.coverage === 'partial' && <><Pill tone="yellow">部分観測</Pill><span className="basis-full text-[10px] leading-[1.6] text-[#8A6C20]">一部の日付にデータがないため、取得できたデータのみで集計しています。</span></>}
+    </div>}
+
+    <div className="grid gap-4 min-[821px]:grid-cols-2" aria-busy={state.status === 'loading'}>
+      {state.status === 'loading' && <>
+        <article className={`${card} min-h-[228px] p-5`}><h2 className="m-0 text-[15px] font-bold">治安指数</h2><p className="mt-7 text-xs text-[#8292A8]">コメント欄の状態を読み込んでいます。</p></article>
+        <article className={`${card} min-h-[228px] p-5`}><h2 className="m-0 text-[15px] font-bold">状態コメント</h2><div className="mt-7 h-10 animate-pulse rounded-xl bg-[#F0F5F8]" /></article>
+      </>}
+
+      {state.status === 'error' && <div className={`${card} border-[#FFC7D7] bg-[#FFF9FB] p-5 min-[821px]:col-span-2`} role="alert">
+        <p className="m-0 text-xs font-black text-[#C44B72]">コメント欄の状態を読み込めませんでした。</p>
+        <button type="button" onClick={state.retry} className={`${button} mt-4 min-h-11 bg-[#FFF0F5] text-[#C44B72]`}>再試行</button>
+      </div>}
+
+      {period && index && <>
+        <article className={`${card} p-4 min-[821px]:p-5`} aria-labelledby="public-order-index-title">
+          <div className="flex items-center justify-between gap-3"><h2 id="public-order-index-title" className="m-0 text-[15px] font-bold">治安指数</h2><Pill tone={evaluationTones[index.evaluation]}>{evaluationNames[index.evaluation]}</Pill></div>
+          <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-x-3">
+            <div className="flex min-w-0 items-baseline gap-1"><strong className="min-w-0 truncate text-[clamp(42px,13vw,58px)] font-black leading-none tracking-[-.055em] text-[#234D7E]">{scoreLabel}</strong><span className="shrink-0 text-[12px] font-bold text-[#8A9AB0]">/ 100</span></div>
+            <div className="pb-1 text-right"><span className="block text-[9px] font-bold text-[#8A9AB0]">一次迷惑率</span><strong className="whitespace-nowrap text-[15px] font-black text-[#536B8D]">{rateLabel}</strong></div>
+          </div>
+          <div className="mt-4 flex items-center justify-between rounded-xl bg-[#F7FBFE] px-3 py-2 text-[10px]"><span className="font-bold text-[#7488A2]">対象観測数</span><strong className="text-[#536B8D]">{period.observation_count.toLocaleString('ja-JP')}件</strong></div>
+          <div className="mt-4 px-1" aria-hidden="true">
+            <div className="relative h-2.5 rounded-full bg-[#ECF3F8]"><div className="absolute inset-y-0 left-0 w-1/3 rounded-l-full bg-[#8EE6C2]" /><div className="absolute inset-y-0 left-1/3 w-1/6 bg-[#6FC8F2]" /><div className="absolute inset-y-0 left-1/2 w-1/6 bg-[#FFD76A]" /><div className="absolute inset-y-0 left-2/3 right-0 rounded-r-full bg-[#FF8EAE]" />{markerPosition !== null && <span className="absolute -top-[3px] h-4 w-[3px] rounded-full bg-[#234D7E] ring-2 ring-white" style={{ left: `calc(${markerPosition}% - 1.5px)` }} />}</div>
+            <div className="relative mt-1 h-4 text-[9px] font-bold text-[#8A9AB0]">{[['0%', 0], ['2%', 100 / 3], ['3%', 50], ['4%', 200 / 3], ['6%', 100]].map(([label, position], labelIndex) => <span key={label} className="absolute" style={{ left: `${position}%`, transform: labelIndex === 0 ? 'none' : labelIndex === 4 ? 'translateX(-100%)' : 'translateX(-50%)' }}>{label}</span>)}</div>
+          </div>
+          <button type="button" onClick={() => onChange('overview')} className={`${button} mt-4 min-h-11 w-full justify-between border border-[#D7E8F4] bg-white text-[#34769D]`}><span>分析概要を見る</span><span aria-hidden="true">→</span></button>
+        </article>
+
+        <article className={`${card} flex min-h-[228px] flex-col p-5`}>
+          <h2 className="m-0 text-[15px] font-bold">状態コメント</h2>
+          <p className="mt-5 text-[13px] leading-[1.9] text-[#536985]">{statusComment(index.evaluation, rateLabel)}</p>
+        </article>
+      </>}
+    </div>
+
+    <section className="mt-5" aria-labelledby="response-candidates-title">
+      <div className="mb-3"><h2 id="response-candidates-title" className="m-0 text-[18px] font-black tracking-[-.025em]">対応候補</h2><p className="mb-0 mt-1 text-[11px] text-[#7488A2]">AI分析から抽出された、確認対象の候補です。</p></div>
+      <div className="grid gap-3 min-[821px]:grid-cols-2">
+        {[["keywords", "フィルターキーワード候補", candidateCounts.keywords.record_count], ["accounts", "ブロックアカウント候補", candidateCounts.accounts.record_count]].map(([screen, label, count]) => <button key={screen} type="button" onClick={() => onChange(screen)} className={`${card} flex min-h-[58px] w-full items-center gap-3 p-4 text-left transition hover:-translate-y-0.5 hover:border-[#8ED9F8] focus-visible:outline-offset-2`}>
+          <span className="min-w-0 flex-1 text-[12px] font-black text-[#55708F]">{label}</span><span className="shrink-0 text-[11px] font-black text-[#607592]">{count.toLocaleString('ja-JP')}件</span><span aria-hidden="true" className="shrink-0 text-lg leading-none text-[#69A7C5]">›</span>
+        </button>)}
+      </div>
+    </section>
+  </section>
 }
 
 function Percentage({ count, total }) {
   return <span className="text-[11px] font-black text-[#7B8EA7]">{total > 0 ? `${((count / total) * 100).toFixed(1)}%` : '—'}</span>
 }
 
-function OverviewScreen({ overview, onDataEndDate }) {
-  const [periodKey, setPeriodKey] = useState('7d')
+function PeriodSelector({ periodKey, onPeriodChange, includeOneDay = false }) {
+  const options = includeOneDay ? [['1d', '1日'], ['7d', '7日'], ['30d', '30日']] : [['7d', '7日'], ['30d', '30日']]
+  return <div className={`grid w-full gap-2 ${includeOneDay ? 'grid-cols-3' : 'grid-cols-2'} min-[821px]:w-auto`} role="group" aria-label="分析期間">
+    {options.map(([key, label]) => <button key={key} type="button" aria-pressed={periodKey === key} onClick={() => onPeriodChange(key)} className={`min-h-11 rounded-[14px] border px-3 text-[11px] font-black ${periodKey === key ? 'border-[#8ED9F8] bg-[#EAF9FF] text-[#2298D3]' : 'border-line bg-white text-[#607592]'}`}>{label}</button>)}
+  </div>
+}
+
+function OverviewScreen({ overview, periodKey, onPeriodChange, onDataEndDate }) {
   useEffect(() => { onDataEndDate(overview.data_end_date) }, [onDataEndDate, overview.data_end_date])
   const period = overview.periods[periodKey]
   const index = derivePublicOrderIndex(period.counts.direct_nuisance, period.observation_count)
   const maxDaily = Math.max(1, ...overview.daily.map((row) => row.observation_count ?? 0))
 
-  const evaluationNames = {
-    goal_met: '目標達成',
-    goal_unmet: '目標未達',
-    caution: '注意',
-    warning: '警告',
-    unavailable: '算出不可',
-  }
-  const evaluationTones = {
-    goal_met: 'green',
-    goal_unmet: 'blue',
-    caution: 'yellow',
-    warning: 'pink',
-    unavailable: 'gray',
-  }
   const scoreLabel = index.status === 'unavailable' ? '—' : formatPublicOrderScore(index.score, index.evaluation)
   const rateLabel = index.status === 'unavailable' ? '—' : formatDirectNuisanceRate(index.directNuisanceRate, index.evaluation)
   const markerPosition = index.status === 'unavailable' ? null : Math.min(index.directNuisanceRate / 6, 1) * 100
 
   return <section className="animate-screen">
-    <SectionHeader title="コメント欄の状態" right={<div className="grid w-full grid-cols-3 gap-2 min-[821px]:w-auto" role="group" aria-label="分析期間">
-      {[['1d', '1日'], ['7d', '7日'], ['30d', '30日']].map(([key, label]) => <button key={key} type="button" aria-pressed={periodKey === key} onClick={() => setPeriodKey(key)} className={`min-h-11 rounded-[14px] border px-3 text-[11px] font-black ${periodKey === key ? 'border-[#8ED9F8] bg-[#EAF9FF] text-[#2298D3]' : 'border-line bg-white text-[#607592]'}`}>{label}</button>)}
-    </div>} />
+    <SectionHeader title="コメント欄の状態" right={<PeriodSelector periodKey={periodKey} onPeriodChange={onPeriodChange} includeOneDay />} />
 
     <div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-2xl border border-[#DCEBF5] bg-white/70 px-3.5 py-3">
       <span className="text-[11px] font-black text-[#587392]">対象観測数: {period.observation_count.toLocaleString('ja-JP')}</span>
@@ -218,7 +297,7 @@ function AccountsScreen({ artifact, release, actions, commitAction, notify }) {
 
 function ErrorState({ error, onRetry }) { return <div className={`${card} border-[#FFC7D7] bg-[#FFF9FB] p-10 text-center`} role="alert"><p className="m-0 text-xs font-black text-[#C44B72]">この画面の公開データを読み込めませんでした。</p><p className="mt-2 text-[10px] text-[#8A7180]">{error.message}</p><button type="button" onClick={onRetry} className={`${button} mt-4 bg-[#FFF0F5] text-[#C44B72]`}>再試行</button></div> }
 
-function useArtifact(client, key) {
+function useArtifact(client, key, { minimumLoadingMs = ARTIFACT_LOADING_MINIMUM_MS } = {}) {
   const [state, setState] = useState(() => {
     const value = client.getCachedArtifact(key)
     return value === null ? { status: 'loading', value: null, error: null } : { status: 'ready', value, error: null }
@@ -235,7 +314,7 @@ function useArtifact(client, key) {
     const startedAt = Date.now()
     const finishLoading = (nextState) => {
       if (!active) return
-      const remaining = Math.max(0, ARTIFACT_LOADING_MINIMUM_MS - (Date.now() - startedAt))
+      const remaining = Math.max(0, minimumLoadingMs - (Date.now() - startedAt))
       if (remaining === 0) {
         setState(nextState)
         return
@@ -250,7 +329,7 @@ function useArtifact(client, key) {
       finishLoading({ status: 'error', value: null, error })
     })
     return () => { active = false; window.clearTimeout(timer) }
-  }, [attempt, client, key])
+  }, [attempt, client, key, minimumLoadingMs])
   const retry = () => {
     setState({ status: 'loading', value: null, error: null })
     setAttempt((value) => value + 1)
@@ -259,10 +338,10 @@ function useArtifact(client, key) {
 }
 
 function AppShell({ screen, onChange, dataEndDate, children }) {
-  return <div className="min-h-screen text-sm leading-[1.55] text-ink"><div className="flex min-h-screen max-[820px]:block"><Sidebar screen={screen} onChange={onChange} /><main className="min-w-0 flex-1"><Header screen={screen} onChange={onChange} dataEndDate={dataEndDate} /><div className="p-7 max-[820px]:px-3.5 max-[820px]:pb-28 max-[820px]:pt-4">{children}</div></main></div><nav className="fixed bottom-[max(14px,env(safe-area-inset-bottom))] left-2.5 right-2.5 z-50 hidden rounded-[20px] border border-[#D8E8F3] bg-white/95 p-1.5 shadow-[0_16px_34px_rgba(44,83,122,.18)] max-[820px]:flex" aria-label="フッターナビゲーション">{screens.map(([id, label, icon]) => <button key={id} type="button" onClick={() => onChange(id)} className={`grid flex-1 place-items-center gap-0.5 rounded-[14px] border-0 px-0.5 py-[7px] text-[8px] font-black ${screen === id ? 'bg-[#EAF9FF] text-[#229ADD]' : 'bg-transparent text-[#73869F]'}`}><Icon name={icon} className="h-[19px] w-[19px]" />{label}</button>)}</nav></div>
+  return <div className="min-h-screen text-sm leading-[1.55] text-ink"><div className="flex min-h-screen max-[820px]:block"><Sidebar screen={screen} onChange={onChange} /><main className="min-w-0 flex-1"><Header screen={screen} onChange={onChange} dataEndDate={dataEndDate} /><div className="p-7 max-[820px]:px-3.5 max-[820px]:pb-28 max-[820px]:pt-4">{children}</div></main></div><nav className="fixed bottom-[max(14px,env(safe-area-inset-bottom))] left-2.5 right-2.5 z-50 hidden rounded-[20px] border border-[#D8E8F3] bg-white/95 p-1.5 shadow-[0_16px_34px_rgba(44,83,122,.18)] max-[820px]:flex" aria-label="フッターナビゲーション">{screens.map(([id, label, icon]) => <button key={id} type="button" aria-current={screen === id ? 'page' : undefined} onClick={() => onChange(id)} className={`grid flex-1 place-items-center gap-0.5 rounded-[14px] border-0 px-0.5 py-[7px] text-[8px] font-black ${screen === id ? 'bg-[#EAF9FF] text-[#229ADD]' : 'bg-transparent text-[#73869F]'}`}><Icon name={icon} className="h-[19px] w-[19px]" />{label}</button>)}</nav></div>
 }
 
-function ArtifactRoute({ screen, client, onChange, dataEndDate, onDataEndDate, actions, commitAction, notify }) {
+function ArtifactRoute({ screen, client, onChange, dataEndDate, onDataEndDate, periodKey, onPeriodChange, actions, commitAction, notify }) {
   const state = useArtifact(client, screen)
   if (state.status === 'loading') return <AppShell screen={screen} onChange={onChange} dataEndDate={dataEndDate}><LoadingScreen mode="content" /></AppShell>
   if (state.status === 'error') {
@@ -272,7 +351,7 @@ function ArtifactRoute({ screen, client, onChange, dataEndDate, onDataEndDate, a
   }
 
   const content = screen === 'overview'
-    ? <OverviewScreen overview={state.value} onDataEndDate={onDataEndDate} />
+    ? <OverviewScreen overview={state.value} periodKey={periodKey} onPeriodChange={onPeriodChange} onDataEndDate={onDataEndDate} />
     : screen === 'comments'
       ? <CommentsScreen artifact={state.value} />
       : screen === 'keywords'
@@ -284,6 +363,7 @@ function ArtifactRoute({ screen, client, onChange, dataEndDate, onDataEndDate, a
 
 export default function App() {
   const [screen, setScreen] = useState('home')
+  const [periodKey, setPeriodKey] = useState('7d')
   const [session, setSession] = useState({ status: 'loading', client: null, error: null })
   const [initialLoadingMinimumElapsed, setInitialLoadingMinimumElapsed] = useState(false)
   const sessionPromise = useRef(null)
@@ -302,15 +382,15 @@ export default function App() {
   useEffect(() => () => window.clearTimeout(toastTimer.current), [])
   const notify = (message) => { setToast(message); window.clearTimeout(toastTimer.current); toastTimer.current = window.setTimeout(() => setToast(''), 1800) }
   const commitAction = (next) => { setActions(next); if (persistence.enabled && !saveActionState(persistence.storage, next)) { setPersistence((value) => ({ ...value, enabled: false })); notify('ローカル状態を保存できませんでした。データ表示は継続します。') } }
-  const changeScreen = (next) => { setScreen(next); window.scrollTo({ top: 0, behavior: 'smooth' }) }
+  const changeScreen = (next) => { if (next === 'home') setPeriodKey((current) => current === '1d' ? '7d' : current); setScreen(next); window.scrollTo({ top: 0, behavior: 'smooth' }) }
   const rootError = <div className={`${card} p-12 text-center`} role="alert"><p className="m-0 text-sm font-black text-[#C44B72]">公開データを利用できません。</p><p className="mt-2 text-xs text-[#8A7180]">release rootの検証に失敗しました。</p></div>
   const view = session.status === 'loading' || !initialLoadingMinimumElapsed
     ? <LoadingScreen />
     : session.status === 'error'
       ? <AppShell screen={screen} onChange={changeScreen} dataEndDate={dataEndDate}>{rootError}</AppShell>
       : screen === 'home'
-        ? <AppShell screen={screen} onChange={changeScreen} dataEndDate={dataEndDate}><HomeScreen onChange={changeScreen} /></AppShell>
-        : <ArtifactRoute key={screen} screen={screen} client={session.client} onChange={changeScreen} dataEndDate={dataEndDate} onDataEndDate={setDataEndDate} actions={actions} commitAction={commitAction} notify={notify} />
+        ? <AppShell screen={screen} onChange={changeScreen} dataEndDate={dataEndDate}><DashboardScreen client={session.client} periodKey={periodKey} onPeriodChange={setPeriodKey} onChange={changeScreen} onDataEndDate={setDataEndDate} /></AppShell>
+        : <ArtifactRoute key={screen} screen={screen} client={session.client} onChange={changeScreen} dataEndDate={dataEndDate} onDataEndDate={setDataEndDate} periodKey={periodKey} onPeriodChange={setPeriodKey} actions={actions} commitAction={commitAction} notify={notify} />
 
   return <>{view}<div className={`pointer-events-none fixed bottom-[22px] right-[22px] z-[100] rounded-[14px] bg-[#2D4F79] px-[17px] py-[13px] text-[11px] font-black text-white shadow-panel transition duration-[230ms] ${toast ? 'translate-y-0 opacity-100' : 'translate-y-[160%] opacity-0'}`}>{toast}</div></>
 }
