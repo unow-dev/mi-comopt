@@ -1,11 +1,11 @@
-const GOAL_MET_RATE = 2
-const GOAL_UNMET_RATE = 3
-const CAUTION_RATE = 4
+export const GOAL_RATE = 2
+export const CAUTION_RATE = 3.5
+export const WARNING_RATE = 4.5
 
 function evaluationForRate(ratePercent) {
-  if (ratePercent <= GOAL_MET_RATE) return 'goal_met'
-  if (ratePercent < GOAL_UNMET_RATE) return 'goal_unmet'
-  if (ratePercent < CAUTION_RATE) return 'caution'
+  if (ratePercent <= GOAL_RATE) return 'goal_met'
+  if (ratePercent < CAUTION_RATE) return 'goal_unmet'
+  if (ratePercent < WARNING_RATE) return 'caution'
   return 'warning'
 }
 
@@ -38,9 +38,11 @@ export function derivePublicOrderIndex(directNuisanceCount, observationCount) {
   }
 
   const directNuisanceRate = (100 * directNuisanceCount) / observationCount
-  const score = directNuisanceRate <= GOAL_MET_RATE
-    ? 100 - (10 * directNuisanceRate)
-    : Math.max(0, 120 - (20 * directNuisanceRate))
+  const score = directNuisanceRate <= GOAL_RATE
+    ? 100 - ((20 / GOAL_RATE) * directNuisanceRate)
+    : directNuisanceRate < CAUTION_RATE
+      ? 80 - ((20 * (directNuisanceRate - GOAL_RATE)) / (CAUTION_RATE - GOAL_RATE))
+      : Math.max(0, 60 - ((20 * (directNuisanceRate - CAUTION_RATE)) / (WARNING_RATE - CAUTION_RATE)))
 
   return {
     status: 'available',
@@ -62,9 +64,9 @@ export function formatDirectNuisanceRate(ratePercent, evaluation) {
   if (evaluationForRate(twoDecimals) === evaluation) return `${twoDecimals.toFixed(2)}%`
 
   if (evaluation === 'goal_unmet') {
-    return twoDecimals <= GOAL_MET_RATE ? '2.0%超' : '3.0%未満'
+    return twoDecimals <= GOAL_RATE ? `${GOAL_RATE.toFixed(1)}%超` : `${CAUTION_RATE.toFixed(1)}%未満`
   }
-  if (evaluation === 'caution') return '4.0%未満'
+  if (evaluation === 'caution') return `${WARNING_RATE.toFixed(1)}%未満`
   return `${twoDecimals.toFixed(2)}%`
 }
 

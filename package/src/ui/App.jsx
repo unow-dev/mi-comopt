@@ -14,7 +14,7 @@ import {
   toggleAccountBlocked,
 } from './local-state.js'
 import { loadReleaseSession } from './release-client.js'
-import { derivePublicOrderIndex, formatDirectNuisanceRate, formatPublicOrderScore } from './public-order-index.js'
+import { CAUTION_RATE, GOAL_RATE, WARNING_RATE, derivePublicOrderIndex, formatDirectNuisanceRate, formatPublicOrderScore } from './public-order-index.js'
 import LoadingScreen from './loading/LoadingScreen.jsx'
 
 const screens = [
@@ -66,6 +66,23 @@ function Pill({ children, tone = 'blue', className = '' }) {
   return <span className={`inline-flex items-center rounded-full px-2.5 py-1.5 text-[9px] font-black ${styles[tone]} ${className}`}>{children}</span>
 }
 
+function PublicOrderGauge({ rate, className = '' }) {
+  const maxRate = 6
+  const ticks = [0, GOAL_RATE, CAUTION_RATE, WARNING_RATE, maxRate]
+  const segmentStyles = ['rounded-l-full bg-[#8EE6C2]', 'bg-[#6FC8F2]', 'bg-[#FFD76A]', 'rounded-r-full bg-[#FF8EAE]']
+  const markerPosition = rate === null ? null : Math.min(rate / maxRate, 1) * 100
+
+  return <div className={`px-1 ${className}`} aria-hidden="true">
+    <div className="relative h-2.5 rounded-full bg-[#ECF3F8]">
+      {segmentStyles.map((style, index) => <div key={style} className={`absolute inset-y-0 ${style}`} style={{ left: `${(ticks[index] / maxRate) * 100}%`, width: `${((ticks[index + 1] - ticks[index]) / maxRate) * 100}%` }} />)}
+      {markerPosition !== null && <span className="absolute -top-[3px] h-4 w-[3px] rounded-full bg-[#234D7E] ring-2 ring-white" style={{ left: `calc(${markerPosition}% - 1.5px)` }} />}
+    </div>
+    <div className="relative mt-1 h-4 text-[9px] font-bold text-[#8A9AB0]">
+      {ticks.map((value, index) => <span key={value} className="absolute" style={{ left: `${(value / maxRate) * 100}%`, transform: index === 0 ? 'none' : index === ticks.length - 1 ? 'translateX(-100%)' : 'translateX(-50%)' }}>{value}%</span>)}
+    </div>
+  </div>
+}
+
 function Brand({ compact = false }) {
   return <div className={`flex items-center ${compact ? 'gap-2' : 'gap-3'}`} aria-label="こちらコメント管理局！">
     <img src={logoSrc} alt="こちらコメント管理局！" className={`block w-full object-contain object-center ${compact ? 'h-8' : 'h-[72px]'}`} />
@@ -113,7 +130,6 @@ function DashboardScreen({ client, periodKey, onPeriodChange, onChange, onDataEn
   const index = period ? derivePublicOrderIndex(period.counts.direct_nuisance, period.observation_count) : null
   const scoreLabel = index?.status === 'unavailable' ? '—' : index ? formatPublicOrderScore(index.score, index.evaluation) : null
   const rateLabel = index?.status === 'unavailable' ? '—' : index ? formatDirectNuisanceRate(index.directNuisanceRate, index.evaluation) : null
-  const markerPosition = index?.status === 'unavailable' ? null : index ? Math.min(index.directNuisanceRate / 6, 1) * 100 : null
   const candidateCounts = client.release.artifacts
 
   return <section className="animate-screen">
@@ -143,10 +159,7 @@ function DashboardScreen({ client, periodKey, onPeriodChange, onChange, onDataEn
             <div className="pb-1 text-right"><span className="block text-[9px] font-bold text-[#8A9AB0]">一次迷惑率</span><strong className="whitespace-nowrap text-[15px] font-black text-[#536B8D]">{rateLabel}</strong></div>
           </div>
           <div className="mt-4 flex items-center justify-between rounded-xl bg-[#F7FBFE] px-3 py-2 text-[10px]"><span className="font-bold text-[#7488A2]">対象観測数</span><strong className="text-[#536B8D]">{period.observation_count.toLocaleString('ja-JP')}件</strong></div>
-          <div className="mt-4 px-1" aria-hidden="true">
-            <div className="relative h-2.5 rounded-full bg-[#ECF3F8]"><div className="absolute inset-y-0 left-0 w-1/3 rounded-l-full bg-[#8EE6C2]" /><div className="absolute inset-y-0 left-1/3 w-1/6 bg-[#6FC8F2]" /><div className="absolute inset-y-0 left-1/2 w-1/6 bg-[#FFD76A]" /><div className="absolute inset-y-0 left-2/3 right-0 rounded-r-full bg-[#FF8EAE]" />{markerPosition !== null && <span className="absolute -top-[3px] h-4 w-[3px] rounded-full bg-[#234D7E] ring-2 ring-white" style={{ left: `calc(${markerPosition}% - 1.5px)` }} />}</div>
-            <div className="relative mt-1 h-4 text-[9px] font-bold text-[#8A9AB0]">{[['0%', 0], ['2%', 100 / 3], ['3%', 50], ['4%', 200 / 3], ['6%', 100]].map(([label, position], labelIndex) => <span key={label} className="absolute" style={{ left: `${position}%`, transform: labelIndex === 0 ? 'none' : labelIndex === 4 ? 'translateX(-100%)' : 'translateX(-50%)' }}>{label}</span>)}</div>
-          </div>
+          <PublicOrderGauge rate={index.directNuisanceRate} className="mt-4" />
           <button type="button" onClick={() => onChange('overview')} className={`${button} mt-4 min-h-11 w-full justify-between border border-[#D7E8F4] bg-white text-[#34769D]`}><span>分析概要を見る</span><span aria-hidden="true">→</span></button>
         </article>
 
@@ -187,7 +200,6 @@ function OverviewScreen({ overview, periodKey, onPeriodChange, onDataEndDate }) 
 
   const scoreLabel = index.status === 'unavailable' ? '—' : formatPublicOrderScore(index.score, index.evaluation)
   const rateLabel = index.status === 'unavailable' ? '—' : formatDirectNuisanceRate(index.directNuisanceRate, index.evaluation)
-  const markerPosition = index.status === 'unavailable' ? null : Math.min(index.directNuisanceRate / 6, 1) * 100
 
   return <section className="animate-screen">
     <SectionHeader title="コメント欄の状態" right={<PeriodSelector periodKey={periodKey} onPeriodChange={onPeriodChange} includeOneDay />} />
@@ -213,18 +225,7 @@ function OverviewScreen({ overview, periodKey, onPeriodChange, onDataEndDate }) 
           <strong className="whitespace-nowrap text-[15px] font-black text-[#536B8D]">{rateLabel}</strong>
         </div>
       </div>
-      <div className="mt-5 px-1" aria-hidden="true">
-        <div className="relative h-2.5 rounded-full bg-[#ECF3F8]">
-          <div className="absolute inset-y-0 left-0 w-1/3 rounded-l-full bg-[#8EE6C2]" />
-          <div className="absolute inset-y-0 left-1/3 w-1/6 bg-[#6FC8F2]" />
-          <div className="absolute inset-y-0 left-1/2 w-1/6 bg-[#FFD76A]" />
-          <div className="absolute inset-y-0 left-2/3 right-0 rounded-r-full bg-[#FF8EAE]" />
-          {markerPosition !== null && <span className="absolute -top-[3px] h-4 w-[3px] rounded-full bg-[#234D7E] ring-2 ring-white" style={{ left: `calc(${markerPosition}% - 1.5px)` }} />}
-        </div>
-        <div className="relative mt-1 h-4 text-[9px] font-bold text-[#8A9AB0]">
-          {[['0%', 0], ['2%', 100 / 3], ['3%', 50], ['4%', 200 / 3], ['6%', 100]].map(([label, position], index) => <span key={label} className="absolute" style={{ left: `${position}%`, transform: index === 0 ? 'none' : index === 4 ? 'translateX(-100%)' : 'translateX(-50%)' }}>{label}</span>)}
-        </div>
-      </div>
+      <PublicOrderGauge rate={index.directNuisanceRate} className="mt-5" />
     </article>
 
     <div className="mt-4 grid grid-cols-[.8fr_1.2fr] gap-4 max-[980px]:grid-cols-1">
