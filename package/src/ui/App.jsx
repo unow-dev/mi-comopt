@@ -44,15 +44,15 @@ const evaluationTones = {
   unavailable: 'gray',
 }
 
-function statusComment(evaluation, rateLabel) {
+function statusComment(evaluation, rateValue) {
+  if (evaluation === 'unavailable') return '対象観測がないため、治安指数を算出できません。'
   const comments = {
-    goal_met: `一次迷惑率は ${rateLabel} で、目標範囲内です。現在は落ち着いた状態です。`,
-    goal_unmet: `一次迷惑率は ${rateLabel} で、目標値を上回っています。分析概要で推移を確認してください。`,
-    caution: `一次迷惑率は ${rateLabel} で、注意が必要な水準です。分析概要で内訳と推移を確認してください。`,
-    warning: `一次迷惑率は ${rateLabel} で、警告水準です。対応候補もあわせて確認してください。`,
-    unavailable: '対象観測がないため、治安指数を算出できません。',
+    goal_met: '目標範囲内です。現在は落ち着いた状態です。',
+    goal_unmet: '目標値を上回っています。分析概要で推移を確認してください。',
+    caution: '注意が必要な水準です。分析概要で内訳と推移を確認してください。',
+    warning: '警告水準です。対応候補もあわせて確認してください。',
   }
-  return comments[evaluation]
+  return <>一次迷惑率は <DirectNuisanceRate value={rateValue} inline /> で、{comments[evaluation]}</>
 }
 
 function Pill({ children, tone = 'blue', className = '' }) {
@@ -81,6 +81,23 @@ function PublicOrderGauge({ rate, className = '' }) {
       {ticks.map((value, index) => <span key={value} className="absolute" style={{ left: `${(value / maxRate) * 100}%`, transform: index === 0 ? 'none' : index === ticks.length - 1 ? 'translateX(-100%)' : 'translateX(-50%)' }}>{value}%</span>)}
     </div>
   </div>
+}
+
+function PublicOrderScore({ value }) {
+  return <div className="min-w-0">
+    <div className="flex items-baseline gap-1">
+      <strong className="text-[clamp(42px,13vw,58px)] font-black leading-none tracking-[-.055em] text-[#234D7E]">{value?.rounded ?? '—'}</strong>
+      <span className="shrink-0 text-[12px] font-bold text-[#8A9AB0]">/ 100</span>
+    </div>
+    {value && <span className="mt-1 block break-all text-[9px] leading-tight text-[#8A9AB0]" aria-label={`丸め前の治安指数 ${value.raw}`}>({value.raw})</span>}
+  </div>
+}
+
+function DirectNuisanceRate({ value, inline = false }) {
+  return <span className={inline ? 'inline' : 'block text-right'}>
+    <strong className={inline ? 'font-black' : 'text-[15px] font-black text-[#536B8D]'}>{value ? `${value.rounded.toFixed(1)}%` : '—'}</strong>
+    {value && <span className={`${inline ? 'ml-1' : 'mt-1 block'} break-all text-[9px] leading-tight text-[#8A9AB0]`} aria-label={`丸め前の一次迷惑率 ${value.raw}%`}>({value.raw}%)</span>}
+  </span>
 }
 
 function Brand({ compact = false }) {
@@ -128,8 +145,8 @@ function DashboardScreen({ client, periodKey, onPeriodChange, onChange, onDataEn
 
   const period = overview?.periods[periodKey]
   const index = period ? derivePublicOrderIndex(period.counts.direct_nuisance, period.observation_count) : null
-  const scoreLabel = index?.status === 'unavailable' ? '—' : index ? formatPublicOrderScore(index.score, index.evaluation) : null
-  const rateLabel = index?.status === 'unavailable' ? '—' : index ? formatDirectNuisanceRate(index.directNuisanceRate, index.evaluation) : null
+  const scoreValue = index?.status === 'available' ? formatPublicOrderScore(index.score, index.evaluation) : null
+  const rateValue = index?.status === 'available' ? formatDirectNuisanceRate(index.directNuisanceRate, index.evaluation) : null
   const candidateCounts = client.release.artifacts
 
   return <section className="animate-screen">
@@ -154,9 +171,9 @@ function DashboardScreen({ client, periodKey, onPeriodChange, onChange, onDataEn
       {period && index && <>
         <article className={`${card} p-4 min-[821px]:p-5`} aria-labelledby="public-order-index-title">
           <div className="flex items-center justify-between gap-3"><h2 id="public-order-index-title" className="m-0 text-[15px] font-bold">治安指数</h2><Pill tone={evaluationTones[index.evaluation]}>{evaluationNames[index.evaluation]}</Pill></div>
-          <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-x-3">
-            <div className="flex min-w-0 items-baseline gap-1"><strong className="min-w-0 truncate text-[clamp(42px,13vw,58px)] font-black leading-none tracking-[-.055em] text-[#234D7E]">{scoreLabel}</strong><span className="shrink-0 text-[12px] font-bold text-[#8A9AB0]">/ 100</span></div>
-            <div className="pb-1 text-right"><span className="block text-[9px] font-bold text-[#8A9AB0]">一次迷惑率</span><strong className="whitespace-nowrap text-[15px] font-black text-[#536B8D]">{rateLabel}</strong></div>
+          <div className="mt-3 grid grid-cols-2 items-end gap-x-3">
+            <PublicOrderScore value={scoreValue} />
+            <div className="min-w-0 pb-1 text-right"><span className="block text-[9px] font-bold text-[#8A9AB0]">一次迷惑率</span><DirectNuisanceRate value={rateValue} /></div>
           </div>
           <div className="mt-4 flex items-center justify-between rounded-xl bg-[#F7FBFE] px-3 py-2 text-[10px]"><span className="font-bold text-[#7488A2]">対象観測数</span><strong className="text-[#536B8D]">{period.observation_count.toLocaleString('ja-JP')}件</strong></div>
           <PublicOrderGauge rate={index.directNuisanceRate} className="mt-4" />
@@ -165,7 +182,7 @@ function DashboardScreen({ client, periodKey, onPeriodChange, onChange, onDataEn
 
         <article className={`${card} flex min-h-[228px] flex-col p-5`}>
           <h2 className="m-0 text-[15px] font-bold">状態コメント</h2>
-          <p className="mt-5 text-[13px] leading-[1.9] text-[#536985]">{statusComment(index.evaluation, rateLabel)}</p>
+          <p className="mt-5 text-[13px] leading-[1.9] text-[#536985]">{statusComment(index.evaluation, rateValue)}</p>
         </article>
       </>}
     </div>
@@ -198,8 +215,8 @@ function OverviewScreen({ overview, periodKey, onPeriodChange, onDataEndDate }) 
   const index = derivePublicOrderIndex(period.counts.direct_nuisance, period.observation_count)
   const maxDaily = Math.max(1, ...overview.daily.map((row) => row.observation_count ?? 0))
 
-  const scoreLabel = index.status === 'unavailable' ? '—' : formatPublicOrderScore(index.score, index.evaluation)
-  const rateLabel = index.status === 'unavailable' ? '—' : formatDirectNuisanceRate(index.directNuisanceRate, index.evaluation)
+  const scoreValue = index.status === 'available' ? formatPublicOrderScore(index.score, index.evaluation) : null
+  const rateValue = index.status === 'available' ? formatDirectNuisanceRate(index.directNuisanceRate, index.evaluation) : null
 
   return <section className="animate-screen">
     <SectionHeader title="コメント欄の状態" right={<PeriodSelector periodKey={periodKey} onPeriodChange={onPeriodChange} includeOneDay />} />
@@ -215,14 +232,11 @@ function OverviewScreen({ overview, periodKey, onPeriodChange, onDataEndDate }) 
         <h2 id="public-order-index-title" className="m-0 text-[15px] font-bold">治安指数</h2>
         <Pill tone={evaluationTones[index.evaluation]}>{evaluationNames[index.evaluation]}</Pill>
       </div>
-      <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-x-3">
-        <div className="flex min-w-0 items-baseline gap-1">
-          <strong className="min-w-0 truncate text-[clamp(42px,13vw,58px)] font-black leading-none tracking-[-.055em] text-[#234D7E]">{scoreLabel}</strong>
-          <span className="shrink-0 text-[12px] font-bold text-[#8A9AB0]">/ 100</span>
-        </div>
-        <div className="pb-1 text-right">
+      <div className="mt-3 grid grid-cols-2 items-end gap-x-3">
+        <PublicOrderScore value={scoreValue} />
+        <div className="min-w-0 pb-1 text-right">
           <span className="block text-[9px] font-bold text-[#8A9AB0]">一次迷惑率</span>
-          <strong className="whitespace-nowrap text-[15px] font-black text-[#536B8D]">{rateLabel}</strong>
+          <DirectNuisanceRate value={rateValue} />
         </div>
       </div>
       <PublicOrderGauge rate={index.directNuisanceRate} className="mt-5" />

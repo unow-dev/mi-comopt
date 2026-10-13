@@ -67,45 +67,68 @@ test('rejects counts outside the input contract', () => {
   for (const values of invalidCases) assert.throws(() => derivePublicOrderIndex(...values), RangeError)
 })
 
-test('formats direct nuisance rates without changing their evaluation', () => {
+test('returns one-decimal rounded rates and unrounded rates at evaluation boundaries', () => {
   const cases = [
-    [3.3, 'goal_unmet', '3.3%'],
-    [2, 'goal_met', '2.0%'],
-    [2.5, 'goal_unmet', '2.5%'],
-    [3.03, 'goal_unmet', '3.0%'],
-    [2.04, 'goal_unmet', '2.04%'],
-    [2.53, 'goal_unmet', '2.5%'],
-    [3.46, 'goal_unmet', '3.46%'],
-    [4.46, 'caution', '4.46%'],
-    [2.001, 'goal_unmet', '2.0%超'],
-    [3.499, 'goal_unmet', '3.5%未満'],
-    [3.5, 'caution', '3.5%'],
-    [4.499, 'caution', '4.5%未満'],
-    [4.5, 'warning', '4.5%'],
+    [0, 'goal_met', 0],
+    [3.3, 'goal_unmet', 3.3],
+    [2, 'goal_met', 2],
+    [2.5, 'goal_unmet', 2.5],
+    [3.03, 'goal_unmet', 3],
+    [2.04, 'goal_unmet', 2],
+    [2.53, 'goal_unmet', 2.5],
+    [3.46, 'goal_unmet', 3.5],
+    [4.46, 'caution', 4.5],
+    [2.001, 'goal_unmet', 2],
+    [3.499, 'goal_unmet', 3.5],
+    [3.5, 'caution', 3.5],
+    [4.499, 'caution', 4.5],
+    [4.5, 'warning', 4.5],
+    [100, 'warning', 100],
   ]
-  for (const [rate, evaluation, expected] of cases) {
-    assert.equal(formatDirectNuisanceRate(rate, evaluation), expected)
+  for (const [rate, evaluation, rounded] of cases) {
+    assert.deepEqual(formatDirectNuisanceRate(rate, evaluation), { rounded, raw: rate })
   }
   assert.throws(() => formatDirectNuisanceRate(2, 'warning'), RangeError)
+  for (const rate of [NaN, Infinity, -1]) {
+    assert.throws(() => formatDirectNuisanceRate(rate, 'warning'), RangeError)
+  }
 })
 
-test('formats scores without crossing their evaluation boundaries', () => {
+test('returns rounded and raw scores even when rounding crosses an evaluation boundary', () => {
   const cases = [
-    [54, 'caution', '54'],
-    [60.8, 'goal_unmet', '61'],
-    [59.8, 'caution', '60'],
-    [39.8, 'warning', '40'],
-    [79.6, 'goal_unmet', '79.6'],
-    [79.98, 'goal_unmet', '80未満'],
-    [60.4, 'goal_unmet', '60.4'],
-    [60.02, 'goal_unmet', '60超'],
-    [40.4, 'caution', '40.4'],
-    [40.02, 'caution', '40超'],
+    [0, 'warning', 0],
+    [100, 'goal_met', 100],
+    [54, 'caution', 54],
+    [60.8, 'goal_unmet', 61],
+    [59.8, 'caution', 60],
+    [39.8, 'warning', 40],
+    [79.6, 'goal_unmet', 80],
+    [79.98, 'goal_unmet', 80],
+    [60.4, 'goal_unmet', 60],
+    [60.02, 'goal_unmet', 60],
+    [40.4, 'caution', 40],
+    [40.02, 'caution', 40],
   ]
-  for (const [score, evaluation, expected] of cases) {
-    assert.equal(formatPublicOrderScore(score, evaluation), expected)
+  for (const [score, evaluation, rounded] of cases) {
+    assert.deepEqual(formatPublicOrderScore(score, evaluation), { rounded, raw: score })
   }
   assert.throws(() => formatPublicOrderScore(60.02, 'caution'), RangeError)
+  for (const score of [NaN, Infinity, -1, 101]) {
+    assert.throws(() => formatPublicOrderScore(score, 'warning'), RangeError)
+  }
+})
+
+test('preserves the full calculated score and rate for the current seven-day observations', () => {
+  const index = derivePublicOrderIndex(45, 1287)
+  const formatted = formatPublicOrderScore(index.score, index.evaluation)
+  assert.equal(index.evaluation, 'goal_unmet')
+  assert.equal(formatted.rounded, 60)
+  assert.equal(formatted.raw, 60.04662004662005)
+  assert.equal(formatted.raw, index.score)
+  assert.deepEqual(formatDirectNuisanceRate(index.directNuisanceRate, index.evaluation), {
+    rounded: 3.5,
+    raw: index.directNuisanceRate,
+  })
 })
 
 test('derived scores remain continuous and can be formatted across the new rate boundaries', () => {

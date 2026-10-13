@@ -57,17 +57,7 @@ export function formatDirectNuisanceRate(ratePercent, evaluation) {
   requireEvaluation(evaluation)
   if (evaluationForRate(ratePercent) !== evaluation) throw new RangeError('evaluation does not match ratePercent')
 
-  const oneDecimal = Number(ratePercent.toFixed(1))
-  if (evaluationForRate(oneDecimal) === evaluation) return `${oneDecimal.toFixed(1)}%`
-
-  const twoDecimals = Number(ratePercent.toFixed(2))
-  if (evaluationForRate(twoDecimals) === evaluation) return `${twoDecimals.toFixed(2)}%`
-
-  if (evaluation === 'goal_unmet') {
-    return twoDecimals <= GOAL_RATE ? `${GOAL_RATE.toFixed(1)}%超` : `${CAUTION_RATE.toFixed(1)}%未満`
-  }
-  if (evaluation === 'caution') return `${WARNING_RATE.toFixed(1)}%未満`
-  return `${twoDecimals.toFixed(2)}%`
+  return { rounded: Number(ratePercent.toFixed(1)), raw: ratePercent }
 }
 
 export function formatPublicOrderScore(score, evaluation) {
@@ -75,13 +65,5 @@ export function formatPublicOrderScore(score, evaluation) {
   requireEvaluation(evaluation)
   if (evaluationForScore(score) !== evaluation) throw new RangeError('evaluation does not match score')
 
-  const integer = Math.round(score)
-  if (evaluationForScore(integer) === evaluation) return String(integer)
-
-  const oneDecimal = Number(score.toFixed(1))
-  if (evaluationForScore(oneDecimal) === evaluation) return oneDecimal.toFixed(1)
-
-  if (evaluation === 'goal_unmet') return score >= 79.5 ? '80未満' : '60超'
-  if (evaluation === 'caution') return '40超'
-  return String(integer)
+  return { rounded: Math.round(score), raw: score }
 }
