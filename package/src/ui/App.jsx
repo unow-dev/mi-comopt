@@ -45,14 +45,14 @@ const evaluationTones = {
 }
 
 function statusComment(evaluation, rateValue) {
-  if (evaluation === 'unavailable') return '対象観測がないため、治安指数を算出できません。'
+  if (evaluation === 'unavailable') return '選択期間に対象観測がないため、治安指数を算出できません。'
   const comments = {
-    goal_met: '目標範囲内です。現在は落ち着いた状態です。',
-    goal_unmet: '目標値を上回っています。分析概要で推移を確認してください。',
-    caution: '注意が必要な水準です。分析概要で内訳と推移を確認してください。',
-    warning: '警告水準です。対応候補もあわせて確認してください。',
+    goal_met: '目標の2%以下に収まっています。',
+    goal_unmet: '目標の2%を上回っています。分析概要で内訳と推移を確認してください。',
+    caution: '注意水準です。対応候補を確認し、フィルター設定やブロックによる対応を検討してください。',
+    warning: '警告水準です。対応候補をもとに、フィルター設定やブロックによる対応を推奨します。',
   }
-  return <>一次迷惑率は <DirectNuisanceRate value={rateValue} inline /> で、{comments[evaluation]}</>
+  return <>選択期間の一次迷惑率は <DirectNuisanceRate value={rateValue} inline /> です。{comments[evaluation]}</>
 }
 
 function Pill({ children, tone = 'blue', className = '' }) {
