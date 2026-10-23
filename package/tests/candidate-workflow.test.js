@@ -18,7 +18,7 @@ import {
   validateDataset,
   validateProposal,
 } from "../src/processing/keyword-candidates/candidate-workflow.js";
-import { isNewCandidate } from "../src/ui/new-badge.js";
+import { isNewCandidate } from "../src/ui/data-model.js";
 import { prepareFullUpdate } from "../src/processing/keyword-candidates/update-flow.js";
 
 const contracts = path.resolve("contracts");

@@ -10,7 +10,6 @@ import test from "node:test";
 import { adaptCommentBatchBytes } from "../src/collector/comment-batch/comment-batch-adapter.js";
 import { importRawInput, openCommentDatabase } from "../src/database/comment-database.js";
 import { readSnapshotThreeClassLabels } from "../src/database/three-class-label-repository.js";
-import { adaptKeywordCandidates } from "../src/ui/candidate-data-adapter.js";
 
 const packageRoot = path.resolve(import.meta.dirname, "..");
 const cliScript = path.join(packageRoot, "scripts", "comment-database.mjs");
@@ -299,7 +298,6 @@ test("DB labels generate a handoff and the full publication round-trip reaches U
   assert.equal(result.status, 0, result.stderr);
   const exportedBytes = fs.readFileSync(exportedPath);
   assert.deepEqual(exportedBytes, fs.readFileSync(path.join(caseData.publicationRoot, "current", "filterKeywordCandidates.json")));
-  assert.equal(adaptKeywordCandidates(JSON.parse(exportedBytes)).length >= 0, true);
 });
 
 test("identical DB publication apply is idempotent and does not change applied_at", async (t) => {

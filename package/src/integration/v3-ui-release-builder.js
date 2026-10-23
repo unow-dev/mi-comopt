@@ -176,8 +176,10 @@ function keywordActions(controlPlane, pins, releaseId) {
     } else if (typeof entry.candidate_id === "string") {
       action.candidate_id = entry.candidate_id;
     }
-    for (const field of ["keyword", "variants", "category_id"]) {
-      if (entry[field] !== undefined) action[field] = entry[field];
+    if (entry.action !== "retire") {
+      for (const field of ["keyword", "variants", "category_id"]) {
+        if (entry[field] !== undefined) action[field] = entry[field];
+      }
     }
     return action;
   });

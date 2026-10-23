@@ -14,6 +14,7 @@ import {
 import { StateControlPlaneError, stateError } from "../state/errors.js";
 import { createV3OperationContext } from "../application/v3/context.js";
 import { validateV3WorkStepResult } from "../workflow/v3/result-rules.js";
+import { buildKeywordProposalState } from "./keyword-proposal-state.js";
 
 function submittedArtifact(value) {
   return value?.result?.artifact ?? value?.artifact ?? null;
@@ -61,15 +62,7 @@ function enrichHumanInputs(capability, inputs, artifactStore) {
   if (capability === "keyword-selection.assess") {
     const proposal = parseJsonArtifact(artifactStore, inputs.proposal);
     if (Array.isArray(proposal?.actions)) {
-      enriched.proposedState = {
-        schema_version: 1,
-        entries: proposal.actions
-          .filter((action) => action && typeof action.keyword === "string")
-          .map((action) => ({
-            ...action,
-            selection_state: action.action === "retire" ? "retired" : action.selection_state ?? "selected",
-          })),
-      };
+      enriched.proposedState = buildKeywordProposalState({ proposal, handoffPreparation: inputs.handoffPreparation, artifactStore });
     }
     if (proposal) enriched.proposal = proposal;
   }

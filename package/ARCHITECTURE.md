@@ -13,7 +13,7 @@
 - `src/application/release-services.js`はexact versionだけでRelease Bundleを構成し、`src/release/artifact-store.js`のrelease-owned artifact storeへmaterializeする。production v3 operatorは同じRelease pinからUI release rootと4つのdata artifactも生成し、`src/application/deployment-services.js`はPromotion（desired）とDeployment（verified actual）を別streamとして扱う。
 - GitHub Pages deploymentはrelease-owned UI artifactを専用refへ公開してからworkflow dispatchし、Pages markerでDB Release identityとUI release manifest SHAを同時に検証する。
 - `src/domain/account-candidates.js`のAccount CandidateはCorpus・Classification・Policyから都度再計算する派生値であり、独立したState Streamを持たない。
-- `candidate-data.js`と`candidate-data-adapter.js`は既存packageテストおよびlegacy static dataとの互換性のために残る旧境界であり、新UIのruntime entrypointからは参照しない。
+- 現行UIはrelease rootを起点とする公開artifactのみを読み、`src/data/`の旧static dataを直接importしない。
 
 `scripts/adapters/` は第5レイヤーではない。CLIやcomposition rootからfilesystemなどの外部境界へ接続するための実装置き場であり、keyword publicationのatomicityはここで扱う。
 
@@ -25,7 +25,7 @@ Comment DBは`src/database/comment-database.js`が境界となる。Collector固
 
 `comment-batch`は動画・作者・コメントmasterを推測して生成せず、取得不能なrich metadataをSQL `NULL`で保持する。各コメント観測の`source_index`は入力array indexであり、入力順と重複を保持する。Processingへはkindを漏らさず、両kindとも同じexact five-field projectionへ渡す。
 
-legacy generated JSONのimportは`src/ui/candidate-data.js`に限定する。新UIのruntime data loadingは`src/ui/release-client.js`に限定し、release rootのsource/policy/artifact SHA、件数、artifact shapeを検証する。新UIはartifactのsnake_case契約を直接表示へ利用するが、未検証のデータを受け取らない。NEW表示判定の正は`src/ui/data-model.js`に置く。
+新UIのruntime data loadingは`src/ui/release-client.js`に限定し、release rootのsource/policy/artifact SHA、件数、artifact shapeを検証する。新UIはartifactのsnake_case契約を直接表示へ利用するが、未検証のデータを受け取らない。NEW表示判定の正は`src/ui/data-model.js`に置く。
 
 ## account legacy shim
 

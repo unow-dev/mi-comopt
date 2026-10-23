@@ -35,7 +35,7 @@ DBを指定しない場合は `<リポジトリルート>/var/comment-history.sq
 
 同じ正規化payloadを再投入すると成功扱いのno-opになります。payload hashは正規化後の観測tupleを並べ替えて計算するSHA-256であり、JSONの空白やプロパティ順、配列順には依存しません。ただし観測の重複数は保持されるためhashに影響します。
 
-UIへ3分類ラベルの内訳を反映する場合は、対象snapshotを明示して集計JSONを出力します。出力先が既に存在する場合は原子的に置き換えます。ブラウザはComment DBを直接参照せず、出力された `src/data/threeClassLabelSummary.json` を読み込みます。
+対象snapshotを明示して3分類ラベルの集計JSONを出力できます。出力先が既に存在する場合は原子的に置き換えます。この出力は旧連携・検証用です。現行UIはComment DBを直接参照せず、release rootが指す公開artifactを読み込みます。
 
 ```bash
 npm run comment-db -- export-three-class-label-summary-ui \

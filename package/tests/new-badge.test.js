@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { isNewCandidate } from "../src/ui/new-badge.js";
+import { isNewCandidate } from "../src/ui/data-model.js";
 
 const introducedAt = new Date("2026-09-01T00:00:00Z");
 const displayEnd = new Date("2026-09-15T00:00:00Z");

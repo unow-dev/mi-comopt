@@ -26,9 +26,9 @@ function resolveLocalImport(sourceFile, specifier) {
   return path.normalize(path.resolve(path.dirname(sourceFile), specifier));
 }
 
-test("src/lib contains the account compatibility shim and UI utility", () => {
+test("src/lib contains only the account compatibility shim", () => {
   const entries = fs.readdirSync(path.join(srcRoot, "lib")).sort();
-  assert.deepEqual(entries, ["account-block-candidate-workflow.js", "utils.js"]);
+  assert.deepEqual(entries, ["account-block-candidate-workflow.js"]);
   assert.equal(
     fs.readFileSync(path.join(srcRoot, "lib", entries[0]), "utf8"),
     'export * from "../processing/account-block-candidates/account-block-candidate-workflow.js";\n',
@@ -78,9 +78,7 @@ test("release-client.js is the runtime UI data boundary", () => {
     const source = fs.readFileSync(sourceFile, "utf8");
     for (const specifier of importedSpecifiers(source)) {
       const target = resolveLocalImport(sourceFile, specifier);
-      if (target?.startsWith(path.join(srcRoot, "data"))) {
-        assert.equal(path.basename(sourceFile), "candidate-data.js");
-      }
+      assert.equal(Boolean(target?.startsWith(path.join(srcRoot, "data"))), false, `${sourceFile} imports legacy static data`);
     }
   }
   assert.doesNotMatch(appSource, /from\s+["'][^"']*src\/data\//);
