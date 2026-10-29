@@ -1,0 +1,60 @@
+Command: node --test reference-implementation/*.test.mjs
+Node: v22.16.0
+TAP version 13
+# Subtest: T01 exact group is corrected, unrelated label unchanged; schema_version stays 1
+ok 1 - T01 exact group is corrected, unrelated label unchanged; schema_version stays 1
+  ---
+  duration_ms: 9.217575
+  type: 'test'
+  ...
+# Subtest: T02 heterogeneous labels converge with accurate distribution
+ok 2 - T02 heterogeneous labels converge with accurate distribution
+  ---
+  duration_ms: 0.406164
+  type: 'test'
+  ...
+# Subtest: T03 invalid IDs and labels fail closed
+ok 3 - T03 invalid IDs and labels fail closed
+  ---
+  duration_ms: 0.672978
+  type: 'test'
+  ...
+# Subtest: T03 duplicates/missing/extra labels fail closed
+ok 4 - T03 duplicates/missing/extra labels fail closed
+  ---
+  duration_ms: 0.288967
+  type: 'test'
+  ...
+# Subtest: T03 string matching is exact without trim, case fold or Unicode normalization
+ok 5 - T03 string matching is exact without trim, case fold or Unicode normalization
+  ---
+  duration_ms: 0.288627
+  type: 'test'
+  ...
+# Subtest: T03 numeric/string canonical ID collisions are rejected
+ok 6 - T03 numeric/string canonical ID collisions are rejected
+  ---
+  duration_ms: 0.189938
+  type: 'test'
+  ...
+# Subtest: pure function does not mutate inputs
+ok 7 - pure function does not mutate inputs
+  ---
+  duration_ms: 0.325182
+  type: 'test'
+  ...
+# Subtest: sorting follows localeCompare, not numeric sort
+ok 8 - sorting follows localeCompare, not numeric sort
+  ---
+  duration_ms: 0.149936
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 70.446891
