@@ -35,9 +35,16 @@ function validateBytes(stepId, bytes, customValidator) {
   let value;
   try { value = JSON.parse(Buffer.from(bytes).toString("utf8")); } catch (error) { throw stateError("ARTIFACT_INVALID", `human artifact is not valid JSON: ${error.message}`); }
   if (stepId === "00-receive-update-artifact") return parseAndValidateCommentBatchBytes(bytes).payload;
-  if (stepId === "03b-receive-classification-response") return validateClassificationResponse(value);
-  if (stepId === "07b-receive-keyword-proposal") return validateKeywordProposal(value);
+  if (/^03b-receive-classification-response(?:-.+)?$/.test(stepId)) return validateClassificationResponse(value);
+  if (/^07b-receive-keyword-proposal(?:-.+)?$/.test(stepId)) return validateKeywordProposal(value);
   throw stateError("ARTIFACT_INVALID", `unsupported human artifact step ${stepId}`);
+}
+
+export function expectedHumanArtifactFile(stepId) {
+  if (EXPECTED_FILES[stepId]) return EXPECTED_FILES[stepId];
+  if (/^03b-receive-classification-response(?:-.+)?$/.test(stepId)) return "response.json";
+  if (/^07b-receive-keyword-proposal(?:-.+)?$/.test(stepId)) return "candidate_proposal.json";
+  return null;
 }
 
 /**
@@ -53,7 +60,7 @@ export async function completeValidatedHumanArtifact({ runtime, registry, artifa
   const task = state?.tasks?.[taskId];
   const activeExecutionId = task?.currentExecutionId;
   if (!task || task.stepId !== stepId || !activeExecutionId || activeExecutionId !== executionId) throw stateError("STALE_EXECUTION", "artifact does not belong to the active Human Execution");
-  const expectedLogicalPath = EXPECTED_FILES[stepId];
+  const expectedLogicalPath = expectedHumanArtifactFile(stepId);
   if (!expectedLogicalPath) throw stateError("ARTIFACT_INVALID", `unsupported human artifact step ${stepId}`);
   const entries = readdirSync(outputDirectory, { withFileTypes: true });
   if (entries.length !== 1 || entries[0].name !== expectedLogicalPath || !entries[0].isFile()) throw stateError("ARTIFACT_CARDINALITY_INVALID", `output must contain exactly ${expectedLogicalPath}`);

@@ -118,6 +118,17 @@ export class StateControlPlane {
     };
   }
 
+  readAssessment(assessmentId) {
+    const row = this.db.prepare("SELECT * FROM state_assessments WHERE assessment_id = ?").get(assessmentId);
+    return row ? {
+      assessmentId: row.assessment_id,
+      streamId: row.stream_id,
+      inputFingerprint: row.input_fingerprint,
+      payload: parseJson(row.assessment_payload_json, "assessment_payload_json"),
+      createdAt: row.created_at,
+    } : null;
+  }
+
   readDecision(proposalId) {
     const row = this.db.prepare("SELECT * FROM state_decisions WHERE proposal_id = ?").get(proposalId);
     return row ? {
@@ -240,6 +251,7 @@ export class StateControlPlane {
       const actualHead = this.resolveHead(stream.stream_id);
       const actualHeadId = actualHead?.versionId ?? null;
       if (actualHeadId !== currentProposal.expectedHeadVersionId) throw stateError("HEAD_CONFLICT", `proposal expected head ${currentProposal.expectedHeadVersionId ?? "null"} but actual head is ${actualHeadId ?? "null"}`);
+      if (typeof domainHandler?.preflight === "function") domainHandler.preflight({ db, proposal: currentProposal, decision: currentDecision, currentHead: actualHead });
       if (actualHead && actualHead.semanticSha256 === currentProposal.proposedSemanticSha256) {
         if (noOpPolicy === "semantic") return { stateResult: "unchanged", versionId: actualHead.versionId, semanticSha256: actualHead.semanticSha256, transitionId: null, decisionId: currentDecision.decisionId, proposalId };
         if (noOpPolicy !== "semantic-and-dependencies") throw stateError("VALIDATION_ERROR", `unsupported no-op policy ${noOpPolicy}`);

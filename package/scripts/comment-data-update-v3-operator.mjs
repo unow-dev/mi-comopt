@@ -13,6 +13,7 @@ import {
   openV3HumanTask,
   openV3Operator,
   releaseV3HumanTask,
+  startV3ClassificationCorrection,
   startV3Session,
   syncV3DeploymentEvents,
 } from "../src/integration/v3-operator.js";
@@ -193,13 +194,16 @@ function createProductionRecoveryVerificationBuilder() {
   };
 }
 
-const TOP_LEVEL_COMMANDS = new Set(["start", "sessions", "tasks", "human-task", "recovery"]);
+const TOP_LEVEL_COMMANDS = new Set(["start", "sessions", "tasks", "human-task", "recovery", "classification-correction"]);
 const HUMAN_TASK_COMMANDS = new Set(["open", "complete", "release"]);
 
 function usage() {
   return `Usage:
   npm --workspace package run comment-data-update:v3 -- start \\
     --db PATH --workspace PATH --session-id ID --update-request-id ID --actor ACTOR [--pinned-json PATH]
+  npm --workspace package run comment-data-update:v3 -- classification-correction start \\
+    --db PATH --workspace PATH --session-id ID --base-classification-version-id ID \\
+    --observation-id ID --expected-label LABEL --new-label LABEL --reason TEXT --actor OS_USER [--pinned-json PATH]
   npm --workspace package run comment-data-update:v3 -- sessions \\
     --db PATH --workspace PATH
   npm --workspace package run comment-data-update:v3 -- tasks \\
@@ -239,11 +243,12 @@ function parseArgs(argv) {
   const args = { command, subcommand: undefined, help: false };
   let subcommand;
   let rest = afterCommand;
-  if (command === "human-task" || command === "recovery") {
+  if (command === "human-task" || command === "recovery" || command === "classification-correction") {
     [subcommand, ...rest] = afterCommand;
     if (!subcommand || subcommand === "--help" || subcommand === "-h") return { help: true };
     if (command === "human-task" && !HUMAN_TASK_COMMANDS.has(subcommand)) throw new Error(`不明なhuman-task commandです: ${subcommand}`);
     if (command === "recovery" && !new Set(["freeze", "plan", "start", "cancel", "status", "resume", "verify", "complete", "classification", "keyword"]).has(subcommand)) throw new Error(`不明なrecovery commandです: ${subcommand}`);
+    if (command === "classification-correction" && subcommand !== "start") throw new Error(`不明なclassification-correction commandです: ${subcommand}`);
     if (command === "recovery" && ["classification", "keyword"].includes(subcommand)) {
       args.recoveryGroup = subcommand;
       [args.recoverySubcommand, ...rest] = rest;
@@ -258,6 +263,11 @@ function parseArgs(argv) {
     else if (value === "--workspace") args.workspacePath = rest[++index];
     else if (value === "--session-id") args.sessionId = rest[++index];
     else if (value === "--update-request-id") args.updateRequestId = rest[++index];
+    else if (value === "--base-classification-version-id") args.baseClassificationVersionId = rest[++index];
+    else if (value === "--observation-id") args.observationId = rest[++index];
+    else if (value === "--expected-label") args.expectedLabel = rest[++index];
+    else if (value === "--new-label") args.newLabel = rest[++index];
+    else if (value === "--reason") args.reason = rest[++index];
     else if (value === "--actor") args.actorId = rest[++index];
     else if (value === "--task-id") args.taskId = rest[++index];
     else if (value === "--step-id") args.stepId = rest[++index];
@@ -353,6 +363,19 @@ async function main(argv) {
         updateRequestId: requireValue(args, "--update-request-id ID", args.updateRequestId),
         actorId: requireActor(args),
         pinned: await readPinned(args.pinnedPath),
+      });
+    } else if (args.command === "classification-correction") {
+      result = await startV3ClassificationCorrection(operator, {
+        sessionId: requireSession(args),
+        actorId: requireActor(args),
+        pinned: await readPinned(args.pinnedPath),
+        command: {
+          baseClassificationVersionId: requireValue(args, "--base-classification-version-id ID", args.baseClassificationVersionId),
+          observationId: requireValue(args, "--observation-id ID", args.observationId),
+          expectedLabel: requireValue(args, "--expected-label LABEL", args.expectedLabel),
+          newLabel: requireValue(args, "--new-label LABEL", args.newLabel),
+          reason: requireValue(args, "--reason TEXT", args.reason),
+        },
       });
     } else if (args.command === "sessions") {
       result = { sessions: listV3Sessions(operator) };

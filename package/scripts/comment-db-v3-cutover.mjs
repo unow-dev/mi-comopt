@@ -47,7 +47,7 @@ function parseArgs(argv) {
 function usage() {
   return `Usage:
   npm run cutover:v3 -- status --db PATH
-  npm run cutover:v3 -- init --apply --db PATH --target-revision 3 --target-hash SHA256 \\
+  npm run cutover:v3 -- init --apply --db PATH --target-revision 4 --target-hash SHA256 \\
     --mandatory-verification-passed --provider-compatible --v2-hashes-unchanged \\
     --v2-hashes-json JSON --evidence-json PATH
   npm run cutover:v3 -- freeze-v2 --apply --db PATH --new-v2-starts 0

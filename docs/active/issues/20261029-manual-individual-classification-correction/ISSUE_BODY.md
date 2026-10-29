@@ -2,7 +2,7 @@
 
 作成日: 2026-10-29（JST）
 
-状態: 未着手
+状態: 実装済み（production AC-08 pending）
 
 ## 目的
 
@@ -40,3 +40,11 @@
 - [累積分類プラン](../../../../package/src/three-class/cumulative-classification-plan.js)
 - [分類Application Service](../../../../package/src/application/v3/domain-services.js)
 - [v3分類ワークフロー](../../../../package/src/workflow/v3/definitions.js)
+
+## 実装結果
+
+- `classification-correction@1` を追加し、指定Observationと同じ完全一致コメント本文を持つ全survivorを一括で提案する。
+- Classificationのhuman accept時だけ新Versionを作成し、rejectとHead競合では既存Headを維持する。Proposalのcommit preflightでCorpus Head、依存、全件差分、Assessment、semantic hashを再検証する。
+- 現在の累積Classification headは`schema_version:2`のため、訂正後もbaseのState schema versionを保持する。WorkDefinition schema version 2とは区別する。
+- `comment-data-update@3`の定義hashは維持し、安全分岐を実装した`@4`を新設する。
+- production DB/Workspaceへの起動、Promotion、Deploymentは実施していない。AC-08のproduction identity確認はpending。

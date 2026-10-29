@@ -1,0 +1,49 @@
+{
+  "description": "Issue #3 reference targets; not a runnable correction request",
+  "source": "https://github.com/unow-dev/mi-comopt/issues/3",
+  "baseline": {
+    "classificationVersionId": "version_67c4dfa11ecb223a5f41d1c92c67dcb8",
+    "corpusVersionId": "version_9ae43beeb67a924bdd62dc837b50d734",
+    "classificationPolicyVersionId": "policy_9473a17cbcabc21d56e44fc5b8b63c7e"
+  },
+  "canonicalSource": {
+    "relativePath": "docs/active/handoff/response (3).json",
+    "sha256": "ccbca9c459ab7dc564d499e1dd2b8db151819d8d5324b5e76b331998e4c6289b",
+    "worksetId": "809c68f0-7345-44c4-af1c-24a11c9b9018",
+    "receiptRef": "production-comment-data-update-20261028T221851Z-codex/03a-prepare-classification-handoff"
+  },
+  "labelTransition": {"expected": "normal", "replacement": "direct_nuisance"},
+  "groupCount": 25,
+  "observationCount": 29,
+  "targets": [
+    {"handoffItemId": "I204", "representativeObservationId": "45921", "count": 5, "observationIds": ["45921", "46365", "46445", "46935", "47243"], "exactCommentText": "うおwかっかー."},
+    {"handoffItemId": "I205", "representativeObservationId": "45922", "count": 1},
+    {"handoffItemId": "I221", "representativeObservationId": "45945", "count": 1},
+    {"handoffItemId": "I323", "representativeObservationId": "46076", "count": 1},
+    {"handoffItemId": "I349", "representativeObservationId": "46105", "count": 1},
+    {"handoffItemId": "I581", "representativeObservationId": "46432", "count": 1},
+    {"handoffItemId": "I594", "representativeObservationId": "46450", "count": 1},
+    {"handoffItemId": "I629", "representativeObservationId": "46493", "count": 1},
+    {"handoffItemId": "I675", "representativeObservationId": "46555", "count": 1},
+    {"handoffItemId": "I702", "representativeObservationId": "46595", "count": 1},
+    {"handoffItemId": "I712", "representativeObservationId": "46608", "count": 1},
+    {"handoffItemId": "I733", "representativeObservationId": "46633", "count": 1},
+    {"handoffItemId": "I739", "representativeObservationId": "46640", "count": 1},
+    {"handoffItemId": "I745", "representativeObservationId": "46646", "count": 1},
+    {"handoffItemId": "I760", "representativeObservationId": "46662", "count": 1},
+    {"handoffItemId": "I770", "representativeObservationId": "46672", "count": 1},
+    {"handoffItemId": "I771", "representativeObservationId": "46673", "count": 1},
+    {"handoffItemId": "I959", "representativeObservationId": "46937", "count": 1},
+    {"handoffItemId": "I1041", "representativeObservationId": "47029", "count": 1},
+    {"handoffItemId": "I1206", "representativeObservationId": "47214", "count": 1},
+    {"handoffItemId": "I1222", "representativeObservationId": "47231", "count": 1},
+    {"handoffItemId": "I1252", "representativeObservationId": "47271", "count": 1},
+    {"handoffItemId": "I1433", "representativeObservationId": "47514", "count": 1},
+    {"handoffItemId": "I1438", "representativeObservationId": "47523", "count": 1},
+    {"handoffItemId": "I1454", "representativeObservationId": "47575", "count": 1}
+  ],
+  "baselineDistribution": {"normal": 41456, "direct_nuisance": 1217, "reactive": 1746},
+  "expectedDistribution": {"normal": 41427, "direct_nuisance": 1246, "reactive": 1746},
+  "expectedTotal": 44419,
+  "important": "These are issue-time reference observations. Revalidate source SHA, handoff receipt, heads and labels before using. No reason or requester was invented."
+}

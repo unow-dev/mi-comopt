@@ -42,7 +42,7 @@ async function localFixture(sessionId = "v3-e2e-session", updateRequestId = "upd
   const db = await openCommentDatabase(":memory:", { stateControlPlane: true });
   const controlPlane = new StateControlPlane(db);
   seedV3State(controlPlane);
-  const environment = createV3LocalRuntime({ controlPlane, registry: workspace.registry, artifactStore: workspace.artifactStore, workspace, keywordHandoffBuilder: testKeywordHandoffBuilder });
+  const environment = createV3LocalRuntime({ controlPlane, registry: workspace.registry, artifactStore: workspace.artifactStore, workspace, keywordHandoffBuilder: testKeywordHandoffBuilder, revision: 3 });
   const input = prepareV3SessionInput({
     controlPlane,
     input: {
@@ -60,7 +60,7 @@ async function localFixture(sessionId = "v3-e2e-session", updateRequestId = "upd
       target: { promotionStream: "production", deploymentTarget: "production" },
     },
   });
-  await startCommentDataUpdateV3({ runtime: environment.runtime, controlPlane, sessionId, input });
+  await startCommentDataUpdateV3({ runtime: environment.runtime, controlPlane, sessionId, input, revision: 3 });
   return { ...environment, controlPlane, db, root, workspace, sessionId };
 }
 
@@ -416,10 +416,10 @@ test("[V3-E2E01] Temporal runtime facade registers the same v3 definition and fo
       },
     });
     await startCommentDataUpdateV3({ runtime: environment.runtime, controlPlane, sessionId: "v3-temporal-facade", input });
-    assert.equal(environment.revision, 3);
-    assert.equal(environment.definition.definitionHash, "9598f503ba9a8e8753e0b1d9d1e4af2f1a80a4d10b718aba5ab250840438a726");
+    assert.equal(environment.revision, 4);
+    assert.equal(environment.definition.definitionHash, "b6e7d6bc04025ea54b4cbe2e8ff221e98f7b9d9a026950e79126915f3c09d1f4");
     assert.equal(calls.length, 1);
-    assert.equal(calls[0].revision, 3);
+    assert.equal(calls[0].revision, 4);
     assert.deepEqual(calls[0].input, input);
     assert.equal(typeof environment.activities.commitCommand, "function");
   } finally {

@@ -136,7 +136,7 @@ async function temporalHarness({ environment = undefined, taskQueue = "comment-d
   const registry = new Registry(path.join(root, "registry.sqlite"));
   const artifactStore = new ArtifactStore(path.join(root, "artifacts"));
   const ownedEnvironment = environment ?? await TestWorkflowEnvironment.createLocal();
-  const runtime = createV3TemporalRuntime({ controlPlane, registry, artifactStore, keywordHandoffBuilder: testKeywordHandoffBuilder });
+  const runtime = createV3TemporalRuntime({ controlPlane, registry, artifactStore, revision: 3, keywordHandoffBuilder: testKeywordHandoffBuilder });
   const worker = await Worker.create({
     connection: ownedEnvironment.nativeConnection,
     taskQueue,

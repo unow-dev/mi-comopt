@@ -8,16 +8,18 @@ import {
 import { PERMISSIONS } from "../application/services.js";
 import {
   buildCommentDataUpdateDefinitionV3,
+  registerClassificationCorrectionDefinitionV3,
   registerCommentDataUpdateDefinitionV3,
   resolveTargetRevision,
+  V3_REVISION,
 } from "../workflow/v3/definitions.js";
-import { resolvePinnedSessionInputV3, validateCommentDataUpdateSessionInputV3 } from "../workflow/v3/session-input.js";
+import { resolveCorrectionSessionInput, resolvePinnedSessionInputV3, validateClassificationCorrectionSessionInputV3, validateCommentDataUpdateSessionInputV3 } from "../workflow/v3/session-input.js";
 import { createV3ApplicationServiceAgentAdapter, V3_SERVICE_CAPABILITIES } from "./task-handlers-v3.js";
 import { MemoryDeploymentAdapter } from "../deployment/adapter.js";
 import { MemoryReleaseArtifactStore } from "../release/artifact-store.js";
 import { stateError } from "../state/errors.js";
 import { canonicalJson } from "../state/canonical.js";
-import { assertV3CorpusPreflight, assertV3StartAllowed } from "../migration/v3-cutover.js";
+import { assertV3CorpusPreflight, assertV3FeatureStartAllowed, assertV3StartAllowed } from "../migration/v3-cutover.js";
 
 /** Bridge the provider content-addressed store to the consumer's artifact
  * version writer used by v3 handoff services. Business Release artifacts do
@@ -60,6 +62,7 @@ export function registerV3Definition({ registry, revision = undefined } = {}) {
 export function createV3LocalRuntime({ controlPlane, registry = new Registry(), artifactStore = ArtifactStore.temporary(), workspace = undefined, deploymentAdapter = new MemoryDeploymentAdapter(), releaseArtifactStore = new MemoryReleaseArtifactStore(), artifactBuilder = undefined, classificationWorksetBuilder = undefined, keywordHandoffBuilder = undefined, revision = undefined, worker = undefined } = {}) {
   if (!controlPlane) throw stateError("CONFIGURATION_ERROR", "controlPlane is required");
   const { definition, revision: targetRevision } = registerV3Definition({ registry, revision });
+  const correctionDefinition = registerClassificationCorrectionDefinitionV3({ registry, publicApi: { validateAndHashDefinition }, revision: 1 });
   const artifactVersionStore = createV3ArtifactVersionStore(artifactStore);
   const agentAdapter = createV3ApplicationServiceAgentAdapter({
     controlPlane,
@@ -77,7 +80,7 @@ export function createV3LocalRuntime({ controlPlane, registry = new Registry(), 
     agentAdapter,
     workers: [worker ?? v3ApplicationWorkerProfile()],
   });
-  return { runtime, registry, artifactStore, workspace, releaseArtifactStore, agentAdapter, definition, revision: targetRevision };
+  return { runtime, registry, artifactStore, workspace, releaseArtifactStore, agentAdapter, definition, correctionDefinition, revision: targetRevision };
 }
 
 /** Build the same v3 application adapter for a Temporal Worker. The provider
@@ -86,6 +89,7 @@ export function createV3LocalRuntime({ controlPlane, registry = new Registry(), 
 export function createV3TemporalRuntime({ controlPlane, registry, artifactStore, client = undefined, deploymentAdapter = new MemoryDeploymentAdapter(), releaseArtifactStore = new MemoryReleaseArtifactStore(), artifactBuilder = undefined, classificationWorksetBuilder = undefined, keywordHandoffBuilder = undefined, revision = undefined, worker = undefined } = {}) {
   if (!controlPlane || !registry || !artifactStore) throw stateError("CONFIGURATION_ERROR", "controlPlane, Registry and ArtifactStore are required");
   const { definition, revision: targetRevision } = registerV3Definition({ registry, revision });
+  const correctionDefinition = registerClassificationCorrectionDefinitionV3({ registry, publicApi: { validateAndHashDefinition }, revision: 1 });
   const artifactVersionStore = createV3ArtifactVersionStore(artifactStore);
   const agentAdapter = createV3ApplicationServiceAgentAdapter({
     controlPlane,
@@ -101,7 +105,7 @@ export function createV3TemporalRuntime({ controlPlane, registry, artifactStore,
   const runtime = client && typeof client.start === "function"
     ? { registry, start: (input) => client.start(input) }
     : undefined;
-  return { runtime, client, activities, agentAdapter, workers, registry, artifactStore, releaseArtifactStore, definition, revision: targetRevision };
+  return { runtime, client, activities, agentAdapter, workers, registry, artifactStore, releaseArtifactStore, definition, correctionDefinition, revision: targetRevision };
 }
 
 export function prepareV3SessionInput({ controlPlane, input } = {}) {
@@ -131,6 +135,27 @@ export async function startCommentDataUpdateV3({ runtime, controlPlane, sessionI
   throw stateError("CONFIGURATION_ERROR", "runtime does not support local or Temporal session start");
 }
 
-export function buildV3DefinitionForRuntime({ revision = 3 } = {}) {
+export async function startClassificationCorrectionV3({ runtime, controlPlane, sessionId, command, authenticatedActor, pinned = {}, revision = 1, commandId = undefined } = {}) {
+  if (!runtime || !controlPlane || typeof sessionId !== "string" || sessionId.length === 0) throw stateError("CONFIGURATION_ERROR", "runtime, controlPlane and sessionId are required");
+  if (revision !== 1) throw stateError("DEFINITION_REVISION_INVALID", "classification-correction currently supports revision 1 only");
+  if (!authenticatedActor || authenticatedActor.actorType !== "human" || typeof authenticatedActor.actorId !== "string" || authenticatedActor.actorId.trim().length === 0) throw stateError("UNAUTHORIZED_ACTOR", "authenticated human actor is required");
+  const input = resolveCorrectionSessionInput(controlPlane, { command, requestedBy: authenticatedActor, pinned, target: { promotionStream: "production", deploymentTarget: "production" } });
+  validateClassificationCorrectionSessionInputV3(input);
+  assertV3CorpusPreflight(controlPlane);
+  assertV3FeatureStartAllowed(controlPlane);
+  const startInput = {
+    sessionId,
+    workDefinitionId: "classification-correction",
+    revision,
+    input,
+    actor: { actorId: authenticatedActor.actorId, actorType: "human" },
+    ...(commandId ? { commandId } : {}),
+  };
+  if (typeof runtime.startSession === "function") return runtime.startSession(startInput);
+  if (typeof runtime.start === "function") return runtime.start(startInput);
+  throw stateError("CONFIGURATION_ERROR", "runtime does not support local or Temporal session start");
+}
+
+export function buildV3DefinitionForRuntime({ revision = V3_REVISION } = {}) {
   return buildCommentDataUpdateDefinitionV3({ revision });
 }

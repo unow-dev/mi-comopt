@@ -1,0 +1,83 @@
+{
+  "handoffId": "mi-comopt-issue3-batch-correction",
+  "createdAtJst": "2026-10-30",
+  "status": "design-handoff",
+  "sourceIssue": "https://github.com/unow-dev/mi-comopt/issues/3",
+  "sourceBranch": "main",
+  "containsImplementation": false,
+  "referencesCheckedBy": "GitHub connector",
+  "testResults": {
+    "typescriptStrictTypecheck": "pass",
+    "taskIdUniqueness": "pass",
+    "fixtureTargetCounts": "pass",
+    "zipIntegrity": "pass"
+  },
+  "fileCount": 13,
+  "files": [
+    {
+      "path": "01_SCOPE_AND_RULES.md",
+      "sizeBytes": 4546,
+      "sha256": "31de4db49aecd65ccb3cac8fd47f1b3fbf9a15b7164bbe9d99e6e43d44a5ccfb"
+    },
+    {
+      "path": "02_WORKFLOW_AND_BINDINGS.md",
+      "sizeBytes": 6944,
+      "sha256": "06fddf2624efee5d2f45c552bbe88b56d5f0bfaedfac0b84305309bee4743b32"
+    },
+    {
+      "path": "03_FUNCTION_PORTS.md",
+      "sizeBytes": 7839,
+      "sha256": "7240adcb3fbb96a2b1934ae0f0e3f4941802db9e47060761f8ba1aa3d4b46227"
+    },
+    {
+      "path": "04_IMPLEMENTATION_SEQUENCE.md",
+      "sizeBytes": 4989,
+      "sha256": "5a3258f18da2aa108d64991b352697c7910ee8fe5bc1b35facc28dc81e86ba14"
+    },
+    {
+      "path": "05_ACCEPTANCE_TESTS.md",
+      "sizeBytes": 4346,
+      "sha256": "4bb1f1753e4d5dfb1231b83b9ff6c82922500b85944597a93cd6a5c507b8e800"
+    },
+    {
+      "path": "06_CODEBASE_GAPS.md",
+      "sizeBytes": 6950,
+      "sha256": "6e6a2a4dc575a53543918e07ad6ad1d06c7a7aa9c88ec82c8a8505b94a3895af"
+    },
+    {
+      "path": "07_DECISIONS_AND_BOUNDARIES.md",
+      "sizeBytes": 3302,
+      "sha256": "3bbe3c2b7e9d21264ac9e0a509d1420bfcb9a29703b4c6f8300e55e3bdcb328e"
+    },
+    {
+      "path": "README.md",
+      "sizeBytes": 4159,
+      "sha256": "52e55c9f74a75e038f9885c7bcefc586a5e54496f9bfd2b18131fccd17749d7f"
+    },
+    {
+      "path": "contracts/task-binding-map.json",
+      "sizeBytes": 9587,
+      "sha256": "e39223b04b1a9aa2a491c5a3a1997b5c1c850d99e8b7ff6d61cb75b5c595153a"
+    },
+    {
+      "path": "fixtures/issue3-targets.json",
+      "sizeBytes": 3434,
+      "sha256": "ee1b546ba3ec552b9f2adfc9099400cf19f16897c971a081d835bdc29afe0737"
+    },
+    {
+      "path": "reference/classification-correction-v2.lower-types.ts",
+      "sizeBytes": 14137,
+      "sha256": "be345f7fd508f419d8e2f64ea023f0766b579050959452ccf6f01720b18df24c"
+    },
+    {
+      "path": "reference/classification-correction-v2.task-types.ts",
+      "sizeBytes": 16240,
+      "sha256": "45c08d31743a915fc9d7f717f69417ddc057d5a21b97cb50f20bcc755499eb41"
+    },
+    {
+      "path": "reference/tsconfig.json",
+      "sizeBytes": 342,
+      "sha256": "c7ec15ff9fb3efa2e74774b0a25d867018158163ee892d7d55cfde3e43d4a385"
+    }
+  ]
+}

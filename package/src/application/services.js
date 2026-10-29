@@ -181,8 +181,11 @@ function assertDependencyRoles(db, proposal, allowedRoles, expectedPolicyKind = 
 export function typedClassificationHandler() {
   return {
     validate({ db, proposal }) { const state = normalizeLabels(proposal.payload.state); if (semanticSha256(state) !== proposal.proposedSemanticSha256) throw stateError("SEMANTIC_FINGERPRINT_MISMATCH", "classification semantic fingerprint is invalid"); assertDependencyRoles(db, proposal, ["corpus", "policy"], "classification"); },
-    persist({ db, versionId, proposal }) {
-      const state = normalizeLabels(proposal.payload.state);
+    persist({ db, versionId, proposal, payload }) {
+      // Genesis migrations pass a normalized payload, while committed
+      // proposals pass the immutable proposal record. Support both so a
+      // typed Classification Version is indexed consistently at creation.
+      const state = normalizeLabels((proposal?.payload ?? payload)?.state);
       db.prepare("INSERT INTO classification_states (version_id, state_json) VALUES (?, ?)").run(versionId, canonicalJson(state));
       const insert = db.prepare("INSERT INTO classification_state_labels (version_id, observation_id, label) VALUES (?, ?, ?)");
       for (const item of state.labels) insert.run(versionId, item.observationId, item.label);
@@ -205,8 +208,8 @@ export function typedKeywordHandler() {
 export function typedCorpusHandler() {
   return {
     validate({ proposal }) { const state = asState(proposal.payload.state, "corpus state"); if (semanticSha256(state) !== proposal.proposedSemanticSha256) throw stateError("SEMANTIC_FINGERPRINT_MISMATCH", "corpus semantic fingerprint is invalid"); },
-    persist({ db, versionId, proposal }) {
-      const state = asState(proposal.payload.state, "corpus state");
+    persist({ db, versionId, proposal, payload }) {
+      const state = asState((proposal?.payload ?? payload)?.state, "corpus state");
       db.prepare("INSERT INTO corpus_states (version_id, state_json) VALUES (?, ?)").run(versionId, canonicalJson(state));
       for (const snapshotRef of state.snapshot_refs ?? state.snapshotRefs ?? []) {
         const serialized = typeof snapshotRef === "string" ? snapshotRef : canonicalJson(snapshotRef);

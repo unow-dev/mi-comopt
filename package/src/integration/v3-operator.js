@@ -1,8 +1,9 @@
 import path from "node:path";
+import os from "node:os";
 import { existsSync } from "node:fs";
 import { executionWorkspace, openWorkspace } from "work-orchestrator";
-import { completeValidatedHumanArtifact, EXPECTED_FILES } from "./human-artifact-completion-v3.js";
-import { createV3LocalRuntime, prepareV3SessionInput, startCommentDataUpdateV3 } from "./v3-runtime.js";
+import { completeValidatedHumanArtifact, EXPECTED_FILES, expectedHumanArtifactFile } from "./human-artifact-completion-v3.js";
+import { createV3LocalRuntime, prepareV3SessionInput, startClassificationCorrectionV3 as startCorrectionRuntime, startCommentDataUpdateV3 } from "./v3-runtime.js";
 import { GitHubPagesDeploymentAdapter } from "../deployment/github-pages-adapter.js";
 import { FileReleaseArtifactStore } from "../release/artifact-store.js";
 import { openCommentDatabase } from "../database/comment-database.js";
@@ -14,9 +15,11 @@ import {
   createDbBackedUiReleaseArtifactBuilder,
   DEFAULT_UI_PUBLICATION_ROOT,
 } from "./v3-ui-release-builder.js";
+import { readCorrectionReviewSummary } from "../application/v3/correction-service.js";
+import { TARGET_REVISION_START, V3_REVISION } from "../workflow/v3/definitions.js";
 
 const WORK_DEFINITION_ID = "comment-data-update";
-const V3_REVISION = 3;
+const CORRECTION_WORK_DEFINITION_ID = "classification-correction";
 
 function requiredString(value, name) {
   if (typeof value !== "string" || value.length === 0) throw stateError("VALIDATION_ERROR", `${name} must be a non-empty string`);
@@ -25,6 +28,27 @@ function requiredString(value, name) {
 
 function actorRef(actorId) {
   return { actorId: requiredString(actorId, "actorId"), actorType: "human" };
+}
+
+function osAuthenticatedActor(actorId) {
+  const authenticatedId = os.userInfo().username;
+  if (typeof authenticatedId !== "string" || authenticatedId.length === 0 || actorId !== authenticatedId) {
+    throw stateError("UNAUTHENTICATED_ACTOR", "actorId must match the authenticated operating-system user for classification corrections");
+  }
+  return actorRef(authenticatedId);
+}
+
+function trustedActor(operator, actorId) {
+  const actor = operator.authenticateHumanActor(actorId);
+  if (!actor || actor.actorType !== "human" || typeof actor.actorId !== "string" || actor.actorId.length === 0 || actor.actorId !== actorId) {
+    throw stateError("UNAUTHENTICATED_ACTOR", "configured authenticator did not confirm the requested human actor");
+  }
+  return { actorType: "human", actorId: actor.actorId };
+}
+
+function isSupportedV3Session(workDefinitionId, revision) {
+  return (workDefinitionId === WORK_DEFINITION_ID && Number(revision) >= TARGET_REVISION_START)
+    || (workDefinitionId === CORRECTION_WORK_DEFINITION_ID && Number(revision) === 1);
 }
 
 function resolveTask(state, { taskId = undefined, stepId = undefined } = {}) {
@@ -38,7 +62,7 @@ function resolveTask(state, { taskId = undefined, stepId = undefined } = {}) {
   return matches[0];
 }
 
-function taskSummary(task, state = undefined) {
+function taskSummary(task, state = undefined, controlPlane = undefined) {
   const summary = {
     taskId: task.taskId,
     stepId: task.stepId,
@@ -49,7 +73,7 @@ function taskSummary(task, state = undefined) {
   };
   if (task.claimantActorId) summary.claimantActorId = task.claimantActorId;
   if (task.currentExecutionId) summary.executionId = task.currentExecutionId;
-  const expectedFile = EXPECTED_FILES[task.stepId];
+  const expectedFile = expectedHumanArtifactFile(task.stepId);
   if (expectedFile) summary.expectedFile = expectedFile;
   if (task.stepId === "03b-receive-classification-response") {
     const worksetId = state?.resultsByStepId?.["03a-prepare-classification-handoff"]?.refs?.worksetId;
@@ -64,8 +88,11 @@ function taskSummary(task, state = undefined) {
       };
     }
   }
-  if (["05-review-classification", "09-review-keyword-selection", "13-review-production-promotion"].includes(task.stepId) && task.inputs && typeof task.inputs === "object") {
+  if ((["05-review-classification", "09-review-keyword-selection"].includes(task.stepId) || task.stepId.startsWith("13-review-production-promotion")) && task.inputs && typeof task.inputs === "object") {
     summary.reviewContext = task.inputs;
+    if (state?.session?.workDefinitionId === CORRECTION_WORK_DEFINITION_ID && task.stepId === "05-review-classification") {
+      summary.correctionReview = readCorrectionReviewSummary(controlPlane, { proposalId: task.inputs.proposal, assessmentId: task.inputs.assessment });
+    }
   }
   return summary;
 }
@@ -99,7 +126,7 @@ function rehydrateReleaseArtifacts(controlPlane, releaseArtifactStore) {
  * the v3 application-service adapter, while the provider Registry and
  * ArtifactStore remain the workflow authorities.
  */
-export async function openV3Operator({ dbPath, workspacePath, deploymentAdapter = undefined, classificationWorksetBuilder = undefined, keywordHandoffBuilder = undefined, artifactBuilder = undefined, dbBackedUiRelease = false, publicationRoot = process.env.COMMENT_DATA_UPDATE_KEYWORD_PUBLICATION_ROOT ?? DEFAULT_UI_PUBLICATION_ROOT } = {}) {
+export async function openV3Operator({ dbPath, workspacePath, deploymentAdapter = undefined, classificationWorksetBuilder = undefined, keywordHandoffBuilder = undefined, artifactBuilder = undefined, dbBackedUiRelease = false, authenticateHumanActor = osAuthenticatedActor, revision = V3_REVISION, publicationRoot = process.env.COMMENT_DATA_UPDATE_KEYWORD_PUBLICATION_ROOT ?? DEFAULT_UI_PUBLICATION_ROOT } = {}) {
   requiredString(dbPath, "dbPath");
   requiredString(workspacePath, "workspacePath");
   if (dbPath !== ":memory:" && !existsSync(path.resolve(dbPath))) throw stateError("AUTHORITY_NOT_FOUND", `production authority DB does not exist: ${dbPath}`);
@@ -127,12 +154,14 @@ export async function openV3Operator({ dbPath, workspacePath, deploymentAdapter 
       artifactBuilder: resolvedArtifactBuilder,
       classificationWorksetBuilder,
       keywordHandoffBuilder,
-      revision: V3_REVISION,
+      revision,
     });
     let closed = false;
     return {
       ...environment,
+      revision,
       deploymentAdapter: resolvedDeploymentAdapter,
+      authenticateHumanActor,
       controlPlane,
       workspace,
       close() {
@@ -153,7 +182,7 @@ export async function openV3Operator({ dbPath, workspacePath, deploymentAdapter 
 export function listV3Sessions(operator) {
   const { workspace } = operator;
   return workspace.registry.listSessions(200)
-    .filter((session) => session.work_definition_id === WORK_DEFINITION_ID && Number(session.definition_revision) >= V3_REVISION)
+    .filter((session) => isSupportedV3Session(session.work_definition_id, session.definition_revision))
     .map((session) => {
       const state = workspace.registry.getRuntimeState(session.session_id);
       const tasks = Object.values(state?.tasks ?? {});
@@ -162,7 +191,7 @@ export function listV3Sessions(operator) {
         revision: Number(session.definition_revision),
         state: state?.session?.state ?? session.state,
         runtimeRevision: state?.revision ?? Number(session.revision),
-        actionableHumanTasks: tasks.filter((task) => task.workerKind === "human" && ["ready", "active"].includes(task.state)).map((task) => taskSummary(task, state)),
+        actionableHumanTasks: tasks.filter((task) => task.workerKind === "human" && ["ready", "active"].includes(task.state)).map((task) => taskSummary(task, state, operator.controlPlane)),
       };
     });
 }
@@ -203,7 +232,7 @@ export async function syncV3DeploymentEvents(operator) {
 export function getV3Session(operator, sessionId) {
   requiredString(sessionId, "sessionId");
   const state = operator.runtime.state(sessionId);
-  if (!state || state.session?.workDefinitionId !== WORK_DEFINITION_ID || Number(state.session?.definitionRevision) < V3_REVISION) {
+  if (!state || !isSupportedV3Session(state.session?.workDefinitionId, state.session?.definitionRevision)) {
     throw stateError("SESSION_NOT_FOUND", `v3 Session was not found: ${sessionId}`);
   }
   return state;
@@ -213,7 +242,7 @@ export function listV3HumanTasks(operator, sessionId) {
   const state = getV3Session(operator, sessionId);
   return Object.values(state.tasks)
     .filter((task) => task.workerKind === "human")
-    .map((task) => taskSummary(task, state));
+    .map((task) => taskSummary(task, state, operator.controlPlane));
 }
 
 export async function startV3Session(operator, { sessionId, updateRequestId, actorId, pinned = {} } = {}) {
@@ -234,33 +263,48 @@ export async function startV3Session(operator, { sessionId, updateRequestId, act
     sessionId,
     input,
     actor: actorRef(actorId),
-    revision: V3_REVISION,
+    revision: operator.revision ?? V3_REVISION,
   });
-  return { ...response, sessionId, revision: V3_REVISION, input };
+  return { ...response, sessionId, revision: operator.revision ?? V3_REVISION, input };
+}
+
+export async function startV3ClassificationCorrection(operator, { sessionId, command, actorId, pinned = {} } = {}) {
+  requiredString(sessionId, "sessionId");
+  const actor = trustedActor(operator, actorId);
+  const response = await startCorrectionRuntime({
+    runtime: operator.runtime,
+    controlPlane: operator.controlPlane,
+    sessionId,
+    command,
+    authenticatedActor: actor,
+    pinned,
+    revision: 1,
+  });
+  return { ...response, sessionId, workDefinitionId: CORRECTION_WORK_DEFINITION_ID, revision: 1 };
 }
 
 export async function openV3HumanTask(operator, { sessionId, taskId, stepId, actorId } = {}) {
-  const actor = actorRef(actorId);
   const state = getV3Session(operator, sessionId);
+  const actor = state.session.workDefinitionId === CORRECTION_WORK_DEFINITION_ID ? trustedActor(operator, actorId) : actorRef(actorId);
   const task = resolveTask(state, { taskId, stepId });
   const workspace = await operator.runtime.openHumanTaskWorkspace(sessionId, task.taskId, actor);
   return {
     sessionId,
-    task: taskSummary(operator.runtime.state(sessionId).tasks[task.taskId], operator.runtime.state(sessionId)),
+    task: taskSummary(operator.runtime.state(sessionId).tasks[task.taskId], operator.runtime.state(sessionId), operator.controlPlane),
     executionId: workspace.executionId,
     outputPath: workspace.outputPath,
-    expectedFile: EXPECTED_FILES[task.stepId] ?? null,
+    expectedFile: expectedHumanArtifactFile(task.stepId),
   };
 }
 
 export async function completeV3HumanTask(operator, { sessionId, taskId, stepId, actorId, outcome, rationale } = {}) {
-  const actor = actorRef(actorId);
   const state = getV3Session(operator, sessionId);
+  const actor = state.session.workDefinitionId === CORRECTION_WORK_DEFINITION_ID ? trustedActor(operator, actorId) : actorRef(actorId);
   const task = resolveTask(state, { taskId, stepId });
   if (task.state !== "active" || task.claimantActorId !== actor.actorId || !task.currentExecutionId) {
     throw stateError("NOT_CLAIM_OWNER", "Human Task must be opened by the same actor before completion");
   }
-  if (EXPECTED_FILES[task.stepId]) {
+  if (expectedHumanArtifactFile(task.stepId)) {
     const execution = state.executions[task.currentExecutionId];
     if (!execution) throw stateError("EXECUTION_NOT_FOUND", `Human Execution was not found: ${task.currentExecutionId}`);
     const executionWorkspace = executionWorkspaceFor(operator, sessionId, execution.executionId);
@@ -296,8 +340,8 @@ function executionWorkspaceFor(operator, sessionId, executionId) {
 }
 
 export async function releaseV3HumanTask(operator, { sessionId, taskId, stepId, actorId } = {}) {
-  const actor = actorRef(actorId);
   const state = getV3Session(operator, sessionId);
+  const actor = state.session.workDefinitionId === CORRECTION_WORK_DEFINITION_ID ? trustedActor(operator, actorId) : actorRef(actorId);
   const task = resolveTask(state, { taskId, stepId });
   const response = await operator.runtime.releaseTask(sessionId, task.taskId, actor, `release-human:${task.taskId}:${actor.actorId}`);
   return { response, sessionId, taskId: task.taskId, stepId: task.stepId };

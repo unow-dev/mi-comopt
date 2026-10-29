@@ -104,7 +104,8 @@ export function readClassificationVersionLabels(db, versionId) {
         labels.label
      FROM classification_state_labels AS labels
      LEFT JOIN snapshot_comment_observations AS sco
-       ON CAST(sco.observation_id AS TEXT) = labels.observation_id
+       ON sco.observation_id = CAST(labels.observation_id AS INTEGER)
+      AND CAST(sco.observation_id AS TEXT) = labels.observation_id
      WHERE labels.version_id = ?
      ORDER BY CAST(labels.observation_id AS INTEGER), labels.observation_id`,
   ).all(versionId).map((row) => ({

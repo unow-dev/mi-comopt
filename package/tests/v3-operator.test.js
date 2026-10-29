@@ -43,7 +43,7 @@ async function fixture() {
     [STREAM_KEYS.deploymentPolicy, "deployment-policy-0", "deployment-production"],
   ]) seed(controlPlane, stream, versionId, { policy_kind: policyKind, auto_commit: true });
   controlPlane.close();
-  return { root, dbPath, workspacePath, keywordHandoffBuilder: testKeywordHandoffBuilder };
+  return { root, dbPath, workspacePath, revision: 3, keywordHandoffBuilder: testKeywordHandoffBuilder };
 }
 
 async function submitArtifact(operator, sessionId, stepId, value, actorId) {

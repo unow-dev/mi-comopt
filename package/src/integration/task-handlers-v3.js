@@ -5,6 +5,7 @@ import {
   CorpusApplicationServiceV3,
   ClassificationHandoffService,
   ClassificationApplicationServiceV3,
+  ClassificationCorrectionServiceV3,
   KeywordHandoffService,
   KeywordSelectionApplicationServiceV3,
   ReleaseApplicationServiceV3,
@@ -43,6 +44,16 @@ function parseJsonArtifact(artifactStore, value) {
 
 function enrichHumanInputs(capability, inputs, artifactStore) {
   const enriched = { ...inputs };
+  if (["classification.finalize", "keyword-selection.finalize", "promotion.finalize"].includes(capability)) {
+    const completion = inputs.review;
+    if (completion && typeof completion === "object") {
+      const actor = completion.actor;
+      const rationale = completion.result?.rationale;
+      if (["accept", "reject"].includes(completion.outcome) && actor?.actorType === "human" && typeof actor.actorId === "string" && actor.actorId.length > 0 && typeof rationale === "string" && rationale.trim().length > 0) {
+        enriched.review = { outcome: completion.outcome, actor: { actorType: "human", actorId: actor.actorId }, rationale, trustedTaskCompletion: true };
+      }
+    }
+  }
   if (capability === "evidence.ingest") {
     const artifact = submittedArtifact(inputs.inputArtifact);
     const payload = parseJsonArtifact(artifactStore, inputs.inputArtifact);
@@ -90,7 +101,7 @@ function attachProducedArtifacts(result, artifacts, workspace) {
 }
 
 export const V3_SERVICE_CAPABILITIES = Object.freeze([
-  "evidence.ingest", "corpus.update", "classification.handoff.prepare", "classification.assess", "classification.finalize",
+  "evidence.ingest", "corpus.update", "classification.handoff.prepare", "classification.assess", "classification.correction.propose", "classification.finalize",
   "keyword-selection.handoff.prepare", "keyword-selection.assess", "keyword-selection.finalize", "release.build", "release.materialize",
   "promotion.propose", "promotion.finalize", "deployment.trigger", "deployment.verify", "deployment.record",
 ]);
@@ -116,6 +127,7 @@ export function createV3ApplicationServiceTaskHandlers({ controlPlane, deploymen
   const corpus = new CorpusApplicationServiceV3(controlPlane);
   const classificationHandoff = new ClassificationHandoffService(controlPlane, artifactStore, { worksetBuilder: classificationWorksetBuilder });
   const classification = new ClassificationApplicationServiceV3(controlPlane);
+  const correction = new ClassificationCorrectionServiceV3(controlPlane);
   const keywordHandoff = new KeywordHandoffService(controlPlane, artifactStore, { handoffBuilder: keywordHandoffBuilder });
   const keyword = new KeywordSelectionApplicationServiceV3(controlPlane);
   const release = new ReleaseApplicationServiceV3(controlPlane, { artifactStore: releaseArtifactStore, artifactBuilder });
@@ -126,6 +138,7 @@ export function createV3ApplicationServiceTaskHandlers({ controlPlane, deploymen
     "corpus.update": (ctx, input) => corpus.update(ctx, input),
     "classification.handoff.prepare": (ctx, input) => classificationHandoff.prepare(ctx, input),
     "classification.assess": (ctx, input) => classification.assess(ctx, input),
+    "classification.correction.propose": (ctx, input) => correction.propose(ctx, input),
     "classification.finalize": (ctx, input) => classification.finalize(ctx, input),
     "keyword-selection.handoff.prepare": (ctx, input) => keywordHandoff.prepare(ctx, input),
     "keyword-selection.assess": (ctx, input) => keyword.assess(ctx, input),
@@ -140,7 +153,7 @@ export function createV3ApplicationServiceTaskHandlers({ controlPlane, deploymen
     handlers["deployment.verify"] = (ctx, input) => deployment.verify(ctx, input);
     handlers["deployment.record"] = (ctx, input) => deployment.record(ctx, input);
   }
-  return { handlers, services: { evidence, corpus, classificationHandoff, classification, keywordHandoff, keyword, release, promotion, deployment } };
+  return { handlers, services: { evidence, corpus, classificationHandoff, classification, correction, keywordHandoff, keyword, release, promotion, deployment } };
 }
 
 export class ApplicationServiceAgentAdapterV3 {

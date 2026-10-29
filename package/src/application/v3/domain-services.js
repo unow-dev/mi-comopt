@@ -30,6 +30,7 @@ import {
 } from "../../three-class/cumulative-classification-plan.js";
 import { v3StepResult } from "./result.js";
 import { runV3Idempotent } from "./context.js";
+import { classificationCorrectionCommitPreflight, CORRECTION_KIND } from "./correction-service.js";
 
 function requireContext(context, permissions = []) {
   if (!context || typeof context !== "object" || typeof context.operationId !== "string") throw stateError("VALIDATION_ERROR", "v3 OperationContext is required");
@@ -449,7 +450,7 @@ function stateFromResponse(request, prior, normalize) {
 
 class ReviewableV3Service {
   constructor(controlPlane, { domain, streamKey, policyKind, resultRef, stepId, normalizer, handler, dependencyRoles }) {
-    this.controlPlane = controlPlane; this.streamKey = streamKey; this.policyKind = policyKind; this.resultRef = resultRef; this.stepId = stepId; this.normalizer = normalizer; this.handler = handler; this.dependencyRoles = dependencyRoles;
+    this.controlPlane = controlPlane; this.domain = domain; this.streamKey = streamKey; this.policyKind = policyKind; this.resultRef = resultRef; this.stepId = stepId; this.normalizer = normalizer; this.handler = handler; this.dependencyRoles = dependencyRoles;
   }
 
   assess(ctx, request = {}) {
@@ -508,9 +509,19 @@ class ReviewableV3Service {
   finalize(ctx, request = {}) {
     requireContext(ctx, ["state:read", "state:commit"]);
     const run = () => {
+      const correctionSession = this.resultRef === "classification" && ctx.workDefinitionId === "classification-correction";
+      if (correctionSession) {
+        if (Object.hasOwn(request, "assessed")) throw stateError("CORRECTION_REVIEW_REQUIRED", "classification correction cannot use the assessed/reused shortcut");
+        if (typeof request.proposalId !== "string" || request.proposalId.length === 0) throw stateError("CORRECTION_REVIEW_REQUIRED", "classification correction requires a Proposal ID");
+        const review = request.review;
+        if (review?.trustedTaskCompletion !== true || !review.actor || review.actor.actorType !== "human" || typeof review.actor.actorId !== "string" || review.actor.actorId.length === 0 || typeof review.rationale !== "string" || review.rationale.trim().length === 0 || !["accept", "reject"].includes(review.outcome)) {
+          throw stateError("CORRECTION_REVIEW_REQUIRED", "classification correction requires a valid authenticated Human Task completion");
+        }
+      }
       if (request.assessed?.refs?.[this.resultRef + "VersionId"] && (!request.proposalId || !request.review)) return v3StepResult({ stepId: ctx.stepId, routingOutcome: "continue", stateResult: "reused", refs: { [this.resultRef + "VersionId"]: request.assessed.refs[this.resultRef + "VersionId"] } });
       const proposal = this.controlPlane.readProposal(request.proposalId);
       if (!proposal) throw stateError("PROPOSAL_NOT_FOUND", `${this.domain} proposal is required`);
+      if (correctionSession && proposal.payload?.correction?.kind !== CORRECTION_KIND) throw stateError("CORRECTION_PROPOSAL_INVALID", "classification correction finalization requires a correction Proposal");
       const policyId = proposal.dependencies.find((item) => item.role === "policy")?.versionId;
       const policyVersion = readExactPolicyVersion(this.controlPlane, policyId, this.policyKind);
       const policy = policyPayload(this.controlPlane, policyVersion.versionId, this.policyKind);
@@ -519,10 +530,13 @@ class ReviewableV3Service {
       const decision = this.controlPlane.createDecision({ decisionId: deterministicId("decision", `${ctx.operationId}:${proposal.proposalId}`), proposalId: proposal.proposalId, outcome: review.outcome === "accept" ? "accepted" : "rejected", authorityKind: "human", authorityRef: review.actor.actorId, transitionPolicyVersionId: policyVersion.versionId, rationale: review.rationale ?? null, operationId: `${ctx.operationId}/decision` });
       if (decision.outcome === "rejected") return v3StepResult({ stepId: ctx.stepId, routingOutcome: "rejected", stateResult: "rejected", refs: { proposalId: proposal.proposalId, decisionId: decision.decisionId } });
       try {
-        const commit = this.controlPlane.commitProposal({ proposalId: proposal.proposalId, decisionId: decision.decisionId, operationId: `${ctx.operationId}/commit`, noOpPolicy: "semantic-and-dependencies", domainHandler: this.handler() });
+        const domainHandler = this.handler();
+        if (correctionSession) domainHandler.preflight = classificationCorrectionCommitPreflight(this.controlPlane);
+        const commit = this.controlPlane.commitProposal({ proposalId: proposal.proposalId, decisionId: decision.decisionId, operationId: `${ctx.operationId}/commit`, noOpPolicy: "semantic-and-dependencies", domainHandler });
+        if (correctionSession && commit.stateResult !== "committed") throw stateError("CORRECTION_COMMIT_INVALID", "classification correction must create a new Classification Version");
         return v3StepResult({ stepId: ctx.stepId, routingOutcome: "continue", stateResult: commit.stateResult === "unchanged" ? "reused" : "committed", refs: { proposalId: proposal.proposalId, decisionId: decision.decisionId, [this.resultRef + "VersionId"]: commit.versionId } });
       } catch (error) {
-        if (error instanceof StateControlPlaneError && error.code === "HEAD_CONFLICT") return v3StepResult({ stepId: ctx.stepId, routingOutcome: "superseded", stateResult: "conflict", refs: { proposalId: proposal.proposalId, decisionId: decision.decisionId }, details: { conflictAt: this.domain } });
+        if (error instanceof StateControlPlaneError && ["HEAD_CONFLICT", "CORPUS_HEAD_CONFLICT"].includes(error.code)) return v3StepResult({ stepId: ctx.stepId, routingOutcome: "superseded", stateResult: "conflict", refs: { proposalId: proposal.proposalId, decisionId: decision.decisionId }, details: { conflictAt: error.code === "CORPUS_HEAD_CONFLICT" ? "corpus" : this.domain } });
         throw error;
       }
     };

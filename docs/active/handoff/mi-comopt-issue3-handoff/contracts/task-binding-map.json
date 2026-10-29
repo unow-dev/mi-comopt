@@ -1,0 +1,284 @@
+{
+  "description": "Issue #3 WorkDefinition new-revision task bindings; paths are conceptual lookup notation, not guaranteed Work Orchestrator parser syntax.",
+  "workDefinitionId": "classification-correction",
+  "proposedRevision": 2,
+  "contract": "classificationCorrectionBatch@2.0.0",
+  "note": "Normalize refs/details and typed input prior to WorkDefinition registration; preserve existing downstream contracts.",
+  "tasks": [
+    {
+      "stepId": "01-validate-correction-batch",
+      "kind": "agent",
+      "capability": "classification-correction.batch.validate",
+      "bindings": {
+        "correctionOperationId": "session:/correctionOperationId",
+        "requester": "trusted-session-actor",
+        "corrections": "session:/corrections",
+        "pinned": "session:/pinned",
+        "provenance": "session:/provenance"
+      },
+      "routingOutcomes": [
+        "continue",
+        "invalid",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "02-resolve-correction-batch",
+      "kind": "agent",
+      "capability": "classification-correction.batch.resolve",
+      "bindings": {
+        "correctionOperationId": "session:/correctionOperationId",
+        "corrections": "session:/corrections",
+        "pinned": "session:/pinned",
+        "requestFingerprint": "step:01-validate-correction-batch:/details/requestFingerprint"
+      },
+      "routingOutcomes": [
+        "continue",
+        "invalid",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "03-propose-correction-batch",
+      "kind": "agent",
+      "capability": "classification-correction.batch.propose",
+      "bindings": {
+        "correctionOperationId": "session:/correctionOperationId",
+        "changeSetId": "step:02-resolve-correction-batch:/details/changeSetId",
+        "changeSetHash": "step:02-resolve-correction-batch:/details/changeSetHash",
+        "requestFingerprint": "step:01-validate-correction-batch:/details/requestFingerprint",
+        "corpusVersionId": "session:/pinned/corpusVersionId",
+        "classificationVersionId": "session:/pinned/classificationVersionId",
+        "classificationPolicyVersionId": "session:/pinned/classificationPolicyVersionId"
+      },
+      "routingOutcomes": [
+        "review_required",
+        "invalid",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "05-review-classification",
+      "kind": "human",
+      "bindings": {
+        "proposalId": "step:03-propose-correction-batch:/refs/proposalId",
+        "assessmentId": "step:03-propose-correction-batch:/refs/assessmentId"
+      },
+      "routingOutcomes": [
+        "accept",
+        "reject"
+      ]
+    },
+    {
+      "stepId": "06-finalize-correction-batch",
+      "kind": "agent",
+      "capability": "classification-correction.batch.finalize",
+      "bindings": {
+        "correctionOperationId": "session:/correctionOperationId",
+        "proposalId": "step:03-propose-correction-batch:/refs/proposalId",
+        "assessmentId": "step:03-propose-correction-batch:/refs/assessmentId",
+        "approvedChangeSetHash": "step:02-resolve-correction-batch:/details/changeSetHash",
+        "review": "task:05-review-classification:result"
+      },
+      "routingOutcomes": [
+        "continue",
+        "rejected",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "07a-prepare-keyword-handoff",
+      "kind": "agent",
+      "capability": "keyword-selection.handoff.prepare",
+      "bindings": {
+        "corpusVersionId": "session:/pinned/corpusVersionId",
+        "classificationVersionId": "step:06-finalize-correction-batch:/refs/classificationVersionId",
+        "keywordSelectionVersionId": "session:/pinned/keywordSelectionVersionId",
+        "keywordPolicyVersionId": "session:/pinned/keywordPolicyVersionId"
+      },
+      "routingOutcomes": [
+        "reuse",
+        "handoff_required",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "07b-receive-keyword-proposal",
+      "kind": "human",
+      "bindings": {
+        "handoffRequest": "step:07a-prepare-keyword-handoff:/refs/candidateRequestId"
+      },
+      "routingOutcomes": [
+        "submitted"
+      ]
+    },
+    {
+      "stepId": "07-update-keyword-selection",
+      "kind": "agent",
+      "capability": "keyword-selection.assess",
+      "bindings": {
+        "corpusVersionId": "session:/pinned/corpusVersionId",
+        "classificationVersionId": "step:06-finalize-correction-batch:/refs/classificationVersionId",
+        "keywordSelectionVersionId": "session:/pinned/keywordSelectionVersionId",
+        "keywordPolicyVersionId": "session:/pinned/keywordPolicyVersionId",
+        "handoffPreparation": "step:07a-prepare-keyword-handoff:full",
+        "proposal": "task:07b-receive-keyword-proposal:result-if-present"
+      },
+      "routingOutcomes": [
+        "continue",
+        "review_required",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "09-review-keyword-selection",
+      "kind": "human",
+      "bindings": {
+        "proposalId": "step:07-update-keyword-selection:/refs/proposalId",
+        "assessmentId": "step:07-update-keyword-selection:/refs/assessmentId"
+      },
+      "routingOutcomes": [
+        "accept",
+        "reject"
+      ]
+    },
+    {
+      "stepId": "10-finalize-keyword-selection",
+      "kind": "agent",
+      "capability": "keyword-selection.finalize",
+      "bindings": {
+        "proposalId": "step:07-update-keyword-selection:/refs/proposalId-if-present",
+        "review": "task:09-review-keyword-selection:result-if-present",
+        "assessed": "step:07-update-keyword-selection:full"
+      },
+      "routingOutcomes": [
+        "continue",
+        "rejected",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "11-build-release-bundle",
+      "kind": "agent",
+      "capability": "release.build",
+      "bindings": {
+        "corpusVersionId": "session:/pinned/corpusVersionId",
+        "classificationVersionId": "step:06-finalize-correction-batch:/refs/classificationVersionId",
+        "keywordSelectionVersionId": "step:10-finalize-keyword-selection:/refs/keywordSelectionVersionId",
+        "policyVersions": "session:/pinned/policy-versions"
+      },
+      "routingOutcomes": [
+        "continue"
+      ]
+    },
+    {
+      "stepId": "12-materialize-release",
+      "kind": "agent",
+      "capability": "release.materialize",
+      "bindings": {
+        "releaseId": "step:11-build-release-bundle:/refs/releaseId"
+      },
+      "routingOutcomes": [
+        "continue"
+      ]
+    },
+    {
+      "stepId": "13-propose-production-promotion",
+      "kind": "agent",
+      "capability": "promotion.propose",
+      "bindings": {
+        "releaseId": "step:12-materialize-release:/refs/releaseId",
+        "promotionStream": "session:/target/promotionStream"
+      },
+      "routingOutcomes": [
+        "continue"
+      ]
+    },
+    {
+      "stepId": "13-review-production-promotion",
+      "kind": "human",
+      "bindings": {
+        "releaseId": "step:12-materialize-release:/refs/releaseId",
+        "proposalId": "step:13-propose-production-promotion:/refs/proposalId"
+      },
+      "routingOutcomes": [
+        "accept",
+        "reject"
+      ]
+    },
+    {
+      "stepId": "14-finalize-production-promotion",
+      "kind": "agent",
+      "capability": "promotion.finalize",
+      "bindings": {
+        "releaseId": "step:12-materialize-release:/refs/releaseId",
+        "proposalId": "step:13-propose-production-promotion:/refs/proposalId",
+        "review": "task:13-review-production-promotion:result"
+      },
+      "routingOutcomes": [
+        "continue",
+        "rejected",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "16-trigger-deployment",
+      "kind": "agent",
+      "capability": "deployment.trigger",
+      "bindings": {
+        "acceptedPromotionDecisionId": "step:14-finalize-production-promotion:/refs/decisionId",
+        "promotionVersionId": "step:14-finalize-production-promotion:/refs/promotionVersionId",
+        "releaseId": "step:14-finalize-production-promotion:/refs/releaseId",
+        "target": "session:/target/deploymentTarget"
+      },
+      "routingOutcomes": [
+        "wait",
+        "verify",
+        "superseded",
+        "deployment_failed"
+      ]
+    },
+    {
+      "stepId": "18-wait-deployment-event",
+      "kind": "waitEvent",
+      "bindings": {
+        "correlationKey": "step:16-trigger-deployment:/refs/deploymentRequestId"
+      },
+      "routingOutcomes": [
+        "event"
+      ]
+    },
+    {
+      "stepId": "19-verify-deployment",
+      "kind": "agent",
+      "capability": "deployment.verify",
+      "bindings": {
+        "deploymentRequestId": "step:16-trigger-deployment:/refs/deploymentRequestId",
+        "releaseId": "step:16-trigger-deployment:/refs/releaseId",
+        "promotionVersionId": "step:16-trigger-deployment:/refs/promotionVersionId",
+        "target": "session:/target/deploymentTarget",
+        "event": "step:18-wait-deployment-event:full-if-present"
+      },
+      "routingOutcomes": [
+        "continue",
+        "superseded",
+        "deployment_failed"
+      ]
+    },
+    {
+      "stepId": "20-record-deployment-state",
+      "kind": "agent",
+      "capability": "deployment.record",
+      "bindings": {
+        "deploymentRequestId": "step:16-trigger-deployment:/refs/deploymentRequestId",
+        "releaseId": "step:16-trigger-deployment:/refs/releaseId",
+        "promotionVersionId": "step:16-trigger-deployment:/refs/promotionVersionId",
+        "verificationRef": "step:19-verify-deployment:/refs/verificationRef"
+      },
+      "routingOutcomes": [
+        "continue",
+        "superseded"
+      ]
+    }
+  ]
+}

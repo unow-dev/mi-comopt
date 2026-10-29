@@ -1,7 +1,7 @@
 import { cloneJson, semanticSha256 } from "../../state/canonical.js";
 import { stateError } from "../../state/errors.js";
 import { STREAM_KEYS, readExactPolicyVersion } from "../../application/services.js";
-import { validateCommentDataUpdateSessionInputSchema } from "./contracts.js";
+import { validateClassificationCorrectionSessionInputSchema, validateCommentDataUpdateSessionInputSchema } from "./contracts.js";
 
 const VERSION_FIELDS = Object.freeze([
   ["initialCorpusVersionId", STREAM_KEYS.corpus], ["classificationVersionId", STREAM_KEYS.classification], ["keywordSelectionVersionId", STREAM_KEYS.keywordSelection],
@@ -56,4 +56,83 @@ export function sessionInputFingerprintV3(input) { return semanticSha256(validat
 export function pinnedInputForService(input) {
   const validated = validateCommentDataUpdateSessionInputV3(input);
   return cloneJson(validated.pinned);
+}
+
+export function validateClassificationCorrectionSessionInputV3(input) {
+  return validateClassificationCorrectionSessionInputSchema(input);
+}
+
+function correctionHead(controlPlane, stream) {
+  return controlPlane.resolveHead(stream)?.versionId ?? null;
+}
+
+function humanActor(value) {
+  if (!value || typeof value !== "object" || value.actorType !== "human" || typeof value.actorId !== "string" || value.actorId.trim().length === 0) {
+    throw stateError("UNAUTHORIZED_ACTOR", "authenticated human actor is required to start a classification correction");
+  }
+  return { actorType: "human", actorId: value.actorId };
+}
+
+function strictCorrectionCommand(command) {
+  const expected = ["baseClassificationVersionId", "observationId", "expectedLabel", "newLabel", "reason"];
+  if (!command || typeof command !== "object" || Array.isArray(command) || JSON.stringify(Object.keys(command).sort()) !== JSON.stringify(expected.slice().sort())) {
+    throw stateError("SESSION_INPUT_INVALID", "classification correction command has an invalid field set");
+  }
+  if (typeof command.baseClassificationVersionId !== "string" || command.baseClassificationVersionId.length === 0) throw stateError("SESSION_INPUT_INVALID", "baseClassificationVersionId is required");
+  return {
+    baseClassificationVersionId: command.baseClassificationVersionId,
+    correction: {
+      observationId: command.observationId,
+      expectedLabel: command.expectedLabel,
+      newLabel: command.newLabel,
+      reason: command.reason,
+    },
+  };
+}
+
+/** Resolve a correction command into its immutable, exact-version Session input. */
+export function resolveCorrectionSessionInput(controlPlane, { command, requestedBy, pinned = {}, target = { promotionStream: "production", deploymentTarget: "production" }, inputContract = { id: "classificationCorrection", version: "1.0.0" } } = {}) {
+  if (!controlPlane) throw stateError("CONFIGURATION_ERROR", "controlPlane is required");
+  const request = strictCorrectionCommand(command);
+  const actor = humanActor(requestedBy);
+  const base = exactVersion(controlPlane, request.baseClassificationVersionId, STREAM_KEYS.classification, "baseClassificationVersionId");
+  if (correctionHead(controlPlane, STREAM_KEYS.classification) !== base) throw stateError("HEAD_CONFLICT", "base Classification Version is no longer the current head");
+  const dependencies = controlPlane.readDependencies(base);
+  const corpusDependencies = dependencies.filter((item) => item.role === "corpus");
+  const policyDependencies = dependencies.filter((item) => item.role === "policy");
+  if (corpusDependencies.length !== 1 || policyDependencies.length !== 1 || dependencies.length !== 2) throw stateError("CORRECTION_DEPENDENCY_INVALID", "base Classification Version must pin exactly one Corpus and one policy");
+  const corpusVersionId = corpusDependencies[0].versionId;
+  exactVersion(controlPlane, corpusVersionId, STREAM_KEYS.corpus, "base Corpus Version");
+  if (correctionHead(controlPlane, STREAM_KEYS.corpus) !== corpusVersionId) throw stateError("CORPUS_HEAD_CONFLICT", "base Corpus Version is no longer the current head");
+  if (pinned.corpusVersionId !== undefined && pinned.corpusVersionId !== corpusVersionId) throw stateError("CORRECTION_DEPENDENCY_INVALID", "pinned corpusVersionId differs from the base Classification dependency");
+  if (pinned.classificationVersionId !== undefined && pinned.classificationVersionId !== base) throw stateError("SESSION_INPUT_INVALID", "pinned classificationVersionId differs from baseClassificationVersionId");
+
+  const policyFields = [
+    ["corpusPolicyVersionId", "corpus", STREAM_KEYS.corpusPolicy],
+    ["classificationPolicyVersionId", "classification", STREAM_KEYS.classificationPolicy],
+    ["keywordPolicyVersionId", "keyword-selection", STREAM_KEYS.keywordPolicy],
+    ["accountPolicyVersionId", "account-candidate", STREAM_KEYS.accountPolicy],
+  ];
+  const resolvedPins = {
+    corpusVersionId,
+    classificationVersionId: base,
+    keywordSelectionVersionId: pinned.keywordSelectionVersionId === undefined ? correctionHead(controlPlane, STREAM_KEYS.keywordSelection) : pinned.keywordSelectionVersionId,
+  };
+  if (resolvedPins.keywordSelectionVersionId !== null) exactVersion(controlPlane, resolvedPins.keywordSelectionVersionId, STREAM_KEYS.keywordSelection, "keywordSelectionVersionId");
+  for (const [field, policyKind, stream] of policyFields) {
+    const baseId = field === "classificationPolicyVersionId" ? policyDependencies[0].versionId : undefined;
+    const versionId = pinned[field] ?? baseId ?? correctionHead(controlPlane, stream);
+    resolvedPins[field] = readExactPolicyVersion(controlPlane, versionId, policyKind).versionId;
+  }
+  if (resolvedPins.classificationPolicyVersionId !== policyDependencies[0].versionId) throw stateError("CORRECTION_DEPENDENCY_INVALID", "pinned classification policy differs from the base Classification dependency");
+  const projectionId = pinned.projectionDefinitionVersionId ?? correctionHead(controlPlane, STREAM_KEYS.projectionDefinition);
+  resolvedPins.projectionDefinitionVersionId = exactVersion(controlPlane, projectionId, STREAM_KEYS.projectionDefinition, "projectionDefinitionVersionId");
+
+  return validateClassificationCorrectionSessionInputV3({
+    inputContract,
+    correction: request.correction,
+    requestedBy: actor,
+    pinned: resolvedPins,
+    target,
+  });
 }

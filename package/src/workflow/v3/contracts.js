@@ -39,6 +39,28 @@ export const SESSION_INPUT_V3_SCHEMA = Object.freeze({
   },
 });
 
+export const CLASSIFICATION_CORRECTION_SESSION_INPUT_SCHEMA = Object.freeze({
+  $schema: "https://json-schema.org/draft/2020-12/schema",
+  type: "object",
+  additionalProperties: false,
+  required: ["inputContract", "correction", "requestedBy", "pinned", "target"],
+  properties: {
+    inputContract: { type: "object", additionalProperties: false, required: ["id", "version"], properties: { id: { const: "classificationCorrection" }, version: { const: "1.0.0" } } },
+    correction: { type: "object", additionalProperties: false, required: ["observationId", "expectedLabel", "newLabel", "reason"], properties: {
+      observationId: { type: ["string", "integer"] },
+      expectedLabel: { enum: ["normal", "reactive", "direct_nuisance"] },
+      newLabel: { enum: ["normal", "reactive", "direct_nuisance"] },
+      reason: { type: "string", minLength: 1 },
+    } },
+    requestedBy: { type: "object", additionalProperties: false, required: ["actorType", "actorId"], properties: { actorType: { const: "human" }, actorId: { type: "string", minLength: 1 } } },
+    pinned: { type: "object", additionalProperties: false, required: ["corpusVersionId", "classificationVersionId", "keywordSelectionVersionId", "corpusPolicyVersionId", "classificationPolicyVersionId", "keywordPolicyVersionId", "accountPolicyVersionId", "projectionDefinitionVersionId"], properties: {
+      corpusVersionId: { type: "string", minLength: 1 }, classificationVersionId: { type: "string", minLength: 1 }, keywordSelectionVersionId: { type: ["string", "null"], minLength: 1 },
+      corpusPolicyVersionId: { type: "string", minLength: 1 }, classificationPolicyVersionId: { type: "string", minLength: 1 }, keywordPolicyVersionId: { type: "string", minLength: 1 }, accountPolicyVersionId: { type: "string", minLength: 1 }, projectionDefinitionVersionId: { type: "string", minLength: 1 },
+    } },
+    target: { type: "object", additionalProperties: false, required: ["promotionStream", "deploymentTarget"], properties: { promotionStream: { const: "production" }, deploymentTarget: { const: "production" } } },
+  },
+});
+
 export const OUTCOME_V3_SCHEMA = Object.freeze({
   $schema: "https://json-schema.org/draft/2020-12/schema", oneOf: [
     { type: "object", additionalProperties: false, required: ["terminalStatus"], properties: { terminalStatus: { const: "deployed" } } },
@@ -57,6 +79,7 @@ export const HUMAN_ARTIFACT_SUBMISSION_RESULT_V1_SCHEMA = Object.freeze({
 
 const validateResult = ajv.compile(WORK_STEP_RESULT_V3_SCHEMA);
 const validateSession = ajv.compile(SESSION_INPUT_V3_SCHEMA);
+const validateCorrectionSession = ajv.compile(CLASSIFICATION_CORRECTION_SESSION_INPUT_SCHEMA);
 const validateOutcome = ajv.compile(OUTCOME_V3_SCHEMA);
 const validateHumanArtifactResult = ajv.compile(HUMAN_ARTIFACT_SUBMISSION_RESULT_V1_SCHEMA);
 
@@ -67,6 +90,16 @@ function assertSchema(validate, value, code, label) {
 
 export function validateWorkStepResultSchema(result) { return assertSchema(validateResult, result, "WORK_STEP_RESULT_INVALID", "WorkStepResult"); }
 export function validateCommentDataUpdateSessionInputSchema(input) { return assertSchema(validateSession, input, "SESSION_INPUT_INVALID", "Comment Data Update v3 Session input"); }
+export function validateClassificationCorrectionSessionInputSchema(input) {
+  const value = assertSchema(validateCorrectionSession, input, "SESSION_INPUT_INVALID", "Classification Correction v3 Session input");
+  const id = value.correction.observationId;
+  if (typeof id === "number" && (!Number.isSafeInteger(id) || id < 0)) throw stateError("SESSION_INPUT_INVALID", "correction.observationId must be a safe integer or string");
+  if (typeof id === "string" && (id.length === 0 || id.trim() !== id)) throw stateError("SESSION_INPUT_INVALID", "correction.observationId must be a non-empty, unpadded string");
+  if (value.correction.expectedLabel === value.correction.newLabel) throw stateError("SESSION_INPUT_INVALID", "correction.newLabel must differ from expectedLabel");
+  if (value.correction.reason.trim().length === 0) throw stateError("SESSION_INPUT_INVALID", "correction.reason must contain non-whitespace text");
+  if (value.requestedBy.actorId.trim().length === 0) throw stateError("SESSION_INPUT_INVALID", "requestedBy.actorId must contain non-whitespace text");
+  return value;
+}
 export function validateCommentDataUpdateOutcomeSchema(outcome) { return assertSchema(validateOutcome, outcome, "OUTCOME_INVALID", "Comment Data Update v3 outcome"); }
 export function validateHumanArtifactSubmissionResultSchema(result) { return assertSchema(validateHumanArtifactResult, result, "HUMAN_ARTIFACT_RESULT_INVALID", "Human artifact submission result"); }
 

@@ -24,14 +24,16 @@ function genesis(controlPlane, stream, versionId, state) {
   return controlPlane.createGenesis({ streamId, versionId, payload: { schema_version: 1, state } });
 }
 
-test("[V3-S01][V3-S05][V3-RV01][V3-RV04][V3-RV06] v3 definition is side-by-side and provider canonical hash matches", () => {
-  const local = validateV3Definition(buildCommentDataUpdateDefinitionV3());
-  const provider = validateAndHashDefinition(local);
-  assert.equal(local.revision, 3);
-  assert.equal(provider.definitionHash, local.definitionHash);
-  assert.equal(local.definitionHash, "9598f503ba9a8e8753e0b1d9d1e4af2f1a80a4d10b718aba5ab250840438a726");
-  assert.match(JSON.stringify(local), /"optional":true/);
-  assert.match(JSON.stringify(local), /"source":"task"/);
+test("[V3-S01][V3-S05][V3-RV01][V3-RV04][V3-RV06] v3 definitions preserve revision 3 and register safe revision 4", () => {
+  const historical = validateV3Definition(buildCommentDataUpdateDefinitionV3({ revision: 3 }));
+  assert.equal(validateAndHashDefinition(historical).definitionHash, historical.definitionHash);
+  assert.equal(historical.definitionHash, "9598f503ba9a8e8753e0b1d9d1e4af2f1a80a4d10b718aba5ab250840438a726");
+  const current = validateV3Definition(buildCommentDataUpdateDefinitionV3());
+  const provider = validateAndHashDefinition(current);
+  assert.equal(current.revision, 4);
+  assert.equal(provider.definitionHash, current.definitionHash);
+  assert.match(JSON.stringify(historical), /"optional":true/);
+  assert.match(JSON.stringify(historical), /"source":"task"/);
 });
 
 test("[V3-CUT06] a conflicting immutable target revision is skipped and never overwritten", () => {
@@ -44,7 +46,7 @@ test("[V3-CUT06] a conflicting immutable target revision is skipped and never ov
     },
     registerDefinition(definition) { registered.push(definition); },
   };
-  assert.equal(resolveTargetRevision({ registry, publicApi: { validateAndHashDefinition } }), 4);
+  assert.equal(resolveTargetRevision({ registry, publicApi: { validateAndHashDefinition }, start: 3 }), 4);
   assert.deepEqual(registered, []);
 });
 

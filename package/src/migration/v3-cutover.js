@@ -198,6 +198,14 @@ export function assertV3StartAllowed(controlPlane, revision) {
   return true;
 }
 
+/** Gate another v3 WorkDefinition without comparing its independent revision to comment-data-update's target revision. */
+export function assertV3FeatureStartAllowed(controlPlane) {
+  const control = readV3CutoverControl(controlPlane);
+  if (!control) return true;
+  if (!V3_START_STATES.has(control.state) || !control.v3StartsEnabled) throw stateError("V3_START_FROZEN", `v3 starts are not enabled in cutover state ${control.state}`);
+  return true;
+}
+
 /**
  * Reject a populated legacy Corpus v1 head before a normal v3 Session is
  * created. An empty v1 seed remains a bootstrap marker for old local

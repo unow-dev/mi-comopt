@@ -2,7 +2,7 @@
 
 ## Comment DB v3 cutover
 
-`comment-db-v3-cutover.mjs` is an auditable, fail-closed cutover controller. `status` is read-only; every state-changing command requires an exact `--db` path and `--apply`. The controller enforces the order `v2_open -> v2_frozen -> v2_drained -> legacy_disabled -> v3_enabled -> smoke_verified` and records immutable transition evidence. A failed smoke moves to `v3_frozen`; it does not re-enable v2 or the legacy writer.
+`comment-db-v3-cutover.mjs` is an auditable, fail-closed cutover controller. `status` is read-only; every state-changing command requires an exact `--db` path and `--apply`. The controller enforces the order `v2_open -> v2_frozen -> v2_drained -> legacy_disabled -> v3_enabled -> smoke_verified` and records immutable transition evidence. A failed smoke moves to `v3_frozen`; it does not re-enable v2 or the legacy writer. The current operator candidate is `comment-data-update@4` (`b6e7d6bc04025ea54b4cbe2e8ff221e98f7b9d9a026950e79126915f3c09d1f4`); historical revision 3 remains unchanged.
 
 ```bash
 npm run cutover:v3 -- status --db ./var/comment-history.sqlite3
@@ -40,6 +40,32 @@ npm run comment-data-update:v3 -- human-task complete \
 ```
 
 Decision型Human Taskは、`open`後に`--outcome accept|reject --rationale "..."`を付けて完了します。Classification responseとkeyword proposalのartifactも同じ`open`/ファイル配置/`complete`経路で、専用validatorがファイル名、件数、bytes、実行IDおよびArtifactVersion identityを検証します。`tasks`のartifact taskには、`response.json`の`workset_id`、または`candidate_proposal.json`の`request_id`・`input_fingerprint`に使う前段identityも表示されます。`sessions`で既存Sessionを一覧し、`human-task release`で同じactorのclaimを解放できます。
+
+### Manual Classification Correction
+
+既存Classification Versionの指定Observationと、同じ完全一致コメント本文を持つCorpus survivor全件を一括訂正する場合は、同じoperatorからSessionを開始します。`--actor`は実行OSのユーザー名と一致する必要があります。アプリケーション組み込み時は`openV3Operator()`に認証済みhuman actorを返す`authenticateHumanActor`を渡します。
+
+```bash
+DB=/home/uya/Workspace/tiktok-filter-keywords/var/comment-history.sqlite3
+WO=/home/uya/Workspace/tiktok-filter-keywords/var/work-orchestrator-production
+ACTOR="$(id -un)"
+
+npm run comment-data-update:v3 -- classification-correction start \
+  --db "$DB" --workspace "$WO" \
+  --session-id "classification-correction-<unique-id>" \
+  --base-classification-version-id <current-classification-version-id> \
+  --observation-id <observation-id> \
+  --expected-label direct_nuisance --new-label normal \
+  --reason "分類基準に照らして誤分類と判断" --actor "$ACTOR"
+npm run comment-data-update:v3 -- tasks \
+  --db "$DB" --workspace "$WO" --session-id "classification-correction-<unique-id>"
+npm run comment-data-update:v3 -- human-task open \
+  --db "$DB" --workspace "$WO" \
+  --session-id "classification-correction-<unique-id>" \
+  --step-id 05-review-classification --actor "$ACTOR"
+```
+
+`tasks`にはProposalから読み直して検証した対象本文、対象件数、変更前後のラベル分布、理由、要求者が表示されます。レビューをopenしたactorだけが`human-task complete --outcome accept|reject --rationale "..."`を実行できます。acceptの後は既存keyword handoffとproduction promotion reviewへ進みます。correction Sessionの開始だけではClassification Versionを更新せず、Promotion acceptとdeployment identity確認をproductionで実施する前に、別途運用承認が必要です。
 
 このentrypointはtargetをproductionに固定します。Release materializeではauthority DBのRelease pinからUIの`optimicom-ui-release.json`と4つのcontent-addressed data artifactを生成し、production Workspace配下のRelease artifact storeへ永続化します。production operatorの既定DeploymentAdapterはGitHub Pagesです。Deploymentごとに生成済みUI artifactを`codex/ui-release/<deployment_request_id>`ブランチへGit Data APIで公開してから、そのブランチを`.github/workflows/deploy-pages.yml`へworkflow dispatchします。Pages上の`comment-db-v3-deployment.json`には同じ`deployment_request_id`、`release_id`、release bundle SHA-256およびUI release manifest SHA-256が記録され、すべて一致することを検証します。`tasks`または`sessions`を実行すると、完了したActions runを`deployment.completed`として正本DBへ取り込み、Work Orchestratorへ配送します。
 
