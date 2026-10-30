@@ -6,3 +6,4 @@ export * from "./v3/correction-service.js";
 export * from "./v3/release-services.js";
 export * from "./v3/deployment-services.js";
 export * from "./v3/recovery-services.js";
+export * from "./v3/correction-batch-service.js";

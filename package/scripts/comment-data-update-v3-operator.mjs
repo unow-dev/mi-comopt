@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { sha256Hex } from "../src/state/canonical.js";
 import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
@@ -14,6 +15,7 @@ import {
   openV3Operator,
   releaseV3HumanTask,
   startV3ClassificationCorrection,
+  startV3ClassificationCorrectionBatch,
   startV3Session,
   syncV3DeploymentEvents,
 } from "../src/integration/v3-operator.js";
@@ -194,7 +196,7 @@ function createProductionRecoveryVerificationBuilder() {
   };
 }
 
-const TOP_LEVEL_COMMANDS = new Set(["start", "sessions", "tasks", "human-task", "recovery", "classification-correction"]);
+const TOP_LEVEL_COMMANDS = new Set(["start", "sessions", "tasks", "human-task", "recovery", "classification-correction", "classification-correction-batch"]);
 const HUMAN_TASK_COMMANDS = new Set(["open", "complete", "release"]);
 
 function usage() {
@@ -204,6 +206,8 @@ function usage() {
   npm --workspace package run comment-data-update:v3 -- classification-correction start \\
     --db PATH --workspace PATH --session-id ID --base-classification-version-id ID \\
     --observation-id ID --expected-label LABEL --new-label LABEL --reason TEXT --actor OS_USER [--pinned-json PATH]
+  npm --workspace package run comment-data-update:v3 -- classification-correction-batch start \\
+    --db PATH --workspace PATH --session-id ID --batch-json PATH --actor OS_USER [--source PATH] [--pinned-json PATH]
   npm --workspace package run comment-data-update:v3 -- sessions \\
     --db PATH --workspace PATH
   npm --workspace package run comment-data-update:v3 -- tasks \\
@@ -243,12 +247,12 @@ function parseArgs(argv) {
   const args = { command, subcommand: undefined, help: false };
   let subcommand;
   let rest = afterCommand;
-  if (command === "human-task" || command === "recovery" || command === "classification-correction") {
+  if (command === "human-task" || command === "recovery" || ["classification-correction", "classification-correction-batch"].includes(command)) {
     [subcommand, ...rest] = afterCommand;
     if (!subcommand || subcommand === "--help" || subcommand === "-h") return { help: true };
     if (command === "human-task" && !HUMAN_TASK_COMMANDS.has(subcommand)) throw new Error(`不明なhuman-task commandです: ${subcommand}`);
     if (command === "recovery" && !new Set(["freeze", "plan", "start", "cancel", "status", "resume", "verify", "complete", "classification", "keyword"]).has(subcommand)) throw new Error(`不明なrecovery commandです: ${subcommand}`);
-    if (command === "classification-correction" && subcommand !== "start") throw new Error(`不明なclassification-correction commandです: ${subcommand}`);
+    if (["classification-correction", "classification-correction-batch"].includes(command) && subcommand !== "start") throw new Error(`不明なclassification-correction commandです: ${subcommand}`);
     if (command === "recovery" && ["classification", "keyword"].includes(subcommand)) {
       args.recoveryGroup = subcommand;
       [args.recoverySubcommand, ...rest] = rest;
@@ -278,6 +282,8 @@ function parseArgs(argv) {
     else if (value === "--broken-head-corpus-version-id") args.brokenHeadCorpusVersionId = rest[++index];
     else if (value === "--expected-plan-sha256") args.expectedPlanSha256 = rest[++index];
     else if (value === "--recovery-id") args.recoveryId = rest[++index];
+    else if (value === "--batch-json") args.batchPath = rest[++index];
+    else if (value === "--source") args.sourcePath = rest[++index];
     else if (value === "--response") args.responsePath = rest[++index];
     else if (value === "--proposal") args.proposalPath = rest[++index];
     else throw new Error(`不明な引数です: ${value}`);
@@ -364,6 +370,16 @@ async function main(argv) {
         actorId: requireActor(args),
         pinned: await readPinned(args.pinnedPath),
       });
+    } else if (args.command === "classification-correction-batch") {
+      const command = await readJsonFile(args.batchPath, "--batch-json");
+      if (args.sourcePath) {
+        const bytes = await readFile(args.sourcePath);
+        const hashes = [command.provenance?.sourceSha256, ...(command.corrections ?? []).map((item) => item?.provenance?.sourceSha256)];
+        if (!hashes.includes(sha256Hex(bytes))) throw new Error("--source SHA-256 differs from batch provenance");
+        const staged = operator.workspace.artifactStore.stage(bytes, "application/json");
+        operator.workspace.artifactStore.finalize(staged);
+      }
+      result = await startV3ClassificationCorrectionBatch(operator, { sessionId: requireSession(args), actorId: requireActor(args), pinned: await readPinned(args.pinnedPath), command });
     } else if (args.command === "classification-correction") {
       result = await startV3ClassificationCorrection(operator, {
         sessionId: requireSession(args),

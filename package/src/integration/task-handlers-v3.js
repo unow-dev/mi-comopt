@@ -1,3 +1,4 @@
+import { canonicalJson } from "../state/canonical.js";
 import { writeFileSync } from "node:fs";
 import path from "node:path";
 import {
@@ -6,6 +7,8 @@ import {
   ClassificationHandoffService,
   ClassificationApplicationServiceV3,
   ClassificationCorrectionServiceV3,
+  ClassificationCorrectionBatchServiceV3,
+  requireBatchRegistration,
   KeywordHandoffService,
   KeywordSelectionApplicationServiceV3,
   ReleaseApplicationServiceV3,
@@ -101,12 +104,14 @@ function attachProducedArtifacts(result, artifacts, workspace) {
 }
 
 export const V3_SERVICE_CAPABILITIES = Object.freeze([
+  "classification-correction.batch.validate", "classification-correction.batch.resolve", "classification-correction.batch.propose", "classification-correction.batch.finalize",
   "evidence.ingest", "corpus.update", "classification.handoff.prepare", "classification.assess", "classification.correction.propose", "classification.finalize",
   "keyword-selection.handoff.prepare", "keyword-selection.assess", "keyword-selection.finalize", "release.build", "release.materialize",
   "promotion.propose", "promotion.finalize", "deployment.trigger", "deployment.verify", "deployment.record",
 ]);
 
 function routingForResult(stepId, result) {
+  if (/^(?:01-validate|02-resolve|03-propose)-correction-batch$/.test(stepId) && result.stateResult === "blocked") return "invalid";
   if (stepId === "03a-prepare-classification-handoff" || stepId === "07a-prepare-keyword-handoff") {
     if (result.stateResult === "reused") return "reuse";
     if (result.stateResult === "succeeded") return "ready_without_handoff";
@@ -121,19 +126,24 @@ function routingForResult(stepId, result) {
   return "continue";
 }
 
-export function createV3ApplicationServiceTaskHandlers({ controlPlane, deploymentAdapter, artifactStore, releaseArtifactStore = artifactStore, artifactBuilder, classificationWorksetBuilder, keywordHandoffBuilder } = {}) {
+export function createV3ApplicationServiceTaskHandlers({ controlPlane, registry, deploymentAdapter, artifactStore, releaseArtifactStore = artifactStore, artifactBuilder, classificationWorksetBuilder, keywordHandoffBuilder } = {}) {
   if (!controlPlane) throw stateError("CONFIGURATION_ERROR", "controlPlane is required");
   const evidence = new EvidenceApplicationServiceV3(controlPlane, { artifactStore });
   const corpus = new CorpusApplicationServiceV3(controlPlane);
   const classificationHandoff = new ClassificationHandoffService(controlPlane, artifactStore, { worksetBuilder: classificationWorksetBuilder });
   const classification = new ClassificationApplicationServiceV3(controlPlane);
   const correction = new ClassificationCorrectionServiceV3(controlPlane);
+  const correctionBatch = new ClassificationCorrectionBatchServiceV3(controlPlane, { artifactStore, registry });
   const keywordHandoff = new KeywordHandoffService(controlPlane, artifactStore, { handoffBuilder: keywordHandoffBuilder });
   const keyword = new KeywordSelectionApplicationServiceV3(controlPlane);
   const release = new ReleaseApplicationServiceV3(controlPlane, { artifactStore: releaseArtifactStore, artifactBuilder });
   const promotion = new PromotionApplicationServiceV3(controlPlane);
   const deployment = deploymentAdapter ? new DeploymentQueueServiceV3(controlPlane, { adapter: deploymentAdapter }) : null;
   const handlers = {
+    "classification-correction.batch.validate": (ctx, input) => correctionBatch.validate(ctx, input),
+    "classification-correction.batch.resolve": (ctx, input) => correctionBatch.resolve(ctx, input),
+    "classification-correction.batch.propose": (ctx, input) => correctionBatch.propose(ctx, input),
+    "classification-correction.batch.finalize": (ctx, input) => correctionBatch.finalize(ctx, input),
     "evidence.ingest": (ctx, input) => evidence.ingest(ctx, input),
     "corpus.update": (ctx, input) => corpus.update(ctx, input),
     "classification.handoff.prepare": (ctx, input) => classificationHandoff.prepare(ctx, input),
@@ -153,13 +163,15 @@ export function createV3ApplicationServiceTaskHandlers({ controlPlane, deploymen
     handlers["deployment.verify"] = (ctx, input) => deployment.verify(ctx, input);
     handlers["deployment.record"] = (ctx, input) => deployment.record(ctx, input);
   }
-  return { handlers, services: { evidence, corpus, classificationHandoff, classification, correction, keywordHandoff, keyword, release, promotion, deployment } };
+  return { handlers, services: { evidence, corpus, classificationHandoff, classification, correction, correctionBatch, keywordHandoff, keyword, release, promotion, deployment } };
 }
 
 export class ApplicationServiceAgentAdapterV3 {
   constructor(options = {}) {
     this.taskHandlers = createV3ApplicationServiceTaskHandlers(options);
     this.artifactStore = options.artifactStore;
+    this.controlPlane = options.controlPlane;
+    this.registry = options.registry;
   }
 
   async run(request) {
@@ -167,6 +179,11 @@ export class ApplicationServiceAgentAdapterV3 {
     if (request?.task?.contract?.requiredCapabilities?.length !== 1 || !V3_SERVICE_CAPABILITIES.includes(capability)) return { status: "failed", failure: "AGENT_CAPABILITY_CONTRACT_INVALID" };
     const context = createV3OperationContext({ sessionId: request.session.sessionId, workDefinitionId: request.session.workDefinitionId, workDefinitionRevision: request.session.definitionRevision, stepId: request.task.stepId, actor: { actorId: "application-service", actorType: "service" }, permissions: request.grant?.permissions ?? [] });
     try {
+      if (context.workDefinitionId === "classification-correction" && context.workDefinitionRevision === 2) {
+        const state = this.registry?.getRuntimeState(context.sessionId);
+        const registration = requireBatchRegistration(this.controlPlane, context, state?.session?.input?.correctionOperationId);
+        if (canonicalJson(state.session.input) !== canonicalJson(registration.input)) throw stateError("BATCH_INTEGRITY_ERROR", "Session input differs from the authenticated registration");
+      }
       const handler = this.taskHandlers.handlers[capability];
       if (typeof handler !== "function") throw stateError("CAPABILITY_NOT_BOUND", `no v3 handler for ${capability}`);
       const result = await handler(context, enrichHumanInputs(capability, request.task.inputs ?? {}, this.artifactStore));

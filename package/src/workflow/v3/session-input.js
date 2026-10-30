@@ -1,3 +1,5 @@
+import { canonicalBatchRequest } from "../../three-class/classification-correction-batch.js";
+import { validateClassificationCorrectionBatchSessionInputSchema } from "./contracts.js";
 import { cloneJson, semanticSha256 } from "../../state/canonical.js";
 import { stateError } from "../../state/errors.js";
 import { STREAM_KEYS, readExactPolicyVersion } from "../../application/services.js";
@@ -135,4 +137,28 @@ export function resolveCorrectionSessionInput(controlPlane, { command, requested
     pinned: resolvedPins,
     target,
   });
+}
+
+/** Revision 2 keeps the single-correction resolver and its callers unchanged. */
+export function resolveCorrectionBatchSessionInput(controlPlane, { command, authenticatedActor, pinned = {}, savedInput = undefined } = {}) {
+  if (!command || typeof command !== "object" || Array.isArray(command)
+    || Object.keys(command).some((key) => !["correctionOperationId", "baseClassificationVersionId", "corrections", "provenance"].includes(key))) throw stateError("SESSION_INPUT_INVALID", "invalid batch command fields");
+  if (!pinned || typeof pinned !== "object" || Array.isArray(pinned) || Object.keys(pinned).some((key) => !["corpusVersionId", "classificationVersionId", "keywordSelectionVersionId", "corpusPolicyVersionId", "classificationPolicyVersionId", "keywordPolicyVersionId", "accountPolicyVersionId", "projectionDefinitionVersionId"].includes(key))) throw stateError("SESSION_INPUT_INVALID", "invalid pinned fields");
+  const requester = humanActor(authenticatedActor);
+  if (typeof command.correctionOperationId !== "string" || !command.correctionOperationId.trim() || typeof command.baseClassificationVersionId !== "string" || !command.baseClassificationVersionId.length || !Array.isArray(command.corrections) || !command.corrections.length) throw stateError("SESSION_INPUT_INVALID", "operation ID, base Classification and corrections are required");
+  let pins;
+  if (savedInput) {
+    pins = { ...savedInput.pinned, ...pinned, classificationVersionId: command.baseClassificationVersionId };
+  } else {
+    const first = command.corrections[0] ?? {};
+    pins = resolveCorrectionSessionInput(controlPlane, { command: { baseClassificationVersionId: command.baseClassificationVersionId, observationId: first.targetObservationId, expectedLabel: first.expectedLabel, newLabel: first.replacementLabel, reason: first.reason }, requestedBy: requester, pinned }).pinned;
+  }
+  return validateClassificationCorrectionBatchSessionInputV3({ inputContract: { id: "classificationCorrectionBatch", version: "2.0.0" }, correctionOperationId: command.correctionOperationId,
+    requester, corrections: command.corrections, pinned: pins, target: { promotionStream: "production", deploymentTarget: "production" }, ...(command.provenance ? { provenance: command.provenance } : {}) });
+}
+
+export function validateClassificationCorrectionBatchSessionInputV3(input) {
+  const value = canonicalBatchRequest(validateClassificationCorrectionBatchSessionInputSchema(input));
+  if (!value.correctionOperationId.trim() || !value.requester.actorId.trim()) throw stateError("SESSION_INPUT_INVALID", "operation ID and requester must contain text");
+  return value;
 }

@@ -4,7 +4,7 @@
 
 GitHub Issue: [#3](https://github.com/unow-dev/mi-comopt/issues/3)
 
-状態: 実装修正待ち（単一修正Sessionは終了済み）
+状態: 実装・隔離環境検証完了（実運用の再開始・承認・公開は未実施）
 
 ## 目的
 
@@ -152,3 +152,7 @@ I204の本文は「うおwかっかー.」。対象Observation IDは `45921`、`
 - [分類修正の状態計算](../../../../package/src/three-class/classification-correction.js)
 - [ラベル読込](../../../../package/src/database/three-class-label-repository.js)
 - [operator](../../../../package/src/integration/v3-operator.js)
+
+## 実装結果
+
+一括修正用の `classification-correction@2` を追加した。[実装・検証結果](IMPLEMENTATION_REPORT.md) と [操作手順](OPERATOR.md) を参照。実運用への適用はその時点のユーザー指示に従う。

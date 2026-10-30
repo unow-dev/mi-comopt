@@ -104,3 +104,41 @@ export function validateCommentDataUpdateOutcomeSchema(outcome) { return assertS
 export function validateHumanArtifactSubmissionResultSchema(result) { return assertSchema(validateHumanArtifactResult, result, "HUMAN_ARTIFACT_RESULT_INVALID", "Human artifact submission result"); }
 
 export { ajv };
+
+const provenanceSchema = {
+  type: "object", additionalProperties: false, required: ["sourceSha256"], properties: {
+    sourceSha256: { type: "string", pattern: "^[0-9a-f]{64}$" },
+    worksetId: { type: "string", minLength: 1 }, receiptRef: { type: "string", minLength: 1 }, handoffItemId: { type: "string", pattern: "^I[1-9][0-9]*$" },
+  },
+};
+export const CLASSIFICATION_CORRECTION_BATCH_SESSION_INPUT_SCHEMA = {
+  $schema: "https://json-schema.org/draft/2020-12/schema",
+  type: "object", additionalProperties: false,
+  required: ["inputContract", "correctionOperationId", "requester", "corrections", "pinned", "target"],
+  properties: {
+    inputContract: { type: "object", additionalProperties: false, required: ["id", "version"], properties: { id: { const: "classificationCorrectionBatch" }, version: { const: "2.0.0" } } },
+    correctionOperationId: { type: "string", minLength: 1 },
+    requester: cloneJson(CLASSIFICATION_CORRECTION_SESSION_INPUT_SCHEMA.properties.requestedBy),
+    pinned: cloneJson(CLASSIFICATION_CORRECTION_SESSION_INPUT_SCHEMA.properties.pinned),
+    target: cloneJson(CLASSIFICATION_CORRECTION_SESSION_INPUT_SCHEMA.properties.target),
+    provenance: provenanceSchema,
+    corrections: { type: "array", minItems: 1, items: {
+      type: "object", additionalProperties: false, required: ["targetObservationId", "expectedLabel", "replacementLabel", "reason"], properties: {
+        targetObservationId: { type: "string", minLength: 1 }, expectedLabel: { enum: ["normal", "direct_nuisance", "reactive"] }, replacementLabel: { enum: ["normal", "direct_nuisance", "reactive"] }, reason: { type: "string", minLength: 1 }, provenance: provenanceSchema,
+      },
+    } },
+  },
+};
+const validateBatchSession = ajv.compile(CLASSIFICATION_CORRECTION_BATCH_SESSION_INPUT_SCHEMA);
+export function validateClassificationCorrectionBatchSessionInputSchema(input) {
+  return assertSchema(validateBatchSession, input, "SESSION_INPUT_INVALID", "Classification Correction Batch input");
+}
+export const CLASSIFICATION_CORRECTION_BATCH_OUTCOME_SCHEMA = {
+  $schema: "https://json-schema.org/draft/2020-12/schema",
+  oneOf: [...cloneJson(OUTCOME_V3_SCHEMA.oneOf),
+    { type: "object", additionalProperties: false, required: ["terminalStatus"], properties: { terminalStatus: { const: "invalid_request" } } },
+    { type: "object", additionalProperties: false, required: ["terminalStatus", "conflictAt"], properties: { terminalStatus: { const: "superseded" }, conflictAt: { const: "policy" } } },
+  ],
+};
+const validateBatchOutcome = ajv.compile(CLASSIFICATION_CORRECTION_BATCH_OUTCOME_SCHEMA);
+export function validateClassificationCorrectionBatchOutcomeSchema(outcome) { return assertSchema(validateBatchOutcome, outcome, "OUTCOME_INVALID", "Classification Correction Batch outcome"); }

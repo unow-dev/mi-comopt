@@ -211,3 +211,18 @@ npm run rebuild:keyword-candidate-publication -- \
 ```
 
 この処理はschema v8、単一current publication、完全な3分類ラベル、filesystemとDBのcurrent run一致を確認してから、filesystemの新runとDBのcurrent rowを更新します。評価結果はactive candidate全件を対象にし、source dataset上の最新データに基づいて公開判定を行います。
+
+### 一括分類修正（classification-correction@2）
+
+```bash
+npm --workspace package run comment-data-update:v3 -- classification-correction-batch start \
+  --db /path/to/comments.sqlite3 --workspace /path/to/workspace \
+  --session-id new-session-id --batch-json /path/to/batch.json --actor OS_USER \
+  --source /path/to/source.json
+```
+
+`--batch-json` は業務操作ID、base Classification Version、1件以上の修正（文字列の代表Observation ID、期待ラベル、変更先ラベル、理由、任意の根拠）を受け取る。根拠付き入力の `--source` は正本をArtifactStoreへ保存する。同じ操作IDの再送は最初のSessionを返すため、返された `sessionId` でtasksとHuman Taskを操作する。
+
+分類承認後は新Classification Versionを使う1経路で後続更新へ進み、Production Promotionは別途Human承認する。従来の単一修正コマンドはrevision 1のまま利用できる。
+
+[入力・承認・再送・復旧の手順](../../docs/active/issues/20261030-batch-classification-correction-single-publication/OPERATOR.md) と [実装・検証結果](../../docs/active/issues/20261030-batch-classification-correction-single-publication/IMPLEMENTATION_REPORT.md) を参照。

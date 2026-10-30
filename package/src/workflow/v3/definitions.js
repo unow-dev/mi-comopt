@@ -194,6 +194,7 @@ function conflictTerminal(stepId, conflictAt) {
 }
 
 export function buildClassificationCorrectionDefinitionV3({ revision = 1 } = {}) {
+  if (revision === 2) return buildClassificationCorrectionBatchDefinitionV3();
   if (!Number.isSafeInteger(revision) || revision < 1) throw stateError("DEFINITION_REVISION_INVALID", "classification-correction revision must be a positive integer");
   const propose = agentTask("03-correction-propose", "classification.correction.propose", ["state:read", "state:propose"], {
     corpusVersionId: SESSION("/pinned/corpusVersionId"),
@@ -291,3 +292,37 @@ export function registerCommentDataUpdateDefinitionV3({ registry, publicApi, rev
 }
 
 export { HUMAN_ARTIFACT_RESULT };
+
+
+export function buildClassificationCorrectionBatchDefinitionV3() {
+  const task = (id, action, bindings, permissions) => {
+    const value = agentTask(id, `classification-correction.batch.${action}`, permissions, bindings, "batch", 120000);
+    value.contract.allowedOutcomes = action === "finalize" ? ["continue", "rejected", "superseded"] : [action === "propose" ? "review_required" : "continue", "invalid", "superseded"];
+    return value;
+  };
+  const batchConflict = (id) => choice(`${id}-batch-conflict`, STEP(id, "/details/conflictAt"), Object.fromEntries(["classification", "corpus", "policy"].map((conflictAt) => [conflictAt, terminal(`${id}-${conflictAt}-superseded`, "superseded", { conflictAt })])));
+  const op = SESSION("/correctionOperationId");
+  const validateId = "01-validate-correction-batch", resolveId = "02-resolve-correction-batch", proposeId = "03-propose-correction-batch", finalizeId = "06-finalize-correction-batch";
+  const fingerprint = STEP(validateId, "/details/requestFingerprint");
+  const hash = STEP(resolveId, "/details/changeSetHash");
+  const review = humanTask("05-review-classification", "全修正の本文・差分・件数・理由・根拠を確認し、バッチ全体を承認または却下する", {
+    proposal: STEP(proposeId, "/refs/proposalId"), assessment: STEP(proposeId, "/refs/assessmentId"), changeSetHash: hash,
+  }, ["accept", "reject"], { type: "object", additionalProperties: false, required: ["rationale"], properties: { rationale: { type: "string", minLength: 1 } } });
+  const finalize = task(finalizeId, "finalize", { correctionOperationId: op, proposalId: STEP(proposeId, "/refs/proposalId"), assessmentId: STEP(proposeId, "/refs/assessmentId"), approvedChangeSetHash: hash, review: TASK(review.id, "") }, ["state:read", "state:commit"]);
+  const finalized = sequence("batch-finalize", [finalize, choice("batch-route-finalization", TASK(finalizeId, "/outcome"), {
+    continue: keywordFlow({ corpus: SESSION("/pinned/corpusVersionId"), classification: STEP(finalizeId, "/refs/classificationVersionId"), safeBranches: true }),
+    rejected: terminal("batch-rejected", "change_rejected", { stage: "classification" }),
+    superseded: batchConflict(finalizeId),
+  })]);
+  const guarded = (step, success, continuation) => sequence(`${step.id}-and-route`, [step, choice(`${step.id}-route`, TASK(step.id, "/outcome"), {
+    [success]: continuation,
+    invalid: terminal(`${step.id}-invalid`, "invalid_request"),
+    superseded: batchConflict(step.id),
+  })]);
+  const propose = task(proposeId, "propose", { correctionOperationId: op, requestFingerprint: fingerprint, changeSetId: STEP(resolveId, "/details/changeSetId"), changeSetHash: hash }, ["state:read", "state:propose"]);
+  const resolve = task(resolveId, "resolve", { batch: SESSION(""), requestFingerprint: fingerprint }, ["state:read", "state:propose"]);
+  const validate = task(validateId, "validate", { batch: SESSION("") }, ["state:read"]);
+  return { workDefinitionId: "classification-correction", revision: 2, schemaVersion: V3_SCHEMA_VERSION,
+    root: guarded(validate, "continue", guarded(resolve, "continue", guarded(propose, "review_required", sequence("batch-review-finalize", [review, finalized])))),
+    limits: { maxBufferedExternalEvents: 50, maxDynamicTasksPerSession: 0 } };
+}

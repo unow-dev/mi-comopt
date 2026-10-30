@@ -8,10 +8,12 @@ import { fileURLToPath } from "node:url";
 import { ArtifactStore, claimTaskUpdate, completeHumanTaskUpdate, receiveExternalEventUpdate, Registry, runtimeStateQuery, workSessionWorkflow } from "work-orchestrator";
 import { TestWorkflowEnvironment } from "@temporalio/testing";
 import { Worker } from "@temporalio/worker";
-import { createV3TemporalRuntime, prepareV3SessionInput } from "../src/integration/v3-runtime.js";
+import { createV3TemporalRuntime, prepareV3SessionInput, startClassificationCorrectionBatchV3 } from "../src/integration/v3-runtime.js";
 import { DeploymentQueueServiceV3 } from "../src/application/v3/deployment-services.js";
 import { createV3OperationContext } from "../src/application/v3/context.js";
-import { STREAM_KEYS } from "../src/application/services.js";
+import { STREAM_KEYS, typedClassificationHandler, typedCorpusHandler } from "../src/application/services.js";
+import { adaptCommentBatchBytes } from "../src/collector/comment-batch/comment-batch-adapter.js";
+import { importRawInputIntoDatabase } from "../src/database/comment-database.js";
 import { openCommentDatabase } from "../src/database/comment-database.js";
 import { StateControlPlane } from "../src/state/control-plane.js";
 import { semanticSha256 } from "../src/state/canonical.js";
@@ -128,11 +130,11 @@ function temporalInput(controlPlane, updateRequestId) {
   });
 }
 
-async function temporalHarness({ environment = undefined, taskQueue = "comment-db-v3-temporal-e2e" } = {}) {
+async function temporalHarness({ environment = undefined, taskQueue = "comment-db-v3-temporal-e2e", seedState = seedV3State } = {}) {
   const root = await mkdtemp(path.join(tmpdir(), "comment-db-v3-temporal-e2e-"));
   const db = await openCommentDatabase(":memory:", { stateControlPlane: true });
   const controlPlane = new StateControlPlane(db);
-  seedV3State(controlPlane);
+  seedState(controlPlane);
   const registry = new Registry(path.join(root, "registry.sqlite"));
   const artifactStore = new ArtifactStore(path.join(root, "artifacts"));
   const ownedEnvironment = environment ?? await TestWorkflowEnvironment.createLocal();
@@ -301,4 +303,36 @@ test("[V3-E2E04] Temporal same-target deployment race never lets an older result
   } finally {
     await disposeTemporalFixture(fixture);
   }
+});
+
+
+test("[V3-BATCH-TEMPORAL] authenticated batch binds one completed Human execution and commits once", async () => {
+  const fixture = await temporalHarness({ taskQueue: "classification-correction-batch-temporal", seedState(controlPlane) {
+    const comments = ["AAA", "AAA", "BBB"].map((comment, index) => ({ username: `u${index}`, handle: `h${index}`, comment, postedAt: "2026-10-01T00:00:00Z", postedDate: "2026-10-01" }));
+    const imported = importRawInputIntoDatabase(controlPlane.db, adaptCommentBatchBytes(Buffer.from(JSON.stringify(comments))));
+    for (const [stream, versionId, policyKind] of [
+      [STREAM_KEYS.corpusPolicy, "corpus-policy-0", "corpus"], [STREAM_KEYS.classificationPolicy, "classification-policy-0", "classification"], [STREAM_KEYS.keywordPolicy, "keyword-policy-0", "keyword-selection"], [STREAM_KEYS.accountPolicy, "account-policy-0", "account-candidate"], [STREAM_KEYS.promotionPolicy, "promotion-policy-0", "promotion-production"], [STREAM_KEYS.deploymentPolicy, "deployment-policy-0", "deployment-production"],
+    ]) seed(controlPlane, stream, versionId, { policy_kind: policyKind, auto_commit: true });
+    seed(controlPlane, STREAM_KEYS.projectionDefinition, "projection-0", { schema_version: 1 });
+    seed(controlPlane, STREAM_KEYS.keywordSelection, "keyword-0", { schema_version: 1, entries: [] });
+    controlPlane.createGenesis({ streamId: controlPlane.ensureStream(STREAM_KEYS.corpus).stream_id, versionId: "corpus-0", payload: { schema_version: 1, state: { schema_version: 2, snapshot_refs: [{ payloadSha256: imported.payloadSha256, snapshotIndex: 0 }] } }, domainHandler: typedCorpusHandler() });
+    controlPlane.createGenesis({ streamId: controlPlane.ensureStream(STREAM_KEYS.classification).stream_id, versionId: "classification-0", payload: { schema_version: 1, state: { schema_version: 2, labels: ["1", "2", "3"].map((observationId) => ({ observationId, label: "normal" })) } }, dependencies: [{ role: "corpus", versionId: "corpus-0" }, { role: "policy", versionId: "classification-policy-0" }], domainHandler: typedClassificationHandler() });
+  } });
+  try {
+    let handle;
+    const runtime = { registry: fixture.registry, start: async (input) => { handle = await fixture.environment.client.workflow.start(workSessionWorkflow, { workflowId: input.sessionId, taskQueue: fixture.taskQueue, args: [input] }); return { sessionId: input.sessionId }; } };
+    const command = { correctionOperationId: "temporal-batch-operation", baseClassificationVersionId: "classification-0", corrections: ["1", "3"].map((targetObservationId) => ({ targetObservationId, expectedLabel: "normal", replacementLabel: "direct_nuisance", reason: "Temporalの一括修正を確認" })) };
+    const actor = { actorType: "human", actorId: "requester" };
+    await startClassificationCorrectionBatchV3({ runtime, controlPlane: fixture.controlPlane, sessionId: "temporal-batch-session", command, authenticatedActor: actor });
+    await completeTemporalDecision(handle, "05-review-classification");
+    const state = await waitForTemporalState(handle, (candidate) => candidate.resultsByStepId["06-finalize-correction-batch"]);
+    const final = state.resultsByStepId["06-finalize-correction-batch"];
+    assert.equal(final?.stateResult, "committed", JSON.stringify(state.tasks));
+    assert.equal(fixture.controlPlane.resolveHead(STREAM_KEYS.classification).versionId, final.refs.classificationVersionId);
+    const resent = await startClassificationCorrectionBatchV3({ runtime, controlPlane: fixture.controlPlane, sessionId: "temporal-batch-resend", command, authenticatedActor: actor });
+    assert.equal(resent.sessionId, "temporal-batch-session");
+    assert.equal(fixture.db.prepare("SELECT COUNT(*) AS n FROM state_transitions").get().n, 1);
+    assert.equal(fixture.db.prepare("SELECT COUNT(*) AS n FROM v3_deployment_requests").get().n, 0);
+    await handle.cancel();
+  } finally { await disposeTemporalFixture(fixture); }
 });

@@ -1,0 +1,319 @@
+{
+  "schema_version": 1,
+  "comparison_date": "2026-10-30",
+  "timezone": "Asia/Tokyo",
+  "authoritative_source": {
+    "path": "docs/active/handoff/response (3).json",
+    "copy_path": "raw-data/response (3).json",
+    "sha256": "ccbca9c459ab7dc564d499e1dd2b8db151819d8d5324b5e76b331998e4c6289b",
+    "workset_id": "809c68f0-7345-44c4-af1c-24a11c9b9018"
+  },
+  "current_classification": {
+    "database_path": "var/comment-history.sqlite3",
+    "version_id": "version_67c4dfa11ecb223a5f41d1c92c67dcb8",
+    "version_no": 12,
+    "semantic_sha256": "b8c5509805072e664fe3d7deaa70dd4409a5419f73579eef4d195c8cc50e0fde"
+  },
+  "item_mapping": {
+    "source": "application_operation_receipts",
+    "operation_id": "production-comment-data-update-20261028T221851Z-codex/03a-prepare-classification-handoff",
+    "description": "同一workset_idのhandoffItemsからitem_idとコメント本文を対応付け、現行Classification内の完全一致コメント本文を持つ全Observationを比較する。"
+  },
+  "summary": {
+    "compared_item_count": 1582,
+    "matched_item_count": 1557,
+    "different_item_count": 25,
+    "different_observation_count": 29,
+    "missing_current_item_count": 0,
+    "mixed_current_label_item_count": 0,
+    "label_transitions": [
+      {
+        "current_label": "normal",
+        "authoritative_label": "direct_nuisance",
+        "item_count": 25,
+        "observation_count": 29
+      }
+    ]
+  },
+  "differences": [
+    {
+      "item_id": "I204",
+      "comment_text": "うおwかっかー.",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "45921",
+      "observation_count": 5,
+      "observation_ids": [
+        "45921",
+        "46365",
+        "46445",
+        "46935",
+        "47243"
+      ]
+    },
+    {
+      "item_id": "I205",
+      "comment_text": "過去一の鳥肌",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "45922",
+      "observation_count": 1,
+      "observation_ids": [
+        "45922"
+      ]
+    },
+    {
+      "item_id": "I221",
+      "comment_text": "うおwカッケーっす先輩",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "45945",
+      "observation_count": 1,
+      "observation_ids": [
+        "45945"
+      ]
+    },
+    {
+      "item_id": "I323",
+      "comment_text": "かっかかっかっかうおwうおw😅",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "46076",
+      "observation_count": 1,
+      "observation_ids": [
+        "46076"
+      ]
+    },
+    {
+      "item_id": "I349",
+      "comment_text": "Mか、、、",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "46105",
+      "observation_count": 1,
+      "observation_ids": [
+        "46105"
+      ]
+    },
+    {
+      "item_id": "I581",
+      "comment_text": "そうゆうとこだよ",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "46432",
+      "observation_count": 1,
+      "observation_ids": [
+        "46432"
+      ]
+    },
+    {
+      "item_id": "I594",
+      "comment_text": "そういうとこやでほんまに。",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "46450",
+      "observation_count": 1,
+      "observation_ids": [
+        "46450"
+      ]
+    },
+    {
+      "item_id": "I629",
+      "comment_text": "え、ひとりでなにしてんの",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "46493",
+      "observation_count": 1,
+      "observation_ids": [
+        "46493"
+      ]
+    },
+    {
+      "item_id": "I675",
+      "comment_text": "30「とぅるるる…かにぃ…うさぎぃ🥺」",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "46555",
+      "observation_count": 1,
+      "observation_ids": [
+        "46555"
+      ]
+    },
+    {
+      "item_id": "I702",
+      "comment_text": "うっわぁっwこれは来たｗｗ",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "46595",
+      "observation_count": 1,
+      "observation_ids": [
+        "46595"
+      ]
+    },
+    {
+      "item_id": "I712",
+      "comment_text": "初めて本当に痛いと感じた",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "46608",
+      "observation_count": 1,
+      "observation_ids": [
+        "46608"
+      ]
+    },
+    {
+      "item_id": "I733",
+      "comment_text": "まじで俺が恥ずかしい",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "46633",
+      "observation_count": 1,
+      "observation_ids": [
+        "46633"
+      ]
+    },
+    {
+      "item_id": "I739",
+      "comment_text": "助けて失神する痛い",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "46640",
+      "observation_count": 1,
+      "observation_ids": [
+        "46640"
+      ]
+    },
+    {
+      "item_id": "I745",
+      "comment_text": "わたしのかってくれるひとー！",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "46646",
+      "observation_count": 1,
+      "observation_ids": [
+        "46646"
+      ]
+    },
+    {
+      "item_id": "I760",
+      "comment_text": "可愛いのはもうええて",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "46662",
+      "observation_count": 1,
+      "observation_ids": [
+        "46662"
+      ]
+    },
+    {
+      "item_id": "I770",
+      "comment_text": "何というか手抜きなのか馬鹿にしてるのか",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "46672",
+      "observation_count": 1,
+      "observation_ids": [
+        "46672"
+      ]
+    },
+    {
+      "item_id": "I771",
+      "comment_text": "いたすぎる",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "46673",
+      "observation_count": 1,
+      "observation_ids": [
+        "46673"
+      ]
+    },
+    {
+      "item_id": "I959",
+      "comment_text": "う、うおww",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "46937",
+      "observation_count": 1,
+      "observation_ids": [
+        "46937"
+      ]
+    },
+    {
+      "item_id": "I1041",
+      "comment_text": "うお😅",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "47029",
+      "observation_count": 1,
+      "observation_ids": [
+        "47029"
+      ]
+    },
+    {
+      "item_id": "I1206",
+      "comment_text": "う、うおうおうおうおうおどわどわどわどわぎょえぎょえぎょえぎょえきちちちちちちちた、たはははははははの田原",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "47214",
+      "observation_count": 1,
+      "observation_ids": [
+        "47214"
+      ]
+    },
+    {
+      "item_id": "I1222",
+      "comment_text": "ミル。一つになろ。",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "47231",
+      "observation_count": 1,
+      "observation_ids": [
+        "47231"
+      ]
+    },
+    {
+      "item_id": "I1252",
+      "comment_text": "愛してる。俺だけの女",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "47271",
+      "observation_count": 1,
+      "observation_ids": [
+        "47271"
+      ]
+    },
+    {
+      "item_id": "I1433",
+      "comment_text": "今までで一番いい説あるよやっぱり笑ったり声出したりしない方がいい",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "47514",
+      "observation_count": 1,
+      "observation_ids": [
+        "47514"
+      ]
+    },
+    {
+      "item_id": "I1438",
+      "comment_text": "1人で何してんの？",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "47523",
+      "observation_count": 1,
+      "observation_ids": [
+        "47523"
+      ]
+    },
+    {
+      "item_id": "I1454",
+      "comment_text": "今年1鳥肌たったわ😅",
+      "current_label": "normal",
+      "authoritative_label": "direct_nuisance",
+      "representative_observation_id": "47575",
+      "observation_count": 1,
+      "observation_ids": [
+        "47575"
+      ]
+    }
+  ]
+}

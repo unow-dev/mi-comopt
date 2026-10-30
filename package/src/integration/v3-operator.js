@@ -3,7 +3,7 @@ import os from "node:os";
 import { existsSync } from "node:fs";
 import { executionWorkspace, openWorkspace } from "work-orchestrator";
 import { completeValidatedHumanArtifact, EXPECTED_FILES, expectedHumanArtifactFile } from "./human-artifact-completion-v3.js";
-import { createV3LocalRuntime, prepareV3SessionInput, startClassificationCorrectionV3 as startCorrectionRuntime, startCommentDataUpdateV3 } from "./v3-runtime.js";
+import { createV3LocalRuntime, prepareV3SessionInput, startClassificationCorrectionBatchV3, startClassificationCorrectionV3 as startCorrectionRuntime, startCommentDataUpdateV3 } from "./v3-runtime.js";
 import { GitHubPagesDeploymentAdapter } from "../deployment/github-pages-adapter.js";
 import { FileReleaseArtifactStore } from "../release/artifact-store.js";
 import { openCommentDatabase } from "../database/comment-database.js";
@@ -15,6 +15,7 @@ import {
   createDbBackedUiReleaseArtifactBuilder,
   DEFAULT_UI_PUBLICATION_ROOT,
 } from "./v3-ui-release-builder.js";
+import { readBatchCorrectionReviewSummary } from "../application/v3/correction-batch-service.js";
 import { readCorrectionReviewSummary } from "../application/v3/correction-service.js";
 import { TARGET_REVISION_START, V3_REVISION } from "../workflow/v3/definitions.js";
 
@@ -48,7 +49,7 @@ function trustedActor(operator, actorId) {
 
 function isSupportedV3Session(workDefinitionId, revision) {
   return (workDefinitionId === WORK_DEFINITION_ID && Number(revision) >= TARGET_REVISION_START)
-    || (workDefinitionId === CORRECTION_WORK_DEFINITION_ID && Number(revision) === 1);
+    || (workDefinitionId === CORRECTION_WORK_DEFINITION_ID && [1, 2].includes(Number(revision)));
 }
 
 function resolveTask(state, { taskId = undefined, stepId = undefined } = {}) {
@@ -91,7 +92,7 @@ function taskSummary(task, state = undefined, controlPlane = undefined) {
   if ((["05-review-classification", "09-review-keyword-selection"].includes(task.stepId) || task.stepId.startsWith("13-review-production-promotion")) && task.inputs && typeof task.inputs === "object") {
     summary.reviewContext = task.inputs;
     if (state?.session?.workDefinitionId === CORRECTION_WORK_DEFINITION_ID && task.stepId === "05-review-classification") {
-      summary.correctionReview = readCorrectionReviewSummary(controlPlane, { proposalId: task.inputs.proposal, assessmentId: task.inputs.assessment });
+      summary.correctionReview = (state.session.definitionRevision === 2 ? readBatchCorrectionReviewSummary : readCorrectionReviewSummary)(controlPlane, { proposalId: task.inputs.proposal, assessmentId: task.inputs.assessment });
     }
   }
   return summary;
@@ -348,3 +349,10 @@ export async function releaseV3HumanTask(operator, { sessionId, taskId, stepId, 
 }
 
 export { EXPECTED_FILES };
+
+
+export async function startV3ClassificationCorrectionBatch(operator, { sessionId, command, actorId, pinned = {} } = {}) {
+  const authenticatedActor = trustedActor(operator, actorId);
+  const response = await startClassificationCorrectionBatchV3({ runtime: operator.runtime, controlPlane: operator.controlPlane, sessionId, command, authenticatedActor, pinned });
+  return { ...response, workDefinitionId: CORRECTION_WORK_DEFINITION_ID, revision: 2 };
+}

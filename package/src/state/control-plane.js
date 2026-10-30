@@ -157,12 +157,10 @@ export class StateControlPlane {
       if (prior.operationKind !== operationKind || prior.requestSha256 !== requestSha256) throw stateError("IDEMPOTENCY_CONFLICT", `operation ${operationId} was already completed with a different request or operation kind`);
       return cloneJson(prior.result);
     }
-    this.db.exec("BEGIN IMMEDIATE");
-    try {
+    return this._transaction(() => {
       const concurrent = this.readReceipt(operationId);
       if (concurrent) {
         if (concurrent.operationKind !== operationKind || concurrent.requestSha256 !== requestSha256) throw stateError("IDEMPOTENCY_CONFLICT", `operation ${operationId} was already completed with a different request or operation kind`);
-        this.db.exec("COMMIT");
         return cloneJson(concurrent.result);
       }
       const result = mutation(this.db);
@@ -171,13 +169,8 @@ export class StateControlPlane {
           (operation_id, operation_kind, request_sha256, result_json, completed_at)
          VALUES (?, ?, ?, ?, ?)`,
       ).run(operationId, operationKind, requestSha256, canonicalJson(result), this.now());
-      this.db.exec("COMMIT");
       return cloneJson(result);
-    } catch (error) {
-      try { this.db.exec("ROLLBACK"); } catch { /* preserve original */ }
-      if (error instanceof StateControlPlaneError) throw error;
-      throw stateError("STATE_TRANSACTION_FAILED", error.message, { cause: error });
-    }
+    });
   }
 
   createProposal({ proposalId = newId("proposal"), streamId, expectedHeadVersionId = null, proposedSemanticSha256, payload, dependencies = [], assessmentRefs = {}, createdAt = this.now(), operationId = undefined } = {}) {
@@ -367,7 +360,12 @@ export class StateControlPlane {
   }
 
   _transaction(mutation) {
+    // Synchronous application units of work join this transaction. Only the
+    // outer owner issues BEGIN/COMMIT; all state mutations and receipts roll
+    // back together when a composed operation throws.
+    if (this._transactionActive) return mutation(this.db);
     this.db.exec("BEGIN IMMEDIATE");
+    this._transactionActive = true;
     try {
       const result = mutation(this.db);
       this.db.exec("COMMIT");
@@ -376,6 +374,8 @@ export class StateControlPlane {
       try { this.db.exec("ROLLBACK"); } catch { /* preserve original */ }
       if (error instanceof StateControlPlaneError) throw error;
       throw stateError("STATE_TRANSACTION_FAILED", error.message, { cause: error });
+    } finally {
+      this._transactionActive = false;
     }
   }
 

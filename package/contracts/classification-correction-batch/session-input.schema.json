@@ -1,0 +1,207 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "inputContract",
+    "correctionOperationId",
+    "requester",
+    "corrections",
+    "pinned",
+    "target"
+  ],
+  "properties": {
+    "inputContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version"
+      ],
+      "properties": {
+        "id": {
+          "const": "classificationCorrectionBatch"
+        },
+        "version": {
+          "const": "2.0.0"
+        }
+      }
+    },
+    "correctionOperationId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requester": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "actorType",
+        "actorId"
+      ],
+      "properties": {
+        "actorType": {
+          "const": "human"
+        },
+        "actorId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "pinned": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "corpusVersionId",
+        "classificationVersionId",
+        "keywordSelectionVersionId",
+        "corpusPolicyVersionId",
+        "classificationPolicyVersionId",
+        "keywordPolicyVersionId",
+        "accountPolicyVersionId",
+        "projectionDefinitionVersionId"
+      ],
+      "properties": {
+        "corpusVersionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "classificationVersionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "keywordSelectionVersionId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "corpusPolicyVersionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "classificationPolicyVersionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "keywordPolicyVersionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "accountPolicyVersionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "projectionDefinitionVersionId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "promotionStream",
+        "deploymentTarget"
+      ],
+      "properties": {
+        "promotionStream": {
+          "const": "production"
+        },
+        "deploymentTarget": {
+          "const": "production"
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceSha256"
+      ],
+      "properties": {
+        "sourceSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "worksetId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "receiptRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "handoffItemId": {
+          "type": "string",
+          "pattern": "^I[1-9][0-9]*$"
+        }
+      }
+    },
+    "corrections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "targetObservationId",
+          "expectedLabel",
+          "replacementLabel",
+          "reason"
+        ],
+        "properties": {
+          "targetObservationId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expectedLabel": {
+            "enum": [
+              "normal",
+              "direct_nuisance",
+              "reactive"
+            ]
+          },
+          "replacementLabel": {
+            "enum": [
+              "normal",
+              "direct_nuisance",
+              "reactive"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "provenance": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "sourceSha256"
+            ],
+            "properties": {
+              "sourceSha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "worksetId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "receiptRef": {
+                "type": "string",
+                "minLength": 1
+              },
+              "handoffItemId": {
+                "type": "string",
+                "pattern": "^I[1-9][0-9]*$"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

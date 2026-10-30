@@ -1,3 +1,5 @@
+import { batchRequestFingerprint } from "../three-class/classification-correction-batch.js";
+import { batchOperationKey, readBatchRegistration } from "../application/v3/correction-batch-service.js";
 import {
   ArtifactStore,
   createTemporalActivities,
@@ -13,7 +15,7 @@ import {
   resolveTargetRevision,
   V3_REVISION,
 } from "../workflow/v3/definitions.js";
-import { resolveCorrectionSessionInput, resolvePinnedSessionInputV3, validateClassificationCorrectionSessionInputV3, validateCommentDataUpdateSessionInputV3 } from "../workflow/v3/session-input.js";
+import { resolveCorrectionBatchSessionInput, resolveCorrectionSessionInput, resolvePinnedSessionInputV3, validateClassificationCorrectionSessionInputV3, validateCommentDataUpdateSessionInputV3 } from "../workflow/v3/session-input.js";
 import { createV3ApplicationServiceAgentAdapter, V3_SERVICE_CAPABILITIES } from "./task-handlers-v3.js";
 import { MemoryDeploymentAdapter } from "../deployment/adapter.js";
 import { MemoryReleaseArtifactStore } from "../release/artifact-store.js";
@@ -63,9 +65,11 @@ export function createV3LocalRuntime({ controlPlane, registry = new Registry(), 
   if (!controlPlane) throw stateError("CONFIGURATION_ERROR", "controlPlane is required");
   const { definition, revision: targetRevision } = registerV3Definition({ registry, revision });
   const correctionDefinition = registerClassificationCorrectionDefinitionV3({ registry, publicApi: { validateAndHashDefinition }, revision: 1 });
+  const correctionBatchDefinition = registerClassificationCorrectionDefinitionV3({ registry, publicApi: { validateAndHashDefinition }, revision: 2 });
   const artifactVersionStore = createV3ArtifactVersionStore(artifactStore);
   const agentAdapter = createV3ApplicationServiceAgentAdapter({
     controlPlane,
+    registry,
     deploymentAdapter,
     artifactStore: artifactVersionStore,
     releaseArtifactStore,
@@ -80,7 +84,7 @@ export function createV3LocalRuntime({ controlPlane, registry = new Registry(), 
     agentAdapter,
     workers: [worker ?? v3ApplicationWorkerProfile()],
   });
-  return { runtime, registry, artifactStore, workspace, releaseArtifactStore, agentAdapter, definition, correctionDefinition, revision: targetRevision };
+  return { runtime, registry, artifactStore, workspace, releaseArtifactStore, agentAdapter, definition, correctionDefinition, correctionBatchDefinition, revision: targetRevision };
 }
 
 /** Build the same v3 application adapter for a Temporal Worker. The provider
@@ -90,9 +94,11 @@ export function createV3TemporalRuntime({ controlPlane, registry, artifactStore,
   if (!controlPlane || !registry || !artifactStore) throw stateError("CONFIGURATION_ERROR", "controlPlane, Registry and ArtifactStore are required");
   const { definition, revision: targetRevision } = registerV3Definition({ registry, revision });
   const correctionDefinition = registerClassificationCorrectionDefinitionV3({ registry, publicApi: { validateAndHashDefinition }, revision: 1 });
+  const correctionBatchDefinition = registerClassificationCorrectionDefinitionV3({ registry, publicApi: { validateAndHashDefinition }, revision: 2 });
   const artifactVersionStore = createV3ArtifactVersionStore(artifactStore);
   const agentAdapter = createV3ApplicationServiceAgentAdapter({
     controlPlane,
+    registry,
     deploymentAdapter,
     artifactStore: artifactVersionStore,
     releaseArtifactStore,
@@ -105,7 +111,7 @@ export function createV3TemporalRuntime({ controlPlane, registry, artifactStore,
   const runtime = client && typeof client.start === "function"
     ? { registry, start: (input) => client.start(input) }
     : undefined;
-  return { runtime, client, activities, agentAdapter, workers, registry, artifactStore, releaseArtifactStore, definition, correctionDefinition, revision: targetRevision };
+  return { runtime, client, activities, agentAdapter, workers, registry, artifactStore, releaseArtifactStore, definition, correctionDefinition, correctionBatchDefinition, revision: targetRevision };
 }
 
 export function prepareV3SessionInput({ controlPlane, input } = {}) {
@@ -158,4 +164,28 @@ export async function startClassificationCorrectionV3({ runtime, controlPlane, s
 
 export function buildV3DefinitionForRuntime({ revision = V3_REVISION } = {}) {
   return buildCommentDataUpdateDefinitionV3({ revision });
+}
+
+
+/** One durable owner Session per business operation. Re-sending from another
+ * Session ID returns the owner, including after a commit/start response loss. */
+export async function startClassificationCorrectionBatchV3({ runtime, controlPlane, sessionId, command, authenticatedActor, pinned = {} } = {}) {
+  if (!runtime || !controlPlane || typeof sessionId !== "string" || !sessionId.length) throw stateError("CONFIGURATION_ERROR", "runtime, controlPlane and sessionId are required");
+  assertV3CorpusPreflight(controlPlane);
+  assertV3FeatureStartAllowed(controlPlane);
+  const prior = readBatchRegistration(controlPlane, command?.correctionOperationId);
+  const input = resolveCorrectionBatchSessionInput(controlPlane, { command, authenticatedActor, pinned, savedInput: prior?.input });
+  const requestFingerprint = batchRequestFingerprint(input);
+  const requestedState = !prior && runtime.registry?.getRuntimeState(sessionId);
+  if (requestedState) throw stateError("IDEMPOTENCY_CONFLICT", "requested Session ID already belongs to another operation");
+  const registered = controlPlane.runIdempotent({ operationId: batchOperationKey(input.correctionOperationId, "registration"), operationKind: "correction-batch.register", request: { requestFingerprint } }, () => ({ sessionId, input, requestFingerprint }));
+  const ownerId = registered.sessionId;
+  const existing = runtime.registry?.getRuntimeState(ownerId);
+  if (existing) {
+    if (existing.session.workDefinitionId !== "classification-correction" || existing.session.definitionRevision !== 2 || canonicalJson(existing.session.input) !== canonicalJson(input)) throw stateError("IDEMPOTENCY_CONFLICT", "owner Session has different input");
+    return { sessionId: ownerId, requestedSessionId: sessionId, revision: 2, reused: true };
+  }
+  const startInput = { sessionId: ownerId, workDefinitionId: "classification-correction", revision: 2, input: registered.input, actor: registered.input.requester, commandId: `start-correction-batch:${input.correctionOperationId}` };
+  const response = typeof runtime.startSession === "function" ? await runtime.startSession(startInput) : await runtime.start(startInput);
+  return { ...response, sessionId: ownerId, requestedSessionId: sessionId, revision: 2, reused: Boolean(prior) };
 }

@@ -297,4 +297,4 @@ export function readCorrectionReviewSummary(controlPlane, { proposalId, assessme
   });
 }
 
-export { CORRECTION_KIND };
+export { CORRECTION_KIND, corpusSnapshotRefs, assertBaseStateMatchesLabelRows, stateSchemaVersion };

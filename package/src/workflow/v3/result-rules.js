@@ -61,6 +61,11 @@ for (const suffix of ["reuse", "07-accepted-without-review", "07-reviewed"]) {
   }
 }
 
+for (const stepId of ["01-validate-correction-batch", "02-resolve-correction-batch", "03-propose-correction-batch"]) {
+  cases[stepId] = [[stepId.startsWith("03") ? "review_required" : "continue", [stepId.startsWith("03") ? "review_required" : "succeeded"], stepId.startsWith("03") ? ["assessmentId", "proposalId"] : []], ["invalid", ["blocked"], []], ["superseded", ["conflict"], []]];
+}
+cases["06-finalize-correction-batch"] = [["continue", ["committed", "reused"], ["classificationVersionId", "proposalId", "decisionId"]], ["rejected", ["rejected"], ["proposalId", "decisionId"]], ["superseded", ["conflict"], []]];
+
 function exactKeys(result) { return Object.keys(result.refs ?? {}).sort(); }
 
 function dynamicRules(stepId) {
@@ -84,6 +89,17 @@ export function validateV3WorkStepResult({ stepId, routingOutcome, result } = {}
   const validated = validateWorkStepResultSchema(result);
   const matched = (cases[stepId] ?? dynamicRules(stepId) ?? []).find(([route, states, refs]) => route === routingOutcome && states.includes(validated.stateResult) && JSON.stringify(refs.slice().sort()) === JSON.stringify(exactKeys(validated)));
   if (!matched) throw stateError("WORK_STEP_RESULT_INVALID", `step ${stepId} has an invalid routing/state/ref combination`, { stepId, routingOutcome, stateResult: validated.stateResult, refKeys: exactKeys(validated) });
+  if (/^(?:01-validate|02-resolve|03-propose|06-finalize)-correction-batch$/.test(stepId)) {
+    const details = validated.details ?? {};
+    const sha = (value) => typeof value === "string" && /^[0-9a-f]{64}$/.test(value);
+    let valid = true;
+    if (validated.stateResult === "blocked") valid = details.reason === "invalid_request" && Array.isArray(details.violations) && details.violations.length > 0;
+    if (validated.stateResult === "conflict") valid = ["classification", "corpus", "policy"].includes(details.conflictAt);
+    if (stepId === "01-validate-correction-batch" && validated.stateResult === "succeeded") valid = sha(details.requestFingerprint);
+    if (stepId === "02-resolve-correction-batch" && validated.stateResult === "succeeded") valid = sha(details.requestFingerprint) && sha(details.changeSetHash) && typeof details.changeSetId === "string" && details.changeSetId.length > 0 && Number.isSafeInteger(details.groupCount) && details.groupCount > 0 && Number.isSafeInteger(details.observationCount) && details.observationCount >= details.groupCount;
+    if (stepId === "03-propose-correction-batch" && validated.stateResult === "review_required") valid = sha(details.changeSetHash);
+    if (!valid) throw stateError("WORK_STEP_RESULT_INVALID", `step ${stepId} has missing or invalid batch details`);
+  }
   return validated;
 }
 

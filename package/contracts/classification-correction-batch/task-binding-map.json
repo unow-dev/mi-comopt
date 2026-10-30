@@ -1,0 +1,1154 @@
+{
+  "workDefinitionId": "classification-correction",
+  "revision": 2,
+  "steps": [
+    {
+      "stepId": "01-validate-correction-batch",
+      "workerKind": "agent",
+      "capability": "classification-correction.batch.validate",
+      "inputBindings": {
+        "batch": {
+          "source": "session",
+          "path": ""
+        }
+      },
+      "allowedOutcomes": [
+        "continue",
+        "invalid",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "02-resolve-correction-batch",
+      "workerKind": "agent",
+      "capability": "classification-correction.batch.resolve",
+      "inputBindings": {
+        "batch": {
+          "source": "session",
+          "path": ""
+        },
+        "requestFingerprint": {
+          "source": "step",
+          "stepId": "01-validate-correction-batch",
+          "path": "/details/requestFingerprint"
+        }
+      },
+      "allowedOutcomes": [
+        "continue",
+        "invalid",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "03-propose-correction-batch",
+      "workerKind": "agent",
+      "capability": "classification-correction.batch.propose",
+      "inputBindings": {
+        "correctionOperationId": {
+          "source": "session",
+          "path": "/correctionOperationId"
+        },
+        "requestFingerprint": {
+          "source": "step",
+          "stepId": "01-validate-correction-batch",
+          "path": "/details/requestFingerprint"
+        },
+        "changeSetId": {
+          "source": "step",
+          "stepId": "02-resolve-correction-batch",
+          "path": "/details/changeSetId"
+        },
+        "changeSetHash": {
+          "source": "step",
+          "stepId": "02-resolve-correction-batch",
+          "path": "/details/changeSetHash"
+        }
+      },
+      "allowedOutcomes": [
+        "review_required",
+        "invalid",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "05-review-classification",
+      "workerKind": "human",
+      "capability": null,
+      "inputBindings": {
+        "proposal": {
+          "source": "step",
+          "stepId": "03-propose-correction-batch",
+          "path": "/refs/proposalId"
+        },
+        "assessment": {
+          "source": "step",
+          "stepId": "03-propose-correction-batch",
+          "path": "/refs/assessmentId"
+        },
+        "changeSetHash": {
+          "source": "step",
+          "stepId": "02-resolve-correction-batch",
+          "path": "/details/changeSetHash"
+        }
+      },
+      "allowedOutcomes": [
+        "accept",
+        "reject"
+      ]
+    },
+    {
+      "stepId": "06-finalize-correction-batch",
+      "workerKind": "agent",
+      "capability": "classification-correction.batch.finalize",
+      "inputBindings": {
+        "correctionOperationId": {
+          "source": "session",
+          "path": "/correctionOperationId"
+        },
+        "proposalId": {
+          "source": "step",
+          "stepId": "03-propose-correction-batch",
+          "path": "/refs/proposalId"
+        },
+        "assessmentId": {
+          "source": "step",
+          "stepId": "03-propose-correction-batch",
+          "path": "/refs/assessmentId"
+        },
+        "approvedChangeSetHash": {
+          "source": "step",
+          "stepId": "02-resolve-correction-batch",
+          "path": "/details/changeSetHash"
+        },
+        "review": {
+          "source": "task",
+          "stepId": "05-review-classification",
+          "path": ""
+        }
+      },
+      "allowedOutcomes": [
+        "continue",
+        "rejected",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "07a-prepare-keyword-handoff",
+      "workerKind": "agent",
+      "capability": "keyword-selection.handoff.prepare",
+      "inputBindings": {
+        "corpusVersionId": {
+          "source": "session",
+          "path": "/pinned/corpusVersionId"
+        },
+        "classificationVersionId": {
+          "source": "step",
+          "stepId": "06-finalize-correction-batch",
+          "path": "/refs/classificationVersionId"
+        },
+        "keywordSelectionVersionId": {
+          "source": "session",
+          "path": "/pinned/keywordSelectionVersionId"
+        },
+        "keywordPolicyVersionId": {
+          "source": "session",
+          "path": "/pinned/keywordPolicyVersionId"
+        }
+      },
+      "allowedOutcomes": [
+        "reuse",
+        "handoff_required",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "11-build-release-bundle-reuse",
+      "workerKind": "agent",
+      "capability": "release.build",
+      "inputBindings": {
+        "corpusVersionId": {
+          "source": "session",
+          "path": "/pinned/corpusVersionId"
+        },
+        "classificationVersionId": {
+          "source": "step",
+          "stepId": "06-finalize-correction-batch",
+          "path": "/refs/classificationVersionId"
+        },
+        "keywordSelectionVersionId": {
+          "source": "step",
+          "stepId": "07a-prepare-keyword-handoff",
+          "path": "/refs/keywordSelectionVersionId"
+        },
+        "corpusPolicyVersionId": {
+          "source": "session",
+          "path": "/pinned/corpusPolicyVersionId"
+        },
+        "classificationPolicyVersionId": {
+          "source": "session",
+          "path": "/pinned/classificationPolicyVersionId"
+        },
+        "keywordPolicyVersionId": {
+          "source": "session",
+          "path": "/pinned/keywordPolicyVersionId"
+        },
+        "accountPolicyVersionId": {
+          "source": "session",
+          "path": "/pinned/accountPolicyVersionId"
+        },
+        "projectionDefinitionVersionId": {
+          "source": "session",
+          "path": "/pinned/projectionDefinitionVersionId"
+        }
+      },
+      "allowedOutcomes": [
+        "continue"
+      ]
+    },
+    {
+      "stepId": "12-materialize-release-reuse",
+      "workerKind": "agent",
+      "capability": "release.materialize",
+      "inputBindings": {
+        "releaseId": {
+          "source": "step",
+          "stepId": "11-build-release-bundle-reuse",
+          "path": "/refs/releaseId"
+        }
+      },
+      "allowedOutcomes": [
+        "continue"
+      ]
+    },
+    {
+      "stepId": "13-propose-production-promotion-reuse",
+      "workerKind": "agent",
+      "capability": "promotion.propose",
+      "inputBindings": {
+        "releaseId": {
+          "source": "step",
+          "stepId": "12-materialize-release-reuse",
+          "path": "/refs/releaseId"
+        },
+        "promotionStream": {
+          "source": "session",
+          "path": "/target/promotionStream"
+        }
+      },
+      "allowedOutcomes": [
+        "continue"
+      ]
+    },
+    {
+      "stepId": "13-review-production-promotion-reuse",
+      "workerKind": "human",
+      "capability": null,
+      "inputBindings": {
+        "releaseId": {
+          "source": "step",
+          "stepId": "12-materialize-release-reuse",
+          "path": "/refs/releaseId"
+        },
+        "proposalId": {
+          "source": "step",
+          "stepId": "13-propose-production-promotion-reuse",
+          "path": "/refs/proposalId"
+        }
+      },
+      "allowedOutcomes": [
+        "accept",
+        "reject"
+      ]
+    },
+    {
+      "stepId": "14-finalize-production-promotion-reuse",
+      "workerKind": "agent",
+      "capability": "promotion.finalize",
+      "inputBindings": {
+        "proposalId": {
+          "source": "step",
+          "stepId": "13-propose-production-promotion-reuse",
+          "path": "/refs/proposalId"
+        },
+        "releaseId": {
+          "source": "step",
+          "stepId": "12-materialize-release-reuse",
+          "path": "/refs/releaseId"
+        },
+        "review": {
+          "source": "task",
+          "stepId": "13-review-production-promotion-reuse",
+          "path": ""
+        }
+      },
+      "allowedOutcomes": [
+        "continue",
+        "rejected",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "16-trigger-deployment-reuse",
+      "workerKind": "agent",
+      "capability": "deployment.trigger",
+      "inputBindings": {
+        "acceptedPromotionDecisionId": {
+          "source": "step",
+          "stepId": "14-finalize-production-promotion-reuse",
+          "path": "/refs/decisionId"
+        },
+        "promotionVersionId": {
+          "source": "step",
+          "stepId": "14-finalize-production-promotion-reuse",
+          "path": "/refs/promotionVersionId"
+        },
+        "releaseId": {
+          "source": "step",
+          "stepId": "14-finalize-production-promotion-reuse",
+          "path": "/refs/releaseId"
+        },
+        "target": {
+          "source": "session",
+          "path": "/target/deploymentTarget"
+        }
+      },
+      "allowedOutcomes": [
+        "wait",
+        "verify",
+        "superseded",
+        "deployment_failed"
+      ]
+    },
+    {
+      "stepId": "19-verify-deployment-after-wait-reuse",
+      "workerKind": "agent",
+      "capability": "deployment.verify",
+      "inputBindings": {
+        "deploymentRequestId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-reuse",
+          "path": "/refs/deploymentRequestId"
+        },
+        "releaseId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-reuse",
+          "path": "/refs/releaseId"
+        },
+        "promotionVersionId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-reuse",
+          "path": "/refs/promotionVersionId"
+        },
+        "target": {
+          "source": "session",
+          "path": "/target/deploymentTarget"
+        },
+        "event": {
+          "source": "step",
+          "stepId": "18-wait-deployment-event-reuse",
+          "path": "",
+          "optional": true
+        }
+      },
+      "allowedOutcomes": [
+        "continue",
+        "superseded",
+        "deployment_failed"
+      ]
+    },
+    {
+      "stepId": "20-record-deployment-state-after-wait-reuse",
+      "workerKind": "agent",
+      "capability": "deployment.record",
+      "inputBindings": {
+        "deploymentRequestId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-reuse",
+          "path": "/refs/deploymentRequestId"
+        },
+        "releaseId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-reuse",
+          "path": "/refs/releaseId"
+        },
+        "promotionVersionId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-reuse",
+          "path": "/refs/promotionVersionId"
+        },
+        "verificationRef": {
+          "source": "step",
+          "stepId": "19-verify-deployment-after-wait-reuse",
+          "path": "/refs/verificationRef"
+        }
+      },
+      "allowedOutcomes": [
+        "continue",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "19-verify-deployment-already-serving-reuse",
+      "workerKind": "agent",
+      "capability": "deployment.verify",
+      "inputBindings": {
+        "deploymentRequestId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-reuse",
+          "path": "/refs/deploymentRequestId"
+        },
+        "releaseId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-reuse",
+          "path": "/refs/releaseId"
+        },
+        "promotionVersionId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-reuse",
+          "path": "/refs/promotionVersionId"
+        },
+        "target": {
+          "source": "session",
+          "path": "/target/deploymentTarget"
+        }
+      },
+      "allowedOutcomes": [
+        "continue",
+        "superseded",
+        "deployment_failed"
+      ]
+    },
+    {
+      "stepId": "20-record-deployment-state-already-serving-reuse",
+      "workerKind": "agent",
+      "capability": "deployment.record",
+      "inputBindings": {
+        "deploymentRequestId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-reuse",
+          "path": "/refs/deploymentRequestId"
+        },
+        "releaseId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-reuse",
+          "path": "/refs/releaseId"
+        },
+        "promotionVersionId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-reuse",
+          "path": "/refs/promotionVersionId"
+        },
+        "verificationRef": {
+          "source": "step",
+          "stepId": "19-verify-deployment-already-serving-reuse",
+          "path": "/refs/verificationRef"
+        }
+      },
+      "allowedOutcomes": [
+        "continue",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "07b-receive-keyword-proposal",
+      "workerKind": "human",
+      "capability": null,
+      "inputBindings": {},
+      "allowedOutcomes": [
+        "submitted"
+      ]
+    },
+    {
+      "stepId": "07-update-keyword-selection",
+      "workerKind": "agent",
+      "capability": "keyword-selection.assess",
+      "inputBindings": {
+        "corpusVersionId": {
+          "source": "session",
+          "path": "/pinned/corpusVersionId"
+        },
+        "classificationVersionId": {
+          "source": "step",
+          "stepId": "06-finalize-correction-batch",
+          "path": "/refs/classificationVersionId"
+        },
+        "keywordSelectionVersionId": {
+          "source": "session",
+          "path": "/pinned/keywordSelectionVersionId"
+        },
+        "keywordPolicyVersionId": {
+          "source": "session",
+          "path": "/pinned/keywordPolicyVersionId"
+        },
+        "handoffPreparation": {
+          "source": "step",
+          "stepId": "07a-prepare-keyword-handoff",
+          "path": "",
+          "optional": true
+        },
+        "proposal": {
+          "source": "task",
+          "stepId": "07b-receive-keyword-proposal",
+          "path": "",
+          "optional": true
+        }
+      },
+      "allowedOutcomes": [
+        "continue",
+        "review_required",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "10-finalize-keyword-selection-07-accepted-without-review",
+      "workerKind": "agent",
+      "capability": "keyword-selection.finalize",
+      "inputBindings": {
+        "proposalId": {
+          "source": "step",
+          "stepId": "07-update-keyword-selection",
+          "path": "/refs/proposalId",
+          "optional": true
+        },
+        "assessed": {
+          "source": "step",
+          "stepId": "07-update-keyword-selection",
+          "path": "",
+          "optional": true
+        }
+      },
+      "allowedOutcomes": [
+        "continue",
+        "rejected",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "11-build-release-bundle-07-accepted-without-review",
+      "workerKind": "agent",
+      "capability": "release.build",
+      "inputBindings": {
+        "corpusVersionId": {
+          "source": "session",
+          "path": "/pinned/corpusVersionId"
+        },
+        "classificationVersionId": {
+          "source": "step",
+          "stepId": "06-finalize-correction-batch",
+          "path": "/refs/classificationVersionId"
+        },
+        "keywordSelectionVersionId": {
+          "source": "step",
+          "stepId": "10-finalize-keyword-selection-07-accepted-without-review",
+          "path": "/refs/keywordSelectionVersionId"
+        },
+        "corpusPolicyVersionId": {
+          "source": "session",
+          "path": "/pinned/corpusPolicyVersionId"
+        },
+        "classificationPolicyVersionId": {
+          "source": "session",
+          "path": "/pinned/classificationPolicyVersionId"
+        },
+        "keywordPolicyVersionId": {
+          "source": "session",
+          "path": "/pinned/keywordPolicyVersionId"
+        },
+        "accountPolicyVersionId": {
+          "source": "session",
+          "path": "/pinned/accountPolicyVersionId"
+        },
+        "projectionDefinitionVersionId": {
+          "source": "session",
+          "path": "/pinned/projectionDefinitionVersionId"
+        }
+      },
+      "allowedOutcomes": [
+        "continue"
+      ]
+    },
+    {
+      "stepId": "12-materialize-release-07-accepted-without-review",
+      "workerKind": "agent",
+      "capability": "release.materialize",
+      "inputBindings": {
+        "releaseId": {
+          "source": "step",
+          "stepId": "11-build-release-bundle-07-accepted-without-review",
+          "path": "/refs/releaseId"
+        }
+      },
+      "allowedOutcomes": [
+        "continue"
+      ]
+    },
+    {
+      "stepId": "13-propose-production-promotion-07-accepted-without-review",
+      "workerKind": "agent",
+      "capability": "promotion.propose",
+      "inputBindings": {
+        "releaseId": {
+          "source": "step",
+          "stepId": "12-materialize-release-07-accepted-without-review",
+          "path": "/refs/releaseId"
+        },
+        "promotionStream": {
+          "source": "session",
+          "path": "/target/promotionStream"
+        }
+      },
+      "allowedOutcomes": [
+        "continue"
+      ]
+    },
+    {
+      "stepId": "13-review-production-promotion-07-accepted-without-review",
+      "workerKind": "human",
+      "capability": null,
+      "inputBindings": {
+        "releaseId": {
+          "source": "step",
+          "stepId": "12-materialize-release-07-accepted-without-review",
+          "path": "/refs/releaseId"
+        },
+        "proposalId": {
+          "source": "step",
+          "stepId": "13-propose-production-promotion-07-accepted-without-review",
+          "path": "/refs/proposalId"
+        }
+      },
+      "allowedOutcomes": [
+        "accept",
+        "reject"
+      ]
+    },
+    {
+      "stepId": "14-finalize-production-promotion-07-accepted-without-review",
+      "workerKind": "agent",
+      "capability": "promotion.finalize",
+      "inputBindings": {
+        "proposalId": {
+          "source": "step",
+          "stepId": "13-propose-production-promotion-07-accepted-without-review",
+          "path": "/refs/proposalId"
+        },
+        "releaseId": {
+          "source": "step",
+          "stepId": "12-materialize-release-07-accepted-without-review",
+          "path": "/refs/releaseId"
+        },
+        "review": {
+          "source": "task",
+          "stepId": "13-review-production-promotion-07-accepted-without-review",
+          "path": ""
+        }
+      },
+      "allowedOutcomes": [
+        "continue",
+        "rejected",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "16-trigger-deployment-07-accepted-without-review",
+      "workerKind": "agent",
+      "capability": "deployment.trigger",
+      "inputBindings": {
+        "acceptedPromotionDecisionId": {
+          "source": "step",
+          "stepId": "14-finalize-production-promotion-07-accepted-without-review",
+          "path": "/refs/decisionId"
+        },
+        "promotionVersionId": {
+          "source": "step",
+          "stepId": "14-finalize-production-promotion-07-accepted-without-review",
+          "path": "/refs/promotionVersionId"
+        },
+        "releaseId": {
+          "source": "step",
+          "stepId": "14-finalize-production-promotion-07-accepted-without-review",
+          "path": "/refs/releaseId"
+        },
+        "target": {
+          "source": "session",
+          "path": "/target/deploymentTarget"
+        }
+      },
+      "allowedOutcomes": [
+        "wait",
+        "verify",
+        "superseded",
+        "deployment_failed"
+      ]
+    },
+    {
+      "stepId": "19-verify-deployment-after-wait-07-accepted-without-review",
+      "workerKind": "agent",
+      "capability": "deployment.verify",
+      "inputBindings": {
+        "deploymentRequestId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-accepted-without-review",
+          "path": "/refs/deploymentRequestId"
+        },
+        "releaseId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-accepted-without-review",
+          "path": "/refs/releaseId"
+        },
+        "promotionVersionId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-accepted-without-review",
+          "path": "/refs/promotionVersionId"
+        },
+        "target": {
+          "source": "session",
+          "path": "/target/deploymentTarget"
+        },
+        "event": {
+          "source": "step",
+          "stepId": "18-wait-deployment-event-07-accepted-without-review",
+          "path": "",
+          "optional": true
+        }
+      },
+      "allowedOutcomes": [
+        "continue",
+        "superseded",
+        "deployment_failed"
+      ]
+    },
+    {
+      "stepId": "20-record-deployment-state-after-wait-07-accepted-without-review",
+      "workerKind": "agent",
+      "capability": "deployment.record",
+      "inputBindings": {
+        "deploymentRequestId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-accepted-without-review",
+          "path": "/refs/deploymentRequestId"
+        },
+        "releaseId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-accepted-without-review",
+          "path": "/refs/releaseId"
+        },
+        "promotionVersionId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-accepted-without-review",
+          "path": "/refs/promotionVersionId"
+        },
+        "verificationRef": {
+          "source": "step",
+          "stepId": "19-verify-deployment-after-wait-07-accepted-without-review",
+          "path": "/refs/verificationRef"
+        }
+      },
+      "allowedOutcomes": [
+        "continue",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "19-verify-deployment-already-serving-07-accepted-without-review",
+      "workerKind": "agent",
+      "capability": "deployment.verify",
+      "inputBindings": {
+        "deploymentRequestId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-accepted-without-review",
+          "path": "/refs/deploymentRequestId"
+        },
+        "releaseId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-accepted-without-review",
+          "path": "/refs/releaseId"
+        },
+        "promotionVersionId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-accepted-without-review",
+          "path": "/refs/promotionVersionId"
+        },
+        "target": {
+          "source": "session",
+          "path": "/target/deploymentTarget"
+        }
+      },
+      "allowedOutcomes": [
+        "continue",
+        "superseded",
+        "deployment_failed"
+      ]
+    },
+    {
+      "stepId": "20-record-deployment-state-already-serving-07-accepted-without-review",
+      "workerKind": "agent",
+      "capability": "deployment.record",
+      "inputBindings": {
+        "deploymentRequestId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-accepted-without-review",
+          "path": "/refs/deploymentRequestId"
+        },
+        "releaseId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-accepted-without-review",
+          "path": "/refs/releaseId"
+        },
+        "promotionVersionId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-accepted-without-review",
+          "path": "/refs/promotionVersionId"
+        },
+        "verificationRef": {
+          "source": "step",
+          "stepId": "19-verify-deployment-already-serving-07-accepted-without-review",
+          "path": "/refs/verificationRef"
+        }
+      },
+      "allowedOutcomes": [
+        "continue",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "09-review-keyword-selection",
+      "workerKind": "human",
+      "capability": null,
+      "inputBindings": {
+        "proposal": {
+          "source": "step",
+          "stepId": "07-update-keyword-selection",
+          "path": "/refs/proposalId"
+        },
+        "assessment": {
+          "source": "step",
+          "stepId": "07-update-keyword-selection",
+          "path": "/refs/assessmentId"
+        }
+      },
+      "allowedOutcomes": [
+        "accept",
+        "reject"
+      ]
+    },
+    {
+      "stepId": "10-finalize-keyword-selection-07-reviewed",
+      "workerKind": "agent",
+      "capability": "keyword-selection.finalize",
+      "inputBindings": {
+        "proposalId": {
+          "source": "step",
+          "stepId": "07-update-keyword-selection",
+          "path": "/refs/proposalId",
+          "optional": true
+        },
+        "review": {
+          "source": "task",
+          "stepId": "09-review-keyword-selection",
+          "path": "",
+          "optional": true
+        },
+        "assessed": {
+          "source": "step",
+          "stepId": "07-update-keyword-selection",
+          "path": "",
+          "optional": true
+        }
+      },
+      "allowedOutcomes": [
+        "continue",
+        "rejected",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "11-build-release-bundle-07-reviewed",
+      "workerKind": "agent",
+      "capability": "release.build",
+      "inputBindings": {
+        "corpusVersionId": {
+          "source": "session",
+          "path": "/pinned/corpusVersionId"
+        },
+        "classificationVersionId": {
+          "source": "step",
+          "stepId": "06-finalize-correction-batch",
+          "path": "/refs/classificationVersionId"
+        },
+        "keywordSelectionVersionId": {
+          "source": "step",
+          "stepId": "10-finalize-keyword-selection-07-reviewed",
+          "path": "/refs/keywordSelectionVersionId"
+        },
+        "corpusPolicyVersionId": {
+          "source": "session",
+          "path": "/pinned/corpusPolicyVersionId"
+        },
+        "classificationPolicyVersionId": {
+          "source": "session",
+          "path": "/pinned/classificationPolicyVersionId"
+        },
+        "keywordPolicyVersionId": {
+          "source": "session",
+          "path": "/pinned/keywordPolicyVersionId"
+        },
+        "accountPolicyVersionId": {
+          "source": "session",
+          "path": "/pinned/accountPolicyVersionId"
+        },
+        "projectionDefinitionVersionId": {
+          "source": "session",
+          "path": "/pinned/projectionDefinitionVersionId"
+        }
+      },
+      "allowedOutcomes": [
+        "continue"
+      ]
+    },
+    {
+      "stepId": "12-materialize-release-07-reviewed",
+      "workerKind": "agent",
+      "capability": "release.materialize",
+      "inputBindings": {
+        "releaseId": {
+          "source": "step",
+          "stepId": "11-build-release-bundle-07-reviewed",
+          "path": "/refs/releaseId"
+        }
+      },
+      "allowedOutcomes": [
+        "continue"
+      ]
+    },
+    {
+      "stepId": "13-propose-production-promotion-07-reviewed",
+      "workerKind": "agent",
+      "capability": "promotion.propose",
+      "inputBindings": {
+        "releaseId": {
+          "source": "step",
+          "stepId": "12-materialize-release-07-reviewed",
+          "path": "/refs/releaseId"
+        },
+        "promotionStream": {
+          "source": "session",
+          "path": "/target/promotionStream"
+        }
+      },
+      "allowedOutcomes": [
+        "continue"
+      ]
+    },
+    {
+      "stepId": "13-review-production-promotion-07-reviewed",
+      "workerKind": "human",
+      "capability": null,
+      "inputBindings": {
+        "releaseId": {
+          "source": "step",
+          "stepId": "12-materialize-release-07-reviewed",
+          "path": "/refs/releaseId"
+        },
+        "proposalId": {
+          "source": "step",
+          "stepId": "13-propose-production-promotion-07-reviewed",
+          "path": "/refs/proposalId"
+        }
+      },
+      "allowedOutcomes": [
+        "accept",
+        "reject"
+      ]
+    },
+    {
+      "stepId": "14-finalize-production-promotion-07-reviewed",
+      "workerKind": "agent",
+      "capability": "promotion.finalize",
+      "inputBindings": {
+        "proposalId": {
+          "source": "step",
+          "stepId": "13-propose-production-promotion-07-reviewed",
+          "path": "/refs/proposalId"
+        },
+        "releaseId": {
+          "source": "step",
+          "stepId": "12-materialize-release-07-reviewed",
+          "path": "/refs/releaseId"
+        },
+        "review": {
+          "source": "task",
+          "stepId": "13-review-production-promotion-07-reviewed",
+          "path": ""
+        }
+      },
+      "allowedOutcomes": [
+        "continue",
+        "rejected",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "16-trigger-deployment-07-reviewed",
+      "workerKind": "agent",
+      "capability": "deployment.trigger",
+      "inputBindings": {
+        "acceptedPromotionDecisionId": {
+          "source": "step",
+          "stepId": "14-finalize-production-promotion-07-reviewed",
+          "path": "/refs/decisionId"
+        },
+        "promotionVersionId": {
+          "source": "step",
+          "stepId": "14-finalize-production-promotion-07-reviewed",
+          "path": "/refs/promotionVersionId"
+        },
+        "releaseId": {
+          "source": "step",
+          "stepId": "14-finalize-production-promotion-07-reviewed",
+          "path": "/refs/releaseId"
+        },
+        "target": {
+          "source": "session",
+          "path": "/target/deploymentTarget"
+        }
+      },
+      "allowedOutcomes": [
+        "wait",
+        "verify",
+        "superseded",
+        "deployment_failed"
+      ]
+    },
+    {
+      "stepId": "19-verify-deployment-after-wait-07-reviewed",
+      "workerKind": "agent",
+      "capability": "deployment.verify",
+      "inputBindings": {
+        "deploymentRequestId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-reviewed",
+          "path": "/refs/deploymentRequestId"
+        },
+        "releaseId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-reviewed",
+          "path": "/refs/releaseId"
+        },
+        "promotionVersionId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-reviewed",
+          "path": "/refs/promotionVersionId"
+        },
+        "target": {
+          "source": "session",
+          "path": "/target/deploymentTarget"
+        },
+        "event": {
+          "source": "step",
+          "stepId": "18-wait-deployment-event-07-reviewed",
+          "path": "",
+          "optional": true
+        }
+      },
+      "allowedOutcomes": [
+        "continue",
+        "superseded",
+        "deployment_failed"
+      ]
+    },
+    {
+      "stepId": "20-record-deployment-state-after-wait-07-reviewed",
+      "workerKind": "agent",
+      "capability": "deployment.record",
+      "inputBindings": {
+        "deploymentRequestId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-reviewed",
+          "path": "/refs/deploymentRequestId"
+        },
+        "releaseId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-reviewed",
+          "path": "/refs/releaseId"
+        },
+        "promotionVersionId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-reviewed",
+          "path": "/refs/promotionVersionId"
+        },
+        "verificationRef": {
+          "source": "step",
+          "stepId": "19-verify-deployment-after-wait-07-reviewed",
+          "path": "/refs/verificationRef"
+        }
+      },
+      "allowedOutcomes": [
+        "continue",
+        "superseded"
+      ]
+    },
+    {
+      "stepId": "19-verify-deployment-already-serving-07-reviewed",
+      "workerKind": "agent",
+      "capability": "deployment.verify",
+      "inputBindings": {
+        "deploymentRequestId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-reviewed",
+          "path": "/refs/deploymentRequestId"
+        },
+        "releaseId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-reviewed",
+          "path": "/refs/releaseId"
+        },
+        "promotionVersionId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-reviewed",
+          "path": "/refs/promotionVersionId"
+        },
+        "target": {
+          "source": "session",
+          "path": "/target/deploymentTarget"
+        }
+      },
+      "allowedOutcomes": [
+        "continue",
+        "superseded",
+        "deployment_failed"
+      ]
+    },
+    {
+      "stepId": "20-record-deployment-state-already-serving-07-reviewed",
+      "workerKind": "agent",
+      "capability": "deployment.record",
+      "inputBindings": {
+        "deploymentRequestId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-reviewed",
+          "path": "/refs/deploymentRequestId"
+        },
+        "releaseId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-reviewed",
+          "path": "/refs/releaseId"
+        },
+        "promotionVersionId": {
+          "source": "step",
+          "stepId": "16-trigger-deployment-07-reviewed",
+          "path": "/refs/promotionVersionId"
+        },
+        "verificationRef": {
+          "source": "step",
+          "stepId": "19-verify-deployment-already-serving-07-reviewed",
+          "path": "/refs/verificationRef"
+        }
+      },
+      "allowedOutcomes": [
+        "continue",
+        "superseded"
+      ]
+    }
+  ]
+}
