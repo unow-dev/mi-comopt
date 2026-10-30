@@ -1,10 +1,10 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-10-28T23:36:26Z",
+  "generated_at": "2026-10-30T14:26:04Z",
   "source": {
     "db_schema_version": 8,
     "corpus_version_id": "version_9ae43beeb67a924bdd62dc837b50d734",
-    "classification_version_id": "version_67c4dfa11ecb223a5f41d1c92c67dcb8",
+    "classification_version_id": "version_49db67818557cc9da18abf75416eed03",
     "snapshot_refs": [
       {
         "payload_sha256": "98b1a2d6ca08fe61b8b821d4498e8bab8683d4cf0c4ac0843cb5b89f7a014c7c",
@@ -35,12 +35,12 @@
         "snapshot_index": 0
       }
     ],
-    "source_dataset_artifact_sha256": "sha256:6a8fa423219c9e6c430cbdb81aa22d65a51e68121b2df82244686faf4bc0f2a8",
+    "source_dataset_artifact_sha256": "sha256:7830037a403c0b985c76c3138a7bec349d664f68ad48908a9b91c818119813de",
     "keyword_publication": {
-      "run_id": "run_0315a404-c403-457f-a8ac-e6f06d6d5cb0",
-      "published_at": "2026-10-28T23:36:26Z",
-      "applied_at": "2026-10-28T23:36:26Z",
-      "candidates_content_sha256": "sha256:a128f3abc16cfc96f1e176185475e11ef1a24e698e8038c35cd7a21b18fc7c3a"
+      "run_id": "run_6fa804f7-18e4-4802-9436-cd27aab3654d",
+      "published_at": "2026-10-30T14:26:04Z",
+      "applied_at": "2026-10-30T14:26:04Z",
+      "candidates_content_sha256": "sha256:69289c6c56efc88d9e2e79871726f6b2c1888985e9af0096850aa61b8d6b6866"
     }
   },
   "policies": {
@@ -55,24 +55,24 @@
   },
   "artifacts": {
     "comments": {
-      "path": "artifacts/source-dataset.6a8fa423219c9e6c430cbdb81aa22d65a51e68121b2df82244686faf4bc0f2a8.json",
-      "artifact_sha256": "sha256:6a8fa423219c9e6c430cbdb81aa22d65a51e68121b2df82244686faf4bc0f2a8",
+      "path": "artifacts/source-dataset.7830037a403c0b985c76c3138a7bec349d664f68ad48908a9b91c818119813de.json",
+      "artifact_sha256": "sha256:7830037a403c0b985c76c3138a7bec349d664f68ad48908a9b91c818119813de",
       "record_count": 44419
     },
     "overview": {
-      "path": "artifacts/overview.e8ee456be5510f4e7cf12726d9af3fe5cdfc564f61407fce67419b182667bd68.json",
-      "artifact_sha256": "sha256:e8ee456be5510f4e7cf12726d9af3fe5cdfc564f61407fce67419b182667bd68",
+      "path": "artifacts/overview.ead5b0624c322785b3c09714d81c8df0cd7f8c66473869c50810f5d8e6281e55.json",
+      "artifact_sha256": "sha256:ead5b0624c322785b3c09714d81c8df0cd7f8c66473869c50810f5d8e6281e55",
       "record_count": 30
     },
     "keywords": {
-      "path": "artifacts/filter-keyword-candidates.f2d543d84452972aa9bd2f6b08bd8ad2e457a6985e9f5f1be65d440f022a7862.json",
-      "artifact_sha256": "sha256:f2d543d84452972aa9bd2f6b08bd8ad2e457a6985e9f5f1be65d440f022a7862",
-      "record_count": 197
+      "path": "artifacts/filter-keyword-candidates.b45316eb032f28105f89a73fc96b23668de841f0c8bad833c3c302e78750922b.json",
+      "artifact_sha256": "sha256:b45316eb032f28105f89a73fc96b23668de841f0c8bad833c3c302e78750922b",
+      "record_count": 181
     },
     "accounts": {
-      "path": "artifacts/account-block-candidates.25bec83aa3ab2d3fdac2048fc72bcaf73805166bc7695d4da444bef2d9c1f2db.json",
-      "artifact_sha256": "sha256:25bec83aa3ab2d3fdac2048fc72bcaf73805166bc7695d4da444bef2d9c1f2db",
-      "record_count": 112
+      "path": "artifacts/account-block-candidates.eb0658c16a638516688cbc725580c317b17adfa7e796bb28240a04054dae26ef.json",
+      "artifact_sha256": "sha256:eb0658c16a638516688cbc725580c317b17adfa7e796bb28240a04054dae26ef",
+      "record_count": 114
     }
   }
 }
